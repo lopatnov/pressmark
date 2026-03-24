@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "Development": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "applicationUrl": "http://localhost:5000",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ConnectionStrings__Default": "Server=localhost,1433;Database=pressmark;User Id=sa;Password=Dev_Password1!;TrustServerCertificate=True",
+        "Jwt__Secret": "dev-secret-min-32-chars-do-not-use-in-prod!!",
+        "Jwt__ExpiryMinutes": "15",
+        "Jwt__RefreshExpiryDays": "7",
+        "Jwt__RefreshCookieName": "refresh_token",
+        "Cors__AllowedOrigins": "http://localhost:5173",
+        "RssFetcher__IntervalMinutes": "15",
+        "RssFetcher__MaxItemsPerFeed": "50"
+      }
+    }
+  }
+}

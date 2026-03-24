@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+option csharp_namespace = "Pressmark.Api.Protos";
+
+package pressmark.admin;
+
+import "google/protobuf/empty.proto";
+
+service AdminService {
+  rpc GetSiteSettings    (google.protobuf.Empty)       returns (SiteSettings);
+  rpc UpdateSiteSettings (UpdateSiteSettingsRequest)   returns (google.protobuf.Empty);
+  rpc HideFeedItem       (HideFeedItemRequest)         returns (google.protobuf.Empty);
+  rpc BanSubscription    (BanSubscriptionRequest)      returns (google.protobuf.Empty);
+  rpc ListUsers          (google.protobuf.Empty)       returns (UserList);
+}
+
+message SiteSettings {
+  string site_name              = 1;
+  int32  community_window_days  = 2;
+  string registration_mode      = 3; // "open" | "invite_only"
+}
+
+message UpdateSiteSettingsRequest {
+  SiteSettings settings = 1;
+}
+
+message HideFeedItemRequest {
+  string feed_item_id = 1;
+  bool   hidden       = 2;
+}
+
+message BanSubscriptionRequest {
+  string subscription_id = 1;
+  bool   banned          = 2;
+}
+
+message UserList {
+  repeated UserInfo users = 1;
+}
+
+message UserInfo {
+  string id         = 1;
+  string email      = 2;
+  string role       = 3;
+  string created_at = 4;
+}

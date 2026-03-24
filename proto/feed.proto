@@ -1,0 +1,92 @@
+syntax = "proto3";
+
+option csharp_namespace = "Pressmark.Api.Protos";
+
+package pressmark.feed;
+
+import "google/protobuf/empty.proto";
+
+service FeedService {
+  // Personal feed (authenticated)
+  rpc GetFeed       (GetFeedRequest)       returns (FeedPage);
+  rpc MarkAsRead    (MarkAsReadRequest)    returns (google.protobuf.Empty);
+  rpc MarkAllAsRead (MarkAllAsReadRequest) returns (google.protobuf.Empty);
+  rpc GetUnreadCount(google.protobuf.Empty) returns (UnreadCount);
+
+  // Likes (authenticated)
+  rpc ToggleLike (ToggleLikeRequest) returns (ToggleLikeResponse);
+
+  // Bookmarks (authenticated)
+  rpc ToggleBookmark (ToggleBookmarkRequest)  returns (ToggleBookmarkResponse);
+  rpc GetBookmarks   (GetBookmarksRequest)    returns (FeedPage);
+
+  // Community feed (anonymous — no JWT required)
+  rpc GetCommunityFeed (GetCommunityFeedRequest) returns (FeedPage);
+}
+
+message GetFeedRequest {
+  int32  page_size       = 1; // default: 20, max: 100
+  string cursor          = 2; // empty = first page
+  bool   unread_only     = 3;
+  string subscription_id = 4; // empty = all subscriptions
+}
+
+message GetCommunityFeedRequest {
+  int32  page_size = 1; // default: 20, max: 100
+  string cursor    = 2; // empty = first page
+}
+
+message GetBookmarksRequest {
+  int32  page_size = 1;
+  string cursor    = 2;
+}
+
+message FeedPage {
+  repeated FeedItem items        = 1;
+  string            next_cursor  = 2; // empty = no more pages
+  int32             total_unread = 3;
+}
+
+message FeedItem {
+  string id              = 1;
+  string subscription_id = 2;
+  string title           = 3;
+  string url             = 4;
+  string summary         = 5;
+  string published_at    = 6;
+  bool   is_read         = 7;
+  int32  like_count      = 8;
+  bool   is_liked        = 9;
+  bool   is_bookmarked   = 10;
+  string source_title    = 11;
+  string image_url       = 12; // empty if RSS has no image
+}
+
+message MarkAsReadRequest {
+  string feed_item_id = 1;
+}
+
+message MarkAllAsReadRequest {
+  string subscription_id = 1; // empty = all subscriptions
+}
+
+message UnreadCount {
+  int32 count = 1;
+}
+
+message ToggleLikeRequest {
+  string feed_item_id = 1;
+}
+
+message ToggleLikeResponse {
+  bool  is_liked   = 1;
+  int32 like_count = 2;
+}
+
+message ToggleBookmarkRequest {
+  string feed_item_id = 1;
+}
+
+message ToggleBookmarkResponse {
+  bool is_bookmarked = 1;
+}

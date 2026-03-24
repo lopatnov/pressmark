@@ -1,0 +1,6 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Pressmark.Api.Tests/Pressmark.Api.Tests.csproj" />
+    <Project Path="src/Pressmark.Api/Pressmark.Api.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,14 @@
+{
+  "title": "Subscriptions",
+  "add": "Add subscription",
+  "empty": "No subscriptions yet",
+  "rssUrl": "RSS URL",
+  "feedTitle": "Feed title",
+  "lastFetched": "Last fetched",
+  "remove": "Remove",
+  "removeConfirm": "Remove this subscription?",
+  "errors": {
+    "invalidUrl": "Invalid RSS URL",
+    "fetchFailed": "Could not fetch RSS feed"
+  }
+}

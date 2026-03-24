@@ -1,0 +1,47 @@
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "Dev_Password1!"
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql_data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD", "/opt/mssql-tools18/bin/sqlcmd", "-S", "localhost",
+             "-U", "sa", "-P", "Dev_Password1!", "-C", "-Q", "SELECT 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: src/Pressmark.Api/Dockerfile
+    environment:
+      ConnectionStrings__Default: "Server=db,1433;Database=pressmark;User Id=sa;Password=Dev_Password1!;TrustServerCertificate=True"
+      Jwt__Secret: "change-me-in-production-min-32-chars!!"
+      Jwt__ExpiryMinutes: "15"
+      Jwt__RefreshExpiryDays: "7"
+      Jwt__RefreshCookieName: "refresh_token"
+      Cors__AllowedOrigins: "http://localhost:5173"
+      RssFetcher__IntervalMinutes: "15"
+      RssFetcher__MaxItemsPerFeed: "50"
+    ports:
+      - "5000:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    build:
+      context: src/pressmark-web
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+
+volumes:
+  mssql_data:

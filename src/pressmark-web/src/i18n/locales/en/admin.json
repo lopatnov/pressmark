@@ -1,0 +1,25 @@
+{
+  "title": "Admin",
+  "settings": {
+    "title": "Site settings",
+    "siteName": "Site name",
+    "communityWindowDays": "Community feed window (days)",
+    "registrationMode": "Registration mode",
+    "open": "Open",
+    "inviteOnly": "Invite only",
+    "saved": "Settings saved"
+  },
+  "moderation": {
+    "title": "Moderation",
+    "hide": "Hide",
+    "unhide": "Unhide",
+    "ban": "Ban channel",
+    "unban": "Unban channel"
+  },
+  "users": {
+    "title": "Users",
+    "email": "Email",
+    "role": "Role",
+    "joined": "Joined"
+  }
+}

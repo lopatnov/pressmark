@@ -1,0 +1,19 @@
+{
+  "title": "Feed",
+  "empty": "No articles yet",
+  "loadMore": "Load more",
+  "markAllRead": "Mark all as read",
+  "unreadOnly": "Unread only",
+  "unreadCount": "{{count}} unread",
+  "like": "Like",
+  "unlike": "Unlike",
+  "bookmark": "Bookmark",
+  "removeBookmark": "Remove bookmark",
+  "readMore": "Read more",
+  "community": {
+    "title": "Community",
+    "subtitle": "Articles liked by the community in the last {{days}} day",
+    "subtitle_plural": "Articles liked by the community in the last {{days}} days",
+    "empty": "No liked articles yet. Sign in to like articles."
+  }
+}

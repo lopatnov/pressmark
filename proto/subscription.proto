@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+option csharp_namespace = "Pressmark.Api.Protos";
+
+package pressmark.subscription;
+
+import "google/protobuf/empty.proto";
+
+service SubscriptionService {
+  rpc AddSubscription    (AddSubscriptionRequest)    returns (Subscription);
+  rpc RemoveSubscription (RemoveSubscriptionRequest) returns (google.protobuf.Empty);
+  rpc ListSubscriptions  (google.protobuf.Empty)     returns (SubscriptionList);
+}
+
+message AddSubscriptionRequest {
+  string rss_url = 1;
+  string title   = 2;
+}
+
+message RemoveSubscriptionRequest {
+  string subscription_id = 1;
+}
+
+message Subscription {
+  string id              = 1;
+  string user_id         = 2;
+  string rss_url         = 3;
+  string title           = 4;
+  string last_fetched_at = 5;
+  string created_at      = 6;
+}
+
+message SubscriptionList {
+  repeated Subscription subscriptions = 1;
+}

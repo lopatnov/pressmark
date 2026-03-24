@@ -1,0 +1,22 @@
+{
+  "recommendations": [
+    // .NET / C#
+    "ms-dotnettools.csdevkit",
+    "ms-dotnettools.csharp",
+    "ms-dotnettools.vscode-dotnet-runtime",
+
+    // Frontend
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "bradlc.vscode-tailwindcss",
+
+    // Proto
+    "zxh404.vscode-proto3",
+
+    // Docker
+    "ms-azuretools.vscode-docker",
+
+    // Git
+    "eamodio.gitlens"
+  ]
+}
