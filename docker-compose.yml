@@ -36,8 +36,8 @@ services:
 
   web:
     build:
-      context: src/pressmark-web
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: src/pressmark-web/Dockerfile
     ports:
       - "80:80"
     depends_on:

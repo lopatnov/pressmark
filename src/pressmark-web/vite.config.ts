@@ -18,6 +18,7 @@ export default defineConfig({
       '/grpc': {
         target: 'http://localhost:5000',
         changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/grpc/, ''),
       },
     },
   },
