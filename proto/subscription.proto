@@ -10,6 +10,8 @@ service SubscriptionService {
   rpc AddSubscription    (AddSubscriptionRequest)    returns (Subscription);
   rpc RemoveSubscription (RemoveSubscriptionRequest) returns (google.protobuf.Empty);
   rpc ListSubscriptions  (google.protobuf.Empty)     returns (SubscriptionList);
+  rpc ImportSubscriptions (ImportSubscriptionsRequest) returns (ImportSubscriptionsResponse);
+  rpc ExportSubscriptions (google.protobuf.Empty)      returns (ExportSubscriptionsResponse);
 }
 
 message AddSubscriptionRequest {
@@ -32,4 +34,17 @@ message Subscription {
 
 message SubscriptionList {
   repeated Subscription subscriptions = 1;
+}
+
+message ImportSubscriptionsRequest {
+  string opml_content = 1;
+}
+
+message ImportSubscriptionsResponse {
+  int32 imported = 1;
+  int32 skipped  = 2;
+}
+
+message ExportSubscriptionsResponse {
+  string opml_content = 1;
 }

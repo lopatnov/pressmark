@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Pressmark.Api.Entities;
@@ -58,6 +59,12 @@ public class JwtService
         {
             return null;
         }
+    }
+
+    public static string HashToken(string raw)
+    {
+        var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(raw));
+        return Convert.ToHexString(bytes).ToLowerInvariant();
     }
 
     private string CreateToken(IEnumerable<Claim> claims, TimeSpan lifetime)

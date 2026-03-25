@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useTranslation } from 'react-i18next'
-import { Plus, Trash2 } from 'lucide-react'
+import { Download, Plus, Trash2, Upload } from 'lucide-react'
 import { ConnectError } from '@connectrpc/connect'
 import { Button } from '@/components/ui/button'
 import { subscriptionClient } from '@/api/clients'
@@ -20,6 +20,8 @@ export function SubscriptionsPage() {
   const { subscriptions, isLoading, setSubscriptions, addSubscription, removeSubscription, setLoading } =
     useSubscriptionStore()
   const [showForm, setShowForm] = useState(false)
+  const [importStatus, setImportStatus] = useState<string | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const { register, handleSubmit, formState: { errors, isSubmitting }, setError, reset } =
     useForm<FormData>({ resolver: zodResolver(schema) })
@@ -53,6 +55,46 @@ export function SubscriptionsPage() {
     }
   }
 
+  const handleExport = async () => {
+    try {
+      const res = await subscriptionClient.exportSubscriptions({})
+      const blob = new Blob([res.opmlContent], { type: 'text/xml' })
+      const url  = URL.createObjectURL(blob)
+      const a    = document.createElement('a')
+      a.href     = url
+      a.download = 'subscriptions.opml'
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch {}
+  }
+
+  const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = async (ev) => {
+      const opmlContent = ev.target?.result as string
+      try {
+        const res = await subscriptionClient.importSubscriptions({ opmlContent })
+        setImportStatus(t('subscriptions:importSuccess', {
+          imported: res.imported,
+          skipped:  res.skipped,
+        }))
+        // Refresh the list
+        const list = await subscriptionClient.listSubscriptions({})
+        setSubscriptions(list.subscriptions.map((s) => ({
+          id: s.id, rssUrl: s.rssUrl, title: s.title,
+          lastFetchedAt: s.lastFetchedAt, createdAt: s.createdAt,
+        })))
+      } catch {
+        setImportStatus(t('subscriptions:importError'))
+      } finally {
+        if (fileInputRef.current) fileInputRef.current.value = ''
+      }
+    }
+    reader.readAsText(file)
+  }
+
   const handleRemove = async (id: string) => {
     if (!confirm(t('subscriptions:removeConfirm'))) return
     removeSubscription(id)
@@ -63,11 +105,32 @@ export function SubscriptionsPage() {
     <div className="mx-auto max-w-2xl space-y-4 p-4">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">{t('subscriptions:title')}</h1>
-        <Button size="sm" onClick={() => setShowForm((v) => !v)}>
-          <Plus className="mr-1 h-4 w-4" />
-          {t('subscriptions:add')}
-        </Button>
+        <div className="flex gap-2">
+          <Button size="sm" variant="outline" onClick={handleExport}>
+            <Download className="mr-1 h-4 w-4" />
+            {t('subscriptions:export')}
+          </Button>
+          <Button size="sm" variant="outline" onClick={() => fileInputRef.current?.click()}>
+            <Upload className="mr-1 h-4 w-4" />
+            {t('subscriptions:import')}
+          </Button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".opml,.xml"
+            className="hidden"
+            onChange={handleImport}
+          />
+          <Button size="sm" onClick={() => setShowForm((v) => !v)}>
+            <Plus className="mr-1 h-4 w-4" />
+            {t('subscriptions:add')}
+          </Button>
+        </div>
       </div>
+
+      {importStatus && (
+        <p className="rounded-md bg-muted px-3 py-2 text-sm">{importStatus}</p>
+      )}
 
       {showForm && (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 rounded-lg border border-border p-4">

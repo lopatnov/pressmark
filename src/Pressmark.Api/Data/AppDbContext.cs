@@ -12,6 +12,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Like> Likes => Set<Like>();
     public DbSet<Bookmark> Bookmarks => Set<Bookmark>();
     public DbSet<SiteSetting> SiteSettings => Set<SiteSetting>();
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+    public DbSet<InviteToken> InviteTokens => Set<InviteToken>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -88,6 +90,27 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             e.HasOne(x => x.FeedItem)
                 .WithMany(f => f.Bookmarks)
                 .HasForeignKey(x => x.FeedItemId);
+        });
+
+        // RefreshTokens
+        modelBuilder.Entity<RefreshToken>(e =>
+        {
+            e.ToTable("refresh_tokens");
+            e.HasKey(x => x.Id);
+            e.HasIndex(x => new { x.UserId, x.ExpiresAt });
+            e.HasIndex(x => x.TokenHash);
+            e.HasOne(x => x.User)
+                .WithMany(u => u.RefreshTokens)
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // InviteTokens
+        modelBuilder.Entity<InviteToken>(e =>
+        {
+            e.ToTable("invite_tokens");
+            e.HasKey(x => x.Id);
+            e.HasIndex(x => x.Token).IsUnique();
         });
 
         // SiteSettings

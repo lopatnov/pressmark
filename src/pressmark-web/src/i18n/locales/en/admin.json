@@ -21,5 +21,19 @@
     "email": "Email",
     "role": "Role",
     "joined": "Joined"
+  },
+  "invites": {
+    "title": "Invite tokens",
+    "generate": "Generate invite",
+    "note": "Note (optional)",
+    "notePlaceholder": "e.g. for Alice",
+    "tokenGenerated": "Token generated — copy it now, it will not be shown again",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "revoke": "Revoke",
+    "statusActive": "Active",
+    "statusUsed": "Used",
+    "statusRevoked": "Revoked",
+    "empty": "No invite tokens yet"
   }
 }

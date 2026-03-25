@@ -5,7 +5,7 @@ import { z } from 'zod'
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { adminClient } from '@/api/clients'
-import { useAdminStore } from '@/store/adminStore'
+import { useAdminStore, type InviteItem } from '@/store/adminStore'
 
 // ── Site settings form ──────────────────────────────────────────────────────
 
@@ -205,6 +205,120 @@ function UsersSection() {
   )
 }
 
+// ── Invites section ─────────────────────────────────────────────────────────
+
+function InviteStatus({ invite }: { invite: InviteItem }) {
+  const { t } = useTranslation('admin')
+  if (invite.isRevoked) return <span className="rounded px-1.5 py-0.5 text-xs bg-muted text-muted-foreground">{t('invites.statusRevoked')}</span>
+  if (invite.isUsed)    return <span className="rounded px-1.5 py-0.5 text-xs bg-muted text-muted-foreground">{t('invites.statusUsed')}</span>
+  return <span className="rounded px-1.5 py-0.5 text-xs bg-primary/10 text-primary">{t('invites.statusActive')}</span>
+}
+
+function InvitesSection() {
+  const { t } = useTranslation(['admin', 'common'])
+  const { invites, setInvites, addInvite, removeInvite } = useAdminStore()
+  const [note, setNote]               = useState('')
+  const [newToken, setNewToken]       = useState<InviteItem | null>(null)
+  const [copiedId, setCopiedId]       = useState<string | null>(null)
+
+  useEffect(() => {
+    adminClient.listInvites({}).then((res) =>
+      setInvites(res.items.map((i) => ({
+        id: i.id, token: '', note: i.note, createdAt: i.createdAt,
+        isUsed: i.isUsed, usedAt: i.usedAt, isRevoked: i.isRevoked,
+      })))
+    )
+  }, [])
+
+  const handleGenerate = async () => {
+    const res = await adminClient.generateInvite({ note })
+    const item: InviteItem = {
+      id: res.id, token: res.token, note: res.note, createdAt: res.createdAt,
+      isUsed: false, usedAt: '', isRevoked: false,
+    }
+    addInvite(item)
+    setNewToken(item)
+    setNote('')
+  }
+
+  const handleCopy = (token: string, id: string) => {
+    navigator.clipboard.writeText(token)
+    setCopiedId(id)
+    setTimeout(() => setCopiedId(null), 2000)
+  }
+
+  const handleRevoke = async (id: string) => {
+    await adminClient.revokeInvite({ id })
+    removeInvite(id)
+    if (newToken?.id === id) setNewToken(null)
+  }
+
+  return (
+    <section className="space-y-3">
+      <h2 className="text-base font-semibold">{t('admin:invites.title')}</h2>
+
+      <div className="space-y-2 rounded-lg border border-border p-4">
+        <div className="flex gap-2">
+          <input
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            placeholder={t('admin:invites.notePlaceholder')}
+            className="flex-1 rounded-md border border-border bg-background px-3 py-2 text-sm"
+          />
+          <Button size="sm" onClick={handleGenerate}>
+            {t('admin:invites.generate')}
+          </Button>
+        </div>
+
+        {newToken && (
+          <div className="rounded-md bg-muted p-3 space-y-1">
+            <p className="text-xs text-muted-foreground">{t('admin:invites.tokenGenerated')}</p>
+            <div className="flex items-center gap-2">
+              <code className="flex-1 truncate rounded bg-background px-2 py-1 text-xs font-mono">
+                {newToken.token}
+              </code>
+              <Button size="sm" variant="outline" onClick={() => handleCopy(newToken.token, newToken.id)}>
+                {copiedId === newToken.id ? t('admin:invites.copied') : t('admin:invites.copy')}
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="rounded-lg border border-border">
+        {invites.length === 0 ? (
+          <p className="px-4 py-6 text-center text-sm text-muted-foreground">{t('admin:invites.empty')}</p>
+        ) : (
+          <table className="w-full text-sm">
+            <tbody>
+              {invites.map((inv) => (
+                <tr key={inv.id} className="border-b border-border last:border-0">
+                  <td className="px-4 py-2 text-xs text-muted-foreground">
+                    {inv.note || '—'}
+                  </td>
+                  <td className="px-4 py-2 text-xs text-muted-foreground">
+                    {inv.createdAt ? new Date(inv.createdAt).toLocaleDateString() : '—'}
+                  </td>
+                  <td className="px-4 py-2">
+                    <InviteStatus invite={inv} />
+                  </td>
+                  <td className="px-4 py-2 text-right">
+                    {!inv.isUsed && !inv.isRevoked && (
+                      <Button size="sm" variant="ghost" onClick={() => handleRevoke(inv.id)}>
+                        {t('admin:invites.revoke')}
+                      </Button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </section>
+  )
+}
+
 // ── AdminPage ───────────────────────────────────────────────────────────────
 
 export function AdminPage() {
@@ -226,6 +340,7 @@ export function AdminPage() {
     <div className="mx-auto max-w-2xl space-y-8 p-4">
       <h1 className="text-xl font-semibold">{t('title')}</h1>
       <SiteSettingsSection />
+      <InvitesSection />
       <ModerationSection />
       <UsersSection />
     </div>

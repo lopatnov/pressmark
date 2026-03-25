@@ -272,3 +272,168 @@ export class UserInfo extends Message<UserInfo> {
   }
 }
 
+/**
+ * @generated from message pressmark.admin.GenerateInviteRequest
+ */
+export class GenerateInviteRequest extends Message<GenerateInviteRequest> {
+  /**
+   * @generated from field: string note = 1;
+   */
+  note = "";
+
+  constructor(data?: PartialMessage<GenerateInviteRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "pressmark.admin.GenerateInviteRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "note", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GenerateInviteRequest {
+    return new GenerateInviteRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GenerateInviteRequest {
+    return new GenerateInviteRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GenerateInviteRequest {
+    return new GenerateInviteRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GenerateInviteRequest | PlainMessage<GenerateInviteRequest> | undefined, b: GenerateInviteRequest | PlainMessage<GenerateInviteRequest> | undefined): boolean {
+    return proto3.util.equals(GenerateInviteRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message pressmark.admin.RevokeInviteRequest
+ */
+export class RevokeInviteRequest extends Message<RevokeInviteRequest> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  constructor(data?: PartialMessage<RevokeInviteRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "pressmark.admin.RevokeInviteRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): RevokeInviteRequest {
+    return new RevokeInviteRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): RevokeInviteRequest {
+    return new RevokeInviteRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): RevokeInviteRequest {
+    return new RevokeInviteRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: RevokeInviteRequest | PlainMessage<RevokeInviteRequest> | undefined, b: RevokeInviteRequest | PlainMessage<RevokeInviteRequest> | undefined): boolean {
+    return proto3.util.equals(RevokeInviteRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message pressmark.admin.InviteToken
+ */
+export class InviteToken extends Message<InviteToken> {
+  /** @generated from field: string id = 1; */
+  id = "";
+  /** full token shown only on creation; empty in ListInvites
+   * @generated from field: string token = 2; */
+  token = "";
+  /** @generated from field: string note = 3; */
+  note = "";
+  /** @generated from field: string created_at = 4; */
+  createdAt = "";
+  /** @generated from field: bool is_used = 5; */
+  isUsed = false;
+  /** @generated from field: string used_at = 6; */
+  usedAt = "";
+  /** @generated from field: bool is_revoked = 7; */
+  isRevoked = false;
+
+  constructor(data?: PartialMessage<InviteToken>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "pressmark.admin.InviteToken";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id",         kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "token",      kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "note",       kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "created_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "is_used",    kind: "scalar", T: 8 /* ScalarType.BOOL */  },
+    { no: 6, name: "used_at",    kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 7, name: "is_revoked", kind: "scalar", T: 8 /* ScalarType.BOOL */  },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): InviteToken {
+    return new InviteToken().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): InviteToken {
+    return new InviteToken().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): InviteToken {
+    return new InviteToken().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: InviteToken | PlainMessage<InviteToken> | undefined, b: InviteToken | PlainMessage<InviteToken> | undefined): boolean {
+    return proto3.util.equals(InviteToken, a, b);
+  }
+}
+
+/**
+ * @generated from message pressmark.admin.InviteList
+ */
+export class InviteList extends Message<InviteList> {
+  /**
+   * @generated from field: repeated pressmark.admin.InviteToken items = 1;
+   */
+  items: InviteToken[] = [];
+
+  constructor(data?: PartialMessage<InviteList>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "pressmark.admin.InviteList";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "items", kind: "message", T: InviteToken, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): InviteList {
+    return new InviteList().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): InviteList {
+    return new InviteList().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): InviteList {
+    return new InviteList().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: InviteList | PlainMessage<InviteList> | undefined, b: InviteList | PlainMessage<InviteList> | undefined): boolean {
+    return proto3.util.equals(InviteList, a, b);
+  }
+}
+

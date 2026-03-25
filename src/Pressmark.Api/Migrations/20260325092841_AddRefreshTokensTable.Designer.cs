@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Pressmark.Api.Data;
 
@@ -11,9 +12,11 @@ using Pressmark.Api.Data;
 namespace Pressmark.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260325092841_AddRefreshTokensTable")]
+    partial class AddRefreshTokensTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -93,54 +96,6 @@ namespace Pressmark.Api.Migrations
                     b.HasIndex("PublishedAt", "Id");
 
                     b.ToTable("feed_items", (string)null);
-                });
-
-            modelBuilder.Entity("Pressmark.Api.Entities.InviteToken", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("created_at");
-
-                    b.Property<bool>("IsRevoked")
-                        .HasColumnType("bit")
-                        .HasColumnName("is_revoked");
-
-                    b.Property<bool>("IsUsed")
-                        .HasColumnType("bit")
-                        .HasColumnName("is_used");
-
-                    b.Property<string>("Note")
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("note");
-
-                    b.Property<DateTime?>("RevokedAt")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("revoked_at");
-
-                    b.Property<string>("Token")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)")
-                        .HasColumnName("token");
-
-                    b.Property<DateTime?>("UsedAt")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("used_at");
-
-                    b.Property<Guid?>("UsedByUserId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("used_by_user_id");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Token")
-                        .IsUnique();
-
-                    b.ToTable("invite_tokens", (string)null);
                 });
 
             modelBuilder.Entity("Pressmark.Api.Entities.Like", b =>

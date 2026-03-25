@@ -12,6 +12,9 @@ service AdminService {
   rpc HideFeedItem       (HideFeedItemRequest)         returns (google.protobuf.Empty);
   rpc BanSubscription    (BanSubscriptionRequest)      returns (google.protobuf.Empty);
   rpc ListUsers          (google.protobuf.Empty)       returns (UserList);
+  rpc GenerateInvite     (GenerateInviteRequest)       returns (InviteToken);
+  rpc RevokeInvite       (RevokeInviteRequest)         returns (google.protobuf.Empty);
+  rpc ListInvites        (google.protobuf.Empty)       returns (InviteList);
 }
 
 message SiteSettings {
@@ -43,4 +46,26 @@ message UserInfo {
   string email      = 2;
   string role       = 3;
   string created_at = 4;
+}
+
+message GenerateInviteRequest {
+  string note = 1;
+}
+
+message RevokeInviteRequest {
+  string id = 1;
+}
+
+message InviteToken {
+  string id         = 1;
+  string token      = 2;  // full token shown only on creation; empty in ListInvites
+  string note       = 3;
+  string created_at = 4;
+  bool   is_used    = 5;
+  string used_at    = 6;
+  bool   is_revoked = 7;
+}
+
+message InviteList {
+  repeated InviteToken items = 1;
 }

@@ -7,6 +7,10 @@
   "lastFetched": "Last fetched",
   "remove": "Remove",
   "removeConfirm": "Remove this subscription?",
+  "import": "Import OPML",
+  "export": "Export OPML",
+  "importSuccess": "Imported {{imported}} feed(s), skipped {{skipped}} duplicate(s)",
+  "importError": "Failed to import: invalid OPML file",
   "errors": {
     "invalidUrl": "Invalid RSS URL",
     "fetchFailed": "Could not fetch RSS feed"

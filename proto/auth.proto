@@ -14,8 +14,9 @@ service AuthService {
 }
 
 message RegisterRequest {
-  string email    = 1;
-  string password = 2;
+  string email        = 1;
+  string password     = 2;
+  string invite_token = 3;  // required when registration_mode = invite_only
 }
 
 message LoginRequest {

@@ -190,3 +190,120 @@ export class SubscriptionList extends Message<SubscriptionList> {
   }
 }
 
+/**
+ * @generated from message pressmark.subscription.ImportSubscriptionsRequest
+ */
+export class ImportSubscriptionsRequest extends Message<ImportSubscriptionsRequest> {
+  /**
+   * @generated from field: string opml_content = 1;
+   */
+  opmlContent = "";
+
+  constructor(data?: PartialMessage<ImportSubscriptionsRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "pressmark.subscription.ImportSubscriptionsRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "opml_content", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ImportSubscriptionsRequest {
+    return new ImportSubscriptionsRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ImportSubscriptionsRequest {
+    return new ImportSubscriptionsRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ImportSubscriptionsRequest {
+    return new ImportSubscriptionsRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ImportSubscriptionsRequest | PlainMessage<ImportSubscriptionsRequest> | undefined, b: ImportSubscriptionsRequest | PlainMessage<ImportSubscriptionsRequest> | undefined): boolean {
+    return proto3.util.equals(ImportSubscriptionsRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message pressmark.subscription.ImportSubscriptionsResponse
+ */
+export class ImportSubscriptionsResponse extends Message<ImportSubscriptionsResponse> {
+  /**
+   * @generated from field: int32 imported = 1;
+   */
+  imported = 0;
+
+  /**
+   * @generated from field: int32 skipped = 2;
+   */
+  skipped = 0;
+
+  constructor(data?: PartialMessage<ImportSubscriptionsResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "pressmark.subscription.ImportSubscriptionsResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "imported", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 2, name: "skipped",  kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ImportSubscriptionsResponse {
+    return new ImportSubscriptionsResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ImportSubscriptionsResponse {
+    return new ImportSubscriptionsResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ImportSubscriptionsResponse {
+    return new ImportSubscriptionsResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ImportSubscriptionsResponse | PlainMessage<ImportSubscriptionsResponse> | undefined, b: ImportSubscriptionsResponse | PlainMessage<ImportSubscriptionsResponse> | undefined): boolean {
+    return proto3.util.equals(ImportSubscriptionsResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message pressmark.subscription.ExportSubscriptionsResponse
+ */
+export class ExportSubscriptionsResponse extends Message<ExportSubscriptionsResponse> {
+  /**
+   * @generated from field: string opml_content = 1;
+   */
+  opmlContent = "";
+
+  constructor(data?: PartialMessage<ExportSubscriptionsResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "pressmark.subscription.ExportSubscriptionsResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "opml_content", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ExportSubscriptionsResponse {
+    return new ExportSubscriptionsResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ExportSubscriptionsResponse {
+    return new ExportSubscriptionsResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ExportSubscriptionsResponse {
+    return new ExportSubscriptionsResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ExportSubscriptionsResponse | PlainMessage<ExportSubscriptionsResponse> | undefined, b: ExportSubscriptionsResponse | PlainMessage<ExportSubscriptionsResponse> | undefined): boolean {
+    return proto3.util.equals(ExportSubscriptionsResponse, a, b);
+  }
+}
+

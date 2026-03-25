@@ -23,4 +23,5 @@ public class User
     public ICollection<ReadItem> ReadItems { get; set; } = [];
     public ICollection<Like> Likes { get; set; } = [];
     public ICollection<Bookmark> Bookmarks { get; set; } = [];
+    public ICollection<RefreshToken> RefreshTokens { get; set; } = [];
 }

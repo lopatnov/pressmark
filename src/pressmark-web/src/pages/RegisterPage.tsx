@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -9,8 +10,9 @@ import { useAuthStore } from '@/store/authStore'
 import { ConnectError } from '@connectrpc/connect'
 
 const schema = z.object({
-  email:    z.string().email(),
-  password: z.string().min(8, 'Minimum 8 characters'),
+  email:       z.string().email(),
+  password:    z.string().min(8, 'Minimum 8 characters'),
+  inviteToken: z.string().optional(),
 })
 type FormData = z.infer<typeof schema>
 
@@ -18,13 +20,18 @@ export function RegisterPage() {
   const { t } = useTranslation('auth')
   const navigate = useNavigate()
   const setAuth  = useAuthStore((s) => s.setAuth)
+  const [showInvite, setShowInvite] = useState(false)
 
   const { register, handleSubmit, formState: { errors, isSubmitting }, setError } =
     useForm<FormData>({ resolver: zodResolver(schema) })
 
   const onSubmit = async (data: FormData) => {
     try {
-      const res = await authClient.register({ email: data.email, password: data.password })
+      const res = await authClient.register({
+        email:       data.email,
+        password:    data.password,
+        inviteToken: data.inviteToken ?? '',
+      })
       setAuth(res.accessToken, {
         id:    res.userId,
         email: res.email,
@@ -32,12 +39,20 @@ export function RegisterPage() {
       })
       navigate('/feed')
     } catch (err) {
-      const msg = err instanceof ConnectError && err.code === 7 /* FailedPrecondition */
-        ? t('errors.registrationClosed')
-        : err instanceof ConnectError && err.code === 6 /* AlreadyExists */
-          ? t('errors.emailTaken')
-          : t('errors.invalidCredentials')
-      setError('root', { message: msg })
+      if (err instanceof ConnectError) {
+        if (err.code === 7 /* FailedPrecondition */) {
+          setError('root', { message: t('errors.registrationClosed') })
+        } else if (err.code === 16 /* PermissionDenied */) {
+          setShowInvite(true)
+          setError('inviteToken', { message: t('errors.invalidInviteToken') })
+        } else if (err.code === 6 /* AlreadyExists */) {
+          setError('root', { message: t('errors.emailTaken') })
+        } else {
+          setError('root', { message: t('errors.invalidCredentials') })
+        }
+      } else {
+        setError('root', { message: t('errors.invalidCredentials') })
+      }
     }
   }
 
@@ -68,6 +83,21 @@ export function RegisterPage() {
             />
             {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
           </div>
+
+          {showInvite && (
+            <div className="space-y-1">
+              <label className="text-sm font-medium">{t('inviteToken')}</label>
+              <input
+                {...register('inviteToken')}
+                type="text"
+                placeholder={t('inviteTokenPlaceholder')}
+                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm font-mono"
+              />
+              {errors.inviteToken && (
+                <p className="text-xs text-destructive">{errors.inviteToken.message}</p>
+              )}
+            </div>
+          )}
 
           {errors.root && <p className="text-sm text-destructive">{errors.root.message}</p>}
 

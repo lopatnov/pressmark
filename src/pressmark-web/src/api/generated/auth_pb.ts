@@ -20,6 +20,13 @@ export class RegisterRequest extends Message<RegisterRequest> {
    */
   password = "";
 
+  /**
+   * required when registration_mode = invite_only
+   *
+   * @generated from field: string invite_token = 3;
+   */
+  inviteToken = "";
+
   constructor(data?: PartialMessage<RegisterRequest>) {
     super();
     proto3.util.initPartial(data, this);
@@ -30,6 +37,7 @@ export class RegisterRequest extends Message<RegisterRequest> {
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "email", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "password", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "invite_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): RegisterRequest {

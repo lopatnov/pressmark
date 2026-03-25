@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { AddSubscriptionRequest, RemoveSubscriptionRequest, Subscription, SubscriptionList } from "./subscription_pb.js";
+import { AddSubscriptionRequest, ExportSubscriptionsResponse, ImportSubscriptionsRequest, ImportSubscriptionsResponse, RemoveSubscriptionRequest, Subscription, SubscriptionList } from "./subscription_pb.js";
 import { Empty, MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -37,6 +37,24 @@ export const SubscriptionService = {
       name: "ListSubscriptions",
       I: Empty,
       O: SubscriptionList,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc pressmark.subscription.SubscriptionService.ImportSubscriptions
+     */
+    importSubscriptions: {
+      name: "ImportSubscriptions",
+      I: ImportSubscriptionsRequest,
+      O: ImportSubscriptionsResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc pressmark.subscription.SubscriptionService.ExportSubscriptions
+     */
+    exportSubscriptions: {
+      name: "ExportSubscriptions",
+      I: Empty,
+      O: ExportSubscriptionsResponse,
       kind: MethodKind.Unary,
     },
   }
