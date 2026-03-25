@@ -1,4 +1,12 @@
 services:
+  # Bundled MSSQL instance for convenience.
+  # To use an external database instead (Azure SQL, a managed server, a local instance, etc.):
+  #   1. Remove or comment out this entire "db" service.
+  #   2. Remove the "depends_on: db" condition from the "api" service below.
+  #   3. Set ConnectionStrings__Default in the "api" environment (or in your .env file)
+  #      to point at your external server — see the connection string format in the comment
+  #      on ConnectionStrings__Default below.
+  #   4. Remove the "mssql_data" volume at the bottom of this file if it is no longer needed.
   db:
     image: mcr.microsoft.com/mssql/server:2022-latest
     environment:
@@ -20,6 +28,9 @@ services:
       context: .
       dockerfile: src/Pressmark.Api/Dockerfile
     environment:
+      # Connection string format:
+      #   Server=<host>,<port>;Database=<db>;User Id=<user>;Password=<pass>;TrustServerCertificate=True
+      # For an external server replace the value here or override it via the .env file.
       ConnectionStrings__Default: "Server=db,1433;Database=pressmark;User Id=sa;Password=Dev_Password1!;TrustServerCertificate=True"
       Jwt__Secret: "change-me-in-production-min-32-chars!!"
       Jwt__ExpiryMinutes: "15"
@@ -39,7 +50,8 @@ services:
       context: .
       dockerfile: src/pressmark-web/Dockerfile
     ports:
-      - "80:80"
+      - "80:80"     # HTTP — change to "443:443" when enabling TLS in nginx/nginx.conf
+      # - "443:443" # Uncomment when the HTTPS server block in nginx/nginx.conf is enabled
     depends_on:
       - api
 

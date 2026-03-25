@@ -7,8 +7,8 @@
 
 > Self-hosted RSS aggregator with a public community feed.
 
-Subscribe to RSS sources, get your personal chronological feed, like and bookmark articles,
-and discover what the community is reading right now — no account required for the public page.
+Subscribe to RSS sources, get your personal chronological feed, like and bookmark articles.
+The public community page — articles liked by users — is open to anyone without an account.
 
 Built as a portfolio demonstration of the **.NET 10 · gRPC · React 19 · TypeScript · MSSQL · Docker** stack.
 
@@ -125,7 +125,29 @@ JWT_SECRET=... MSSQL_SA_PASSWORD=... CORS_ALLOWED_ORIGINS=https://your-domain.co
   docker compose up -d
 ```
 
-### 3. Start the stack
+### 3. Configure the database
+
+By default, `docker-compose.yml` starts a bundled MSSQL container.
+If you prefer to use an existing database (Azure SQL, a managed server, or a local instance),
+follow the instructions in the comments at the top of the `db` service in `docker-compose.yml` —
+they walk through removing the bundled container and pointing the API at an external server.
+
+The connection string format is:
+
+```
+Server=<host>,<port>;Database=pressmark;User Id=<user>;Password=<pass>;TrustServerCertificate=True
+```
+
+For local development without Docker, edit `src/Pressmark.Api/Properties/launchSettings.json`
+and update the `ConnectionStrings__Default` value there.
+
+EF Core applies migrations automatically on startup. To run them manually:
+
+```bash
+dotnet ef database update --project src/Pressmark.Api
+```
+
+### 4. Start the stack
 
 ```bash
 docker compose up -d
@@ -138,16 +160,14 @@ This starts:
 
 Open **http://your-server-ip**. The first registered account automatically becomes **Admin**.
 
-### 4. HTTPS (recommended)
+### 5. HTTPS (recommended)
 
-The included nginx config listens on port 80. For TLS, put a reverse proxy in front — for example [nginx-proxy + acme-companion](https://github.com/nginx-proxy/acme-companion) or [Caddy](https://caddyserver.com/):
+The nginx config and Docker Compose file contain commented-out instructions for enabling TLS:
 
-```bash
-# Caddy example — automatic HTTPS via Let's Encrypt
-caddy reverse-proxy --from your-domain.com --to localhost:80
-```
+1. **`nginx/nginx.conf`** — uncomment the `server { listen 443 ssl; ... }` block and fill in your certificate paths.
+2. **`docker-compose.yml`** — uncomment the `"443:443"` port mapping in the `web` service.
 
-Or edit `nginx/nginx.conf` to add an SSL listener and mount your certificates.
+Certificates can be obtained via [Let's Encrypt / certbot](https://certbot.eff.org/) and mounted as a read-only volume into the `web` container (see the comment in `nginx/nginx.conf`).
 
 ---
 
