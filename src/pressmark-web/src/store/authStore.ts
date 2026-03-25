@@ -27,7 +27,7 @@ export const useAuthStore = create<AuthState>()(
       setAuth: (token, user) => set({ accessToken: token, user }),
       clearAuth: () => set({ accessToken: null, user: null }),
       setInitialized: () => set({ isInitialized: true }),
-      isAuthenticated: () => get().accessToken !== null,
+      isAuthenticated: () => !!get().accessToken,
       isAdmin: () => get().user?.role === 'Admin',
     }),
     { name: 'auth' }

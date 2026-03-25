@@ -14,6 +14,25 @@ namespace Pressmark.Api.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "invite_tokens",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    token = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    note = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    is_used = table.Column<bool>(type: "bit", nullable: false),
+                    used_at = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    used_by_user_id = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    is_revoked = table.Column<bool>(type: "bit", nullable: false),
+                    revoked_at = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_invite_tokens", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "site_settings",
                 columns: table => new
                 {
@@ -38,6 +57,52 @@ namespace Pressmark.Api.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_users", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "password_reset_tokens",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    token_hash = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    user_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    expires_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    is_used = table.Column<bool>(type: "bit", nullable: false),
+                    used_at = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_password_reset_tokens", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_password_reset_tokens_users_user_id",
+                        column: x => x.user_id,
+                        principalTable: "users",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "refresh_tokens",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    user_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    token_hash = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    issued_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    expires_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    is_revoked = table.Column<bool>(type: "bit", nullable: false),
+                    revoked_at = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_refresh_tokens", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_refresh_tokens_users_user_id",
+                        column: x => x.user_id,
+                        principalTable: "users",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -109,8 +174,7 @@ namespace Pressmark.Api.Migrations
                         name: "FK_bookmarks_users_user_id",
                         column: x => x.user_id,
                         principalTable: "users",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "id");
                 });
 
             migrationBuilder.CreateTable(
@@ -134,8 +198,7 @@ namespace Pressmark.Api.Migrations
                         name: "FK_likes_users_user_id",
                         column: x => x.user_id,
                         principalTable: "users",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "id");
                 });
 
             migrationBuilder.CreateTable(
@@ -159,8 +222,7 @@ namespace Pressmark.Api.Migrations
                         name: "FK_read_items_users_user_id",
                         column: x => x.user_id,
                         principalTable: "users",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "id");
                 });
 
             migrationBuilder.InsertData(
@@ -194,6 +256,12 @@ namespace Pressmark.Api.Migrations
                 column: "subscription_id");
 
             migrationBuilder.CreateIndex(
+                name: "IX_invite_tokens_token",
+                table: "invite_tokens",
+                column: "token",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_likes_created_at",
                 table: "likes",
                 column: "created_at");
@@ -204,6 +272,16 @@ namespace Pressmark.Api.Migrations
                 column: "feed_item_id");
 
             migrationBuilder.CreateIndex(
+                name: "IX_password_reset_tokens_token_hash",
+                table: "password_reset_tokens",
+                column: "token_hash");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_password_reset_tokens_user_id",
+                table: "password_reset_tokens",
+                column: "user_id");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_read_items_feed_item_id",
                 table: "read_items",
                 column: "feed_item_id");
@@ -212,6 +290,16 @@ namespace Pressmark.Api.Migrations
                 name: "IX_read_items_user_id",
                 table: "read_items",
                 column: "user_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_refresh_tokens_token_hash",
+                table: "refresh_tokens",
+                column: "token_hash");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_refresh_tokens_user_id_expires_at",
+                table: "refresh_tokens",
+                columns: new[] { "user_id", "expires_at" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_subscriptions_user_id",
@@ -232,10 +320,19 @@ namespace Pressmark.Api.Migrations
                 name: "bookmarks");
 
             migrationBuilder.DropTable(
+                name: "invite_tokens");
+
+            migrationBuilder.DropTable(
                 name: "likes");
 
             migrationBuilder.DropTable(
+                name: "password_reset_tokens");
+
+            migrationBuilder.DropTable(
                 name: "read_items");
+
+            migrationBuilder.DropTable(
+                name: "refresh_tokens");
 
             migrationBuilder.DropTable(
                 name: "site_settings");

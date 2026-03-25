@@ -11,14 +11,14 @@ services:
     image: mcr.microsoft.com/mssql/server:2022-latest
     environment:
       ACCEPT_EULA: "Y"
-      SA_PASSWORD: "Dev_Password1!"
+      SA_PASSWORD: "${MSSQL_SA_PASSWORD}"
     ports:
-      - "1433:1433"
+      - "1434:1433"   # host:container — local SQL Server stays on 1433
     volumes:
       - mssql_data:/var/opt/mssql
     healthcheck:
       test: ["CMD", "/opt/mssql-tools18/bin/sqlcmd", "-S", "localhost",
-             "-U", "sa", "-P", "Dev_Password1!", "-C", "-Q", "SELECT 1"]
+             "-U", "sa", "-P", "${MSSQL_SA_PASSWORD}", "-C", "-Q", "SELECT 1"]
       interval: 10s
       timeout: 5s
       retries: 10
@@ -31,16 +31,22 @@ services:
       # Connection string format:
       #   Server=<host>,<port>;Database=<db>;User Id=<user>;Password=<pass>;TrustServerCertificate=True
       # For an external server replace the value here or override it via the .env file.
-      ConnectionStrings__Default: "Server=db,1433;Database=pressmark;User Id=sa;Password=Dev_Password1!;TrustServerCertificate=True"
-      Jwt__Secret: "change-me-in-production-min-32-chars!!"
+      ConnectionStrings__Default: "Server=db,1433;Database=pressmark;User Id=sa;Password=${MSSQL_SA_PASSWORD};TrustServerCertificate=True"
+      Jwt__Secret: "${JWT_SECRET}"
       Jwt__ExpiryMinutes: "15"
       Jwt__RefreshExpiryDays: "7"
       Jwt__RefreshCookieName: "refresh_token"
-      Cors__AllowedOrigins: "http://localhost:5173"
+      Cors__AllowedOrigins: "${CORS_ALLOWED_ORIGINS}"
       RssFetcher__IntervalMinutes: "15"
       RssFetcher__MaxItemsPerFeed: "50"
     ports:
       - "5000:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8080/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
     depends_on:
       db:
         condition: service_healthy
@@ -53,7 +59,8 @@ services:
       - "80:80"     # HTTP — change to "443:443" when enabling TLS in nginx/nginx.conf
       # - "443:443" # Uncomment when the HTTPS server block in nginx/nginx.conf is enabled
     depends_on:
-      - api
+      api:
+        condition: service_healthy
 
 volumes:
   mssql_data:

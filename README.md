@@ -1,7 +1,7 @@
 [![CI](https://github.com/lopatnov/pressmark/actions/workflows/ci.yml/badge.svg)](https://github.com/lopatnov/pressmark/actions/workflows/ci.yml)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
-[![GitHub stars](https://img.shields.io/github/stars/lopatnov/pressmark?style=social)](https://github.com/lopatnov/pressmark/stargazers)
 [![GitHub issues](https://img.shields.io/github/issues/lopatnov/pressmark)](https://github.com/lopatnov/pressmark/issues)
+[![GitHub stars](https://img.shields.io/github/stars/lopatnov/pressmark?style=social)](https://github.com/lopatnov/pressmark/stargazers)
 
 # Pressmark
 
@@ -9,8 +9,6 @@
 
 Subscribe to RSS sources, get your personal chronological feed, like and bookmark articles.
 The public community page — articles liked by users — is open to anyone without an account.
-
-Built as a portfolio demonstration of the **.NET 10 · gRPC · React 19 · TypeScript · MSSQL · Docker** stack.
 
 ---
 
@@ -27,50 +25,63 @@ Built as a portfolio demonstration of the **.NET 10 · gRPC · React 19 · TypeS
 
 ## Tech Stack
 
-| Layer              | Technology                                            |
-| ------------------ | ----------------------------------------------------- |
-| Backend            | .NET 10 · ASP.NET Core · gRPC (`Grpc.AspNetCore`)    |
-| Frontend           | React 19 · TypeScript (strict) · Vite                 |
-| UI                 | TailwindCSS v4 · shadcn/ui · lucide-react             |
-| State              | Zustand                                               |
-| Forms              | react-hook-form + zod                                 |
-| i18n               | react-i18next (English by default)                    |
-| API transport      | gRPC-web (`@connectrpc/connect-web`, no Envoy needed) |
-| Database           | MSSQL · EF Core 10 (Code First)                       |
-| Authentication     | JWT — access token in memory + httpOnly refresh cookie|
-| Infrastructure     | Docker · Docker Compose · nginx                       |
-| CI/CD              | GitHub Actions                                        |
+| Layer          | Technology                                             |
+| -------------- | ------------------------------------------------------ |
+| Backend        | .NET 10 · ASP.NET Core · gRPC (`Grpc.AspNetCore`)      |
+| Frontend       | React 19 · TypeScript (strict) · Vite                  |
+| UI             | TailwindCSS v4 · shadcn/ui · lucide-react              |
+| State          | Zustand                                                |
+| Forms          | react-hook-form + zod                                  |
+| i18n           | react-i18next (English by default)                     |
+| API transport  | gRPC-web (`@connectrpc/connect-web`, no Envoy needed)  |
+| Database       | MSSQL · EF Core 10 (Code First)                        |
+| Authentication | JWT — access token in memory + httpOnly refresh cookie |
+| Infrastructure | Docker · Docker Compose · nginx                        |
+| CI/CD          | GitHub Actions                                         |
 
 ---
 
 ## Local Development
 
-**Prerequisites:** [.NET 10 SDK](https://dotnet.microsoft.com/download) · [Node.js 22](https://nodejs.org/) · [Docker](https://docs.docker.com/get-docker/)
+**Prerequisites:** [.NET 10 SDK](https://dotnet.microsoft.com/download) · [Node.js 22](https://nodejs.org/)
+
+You need a running MSSQL instance — either **local** or **Docker**:
+
+| Setup                 | Host port   | How to get MSSQL running                                                            |
+| --------------------- | ----------- | ----------------------------------------------------------------------------------- |
+| Docker                | `1434`      | `docker compose up db -d` (requires [Docker](https://docs.docker.com/get-docker/)) |
+| Local MSSQL installed | `1433`      | Already running — change port to `1433` in `launchSettings.json` and `launch.json` |
+
+The default connection string (`sa` / `Dev_Password1!`) targets **Docker on port 1434** and is pre-configured in `launchSettings.json` and `.vscode/launch.json`.
+If using a local SQL Server instance, change `1434` → `1433` in `ConnectionStrings__Default` in both files.
+
+Migrations are applied **automatically on startup** — no manual `dotnet ef` step required.
 
 ### Option A — VS Code (recommended)
 
 1. Open the repo folder in VS Code.
 2. Install recommended extensions when prompted (`.vscode/extensions.json`).
-3. Press **F5** and select **Full Stack (API + Vite)**.
+3. Ensure MSSQL is running:
+   - **Docker** — open the Command Palette (`Ctrl+Shift+P`) → **Tasks: Run Task** → **db: start**.
+     This runs `docker compose up db -d` and maps MSSQL to `localhost:1434`.
+   - **Local MSSQL installed** — already running on `localhost:1433`; change the port in `launchSettings.json` and `.vscode/launch.json` (`1434` → `1433`).
+4. Select **Full Stack (API + Vite)** and press **F5**.
 
-This starts MSSQL in Docker, runs the .NET API with the debugger attached, and launches the Vite dev server.
+This runs the .NET API with the debugger attached and launches the Vite dev server.
 Breakpoints work in both the C# and TypeScript code simultaneously.
 
 ### Option B — terminal
 
 ```bash
-# 1. Start MSSQL
-docker compose up db -d
-# Available at localhost:1433  (sa / Dev_Password1!)
+# 1. Ensure MSSQL is running
+#    Docker:       docker compose up db -d  (available at localhost:1434)
+#    Local MSSQL:  already running at localhost:1433 — update port in launchSettings.json
 
-# 2. Apply migrations
-dotnet ef database update --project src/Pressmark.Api
-
-# 3. Start the API  (env vars pre-filled in launchSettings.json)
+# 2. Start the API (migrations apply automatically on first run)
 dotnet run --project src/Pressmark.Api
 # gRPC server at http://localhost:5000
 
-# 4. Start the frontend  (separate terminal)
+# 3. Start the frontend  (separate terminal)
 cd src/pressmark-web
 npm install
 npm run dev
@@ -78,14 +89,29 @@ npm run dev
 # Vite proxies /grpc/* → http://localhost:5000 automatically
 ```
 
+### Connecting a database client
+
+Once the Docker MSSQL container is running (`docker compose up db -d`), connect with any SQL client:
+
+| Setting                  | Value            |
+| ------------------------ | ---------------- |
+| Server                   | `localhost,1434` |
+| Login                    | `sa`             |
+| Password                 | `Dev_Password1!` |
+| Trust server certificate | Yes              |
+
+Compatible tools: [Azure Data Studio](https://aka.ms/azuredatastudio), SSMS, DBeaver, DataGrip.
+
 ### Debugging tips
 
 **Backend (C#):**
+
 - VS Code attaches the .NET debugger automatically via `launch.json`.
 - To attach to an already-running process: **Run → Attach to Process** → select `dotnet`.
 - Structured logs appear in the Debug Console; set `Logging:LogLevel:Default` to `Debug` in `appsettings.Development.json` for verbose output.
 
 **Frontend (TypeScript):**
+
 - Vite source maps are enabled in dev mode — set breakpoints directly in `.tsx` files inside VS Code.
 - gRPC-web calls use plain HTTP/1.1 and are visible in the browser **Network** tab as POST requests to `/grpc/<ServiceName>/<MethodName>`.
 - The Zustand devtools middleware exposes all store state in the **Redux DevTools** browser extension.
@@ -103,27 +129,17 @@ git clone https://github.com/lopatnov/pressmark.git
 cd pressmark
 ```
 
-### 2. Set required environment variables
+### 2. Configure environment variables
 
-Create a `.env` file next to `docker-compose.yml` (it is gitignored):
+A `.env` file is included in the repository with default values. **Before deploying to production, edit `.env`** and change:
 
-```env
-# Generate a strong secret: openssl rand -base64 32
-JWT_SECRET=replace-with-a-long-random-string
+| Variable              | What to set                                                    |
+| --------------------- | -------------------------------------------------------------- |
+| `MSSQL_SA_PASSWORD`   | Strong SA password (uppercase + lowercase + digit + symbol)    |
+| `JWT_SECRET`          | Random secret, min 32 chars — `openssl rand -base64 32`        |
+| `CORS_ALLOWED_ORIGINS`| Your public domain, e.g. `https://your-domain.com`            |
 
-# Change the SA password — must meet MSSQL complexity requirements
-MSSQL_SA_PASSWORD=Your_Strong_Password1!
-
-# Set to your actual domain
-CORS_ALLOWED_ORIGINS=https://your-domain.com
-```
-
-Then update `docker-compose.yml` to reference these variables, or pass them inline:
-
-```bash
-JWT_SECRET=... MSSQL_SA_PASSWORD=... CORS_ALLOWED_ORIGINS=https://your-domain.com \
-  docker compose up -d
-```
+The remaining variables in `.env` have sensible defaults and rarely need changing.
 
 ### 3. Configure the database
 
@@ -154,6 +170,7 @@ docker compose up -d
 ```
 
 This starts:
+
 - **db** — Microsoft SQL Server
 - **api** — .NET gRPC server (applies migrations on startup)
 - **web** — nginx serving the React SPA and proxying `/grpc/*` to the API
@@ -237,8 +254,8 @@ pressmark/
 
 | Variable                      | Default                 | Description                                         |
 | ----------------------------- | ----------------------- | --------------------------------------------------- |
-| `ConnectionStrings__Default`  | *(required)*            | MSSQL connection string                             |
-| `Jwt__Secret`                 | *(required)*            | JWT signing secret — min 32 chars, **change this!** |
+| `ConnectionStrings__Default`  | _(required)_            | MSSQL connection string                             |
+| `Jwt__Secret`                 | _(required)_            | JWT signing secret — min 32 chars, **change this!** |
 | `Jwt__ExpiryMinutes`          | `15`                    | Access token lifetime (minutes)                     |
 | `Jwt__RefreshExpiryDays`      | `7`                     | Refresh token lifetime (days)                       |
 | `Jwt__RefreshCookieName`      | `refresh_token`         | Name of the httpOnly refresh cookie                 |

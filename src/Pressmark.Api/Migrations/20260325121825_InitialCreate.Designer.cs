@@ -12,7 +12,7 @@ using Pressmark.Api.Data;
 namespace Pressmark.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260324154032_InitialCreate")]
+    [Migration("20260325121825_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -98,6 +98,54 @@ namespace Pressmark.Api.Migrations
                     b.ToTable("feed_items", (string)null);
                 });
 
+            modelBuilder.Entity("Pressmark.Api.Entities.InviteToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("created_at");
+
+                    b.Property<bool>("IsRevoked")
+                        .HasColumnType("bit")
+                        .HasColumnName("is_revoked");
+
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("bit")
+                        .HasColumnName("is_used");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("note");
+
+                    b.Property<DateTime?>("RevokedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("revoked_at");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)")
+                        .HasColumnName("token");
+
+                    b.Property<DateTime?>("UsedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("used_at");
+
+                    b.Property<Guid?>("UsedByUserId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("used_by_user_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Token")
+                        .IsUnique();
+
+                    b.ToTable("invite_tokens", (string)null);
+                });
+
             modelBuilder.Entity("Pressmark.Api.Entities.Like", b =>
                 {
                     b.Property<Guid>("UserId")
@@ -121,6 +169,47 @@ namespace Pressmark.Api.Migrations
                     b.ToTable("likes", (string)null);
                 });
 
+            modelBuilder.Entity("Pressmark.Api.Entities.PasswordResetToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("expires_at");
+
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("bit")
+                        .HasColumnName("is_used");
+
+                    b.Property<string>("TokenHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)")
+                        .HasColumnName("token_hash");
+
+                    b.Property<DateTime?>("UsedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("used_at");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TokenHash");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("password_reset_tokens", (string)null);
+                });
+
             modelBuilder.Entity("Pressmark.Api.Entities.ReadItem", b =>
                 {
                     b.Property<Guid>("UserId")
@@ -142,6 +231,47 @@ namespace Pressmark.Api.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("read_items", (string)null);
+                });
+
+            modelBuilder.Entity("Pressmark.Api.Entities.RefreshToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("expires_at");
+
+                    b.Property<bool>("IsRevoked")
+                        .HasColumnType("bit")
+                        .HasColumnName("is_revoked");
+
+                    b.Property<DateTime>("IssuedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("issued_at");
+
+                    b.Property<DateTime?>("RevokedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("revoked_at");
+
+                    b.Property<string>("TokenHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)")
+                        .HasColumnName("token_hash");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TokenHash");
+
+                    b.HasIndex("UserId", "ExpiresAt");
+
+                    b.ToTable("refresh_tokens", (string)null);
                 });
 
             modelBuilder.Entity("Pressmark.Api.Entities.SiteSetting", b =>
@@ -262,7 +392,7 @@ namespace Pressmark.Api.Migrations
                     b.HasOne("Pressmark.Api.Entities.User", "User")
                         .WithMany("Bookmarks")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("FeedItem");
@@ -292,10 +422,21 @@ namespace Pressmark.Api.Migrations
                     b.HasOne("Pressmark.Api.Entities.User", "User")
                         .WithMany("Likes")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("FeedItem");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Pressmark.Api.Entities.PasswordResetToken", b =>
+                {
+                    b.HasOne("Pressmark.Api.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
@@ -311,10 +452,21 @@ namespace Pressmark.Api.Migrations
                     b.HasOne("Pressmark.Api.Entities.User", "User")
                         .WithMany("ReadItems")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("FeedItem");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Pressmark.Api.Entities.RefreshToken", b =>
+                {
+                    b.HasOne("Pressmark.Api.Entities.User", "User")
+                        .WithMany("RefreshTokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
@@ -351,6 +503,8 @@ namespace Pressmark.Api.Migrations
                     b.Navigation("Likes");
 
                     b.Navigation("ReadItems");
+
+                    b.Navigation("RefreshTokens");
 
                     b.Navigation("Subscriptions");
                 });

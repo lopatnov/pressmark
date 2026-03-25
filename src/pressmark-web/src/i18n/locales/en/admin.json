@@ -28,7 +28,8 @@
     "title": "Users",
     "email": "Email",
     "role": "Role",
-    "joined": "Joined"
+    "joined": "Joined",
+    "empty": "No users found"
   },
   "invites": {
     "title": "Invite tokens",

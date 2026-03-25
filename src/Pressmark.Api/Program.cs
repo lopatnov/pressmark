@@ -54,6 +54,15 @@ builder.Services.AddHostedService<RssFetcherService>();
 
 var app = builder.Build();
 
+// Auto-apply pending migrations on startup
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate();
+}
+
+app.MapGet("/health", () => Results.Ok(new { status = "healthy" }));
+
 app.UseCors("GrpcWeb");
 app.UseAuthentication();
 app.UseAuthorization();

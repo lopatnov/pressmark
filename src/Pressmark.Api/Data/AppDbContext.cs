@@ -56,12 +56,16 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             e.ToTable("read_items");
             e.HasKey(x => new { x.UserId, x.FeedItemId });
             e.HasIndex(x => x.UserId);
+            // NoAction on User side: MSSQL disallows multiple cascade paths
+            // (User→Subscription→FeedItem→ReadItem already cascades via feed_item_id)
             e.HasOne(x => x.User)
                 .WithMany(u => u.ReadItems)
-                .HasForeignKey(x => x.UserId);
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
             e.HasOne(x => x.FeedItem)
                 .WithMany(f => f.ReadItems)
-                .HasForeignKey(x => x.FeedItemId);
+                .HasForeignKey(x => x.FeedItemId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         // Likes (composite PK)
@@ -71,12 +75,15 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             e.HasKey(x => new { x.UserId, x.FeedItemId });
             e.HasIndex(x => x.FeedItemId);   // count likes per item
             e.HasIndex(x => x.CreatedAt);    // time window filter for community feed
+            // NoAction on User side: MSSQL disallows multiple cascade paths
             e.HasOne(x => x.User)
                 .WithMany(u => u.Likes)
-                .HasForeignKey(x => x.UserId);
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
             e.HasOne(x => x.FeedItem)
                 .WithMany(f => f.Likes)
-                .HasForeignKey(x => x.FeedItemId);
+                .HasForeignKey(x => x.FeedItemId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         // Bookmarks (composite PK)
@@ -85,12 +92,15 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             e.ToTable("bookmarks");
             e.HasKey(x => new { x.UserId, x.FeedItemId });
             e.HasIndex(x => x.UserId);
+            // NoAction on User side: MSSQL disallows multiple cascade paths
             e.HasOne(x => x.User)
                 .WithMany(u => u.Bookmarks)
-                .HasForeignKey(x => x.UserId);
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
             e.HasOne(x => x.FeedItem)
                 .WithMany(f => f.Bookmarks)
-                .HasForeignKey(x => x.FeedItemId);
+                .HasForeignKey(x => x.FeedItemId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         // RefreshTokens

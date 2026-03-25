@@ -389,7 +389,7 @@ namespace Pressmark.Api.Migrations
                     b.HasOne("Pressmark.Api.Entities.User", "User")
                         .WithMany("Bookmarks")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("FeedItem");
@@ -419,7 +419,7 @@ namespace Pressmark.Api.Migrations
                     b.HasOne("Pressmark.Api.Entities.User", "User")
                         .WithMany("Likes")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("FeedItem");
@@ -449,7 +449,7 @@ namespace Pressmark.Api.Migrations
                     b.HasOne("Pressmark.Api.Entities.User", "User")
                         .WithMany("ReadItems")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("FeedItem");
