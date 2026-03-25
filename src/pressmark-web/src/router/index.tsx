@@ -1,4 +1,5 @@
 import { createBrowserRouter } from 'react-router-dom'
+import { RootLayout } from '@/components/layout/RootLayout'
 import { ProtectedRoute } from './ProtectedRoute'
 import { AdminRoute } from './AdminRoute'
 import { CommunityPage } from '@/pages/CommunityPage'
@@ -10,19 +11,24 @@ import { BookmarksPage } from '@/pages/BookmarksPage'
 import { AdminPage } from '@/pages/AdminPage'
 
 export const router = createBrowserRouter([
-  { path: '/', element: <CommunityPage /> },
-  { path: '/login', element: <LoginPage /> },
-  { path: '/register', element: <RegisterPage /> },
   {
-    element: <ProtectedRoute />,
+    element: <RootLayout />,
     children: [
-      { path: '/feed', element: <FeedPage /> },
-      { path: '/subscriptions', element: <SubscriptionsPage /> },
-      { path: '/bookmarks', element: <BookmarksPage /> },
+      { path: '/', element: <CommunityPage /> },
+      { path: '/login', element: <LoginPage /> },
+      { path: '/register', element: <RegisterPage /> },
+      {
+        element: <ProtectedRoute />,
+        children: [
+          { path: '/feed', element: <FeedPage /> },
+          { path: '/subscriptions', element: <SubscriptionsPage /> },
+          { path: '/bookmarks', element: <BookmarksPage /> },
+        ],
+      },
+      {
+        element: <AdminRoute />,
+        children: [{ path: '/admin', element: <AdminPage /> }],
+      },
     ],
-  },
-  {
-    element: <AdminRoute />,
-    children: [{ path: '/admin', element: <AdminPage /> }],
   },
 ])

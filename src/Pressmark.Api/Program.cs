@@ -3,6 +3,7 @@ using Grpc.AspNetCore.Web;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Pressmark.Api.BackgroundServices;
 using Pressmark.Api.Data;
 using Pressmark.Api.Services;
 
@@ -16,7 +17,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // gRPC
 builder.Services.AddGrpc();
 
-// JWT authentication
+// JWT
+builder.Services.AddSingleton<JwtService>();
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -25,9 +28,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(config["Jwt:Secret"]!)),
-            ValidateIssuer = false,
+            ValidateIssuer   = false,
             ValidateAudience = false,
-            ClockSkew = TimeSpan.Zero
+            ClockSkew        = TimeSpan.Zero,
         };
     });
 
@@ -39,6 +42,9 @@ builder.Services.AddCors(o => o.AddPolicy("GrpcWeb", policy => policy
     .AllowAnyMethod()
     .AllowAnyHeader()
     .AllowCredentials()));
+
+// Background services
+builder.Services.AddHostedService<RssFetcherService>();
 
 var app = builder.Build();
 

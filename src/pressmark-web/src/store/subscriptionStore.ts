@@ -3,7 +3,6 @@ import { devtools } from 'zustand/middleware'
 
 interface Subscription {
   id: string
-  userId: string
   rssUrl: string
   title: string
   lastFetchedAt: string

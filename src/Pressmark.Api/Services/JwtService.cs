@@ -1,0 +1,72 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
+using Pressmark.Api.Entities;
+
+namespace Pressmark.Api.Services;
+
+public class JwtService
+{
+    private readonly SymmetricSecurityKey _key;
+    private readonly int _expiryMinutes;
+    private readonly int _refreshExpiryDays;
+
+    public string CookieName { get; }
+    public int RefreshExpiryDays => _refreshExpiryDays;
+
+    public JwtService(IConfiguration config)
+    {
+        _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Secret"]!));
+        _expiryMinutes = int.Parse(config["Jwt:ExpiryMinutes"] ?? "15");
+        _refreshExpiryDays = int.Parse(config["Jwt:RefreshExpiryDays"] ?? "7");
+        CookieName = config["Jwt:RefreshCookieName"] ?? "refresh_token";
+    }
+
+    public string GenerateAccessToken(User user)
+    {
+        var claims = new[]
+        {
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.Role, user.Role),
+        };
+        return CreateToken(claims, TimeSpan.FromMinutes(_expiryMinutes));
+    }
+
+    public string GenerateRefreshToken(User user)
+    {
+        var claims = new[] { new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()) };
+        return CreateToken(claims, TimeSpan.FromDays(_refreshExpiryDays));
+    }
+
+    public ClaimsPrincipal? ValidateRefreshToken(string token)
+    {
+        var handler = new JwtSecurityTokenHandler();
+        try
+        {
+            return handler.ValidateToken(token, new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = _key,
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ClockSkew = TimeSpan.Zero,
+            }, out _);
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    private string CreateToken(IEnumerable<Claim> claims, TimeSpan lifetime)
+    {
+        var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha256);
+        var token = new JwtSecurityToken(
+            claims: claims,
+            expires: DateTime.UtcNow.Add(lifetime),
+            signingCredentials: creds);
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+}
