@@ -7,10 +7,12 @@ package pressmark.auth;
 import "google/protobuf/empty.proto";
 
 service AuthService {
-  rpc Register (RegisterRequest) returns (AuthResponse);
-  rpc Login    (LoginRequest)    returns (AuthResponse);
-  rpc Refresh  (RefreshRequest)  returns (AuthResponse);
-  rpc Logout   (google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc Register       (RegisterRequest)       returns (AuthResponse);
+  rpc Login          (LoginRequest)          returns (AuthResponse);
+  rpc Refresh        (RefreshRequest)        returns (AuthResponse);
+  rpc Logout         (google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc ForgotPassword (ForgotPasswordRequest) returns (google.protobuf.Empty);
+  rpc ResetPassword  (ResetPasswordRequest)  returns (google.protobuf.Empty);
 }
 
 message RegisterRequest {
@@ -31,4 +33,13 @@ message AuthResponse {
   string email        = 2;
   string user_id      = 3;
   string role         = 4;
+}
+
+message ForgotPasswordRequest {
+  string email = 1;
+}
+
+message ResetPasswordRequest {
+  string token        = 1;
+  string new_password = 2;
 }

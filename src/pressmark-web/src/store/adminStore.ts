@@ -5,6 +5,12 @@ interface SiteSettings {
   siteName: string
   communityWindowDays: number
   registrationMode: 'open' | 'invite_only'
+  smtpHost: string
+  smtpPort: number
+  smtpUser: string
+  smtpPassword: string
+  smtpUseTls: boolean
+  smtpFromAddress: string
 }
 
 interface UserInfo {

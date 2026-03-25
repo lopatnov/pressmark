@@ -22,6 +22,9 @@ service FeedService {
 
   // Community feed (anonymous — no JWT required)
   rpc GetCommunityFeed (GetCommunityFeedRequest) returns (FeedPage);
+
+  // Real-time streaming of new feed items (authenticated)
+  rpc StreamFeedUpdates (StreamFeedRequest) returns (stream FeedItem);
 }
 
 message GetFeedRequest {
@@ -39,6 +42,10 @@ message GetCommunityFeedRequest {
 message GetBookmarksRequest {
   int32  page_size = 1;
   string cursor    = 2;
+}
+
+message StreamFeedRequest {
+  string since_timestamp = 1; // ISO 8601; empty = stream from connection time
 }
 
 message FeedPage {

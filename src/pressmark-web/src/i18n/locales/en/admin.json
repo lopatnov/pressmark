@@ -7,7 +7,15 @@
     "registrationMode": "Registration mode",
     "open": "Open",
     "inviteOnly": "Invite only",
-    "saved": "Settings saved"
+    "saved": "Settings saved",
+    "smtp": "Email (SMTP)",
+    "smtpHost": "SMTP host",
+    "smtpPort": "Port",
+    "smtpUser": "Username",
+    "smtpPassword": "Password",
+    "smtpPasswordPlaceholder": "Leave blank to keep current",
+    "smtpUseTls": "Use TLS (STARTTLS)",
+    "smtpFromAddress": "From address"
   },
   "moderation": {
     "title": "Moderation",

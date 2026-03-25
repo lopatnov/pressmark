@@ -11,7 +11,7 @@ using Pressmark.Api.Protos;
 namespace Pressmark.Api.Services;
 
 [Authorize]
-public class FeedServiceImpl(AppDbContext db) : FeedService.FeedServiceBase
+public class FeedServiceImpl(AppDbContext db, FeedUpdateBroadcaster broadcaster) : FeedService.FeedServiceBase
 {
     private const int DefaultPageSize = 20;
     private const int MaxPageSize     = 100;
@@ -324,6 +324,55 @@ public class FeedServiceImpl(AppDbContext db) : FeedService.FeedServiceBase
         return page;
     }
 
+    public override async Task StreamFeedUpdates(
+        StreamFeedRequest request,
+        IServerStreamWriter<Protos.FeedItem> responseStream,
+        ServerCallContext context)
+    {
+        var userId = GetUserId(context);
+        var ct     = context.CancellationToken;
+
+        // Load the user's active subscription IDs for filtering broadcast events
+        var userSubIds = await db.Subscriptions
+            .Where(s => s.UserId == userId && !s.IsCommunityBanned)
+            .Select(s => s.Id)
+            .ToHashSetAsync(ct);
+
+        // Catch-up: send items published after since_timestamp that the client may have missed
+        if (!string.IsNullOrEmpty(request.SinceTimestamp)
+            && DateTime.TryParse(request.SinceTimestamp, null,
+                System.Globalization.DateTimeStyles.RoundtripKind, out var since))
+        {
+            var catchUp = await db.FeedItems
+                .Include(f => f.Subscription)
+                .Where(f => f.Subscription.UserId == userId
+                         && f.PublishedAt > since
+                         && !f.IsCommunityHidden
+                         && !f.Subscription.IsCommunityBanned)
+                .OrderBy(f => f.PublishedAt)
+                .ToListAsync(ct);
+
+            foreach (var item in catchUp)
+                await responseStream.WriteAsync(MapCatchUpItem(item), ct);
+        }
+
+        // Subscribe to live updates
+        var (reader, writer) = broadcaster.Subscribe();
+        try
+        {
+            while (!ct.IsCancellationRequested)
+            {
+                var evt = await reader.ReadAsync(ct);
+                if (userSubIds.Contains(evt.SubscriptionId))
+                    await responseStream.WriteAsync(MapBroadcastEvent(evt), ct);
+            }
+        }
+        finally
+        {
+            broadcaster.Unsubscribe(writer);
+        }
+    }
+
     // ── helpers ──────────────────────────────────────────────────────────────
 
     private static Guid GetUserId(ServerCallContext context)
@@ -375,5 +424,38 @@ public class FeedServiceImpl(AppDbContext db) : FeedService.FeedServiceBase
         IsBookmarked   = bookmarkIds.Contains(item.Id),
         SourceTitle    = item.Subscription?.Title ?? "",
         ImageUrl       = item.ImageUrl ?? "",
+    };
+
+    // New items are never read/liked/bookmarked by definition
+    private static Protos.FeedItem MapCatchUpItem(Entities.FeedItem item) => new()
+    {
+        Id             = item.Id.ToString(),
+        SubscriptionId = item.SubscriptionId.ToString(),
+        Title          = item.Title,
+        Url            = item.Url,
+        Summary        = item.Summary ?? "",
+        PublishedAt    = item.PublishedAt.ToString("o"),
+        IsRead         = false,
+        LikeCount      = 0,
+        IsLiked        = false,
+        IsBookmarked   = false,
+        SourceTitle    = item.Subscription?.Title ?? "",
+        ImageUrl       = item.ImageUrl ?? "",
+    };
+
+    private static Protos.FeedItem MapBroadcastEvent(FeedUpdateEvent evt) => new()
+    {
+        Id             = evt.Id.ToString(),
+        SubscriptionId = evt.SubscriptionId.ToString(),
+        Title          = evt.Title,
+        Url            = evt.Url,
+        Summary        = evt.Summary,
+        PublishedAt    = evt.PublishedAt.ToString("o"),
+        IsRead         = false,
+        LikeCount      = 0,
+        IsLiked        = false,
+        IsBookmarked   = false,
+        SourceTitle    = evt.SourceTitle,
+        ImageUrl       = evt.ImageUrl,
     };
 }

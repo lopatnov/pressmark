@@ -70,10 +70,15 @@ export function LoginPage() {
           </Button>
         </form>
 
-        <p className="text-center text-sm text-muted-foreground">
-          {t('login.noAccount')}{' '}
-          <Link to="/register" className="underline">{t('login.register')}</Link>
-        </p>
+        <div className="space-y-1 text-center text-sm text-muted-foreground">
+          <p>
+            {t('login.noAccount')}{' '}
+            <Link to="/register" className="underline">{t('login.register')}</Link>
+          </p>
+          <p>
+            <Link to="/forgot-password" className="underline">{t('login.forgotPassword')}</Link>
+          </p>
+        </div>
       </div>
     </div>
   )

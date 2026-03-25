@@ -27,6 +27,38 @@ export class SiteSettings extends Message<SiteSettings> {
    */
   registrationMode = "";
 
+  /**
+   * @generated from field: string smtp_host = 4;
+   */
+  smtpHost = "";
+
+  /**
+   * @generated from field: int32 smtp_port = 5;
+   */
+  smtpPort = 0;
+
+  /**
+   * @generated from field: string smtp_user = 6;
+   */
+  smtpUser = "";
+
+  /**
+   * write-only: always returned as "" by GetSiteSettings
+   *
+   * @generated from field: string smtp_password = 7;
+   */
+  smtpPassword = "";
+
+  /**
+   * @generated from field: bool smtp_use_tls = 8;
+   */
+  smtpUseTls = false;
+
+  /**
+   * @generated from field: string smtp_from_address = 9;
+   */
+  smtpFromAddress = "";
+
   constructor(data?: PartialMessage<SiteSettings>) {
     super();
     proto3.util.initPartial(data, this);
@@ -38,6 +70,12 @@ export class SiteSettings extends Message<SiteSettings> {
     { no: 1, name: "site_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "community_window_days", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
     { no: 3, name: "registration_mode", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "smtp_host", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "smtp_port", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 6, name: "smtp_user", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 7, name: "smtp_password", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 8, name: "smtp_use_tls", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 9, name: "smtp_from_address", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): SiteSettings {

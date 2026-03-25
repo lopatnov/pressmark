@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { FeedPage, GetBookmarksRequest, GetCommunityFeedRequest, GetFeedRequest, MarkAllAsReadRequest, MarkAsReadRequest, ToggleBookmarkRequest, ToggleBookmarkResponse, ToggleLikeRequest, ToggleLikeResponse, UnreadCount } from "./feed_pb.js";
+import { FeedItem, FeedPage, GetBookmarksRequest, GetCommunityFeedRequest, GetFeedRequest, MarkAllAsReadRequest, MarkAsReadRequest, StreamFeedRequest, ToggleBookmarkRequest, ToggleBookmarkResponse, ToggleLikeRequest, ToggleLikeResponse, UnreadCount } from "./feed_pb.js";
 import { Empty, MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -91,6 +91,17 @@ export const FeedService = {
       I: GetCommunityFeedRequest,
       O: FeedPage,
       kind: MethodKind.Unary,
+    },
+    /**
+     * Real-time streaming of new feed items (authenticated)
+     *
+     * @generated from rpc pressmark.feed.FeedService.StreamFeedUpdates
+     */
+    streamFeedUpdates: {
+      name: "StreamFeedUpdates",
+      I: StreamFeedRequest,
+      O: FeedItem,
+      kind: MethodKind.ServerStreaming,
     },
   }
 } as const;

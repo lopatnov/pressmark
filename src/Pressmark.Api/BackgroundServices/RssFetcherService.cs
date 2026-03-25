@@ -3,13 +3,15 @@ using System.Xml;
 using Microsoft.EntityFrameworkCore;
 using Pressmark.Api.Data;
 using Pressmark.Api.Entities;
+using Pressmark.Api.Services;
 
 namespace Pressmark.Api.BackgroundServices;
 
 public class RssFetcherService(
     IServiceScopeFactory scopeFactory,
     IConfiguration config,
-    ILogger<RssFetcherService> logger) : BackgroundService
+    ILogger<RssFetcherService> logger,
+    FeedUpdateBroadcaster broadcaster) : BackgroundService
 {
     private readonly TimeSpan _interval = TimeSpan.FromMinutes(
         double.Parse(config["RssFetcher:IntervalMinutes"] ?? "15"));
@@ -36,12 +38,15 @@ public class RssFetcherService(
 
         var subscriptions = await db.Subscriptions.ToListAsync(ct);
 
+        var pendingBroadcast = new List<(FeedItem item, string sourceTitle)>();
+
         foreach (var sub in subscriptions)
         {
             if (ct.IsCancellationRequested) break;
             try
             {
-                await FetchSubscriptionAsync(db, sub, ct);
+                var added = await FetchSubscriptionAsync(db, sub, ct);
+                pendingBroadcast.AddRange(added.Select(i => (i, sub.Title)));
             }
             catch (Exception ex)
             {
@@ -51,9 +56,17 @@ public class RssFetcherService(
         }
 
         await db.SaveChangesAsync(ct);
+
+        // Broadcast newly saved items to streaming clients (IDs assigned after SaveChanges)
+        foreach (var (item, sourceTitle) in pendingBroadcast)
+        {
+            await broadcaster.BroadcastAsync(new FeedUpdateEvent(
+                item.Id, item.SubscriptionId, item.Title, item.Url,
+                item.Summary ?? "", item.PublishedAt, item.ImageUrl ?? "", sourceTitle));
+        }
     }
 
-    private async Task FetchSubscriptionAsync(
+    private async Task<List<FeedItem>> FetchSubscriptionAsync(
         AppDbContext db, Entities.Subscription sub, CancellationToken ct)
     {
         SyndicationFeed feed;
@@ -88,9 +101,11 @@ public class RssFetcherService(
             .Where(i => !existingUrls.Contains(i.Url))
             .ToList();
 
+        var addedItems = new List<FeedItem>();
+
         foreach (var item in newItems)
         {
-            db.FeedItems.Add(new FeedItem
+            var feedItem = new FeedItem
             {
                 SubscriptionId = sub.Id,
                 Url            = item.Url,
@@ -98,7 +113,9 @@ public class RssFetcherService(
                 Summary        = item.Summary,
                 PublishedAt    = item.PublishedAt,
                 ImageUrl       = item.ImageUrl,
-            });
+            };
+            db.FeedItems.Add(feedItem);
+            addedItems.Add(feedItem);
         }
 
         sub.LastFetchedAt = DateTime.UtcNow;
@@ -106,6 +123,8 @@ public class RssFetcherService(
         if (newItems.Count > 0)
             logger.LogInformation("Fetched {Count} new items for subscription {Id}",
                 newItems.Count, sub.Id);
+
+        return addedItems;
     }
 
     private static string? ExtractImageUrl(SyndicationItem item)

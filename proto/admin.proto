@@ -21,6 +21,12 @@ message SiteSettings {
   string site_name              = 1;
   int32  community_window_days  = 2;
   string registration_mode      = 3; // "open" | "invite_only"
+  string smtp_host              = 4;
+  int32  smtp_port              = 5;
+  string smtp_user              = 6;
+  string smtp_password          = 7; // write-only: always returned as "" by GetSiteSettings
+  bool   smtp_use_tls           = 8;
+  string smtp_from_address      = 9;
 }
 
 message UpdateSiteSettingsRequest {

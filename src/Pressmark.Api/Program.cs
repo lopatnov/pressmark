@@ -20,6 +20,12 @@ builder.Services.AddGrpc();
 // JWT
 builder.Services.AddSingleton<JwtService>();
 
+// Real-time feed streaming
+builder.Services.AddSingleton<FeedUpdateBroadcaster>();
+
+// Email
+builder.Services.AddScoped<IEmailService, SmtpEmailService>();
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {

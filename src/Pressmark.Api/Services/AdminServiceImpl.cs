@@ -18,20 +18,35 @@ public class AdminServiceImpl(AppDbContext db) : AdminService.AdminServiceBase
 
         return new SiteSettings
         {
-            SiteName             = settings.GetValueOrDefault("site_name", "Pressmark"),
-            CommunityWindowDays  = int.TryParse(settings.GetValueOrDefault("community_window_days"), out var d) ? d : 1,
-            RegistrationMode     = settings.GetValueOrDefault("registration_mode", "open"),
+            SiteName            = settings.GetValueOrDefault("site_name", "Pressmark"),
+            CommunityWindowDays = int.TryParse(settings.GetValueOrDefault("community_window_days"), out var d) ? d : 1,
+            RegistrationMode    = settings.GetValueOrDefault("registration_mode", "open"),
+            SmtpHost            = settings.GetValueOrDefault("smtp_host", ""),
+            SmtpPort            = int.TryParse(settings.GetValueOrDefault("smtp_port"), out var p) ? p : 587,
+            SmtpUser            = settings.GetValueOrDefault("smtp_user", ""),
+            SmtpPassword        = "",  // write-only: never returned
+            SmtpUseTls          = settings.GetValueOrDefault("smtp_use_tls", "true") == "true",
+            SmtpFromAddress     = settings.GetValueOrDefault("smtp_from_address", ""),
         };
     }
 
     public override async Task<Empty> UpdateSiteSettings(UpdateSiteSettingsRequest request, ServerCallContext context)
     {
-        var ct   = context.CancellationToken;
-        var s    = request.Settings;
+        var ct = context.CancellationToken;
+        var s  = request.Settings;
 
         await UpsertSetting("site_name",             s.SiteName, ct);
         await UpsertSetting("community_window_days", s.CommunityWindowDays.ToString(), ct);
         await UpsertSetting("registration_mode",     s.RegistrationMode, ct);
+        await UpsertSetting("smtp_host",             s.SmtpHost, ct);
+        await UpsertSetting("smtp_port",             s.SmtpPort.ToString(), ct);
+        await UpsertSetting("smtp_user",             s.SmtpUser, ct);
+        await UpsertSetting("smtp_use_tls",          s.SmtpUseTls ? "true" : "false", ct);
+        await UpsertSetting("smtp_from_address",     s.SmtpFromAddress, ct);
+
+        // Only update the password if a new value was provided
+        if (!string.IsNullOrEmpty(s.SmtpPassword))
+            await UpsertSetting("smtp_password", s.SmtpPassword, ct);
 
         return new Empty();
     }

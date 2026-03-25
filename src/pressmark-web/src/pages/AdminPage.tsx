@@ -13,6 +13,12 @@ const settingsSchema = z.object({
   siteName:            z.string().min(1),
   communityWindowDays: z.number().int().min(1).max(365),
   registrationMode:    z.enum(['open', 'invite_only']),
+  smtpHost:            z.string(),
+  smtpPort:            z.number().int().min(1).max(65535),
+  smtpUser:            z.string(),
+  smtpPassword:        z.string(),
+  smtpUseTls:          z.boolean(),
+  smtpFromAddress:     z.string(),
 })
 type SettingsForm = z.infer<typeof settingsSchema>
 
@@ -25,15 +31,24 @@ function SiteSettingsSection() {
     useForm<SettingsForm>({ resolver: zodResolver(settingsSchema) })
 
   useEffect(() => {
-    if (settings) reset(settings)
+    if (settings) reset({
+      ...settings,
+      smtpPassword: '',  // never pre-fill the password field
+    })
   }, [settings])
 
   const onSubmit = async (data: SettingsForm) => {
     await adminClient.updateSiteSettings({
       settings: {
-        siteName:           data.siteName,
+        siteName:            data.siteName,
         communityWindowDays: data.communityWindowDays,
-        registrationMode:   data.registrationMode,
+        registrationMode:    data.registrationMode,
+        smtpHost:            data.smtpHost,
+        smtpPort:            data.smtpPort,
+        smtpUser:            data.smtpUser,
+        smtpPassword:        data.smtpPassword,
+        smtpUseTls:          data.smtpUseTls,
+        smtpFromAddress:     data.smtpFromAddress,
       },
     })
     setSettings(data)
@@ -77,6 +92,68 @@ function SiteSettingsSection() {
             <option value="open">{t('admin:settings.open')}</option>
             <option value="invite_only">{t('admin:settings.inviteOnly')}</option>
           </select>
+        </div>
+
+        <div className="border-t border-border pt-3 space-y-3">
+          <p className="text-sm font-medium text-muted-foreground">{t('admin:settings.smtp')}</p>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1">
+              <label className="text-sm font-medium">{t('admin:settings.smtpHost')}</label>
+              <input
+                {...register('smtpHost')}
+                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+                placeholder="smtp.example.com"
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="text-sm font-medium">{t('admin:settings.smtpPort')}</label>
+              <input
+                {...register('smtpPort', { valueAsNumber: true })}
+                type="number" min={1} max={65535}
+                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-sm font-medium">{t('admin:settings.smtpUser')}</label>
+            <input
+              {...register('smtpUser')}
+              autoComplete="off"
+              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+            />
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-sm font-medium">{t('admin:settings.smtpPassword')}</label>
+            <input
+              {...register('smtpPassword')}
+              type="password"
+              autoComplete="new-password"
+              placeholder={t('admin:settings.smtpPasswordPlaceholder')}
+              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+            />
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-sm font-medium">{t('admin:settings.smtpFromAddress')}</label>
+            <input
+              {...register('smtpFromAddress')}
+              type="email"
+              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+              placeholder="noreply@example.com"
+            />
+          </div>
+
+          <label className="flex items-center gap-2 text-sm font-medium cursor-pointer">
+            <input
+              {...register('smtpUseTls')}
+              type="checkbox"
+              className="h-4 w-4"
+            />
+            {t('admin:settings.smtpUseTls')}
+          </label>
         </div>
 
         <div className="flex items-center gap-3">
@@ -332,6 +409,12 @@ export function AdminPage() {
         siteName:            res.siteName,
         communityWindowDays: res.communityWindowDays,
         registrationMode:    res.registrationMode as 'open' | 'invite_only',
+        smtpHost:            res.smtpHost,
+        smtpPort:            res.smtpPort || 587,
+        smtpUser:            res.smtpUser,
+        smtpPassword:        '',  // write-only
+        smtpUseTls:          res.smtpUseTls,
+        smtpFromAddress:     res.smtpFromAddress,
       }))
       .finally(() => setLoading(false))
   }, [])

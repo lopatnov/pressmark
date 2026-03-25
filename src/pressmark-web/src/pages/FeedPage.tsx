@@ -9,7 +9,7 @@ export function FeedPage() {
   const { t } = useTranslation(['feed', 'common'])
   const {
     items, nextCursor, totalUnread, isLoading, unreadOnly,
-    setItems, appendItems, setLoading, setFilter, updateLike,
+    setItems, appendItems, prependItem, setLoading, setFilter, updateLike,
     updateBookmark, markRead, reset,
   } = useFeedStore()
 
@@ -50,6 +50,40 @@ export function FeedPage() {
     reset()
     loadFeed()
   }, [unreadOnly])
+
+  // Real-time streaming: prepend new items as they arrive from the server
+  useEffect(() => {
+    let active = true
+
+    const connect = async () => {
+      try {
+        const sinceTimestamp = useFeedStore.getState().items[0]?.publishedAt ?? ''
+        const stream = feedClient.streamFeedUpdates({ sinceTimestamp })
+        for await (const item of stream) {
+          if (!active) break
+          prependItem({
+            id:             item.id,
+            subscriptionId: item.subscriptionId,
+            title:          item.title,
+            url:            item.url,
+            summary:        item.summary,
+            publishedAt:    item.publishedAt,
+            isRead:         item.isRead,
+            likeCount:      item.likeCount,
+            isLiked:        item.isLiked,
+            isBookmarked:   item.isBookmarked,
+            sourceTitle:    item.sourceTitle,
+            imageUrl:       item.imageUrl,
+          })
+        }
+      } catch {
+        if (active) setTimeout(connect, 5000)
+      }
+    }
+
+    connect()
+    return () => { active = false }
+  }, [])
 
   const handleLike = async (id: string) => {
     const res = await feedClient.toggleLike({ feedItemId: id })

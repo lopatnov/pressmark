@@ -186,3 +186,83 @@ export class AuthResponse extends Message<AuthResponse> {
   }
 }
 
+/**
+ * @generated from message pressmark.auth.ForgotPasswordRequest
+ */
+export class ForgotPasswordRequest extends Message<ForgotPasswordRequest> {
+  /**
+   * @generated from field: string email = 1;
+   */
+  email = "";
+
+  constructor(data?: PartialMessage<ForgotPasswordRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "pressmark.auth.ForgotPasswordRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "email", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ForgotPasswordRequest {
+    return new ForgotPasswordRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ForgotPasswordRequest {
+    return new ForgotPasswordRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ForgotPasswordRequest {
+    return new ForgotPasswordRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ForgotPasswordRequest | PlainMessage<ForgotPasswordRequest> | undefined, b: ForgotPasswordRequest | PlainMessage<ForgotPasswordRequest> | undefined): boolean {
+    return proto3.util.equals(ForgotPasswordRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message pressmark.auth.ResetPasswordRequest
+ */
+export class ResetPasswordRequest extends Message<ResetPasswordRequest> {
+  /**
+   * @generated from field: string token = 1;
+   */
+  token = "";
+
+  /**
+   * @generated from field: string new_password = 2;
+   */
+  newPassword = "";
+
+  constructor(data?: PartialMessage<ResetPasswordRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "pressmark.auth.ResetPasswordRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "new_password", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ResetPasswordRequest {
+    return new ResetPasswordRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ResetPasswordRequest {
+    return new ResetPasswordRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ResetPasswordRequest {
+    return new ResetPasswordRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ResetPasswordRequest | PlainMessage<ResetPasswordRequest> | undefined, b: ResetPasswordRequest | PlainMessage<ResetPasswordRequest> | undefined): boolean {
+    return proto3.util.equals(ResetPasswordRequest, a, b);
+  }
+}
+

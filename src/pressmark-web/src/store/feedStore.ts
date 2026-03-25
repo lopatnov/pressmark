@@ -25,6 +25,7 @@ interface FeedState {
   subscriptionIdFilter: string
   setItems: (items: FeedItem[], cursor: string, unread: number) => void
   appendItems: (items: FeedItem[], cursor: string) => void
+  prependItem: (item: FeedItem) => void
   setLoading: (loading: boolean) => void
   setFilter: (unreadOnly: boolean, subscriptionId: string) => void
   updateLike: (id: string, isLiked: boolean, likeCount: number) => void
@@ -46,6 +47,8 @@ export const useFeedStore = create<FeedState>()(
         set({ items, nextCursor: cursor, totalUnread: unread }),
       appendItems: (items, cursor) =>
         set((s) => ({ items: [...s.items, ...items], nextCursor: cursor })),
+      prependItem: (item) =>
+        set((s) => ({ items: [item, ...s.items], totalUnread: s.totalUnread + 1 })),
       setLoading: (isLoading) => set({ isLoading }),
       setFilter: (unreadOnly, subscriptionIdFilter) =>
         set({ unreadOnly, subscriptionIdFilter }),
