@@ -11,7 +11,8 @@ public class RssFetcherService(
     IServiceScopeFactory scopeFactory,
     IConfiguration config,
     ILogger<RssFetcherService> logger,
-    FeedUpdateBroadcaster broadcaster) : BackgroundService
+    FeedUpdateBroadcaster broadcaster,
+    IHttpClientFactory httpClientFactory) : BackgroundService
 {
     private readonly TimeSpan _interval = TimeSpan.FromMinutes(
         double.Parse(config["RssFetcher:IntervalMinutes"] ?? "15"));
@@ -71,7 +72,7 @@ public class RssFetcherService(
     {
         SyndicationFeed feed;
 
-        using var httpClient = new HttpClient();
+        var httpClient = httpClientFactory.CreateClient("Pressmark");
         httpClient.Timeout = TimeSpan.FromSeconds(15);
         var xml = await httpClient.GetStringAsync(sub.RssUrl, ct);
 

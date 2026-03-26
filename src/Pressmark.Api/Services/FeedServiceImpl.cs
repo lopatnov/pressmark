@@ -53,44 +53,11 @@ public class FeedServiceImpl(AppDbContext db, FeedUpdateBroadcaster broadcaster)
             .Take(pageSize + 1)
             .ToListAsync(ct);
 
-        var hasMore  = items.Count > pageSize;
+        var hasMore   = items.Count > pageSize;
         var pageItems = items.Take(pageSize).ToList();
 
-        // Enrich with read/like/bookmark state
-        var ids       = pageItems.Select(f => f.Id).ToList();
-        var readIds   = await db.ReadItems
-            .Where(r => r.UserId == userId && ids.Contains(r.FeedItemId))
-            .Select(r => r.FeedItemId).ToHashSetAsync(ct);
-        var likedIds  = await db.Likes
-            .Where(l => l.UserId == userId && ids.Contains(l.FeedItemId))
-            .Select(l => l.FeedItemId).ToHashSetAsync(ct);
-        var bookmarkIds = await db.Bookmarks
-            .Where(b => b.UserId == userId && ids.Contains(b.FeedItemId))
-            .Select(b => b.FeedItemId).ToHashSetAsync(ct);
-        var likeCounts = await db.Likes
-            .Where(l => ids.Contains(l.FeedItemId))
-            .GroupBy(l => l.FeedItemId)
-            .Select(g => new { g.Key, Count = g.Count() })
-            .ToDictionaryAsync(x => x.Key, x => x.Count, ct);
-
-        var readFeedItemIds = db.ReadItems
-            .Where(r => r.UserId == userId)
-            .Select(r => r.FeedItemId);
-        var totalUnread = await db.FeedItems
-            .CountAsync(f => f.Subscription.UserId == userId && !readFeedItemIds.Contains(f.Id), ct);
-
-        var page = new FeedPage { TotalUnread = totalUnread };
-
-        foreach (var item in pageItems)
-            page.Items.Add(ToProto(item, readIds, likedIds, bookmarkIds, likeCounts));
-
-        if (hasMore)
-        {
-            var last = pageItems.Last();
-            page.NextCursor = EncodeCursor(last.PublishedAt, last.Id);
-        }
-
-        return page;
+        return await BuildPageResponseAsync(pageItems, hasMore, userId,
+            allBookmarked: false, includeTotalUnread: true, ct);
     }
 
     public override async Task<Empty> MarkAsRead(
@@ -222,31 +189,8 @@ public class FeedServiceImpl(AppDbContext db, FeedUpdateBroadcaster broadcaster)
         var hasMore   = items.Count > pageSize;
         var pageItems = items.Take(pageSize).ToList();
 
-        var ids      = pageItems.Select(f => f.Id).ToList();
-        var readIds  = await db.ReadItems
-            .Where(r => r.UserId == userId && ids.Contains(r.FeedItemId))
-            .Select(r => r.FeedItemId).ToHashSetAsync(ct);
-        var likedIds = await db.Likes
-            .Where(l => l.UserId == userId && ids.Contains(l.FeedItemId))
-            .Select(l => l.FeedItemId).ToHashSetAsync(ct);
-        var likeCounts = await db.Likes
-            .Where(l => ids.Contains(l.FeedItemId))
-            .GroupBy(l => l.FeedItemId)
-            .Select(g => new { g.Key, Count = g.Count() })
-            .ToDictionaryAsync(x => x.Key, x => x.Count, ct);
-
-        var page = new FeedPage();
-        foreach (var item in pageItems)
-            page.Items.Add(ToProto(item, readIds, likedIds,
-                ids.ToHashSet(), likeCounts)); // bookmarked = all (they are bookmarks)
-
-        if (hasMore)
-        {
-            var last = pageItems.Last();
-            page.NextCursor = EncodeCursor(last.PublishedAt, last.Id);
-        }
-
-        return page;
+        return await BuildPageResponseAsync(pageItems, hasMore, userId,
+            allBookmarked: true, includeTotalUnread: false, ct);
     }
 
     [AllowAnonymous]
@@ -460,4 +404,59 @@ public class FeedServiceImpl(AppDbContext db, FeedUpdateBroadcaster broadcaster)
         SourceTitle    = evt.SourceTitle,
         ImageUrl       = evt.ImageUrl,
     };
+
+    /// <summary>
+    /// Enriches a page of feed items with per-user read/like/bookmark state and assembles a FeedPage.
+    /// </summary>
+    /// <param name="allBookmarked">When true (GetBookmarks), all items are bookmarked by definition.</param>
+    /// <param name="includeTotalUnread">When true (GetFeed), compute and set TotalUnread.</param>
+    private async Task<FeedPage> BuildPageResponseAsync(
+        List<Entities.FeedItem> pageItems,
+        bool hasMore,
+        Guid userId,
+        bool allBookmarked,
+        bool includeTotalUnread,
+        CancellationToken ct)
+    {
+        var ids = pageItems.Select(f => f.Id).ToList();
+
+        var readIds = await db.ReadItems
+            .Where(r => r.UserId == userId && ids.Contains(r.FeedItemId))
+            .Select(r => r.FeedItemId).ToHashSetAsync(ct);
+        var likedIds = await db.Likes
+            .Where(l => l.UserId == userId && ids.Contains(l.FeedItemId))
+            .Select(l => l.FeedItemId).ToHashSetAsync(ct);
+        var bookmarkIds = allBookmarked
+            ? ids.ToHashSet()
+            : await db.Bookmarks
+                .Where(b => b.UserId == userId && ids.Contains(b.FeedItemId))
+                .Select(b => b.FeedItemId).ToHashSetAsync(ct);
+        var likeCounts = await db.Likes
+            .Where(l => ids.Contains(l.FeedItemId))
+            .GroupBy(l => l.FeedItemId)
+            .Select(g => new { g.Key, Count = g.Count() })
+            .ToDictionaryAsync(x => x.Key, x => x.Count, ct);
+
+        var page = new FeedPage();
+
+        if (includeTotalUnread)
+        {
+            var readFeedItemIds = db.ReadItems
+                .Where(r => r.UserId == userId)
+                .Select(r => r.FeedItemId);
+            page.TotalUnread = await db.FeedItems
+                .CountAsync(f => f.Subscription.UserId == userId && !readFeedItemIds.Contains(f.Id), ct);
+        }
+
+        foreach (var item in pageItems)
+            page.Items.Add(ToProto(item, readIds, likedIds, bookmarkIds, likeCounts));
+
+        if (hasMore)
+        {
+            var last = pageItems.Last();
+            page.NextCursor = EncodeCursor(last.PublishedAt, last.Id);
+        }
+
+        return page;
+    }
 }

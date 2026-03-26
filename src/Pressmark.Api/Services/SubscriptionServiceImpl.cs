@@ -12,7 +12,7 @@ using Pressmark.Api.Protos;
 namespace Pressmark.Api.Services;
 
 [Authorize]
-public class SubscriptionServiceImpl(AppDbContext db) : SubscriptionService.SubscriptionServiceBase
+public class SubscriptionServiceImpl(AppDbContext db, IHttpClientFactory httpClientFactory) : SubscriptionService.SubscriptionServiceBase
 {
     public override async Task<Protos.Subscription> AddSubscription(
         AddSubscriptionRequest request, ServerCallContext context)
@@ -28,9 +28,8 @@ public class SubscriptionServiceImpl(AppDbContext db) : SubscriptionService.Subs
         var feedTitle = "";
         try
         {
-            using var http = new HttpClient();
+            var http = httpClientFactory.CreateClient("Pressmark");
             http.Timeout = TimeSpan.FromSeconds(10);
-            http.DefaultRequestHeaders.UserAgent.ParseAdd("Pressmark/1.0");
             var xml = await http.GetStringAsync(request.RssUrl, ct);
 
             using var reader = XmlReader.Create(

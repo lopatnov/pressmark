@@ -27,6 +27,12 @@ builder.Services.AddSingleton<FeedUpdateBroadcaster>();
 // Email
 builder.Services.AddScoped<IEmailService, SmtpEmailService>();
 
+// HTTP client (pooled — used by SubscriptionServiceImpl and RssFetcherService)
+builder.Services.AddHttpClient("Pressmark", c =>
+{
+    c.DefaultRequestHeaders.UserAgent.ParseAdd("Pressmark/1.0");
+});
+
 var jwtSecret = config["Jwt:Secret"]
     ?? throw new InvalidOperationException("Jwt:Secret is required. Set it via env var or appsettings.");
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
