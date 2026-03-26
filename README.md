@@ -80,6 +80,7 @@ Breakpoints work in both the C# and TypeScript code simultaneously.
 # 2. Start the API (migrations apply automatically on first run)
 dotnet run --project src/Pressmark.Api
 # gRPC server at http://localhost:5000
+# Check that server started at http://localhost:5000/health
 
 # 3. Start the frontend  (separate terminal)
 cd src/pressmark-web
