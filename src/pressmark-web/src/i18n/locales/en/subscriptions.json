@@ -4,6 +4,7 @@
   "empty": "No subscriptions yet",
   "rssUrl": "RSS URL",
   "feedTitle": "Feed title",
+  "feedTitlePlaceholder": "Optional — auto-filled from feed",
   "lastFetched": "Last fetched",
   "remove": "Remove",
   "removeConfirm": "Remove this subscription?",

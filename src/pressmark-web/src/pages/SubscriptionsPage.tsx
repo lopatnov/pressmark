@@ -11,7 +11,7 @@ import { useSubscriptionStore } from '@/store/subscriptionStore'
 
 const schema = z.object({
   rssUrl: z.string().url(),
-  title:  z.string().min(1),
+  title:  z.string().optional(),
 })
 type FormData = z.infer<typeof schema>
 
@@ -43,15 +43,16 @@ export function SubscriptionsPage() {
 
   const onSubmit = async (data: FormData) => {
     try {
-      const sub = await subscriptionClient.addSubscription({ rssUrl: data.rssUrl, title: data.title })
+      const sub = await subscriptionClient.addSubscription({ rssUrl: data.rssUrl, title: data.title ?? '' })
       addSubscription({ id: sub.id, rssUrl: sub.rssUrl, title: sub.title, lastFetchedAt: sub.lastFetchedAt, createdAt: sub.createdAt })
       reset()
       setShowForm(false)
     } catch (err) {
-      const msg = err instanceof ConnectError
-        ? t('subscriptions:errors.fetchFailed')
-        : t('subscriptions:errors.invalidUrl')
-      setError('root', { message: msg })
+      if (err instanceof ConnectError && err.code === 3 /* InvalidArgument */) {
+        setError('rssUrl', { message: t('subscriptions:errors.fetchFailed') })
+      } else {
+        setError('root', { message: t('common:error') })
+      }
     }
   }
 
@@ -149,7 +150,7 @@ export function SubscriptionsPage() {
             <input
               {...register('title')}
               type="text"
-              placeholder="My feed"
+              placeholder={t('subscriptions:feedTitlePlaceholder')}
               className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
             />
             {errors.title && <p className="text-xs text-destructive">{errors.title.message}</p>}

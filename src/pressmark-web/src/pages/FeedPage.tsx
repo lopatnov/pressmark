@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button'
 import { feedClient } from '@/api/clients'
 import { useFeedStore } from '@/store/feedStore'
 
+const stripHtml = (html: string) => html.replace(/<[^>]+>/g, '').trim()
+
 export function FeedPage() {
   const { t } = useTranslation(['feed', 'common'])
   const {
@@ -167,7 +169,7 @@ export function FeedPage() {
             </div>
 
             {item.summary && (
-              <p className="line-clamp-2 text-xs text-muted-foreground">{item.summary}</p>
+              <p className="line-clamp-2 text-xs text-muted-foreground">{stripHtml(item.summary)}</p>
             )}
 
             <div className="flex items-center gap-1 pt-1">

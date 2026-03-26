@@ -1,4 +1,6 @@
 using System.Security.Claims;
+using System.ServiceModel.Syndication;
+using System.Xml;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
@@ -22,12 +24,36 @@ public class SubscriptionServiceImpl(AppDbContext db) : SubscriptionService.Subs
             || (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps))
             throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid RSS URL"));
 
+        // Validate by fetching and parsing the feed; also use the feed title as default
+        var feedTitle = "";
+        try
+        {
+            using var http = new HttpClient();
+            http.Timeout = TimeSpan.FromSeconds(10);
+            http.DefaultRequestHeaders.UserAgent.ParseAdd("Pressmark/1.0");
+            var xml = await http.GetStringAsync(request.RssUrl, ct);
+
+            using var reader = XmlReader.Create(
+                new StringReader(xml),
+                new XmlReaderSettings { DtdProcessing = DtdProcessing.Ignore });
+            feedTitle = SyndicationFeed.Load(reader).Title?.Text ?? "";
+        }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch
+        {
+            throw new RpcException(new Status(StatusCode.InvalidArgument,
+                "Could not fetch or parse RSS feed"));
+        }
+
         var entity = new Entities.Subscription
         {
             UserId = userId,
             RssUrl = request.RssUrl,
             Title  = string.IsNullOrWhiteSpace(request.Title)
-                        ? request.RssUrl
+                        ? (string.IsNullOrWhiteSpace(feedTitle) ? request.RssUrl : feedTitle)
                         : request.Title,
         };
 

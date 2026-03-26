@@ -92,7 +92,7 @@ public class RssFetcherService(
             {
                 Url        = i.Links.First().Uri.ToString(),
                 Title      = i.Title?.Text ?? "(no title)",
-                Summary    = i.Summary?.Text,
+                Summary    = StripHtml(i.Summary?.Text),
                 PublishedAt = i.PublishDate == DateTimeOffset.MinValue
                                 ? DateTime.UtcNow
                                 : i.PublishDate.UtcDateTime,
@@ -125,6 +125,15 @@ public class RssFetcherService(
                 newItems.Count, sub.Id);
 
         return addedItems;
+    }
+
+    private static string? StripHtml(string? html)
+    {
+        if (string.IsNullOrEmpty(html)) return null;
+        var text = System.Text.RegularExpressions.Regex.Replace(html, "<[^>]+>", " ");
+        text = System.Net.WebUtility.HtmlDecode(text);
+        text = System.Text.RegularExpressions.Regex.Replace(text, @"\s{2,}", " ").Trim();
+        return text.Length == 0 ? null : text;
     }
 
     private static string? ExtractImageUrl(SyndicationItem item)

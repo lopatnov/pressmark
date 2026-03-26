@@ -70,7 +70,7 @@ export const useFeedStore = create<FeedState>()(
           totalUnread: Math.max(0, s.totalUnread - 1),
         })),
       reset: () =>
-        set({ items: [], nextCursor: '', totalUnread: 0, isLoading: false }),
+        set({ items: [], nextCursor: '', totalUnread: 0, isLoading: true }),
     }),
     { name: 'feed' }
   )

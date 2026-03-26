@@ -4,6 +4,8 @@ import { BookMarked, ExternalLink } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { feedClient } from '@/api/clients'
 
+const stripHtml = (html: string) => html.replace(/<[^>]+>/g, '').trim()
+
 interface BookmarkItem {
   id: string
   title: string
@@ -82,7 +84,7 @@ export function BookmarksPage() {
             </div>
 
             {item.summary && (
-              <p className="line-clamp-2 text-xs text-muted-foreground">{item.summary}</p>
+              <p className="line-clamp-2 text-xs text-muted-foreground">{stripHtml(item.summary)}</p>
             )}
 
             <div className="flex items-center gap-1 pt-1">

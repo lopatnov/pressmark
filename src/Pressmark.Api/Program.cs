@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using Grpc.AspNetCore.Web;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -26,6 +27,7 @@ builder.Services.AddSingleton<FeedUpdateBroadcaster>();
 // Email
 builder.Services.AddScoped<IEmailService, SmtpEmailService>();
 
+var jwtSecret = config["Jwt:Secret"] ?? "";
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -33,10 +35,33 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         {
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(config["Jwt:Secret"]!)),
+                Encoding.UTF8.GetBytes(jwtSecret)),
             ValidateIssuer   = false,
             ValidateAudience = false,
             ClockSkew        = TimeSpan.Zero,
+        };
+        options.Events = new JwtBearerEvents
+        {
+            // Workaround: JwtBearerHandler in .NET 10 does not correctly strip the
+            // "Bearer " prefix from the Authorization header on gRPC-web requests,
+            // causing IDX14102. Validate manually and short-circuit via ctx.Success().
+            OnMessageReceived = ctx =>
+            {
+                var auth = ctx.Request.Headers.Authorization.FirstOrDefault() ?? "";
+                if (!auth.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+                    return Task.CompletedTask;
+
+                var token = auth["Bearer ".Length..].Trim();
+                try
+                {
+                    var principal = new JwtSecurityTokenHandler()
+                        .ValidateToken(token, ctx.Options.TokenValidationParameters, out _);
+                    ctx.Principal = principal;
+                    ctx.Success();
+                }
+                catch (Exception ex) { ctx.Fail(ex); }
+                return Task.CompletedTask;
+            },
         };
     });
 
