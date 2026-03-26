@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Heart, ExternalLink } from 'lucide-react'
+import { Heart } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { feedClient } from '@/api/clients'
 import { useAuthStore } from '@/store/authStore'
-
-const stripHtml = (html: string) => html.replace(/<[^>]+>/g, '').trim()
+import { FeedItemCard } from '@/components/feed/FeedItemCard'
 
 interface CommunityItem {
   id: string
@@ -93,31 +92,11 @@ export function CommunityPage() {
 
       <div className="space-y-2">
         {items.map((item) => (
-          <article key={item.id} className="rounded-lg border border-border bg-card p-4 space-y-1.5">
-            <div className="flex items-start justify-between gap-2">
-              <a
-                href={item.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm font-medium leading-snug hover:underline"
-              >
-                {item.title}
-              </a>
-              <ExternalLink className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-            </div>
-
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              {item.sourceTitle && <span className="font-medium">{item.sourceTitle}</span>}
-              {item.sourceTitle && <span>·</span>}
-              <span>{item.publishedAt ? new Date(item.publishedAt).toLocaleDateString() : ''}</span>
-            </div>
-
-            {item.summary && (
-              <p className="line-clamp-2 text-xs text-muted-foreground">{stripHtml(item.summary)}</p>
-            )}
-
-            <div className="flex items-center gap-1 pt-1">
-              {isAuthenticated ? (
+          <FeedItemCard
+            key={item.id}
+            item={item}
+            actions={
+              isAuthenticated ? (
                 <button
                   onClick={() => handleLike(item.id)}
                   className={`flex items-center gap-1 rounded px-2 py-1 text-xs transition-colors hover:bg-muted ${item.isLiked ? 'text-rose-500' : 'text-muted-foreground'}`}
@@ -130,9 +109,9 @@ export function CommunityPage() {
                   <Heart className="h-3.5 w-3.5" />
                   {item.likeCount > 0 && <span>{item.likeCount}</span>}
                 </span>
-              )}
-            </div>
-          </article>
+              )
+            }
+          />
         ))}
       </div>
 

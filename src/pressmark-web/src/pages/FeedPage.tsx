@@ -1,11 +1,10 @@
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Heart, Bookmark, BookMarked, ExternalLink } from 'lucide-react'
+import { Heart, Bookmark, BookMarked } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { feedClient } from '@/api/clients'
 import { useFeedStore } from '@/store/feedStore'
-
-const stripHtml = (html: string) => html.replace(/<[^>]+>/g, '').trim()
+import { FeedItemCard } from '@/components/feed/FeedItemCard'
 
 export function FeedPage() {
   const { t } = useTranslation(['feed', 'common'])
@@ -143,54 +142,31 @@ export function FeedPage() {
 
       <div className="space-y-2">
         {items.map((item) => (
-          <article
+          <FeedItemCard
             key={item.id}
-            className={`rounded-lg border bg-card p-4 space-y-1.5 ${!item.isRead ? 'border-l-2 border-l-primary border-border' : 'border-border'}`}
-          >
-            <div className="flex items-start justify-between gap-2">
-              <a
-                href={item.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => !item.isRead && handleRead(item.id)}
-                className={`text-sm font-medium leading-snug hover:underline ${!item.isRead ? 'text-foreground' : 'text-muted-foreground'}`}
-              >
-                {item.title}
-              </a>
-              <ExternalLink className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-            </div>
-
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              {item.sourceTitle && <span className="font-medium">{item.sourceTitle}</span>}
-              {item.sourceTitle && <span>·</span>}
-              <span>
-                {item.publishedAt ? new Date(item.publishedAt).toLocaleDateString() : ''}
-              </span>
-            </div>
-
-            {item.summary && (
-              <p className="line-clamp-2 text-xs text-muted-foreground">{stripHtml(item.summary)}</p>
-            )}
-
-            <div className="flex items-center gap-1 pt-1">
-              <button
-                onClick={() => handleLike(item.id)}
-                className={`flex items-center gap-1 rounded px-2 py-1 text-xs transition-colors hover:bg-muted ${item.isLiked ? 'text-rose-500' : 'text-muted-foreground'}`}
-              >
-                <Heart className={`h-3.5 w-3.5 ${item.isLiked ? 'fill-current' : ''}`} />
-                {item.likeCount > 0 && <span>{item.likeCount}</span>}
-              </button>
-              <button
-                onClick={() => handleBookmark(item.id)}
-                className={`flex items-center gap-1 rounded px-2 py-1 text-xs transition-colors hover:bg-muted ${item.isBookmarked ? 'text-amber-500' : 'text-muted-foreground'}`}
-              >
-                {item.isBookmarked
-                  ? <BookMarked className="h-3.5 w-3.5 fill-current" />
-                  : <Bookmark className="h-3.5 w-3.5" />
-                }
-              </button>
-            </div>
-          </article>
+            item={item}
+            onTitleClick={!item.isRead ? () => handleRead(item.id) : undefined}
+            actions={
+              <>
+                <button
+                  onClick={() => handleLike(item.id)}
+                  className={`flex items-center gap-1 rounded px-2 py-1 text-xs transition-colors hover:bg-muted ${item.isLiked ? 'text-rose-500' : 'text-muted-foreground'}`}
+                >
+                  <Heart className={`h-3.5 w-3.5 ${item.isLiked ? 'fill-current' : ''}`} />
+                  {item.likeCount > 0 && <span>{item.likeCount}</span>}
+                </button>
+                <button
+                  onClick={() => handleBookmark(item.id)}
+                  className={`flex items-center gap-1 rounded px-2 py-1 text-xs transition-colors hover:bg-muted ${item.isBookmarked ? 'text-amber-500' : 'text-muted-foreground'}`}
+                >
+                  {item.isBookmarked
+                    ? <BookMarked className="h-3.5 w-3.5 fill-current" />
+                    : <Bookmark className="h-3.5 w-3.5" />
+                  }
+                </button>
+              </>
+            }
+          />
         ))}
       </div>
 

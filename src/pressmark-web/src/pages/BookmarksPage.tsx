@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BookMarked, ExternalLink } from 'lucide-react'
+import { BookMarked } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { feedClient } from '@/api/clients'
-
-const stripHtml = (html: string) => html.replace(/<[^>]+>/g, '').trim()
+import { FeedItemCard } from '@/components/feed/FeedItemCard'
 
 interface BookmarkItem {
   id: string
@@ -64,30 +63,10 @@ export function BookmarksPage() {
 
       <div className="space-y-2">
         {items.map((item) => (
-          <article key={item.id} className="rounded-lg border border-border bg-card p-4 space-y-1.5">
-            <div className="flex items-start justify-between gap-2">
-              <a
-                href={item.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm font-medium leading-snug hover:underline"
-              >
-                {item.title}
-              </a>
-              <ExternalLink className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-            </div>
-
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              {item.sourceTitle && <span className="font-medium">{item.sourceTitle}</span>}
-              {item.sourceTitle && <span>·</span>}
-              <span>{item.publishedAt ? new Date(item.publishedAt).toLocaleDateString() : ''}</span>
-            </div>
-
-            {item.summary && (
-              <p className="line-clamp-2 text-xs text-muted-foreground">{stripHtml(item.summary)}</p>
-            )}
-
-            <div className="flex items-center gap-1 pt-1">
+          <FeedItemCard
+            key={item.id}
+            item={item}
+            actions={
               <button
                 onClick={() => handleRemoveBookmark(item.id)}
                 className="flex items-center gap-1 rounded px-2 py-1 text-xs text-amber-500 transition-colors hover:bg-muted"
@@ -95,8 +74,8 @@ export function BookmarksPage() {
                 <BookMarked className="h-3.5 w-3.5 fill-current" />
                 <span>{t('feed:removeBookmark')}</span>
               </button>
-            </div>
-          </article>
+            }
+          />
         ))}
       </div>
 
