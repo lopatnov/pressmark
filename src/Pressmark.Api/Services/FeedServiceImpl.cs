@@ -14,13 +14,13 @@ namespace Pressmark.Api.Services;
 public class FeedServiceImpl(AppDbContext db, FeedUpdateBroadcaster broadcaster) : FeedService.FeedServiceBase
 {
     private const int DefaultPageSize = 20;
-    private const int MaxPageSize     = 100;
+    private const int MaxPageSize = 100;
 
     public override async Task<FeedPage> GetFeed(
         GetFeedRequest request, ServerCallContext context)
     {
-        var userId   = GetUserId(context);
-        var ct       = context.CancellationToken;
+        var userId = GetUserId(context);
+        var ct = context.CancellationToken;
         var pageSize = Math.Clamp(request.PageSize == 0 ? DefaultPageSize : request.PageSize,
                                   1, MaxPageSize);
 
@@ -53,7 +53,7 @@ public class FeedServiceImpl(AppDbContext db, FeedUpdateBroadcaster broadcaster)
             .Take(pageSize + 1)
             .ToListAsync(ct);
 
-        var hasMore   = items.Count > pageSize;
+        var hasMore = items.Count > pageSize;
         var pageItems = items.Take(pageSize).ToList();
 
         return await BuildPageResponseAsync(pageItems, hasMore, userId,
@@ -65,7 +65,7 @@ public class FeedServiceImpl(AppDbContext db, FeedUpdateBroadcaster broadcaster)
     {
         var userId = GetUserId(context);
         var itemId = Guid.Parse(request.FeedItemId);
-        var ct     = context.CancellationToken;
+        var ct = context.CancellationToken;
 
         var exists = await db.ReadItems
             .AnyAsync(r => r.UserId == userId && r.FeedItemId == itemId, ct);
@@ -83,7 +83,7 @@ public class FeedServiceImpl(AppDbContext db, FeedUpdateBroadcaster broadcaster)
         MarkAllAsReadRequest request, ServerCallContext context)
     {
         var userId = GetUserId(context);
-        var ct     = context.CancellationToken;
+        var ct = context.CancellationToken;
 
         var query = db.FeedItems
             .Include(f => f.Subscription)
@@ -107,7 +107,7 @@ public class FeedServiceImpl(AppDbContext db, FeedUpdateBroadcaster broadcaster)
         Empty request, ServerCallContext context)
     {
         var userId = GetUserId(context);
-        var ct     = context.CancellationToken;
+        var ct = context.CancellationToken;
 
         var count = await db.FeedItems
             .CountAsync(f => f.Subscription.UserId == userId
@@ -122,7 +122,7 @@ public class FeedServiceImpl(AppDbContext db, FeedUpdateBroadcaster broadcaster)
     {
         var userId = GetUserId(context);
         var itemId = Guid.Parse(request.FeedItemId);
-        var ct     = context.CancellationToken;
+        var ct = context.CancellationToken;
 
         var like = await db.Likes
             .FirstOrDefaultAsync(l => l.UserId == userId && l.FeedItemId == itemId, ct);
@@ -134,7 +134,7 @@ public class FeedServiceImpl(AppDbContext db, FeedUpdateBroadcaster broadcaster)
 
         await db.SaveChangesAsync(ct);
 
-        var count   = await db.Likes.CountAsync(l => l.FeedItemId == itemId, ct);
+        var count = await db.Likes.CountAsync(l => l.FeedItemId == itemId, ct);
         var isLiked = like is null; // if we removed it, now not liked; if we added, now liked
 
         return new ToggleLikeResponse { IsLiked = isLiked, LikeCount = count };
@@ -145,7 +145,7 @@ public class FeedServiceImpl(AppDbContext db, FeedUpdateBroadcaster broadcaster)
     {
         var userId = GetUserId(context);
         var itemId = Guid.Parse(request.FeedItemId);
-        var ct     = context.CancellationToken;
+        var ct = context.CancellationToken;
 
         var bookmark = await db.Bookmarks
             .FirstOrDefaultAsync(b => b.UserId == userId && b.FeedItemId == itemId, ct);
@@ -163,8 +163,8 @@ public class FeedServiceImpl(AppDbContext db, FeedUpdateBroadcaster broadcaster)
     public override async Task<FeedPage> GetBookmarks(
         GetBookmarksRequest request, ServerCallContext context)
     {
-        var userId   = GetUserId(context);
-        var ct       = context.CancellationToken;
+        var userId = GetUserId(context);
+        var ct = context.CancellationToken;
         var pageSize = Math.Clamp(request.PageSize == 0 ? DefaultPageSize : request.PageSize,
                                   1, MaxPageSize);
 
@@ -186,7 +186,7 @@ public class FeedServiceImpl(AppDbContext db, FeedUpdateBroadcaster broadcaster)
             .Take(pageSize + 1)
             .ToListAsync(ct);
 
-        var hasMore   = items.Count > pageSize;
+        var hasMore = items.Count > pageSize;
         var pageItems = items.Take(pageSize).ToList();
 
         return await BuildPageResponseAsync(pageItems, hasMore, userId,
@@ -197,7 +197,7 @@ public class FeedServiceImpl(AppDbContext db, FeedUpdateBroadcaster broadcaster)
     public override async Task<FeedPage> GetCommunityFeed(
         GetCommunityFeedRequest request, ServerCallContext context)
     {
-        var ct       = context.CancellationToken;
+        var ct = context.CancellationToken;
         var pageSize = Math.Clamp(request.PageSize == 0 ? DefaultPageSize : request.PageSize,
                                   1, MaxPageSize);
 
@@ -229,7 +229,7 @@ public class FeedServiceImpl(AppDbContext db, FeedUpdateBroadcaster broadcaster)
             .Take(pageSize + 1)
             .ToListAsync(ct);
 
-        var hasMore   = items.Count > pageSize;
+        var hasMore = items.Count > pageSize;
         var pageItems = items.Take(pageSize).ToList();
 
         var ids = pageItems.Select(f => f.Id).ToList();
@@ -244,7 +244,7 @@ public class FeedServiceImpl(AppDbContext db, FeedUpdateBroadcaster broadcaster)
         var claim = context.GetHttpContext().User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (claim != null && Guid.TryParse(claim, out var parsedId)) userId = parsedId;
 
-        HashSet<Guid> likedIds    = [];
+        HashSet<Guid> likedIds = [];
         HashSet<Guid> bookmarkIds = [];
 
         if (userId.HasValue)
@@ -276,7 +276,7 @@ public class FeedServiceImpl(AppDbContext db, FeedUpdateBroadcaster broadcaster)
         ServerCallContext context)
     {
         var userId = GetUserId(context);
-        var ct     = context.CancellationToken;
+        var ct = context.CancellationToken;
 
         // Load the user's active subscription IDs for filtering broadcast events
         var userSubIds = await db.Subscriptions
@@ -306,12 +306,25 @@ public class FeedServiceImpl(AppDbContext db, FeedUpdateBroadcaster broadcaster)
         var (reader, writer) = broadcaster.Subscribe();
         try
         {
-            while (!ct.IsCancellationRequested)
+            while (await reader.WaitToReadAsync(ct))
             {
-                var evt = await reader.ReadAsync(ct);
-                if (userSubIds.Contains(evt.SubscriptionId))
-                    await responseStream.WriteAsync(MapBroadcastEvent(evt), ct);
+                while (reader.TryRead(out var evt))
+                {
+                    if (userSubIds.Contains(evt.SubscriptionId))
+                    {
+                        await responseStream.WriteAsync(MapBroadcastEvent(evt), ct);
+                    }
+                }
             }
+        }
+        catch (OperationCanceledException)
+        {
+            //logger.LogInformation("Client disconnected from feed stream.");
+        }
+        catch (Exception ex)
+        {
+            //logger.LogError(ex, "Unexpected error in feed stream.");
+            throw;
         }
         finally
         {
@@ -345,7 +358,7 @@ public class FeedServiceImpl(AppDbContext db, FeedUpdateBroadcaster broadcaster)
             var parts = raw.Split('|');
             if (parts.Length != 2) return false;
             date = new DateTime(long.Parse(parts[0]), DateTimeKind.Utc);
-            id   = Guid.Parse(parts[1]);
+            id = Guid.Parse(parts[1]);
             return true;
         }
         catch { return false; }
@@ -357,52 +370,52 @@ public class FeedServiceImpl(AppDbContext db, FeedUpdateBroadcaster broadcaster)
         HashSet<Guid> likedIds,
         HashSet<Guid> bookmarkIds,
         Dictionary<Guid, int> likeCounts) => new()
-    {
-        Id             = item.Id.ToString(),
-        SubscriptionId = item.SubscriptionId.ToString(),
-        Title          = item.Title,
-        Url            = item.Url,
-        Summary        = item.Summary ?? "",
-        PublishedAt    = item.PublishedAt.ToString("o"),
-        IsRead         = readIds.Contains(item.Id),
-        LikeCount      = likeCounts.GetValueOrDefault(item.Id),
-        IsLiked        = likedIds.Contains(item.Id),
-        IsBookmarked   = bookmarkIds.Contains(item.Id),
-        SourceTitle    = item.Subscription?.Title ?? "",
-        ImageUrl       = item.ImageUrl ?? "",
-    };
+        {
+            Id = item.Id.ToString(),
+            SubscriptionId = item.SubscriptionId.ToString(),
+            Title = item.Title,
+            Url = item.Url,
+            Summary = item.Summary ?? "",
+            PublishedAt = item.PublishedAt.ToString("o"),
+            IsRead = readIds.Contains(item.Id),
+            LikeCount = likeCounts.GetValueOrDefault(item.Id),
+            IsLiked = likedIds.Contains(item.Id),
+            IsBookmarked = bookmarkIds.Contains(item.Id),
+            SourceTitle = item.Subscription?.Title ?? "",
+            ImageUrl = item.ImageUrl ?? "",
+        };
 
     // New items are never read/liked/bookmarked by definition
     private static Protos.FeedItem MapCatchUpItem(Entities.FeedItem item) => new()
     {
-        Id             = item.Id.ToString(),
+        Id = item.Id.ToString(),
         SubscriptionId = item.SubscriptionId.ToString(),
-        Title          = item.Title,
-        Url            = item.Url,
-        Summary        = item.Summary ?? "",
-        PublishedAt    = item.PublishedAt.ToString("o"),
-        IsRead         = false,
-        LikeCount      = 0,
-        IsLiked        = false,
-        IsBookmarked   = false,
-        SourceTitle    = item.Subscription?.Title ?? "",
-        ImageUrl       = item.ImageUrl ?? "",
+        Title = item.Title,
+        Url = item.Url,
+        Summary = item.Summary ?? "",
+        PublishedAt = item.PublishedAt.ToString("o"),
+        IsRead = false,
+        LikeCount = 0,
+        IsLiked = false,
+        IsBookmarked = false,
+        SourceTitle = item.Subscription?.Title ?? "",
+        ImageUrl = item.ImageUrl ?? "",
     };
 
     private static Protos.FeedItem MapBroadcastEvent(FeedUpdateEvent evt) => new()
     {
-        Id             = evt.Id.ToString(),
+        Id = evt.Id.ToString(),
         SubscriptionId = evt.SubscriptionId.ToString(),
-        Title          = evt.Title,
-        Url            = evt.Url,
-        Summary        = evt.Summary,
-        PublishedAt    = evt.PublishedAt.ToString("o"),
-        IsRead         = false,
-        LikeCount      = 0,
-        IsLiked        = false,
-        IsBookmarked   = false,
-        SourceTitle    = evt.SourceTitle,
-        ImageUrl       = evt.ImageUrl,
+        Title = evt.Title,
+        Url = evt.Url,
+        Summary = evt.Summary,
+        PublishedAt = evt.PublishedAt.ToString("o"),
+        IsRead = false,
+        LikeCount = 0,
+        IsLiked = false,
+        IsBookmarked = false,
+        SourceTitle = evt.SourceTitle,
+        ImageUrl = evt.ImageUrl,
     };
 
     /// <summary>
