@@ -20,6 +20,11 @@ public class AuthServiceImpl(
     {
         var ct = context.CancellationToken;
 
+        if (!System.Net.Mail.MailAddress.TryCreate(request.Email, out _))
+            throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid email address"));
+        if (request.Password.Length < 8)
+            throw new RpcException(new Status(StatusCode.InvalidArgument, "Password must be at least 8 characters"));
+
         var mode = await db.SiteSettings
             .Where(s => s.Key == "registration_mode")
             .Select(s => s.Value)

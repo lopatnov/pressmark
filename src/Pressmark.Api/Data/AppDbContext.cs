@@ -33,6 +33,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         {
             e.ToTable("subscriptions");
             e.HasKey(x => x.Id);
+            e.HasIndex(x => x.UserId);
             e.HasOne(x => x.User)
                 .WithMany(u => u.Subscriptions)
                 .HasForeignKey(x => x.UserId);

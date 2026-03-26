@@ -48,7 +48,7 @@ public class FeedUpdateBroadcaster
     }
 
     /// <summary>Writes the event to every active subscriber's channel.</summary>
-    public async Task BroadcastAsync(FeedUpdateEvent evt)
+    public Task BroadcastAsync(FeedUpdateEvent evt)
     {
         ChannelWriter<FeedUpdateEvent>[] snapshot;
         lock (_lock)
@@ -60,6 +60,6 @@ public class FeedUpdateBroadcaster
             // TryWrite is non-blocking; channel is unbounded so it always succeeds.
             w.TryWrite(evt);
         }
-        await Task.CompletedTask;
+        return Task.CompletedTask;
     }
 }

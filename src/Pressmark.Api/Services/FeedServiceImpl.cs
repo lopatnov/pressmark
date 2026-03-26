@@ -298,7 +298,7 @@ public class FeedServiceImpl(AppDbContext db, FeedUpdateBroadcaster broadcaster)
         // Determine current user for is_liked / is_bookmarked (optional, anonymous = false)
         Guid? userId = null;
         var claim = context.GetHttpContext().User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (claim != null) userId = Guid.Parse(claim);
+        if (claim != null && Guid.TryParse(claim, out var parsedId)) userId = parsedId;
 
         HashSet<Guid> likedIds    = [];
         HashSet<Guid> bookmarkIds = [];
