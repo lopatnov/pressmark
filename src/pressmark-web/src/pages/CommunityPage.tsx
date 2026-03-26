@@ -55,12 +55,14 @@ export function CommunityPage() {
   }
 
   const handleLike = async (id: string) => {
-    const res = await feedClient.toggleLike({ feedItemId: id })
-    setItems((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, isLiked: res.isLiked, likeCount: res.likeCount } : item
+    try {
+      const res = await feedClient.toggleLike({ feedItemId: id })
+      setItems((prev) =>
+        prev.map((item) =>
+          item.id === id ? { ...item, isLiked: res.isLiked, likeCount: res.likeCount } : item
+        )
       )
-    )
+    } catch {}
   }
 
   useEffect(() => { loadFeed() }, [])

@@ -73,10 +73,11 @@ public class FeedServiceImpl(AppDbContext db, FeedUpdateBroadcaster broadcaster)
             .Select(g => new { g.Key, Count = g.Count() })
             .ToDictionaryAsync(x => x.Key, x => x.Count, ct);
 
+        var readFeedItemIds = db.ReadItems
+            .Where(r => r.UserId == userId)
+            .Select(r => r.FeedItemId);
         var totalUnread = await db.FeedItems
-            .CountAsync(f => f.Subscription.UserId == userId
-                          && !db.ReadItems.Any(r => r.UserId == userId && r.FeedItemId == f.Id),
-                        ct);
+            .CountAsync(f => f.Subscription.UserId == userId && !readFeedItemIds.Contains(f.Id), ct);
 
         var page = new FeedPage { TotalUnread = totalUnread };
 
@@ -261,7 +262,8 @@ public class FeedServiceImpl(AppDbContext db, FeedUpdateBroadcaster broadcaster)
             .Select(s => s.Value)
             .FirstOrDefaultAsync(ct) ?? "1";
 
-        var since = DateTime.UtcNow.AddDays(-int.Parse(windowDaysStr));
+        var windowDays = int.TryParse(windowDaysStr, out var d) ? d : 1;
+        var since = DateTime.UtcNow.AddDays(-windowDays);
 
         var query = db.FeedItems
             .Include(f => f.Subscription)

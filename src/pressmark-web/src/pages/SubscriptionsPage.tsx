@@ -93,6 +93,10 @@ export function SubscriptionsPage() {
         if (fileInputRef.current) fileInputRef.current.value = ''
       }
     }
+    reader.onerror = () => {
+      setImportStatus(t('subscriptions:importError'))
+      if (fileInputRef.current) fileInputRef.current.value = ''
+    }
     reader.readAsText(file)
   }
 
