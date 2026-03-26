@@ -1,4 +1,4 @@
-import { ConnectError, createClient } from '@connectrpc/connect'
+import { Code, ConnectError, createClient } from '@connectrpc/connect'
 import { createGrpcWebTransport } from '@connectrpc/connect-web'
 import type { Interceptor } from '@connectrpc/connect'
 
@@ -48,7 +48,7 @@ const authInterceptor: Interceptor = (next) => async (req) => {
   } catch (err) {
     // Skip refresh if this call IS the Refresh endpoint — prevents infinite loop
     const isRefreshCall = req.url.includes('/Refresh')
-    if (err instanceof ConnectError && err.code === 16 /* Unauthenticated */ && !isRefreshCall) {
+    if (err instanceof ConnectError && err.code === Code.Unauthenticated && !isRefreshCall) {
       // Try to silently refresh the access token using the httpOnly refresh cookie.
       // Only call clearAuth() (→ redirect to /login) if the refresh itself fails.
       const newToken = await refreshAccessToken()

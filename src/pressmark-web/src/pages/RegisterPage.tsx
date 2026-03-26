@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -7,20 +7,20 @@ import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { authClient } from '@/api/clients'
 import { useAuthStore } from '@/store/authStore'
-import { ConnectError } from '@connectrpc/connect'
-
-const schema = z.object({
-  email:       z.string().email(),
-  password:    z.string().min(8, 'Minimum 8 characters'),
-  inviteToken: z.string().optional(),
-})
-type FormData = z.infer<typeof schema>
+import { Code, ConnectError } from '@connectrpc/connect'
 
 export function RegisterPage() {
   const { t } = useTranslation('auth')
   const navigate = useNavigate()
   const setAuth  = useAuthStore((s) => s.setAuth)
   const [showInvite, setShowInvite] = useState(false)
+
+  const schema = useMemo(() => z.object({
+    email:       z.string().email(t('errors.invalidEmail')),
+    password:    z.string().min(8, t('errors.passwordTooShort')),
+    inviteToken: z.string().optional(),
+  }), [t])
+  type FormData = z.infer<typeof schema>
 
   const { register, handleSubmit, formState: { errors, isSubmitting }, setError } =
     useForm<FormData>({ resolver: zodResolver(schema) })
@@ -40,12 +40,14 @@ export function RegisterPage() {
       navigate('/feed')
     } catch (err) {
       if (err instanceof ConnectError) {
-        if (err.code === 7 /* FailedPrecondition */) {
-          setError('root', { message: t('errors.registrationClosed') })
-        } else if (err.code === 16 /* PermissionDenied */) {
+        if (err.code === Code.PermissionDenied) {
+          // invite_only mode: invite token missing or invalid
           setShowInvite(true)
           setError('inviteToken', { message: t('errors.invalidInviteToken') })
-        } else if (err.code === 6 /* AlreadyExists */) {
+        } else if (err.code === Code.FailedPrecondition) {
+          // registration mode is neither open nor invite_only
+          setError('root', { message: t('errors.registrationClosed') })
+        } else if (err.code === Code.AlreadyExists) {
           setError('root', { message: t('errors.emailTaken') })
         } else {
           setError('root', { message: t('errors.invalidCredentials') })

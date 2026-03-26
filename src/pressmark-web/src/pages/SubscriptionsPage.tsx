@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useTranslation } from 'react-i18next'
 import { Download, Plus, Trash2, Upload } from 'lucide-react'
-import { ConnectError } from '@connectrpc/connect'
+import { Code, ConnectError } from '@connectrpc/connect'
 import { Button } from '@/components/ui/button'
 import { subscriptionClient } from '@/api/clients'
 import { useSubscriptionStore } from '@/store/subscriptionStore'
@@ -48,7 +48,7 @@ export function SubscriptionsPage() {
       reset()
       setShowForm(false)
     } catch (err) {
-      if (err instanceof ConnectError && err.code === 3 /* InvalidArgument */) {
+      if (err instanceof ConnectError && err.code === Code.InvalidArgument) {
         setError('rssUrl', { message: t('subscriptions:errors.fetchFailed') })
       } else {
         setError('root', { message: t('common:error') })

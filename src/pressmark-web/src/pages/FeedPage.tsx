@@ -14,15 +14,14 @@ export function FeedPage() {
     updateBookmark, markRead, reset,
   } = useFeedStore()
 
-  const loadFeed = async (cursor = '') => {
+  const loadFeed = async (cursor = '', signal?: AbortSignal) => {
     setLoading(true)
     try {
-      const res = await feedClient.getFeed({
-        pageSize: 20,
-        cursor,
-        unreadOnly,
-        subscriptionId: '',
-      })
+      const res = await feedClient.getFeed(
+        { pageSize: 20, cursor, unreadOnly, subscriptionId: '' },
+        { signal },
+      )
+      if (signal?.aborted) return
       const mapped = res.items.map((item) => ({
         id:             item.id,
         subscriptionId: item.subscriptionId,
@@ -42,26 +41,33 @@ export function FeedPage() {
       } else {
         setItems(mapped, res.nextCursor, res.totalUnread)
       }
+    } catch {
+      // ignore aborted requests
     } finally {
-      setLoading(false)
+      if (!signal?.aborted) setLoading(false)
     }
   }
 
+  // Reload when filter changes; abort the previous in-flight request
   useEffect(() => {
+    const controller = new AbortController()
     reset()
-    loadFeed()
+    loadFeed('', controller.signal)
+    return () => controller.abort()
   }, [unreadOnly])
 
   // Real-time streaming: prepend new items as they arrive from the server
   useEffect(() => {
-    let active = true
+    const controller = new AbortController()
 
     const connect = async () => {
       try {
         const sinceTimestamp = useFeedStore.getState().items[0]?.publishedAt ?? ''
-        const stream = feedClient.streamFeedUpdates({ sinceTimestamp })
+        const stream = feedClient.streamFeedUpdates(
+          { sinceTimestamp },
+          { signal: controller.signal },
+        )
         for await (const item of stream) {
-          if (!active) break
           prependItem({
             id:             item.id,
             subscriptionId: item.subscriptionId,
@@ -78,12 +84,12 @@ export function FeedPage() {
           })
         }
       } catch {
-        if (active) setTimeout(connect, 5000)
+        if (!controller.signal.aborted) setTimeout(connect, 5000)
       }
     }
 
     connect()
-    return () => { active = false }
+    return () => controller.abort()
   }, [])
 
   const handleLike = async (id: string) => {
