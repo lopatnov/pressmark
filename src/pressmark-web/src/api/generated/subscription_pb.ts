@@ -250,7 +250,7 @@ export class ImportSubscriptionsResponse extends Message<ImportSubscriptionsResp
   static readonly typeName = "pressmark.subscription.ImportSubscriptionsResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "imported", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
-    { no: 2, name: "skipped",  kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 2, name: "skipped", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ImportSubscriptionsResponse {
@@ -304,6 +304,80 @@ export class ExportSubscriptionsResponse extends Message<ExportSubscriptionsResp
 
   static equals(a: ExportSubscriptionsResponse | PlainMessage<ExportSubscriptionsResponse> | undefined, b: ExportSubscriptionsResponse | PlainMessage<ExportSubscriptionsResponse> | undefined): boolean {
     return proto3.util.equals(ExportSubscriptionsResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message pressmark.subscription.TriggerFetchRequest
+ */
+export class TriggerFetchRequest extends Message<TriggerFetchRequest> {
+  /**
+   * @generated from field: string subscription_id = 1;
+   */
+  subscriptionId = "";
+
+  constructor(data?: PartialMessage<TriggerFetchRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "pressmark.subscription.TriggerFetchRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "subscription_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): TriggerFetchRequest {
+    return new TriggerFetchRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): TriggerFetchRequest {
+    return new TriggerFetchRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): TriggerFetchRequest {
+    return new TriggerFetchRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: TriggerFetchRequest | PlainMessage<TriggerFetchRequest> | undefined, b: TriggerFetchRequest | PlainMessage<TriggerFetchRequest> | undefined): boolean {
+    return proto3.util.equals(TriggerFetchRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message pressmark.subscription.TriggerFetchResponse
+ */
+export class TriggerFetchResponse extends Message<TriggerFetchResponse> {
+  /**
+   * @generated from field: int32 new_items = 1;
+   */
+  newItems = 0;
+
+  constructor(data?: PartialMessage<TriggerFetchResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "pressmark.subscription.TriggerFetchResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "new_items", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): TriggerFetchResponse {
+    return new TriggerFetchResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): TriggerFetchResponse {
+    return new TriggerFetchResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): TriggerFetchResponse {
+    return new TriggerFetchResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: TriggerFetchResponse | PlainMessage<TriggerFetchResponse> | undefined, b: TriggerFetchResponse | PlainMessage<TriggerFetchResponse> | undefined): boolean {
+    return proto3.util.equals(TriggerFetchResponse, a, b);
   }
 }
 

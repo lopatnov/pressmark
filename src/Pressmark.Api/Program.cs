@@ -81,6 +81,9 @@ builder.Services.AddCors(o => o.AddPolicy("GrpcWeb", policy => policy
     .AllowAnyHeader()
     .AllowCredentials()));
 
+// RSS feed fetcher (shared between background scheduler and on-demand TriggerFetch)
+builder.Services.AddSingleton<FeedFetcherService>();
+
 // Background services
 builder.Services.AddHostedService<RssFetcherService>();
 

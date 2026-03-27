@@ -7,6 +7,7 @@
   "feedTitlePlaceholder": "可选 — 从订阅源自动填充",
   "lastFetched": "上次获取",
   "remove": "移除",
+  "fetch": "刷新",
   "removeConfirm": "移除此订阅？",
   "import": "导入 OPML",
   "export": "导出 OPML",

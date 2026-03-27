@@ -7,6 +7,7 @@
   "feedTitlePlaceholder": "선택 사항 — 피드에서 자동 채워짐",
   "lastFetched": "마지막 가져오기",
   "remove": "제거",
+  "fetch": "새로고침",
   "removeConfirm": "이 구독을 제거하시겠습니까?",
   "import": "OPML 가져오기",
   "export": "OPML 내보내기",

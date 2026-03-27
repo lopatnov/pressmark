@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useTranslation } from 'react-i18next'
-import { Download, Plus, Trash2, Upload } from 'lucide-react'
+import { Download, Plus, RefreshCw, Trash2, Upload } from 'lucide-react'
 import { Code, ConnectError } from '@connectrpc/connect'
 import { Button } from '@/components/ui/button'
 import { subscriptionClient } from '@/api/clients'
@@ -21,6 +21,7 @@ export function SubscriptionsPage() {
     useSubscriptionStore()
   const [showForm, setShowForm] = useState(false)
   const [importStatus, setImportStatus] = useState<string | null>(null)
+  const [fetchingId, setFetchingId] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const { register, handleSubmit, formState: { errors, isSubmitting }, setError, reset } =
@@ -98,6 +99,21 @@ export function SubscriptionsPage() {
       if (fileInputRef.current) fileInputRef.current.value = ''
     }
     reader.readAsText(file)
+  }
+
+  const handleFetch = async (id: string) => {
+    setFetchingId(id)
+    try {
+      await subscriptionClient.triggerFetch({ subscriptionId: id })
+      // Refresh the subscription to get the updated lastFetchedAt
+      const list = await subscriptionClient.listSubscriptions({})
+      setSubscriptions(list.subscriptions.map((s) => ({
+        id: s.id, rssUrl: s.rssUrl, title: s.title,
+        lastFetchedAt: s.lastFetchedAt, createdAt: s.createdAt,
+      })))
+    } catch {} finally {
+      setFetchingId(null)
+    }
   }
 
   const handleRemove = async (id: string) => {
@@ -189,14 +205,25 @@ export function SubscriptionsPage() {
                 </p>
               )}
             </div>
-            <button
-              onClick={() => handleRemove(sub.id)}
-              title={t('subscriptions:remove')}
-              aria-label={t('subscriptions:remove')}
-              className="ml-3 cursor-pointer rounded p-1.5 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
-            >
-              <Trash2 className="h-4 w-4" />
-            </button>
+            <div className="ml-3 flex items-center gap-1">
+              <button
+                onClick={() => handleFetch(sub.id)}
+                disabled={fetchingId === sub.id}
+                title={t('subscriptions:fetch')}
+                aria-label={t('subscriptions:fetch')}
+                className="cursor-pointer rounded p-1.5 text-muted-foreground transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <RefreshCw className={`h-4 w-4 ${fetchingId === sub.id ? 'animate-spin' : ''}`} />
+              </button>
+              <button
+                onClick={() => handleRemove(sub.id)}
+                title={t('subscriptions:remove')}
+                aria-label={t('subscriptions:remove')}
+                className="cursor-pointer rounded p-1.5 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </div>
           </div>
         ))}
       </div>

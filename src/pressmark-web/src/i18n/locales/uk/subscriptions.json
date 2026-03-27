@@ -7,6 +7,7 @@
   "feedTitlePlaceholder": "Необов'язково — заповниться автоматично",
   "lastFetched": "Останнє оновлення",
   "remove": "Видалити",
+  "fetch": "Оновити",
   "removeConfirm": "Видалити цю підписку?",
   "import": "Імпорт OPML",
   "export": "Експорт OPML",

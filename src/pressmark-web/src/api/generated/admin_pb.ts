@@ -388,20 +388,41 @@ export class RevokeInviteRequest extends Message<RevokeInviteRequest> {
  * @generated from message pressmark.admin.InviteToken
  */
 export class InviteToken extends Message<InviteToken> {
-  /** @generated from field: string id = 1; */
+  /**
+   * @generated from field: string id = 1;
+   */
   id = "";
-  /** full token shown only on creation; empty in ListInvites
-   * @generated from field: string token = 2; */
+
+  /**
+   * full token shown only on creation; empty in ListInvites
+   *
+   * @generated from field: string token = 2;
+   */
   token = "";
-  /** @generated from field: string note = 3; */
+
+  /**
+   * @generated from field: string note = 3;
+   */
   note = "";
-  /** @generated from field: string created_at = 4; */
+
+  /**
+   * @generated from field: string created_at = 4;
+   */
   createdAt = "";
-  /** @generated from field: bool is_used = 5; */
+
+  /**
+   * @generated from field: bool is_used = 5;
+   */
   isUsed = false;
-  /** @generated from field: string used_at = 6; */
+
+  /**
+   * @generated from field: string used_at = 6;
+   */
   usedAt = "";
-  /** @generated from field: bool is_revoked = 7; */
+
+  /**
+   * @generated from field: bool is_revoked = 7;
+   */
   isRevoked = false;
 
   constructor(data?: PartialMessage<InviteToken>) {
@@ -412,13 +433,13 @@ export class InviteToken extends Message<InviteToken> {
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "pressmark.admin.InviteToken";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "id",         kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "token",      kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 3, name: "note",       kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "note", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 4, name: "created_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 5, name: "is_used",    kind: "scalar", T: 8 /* ScalarType.BOOL */  },
-    { no: 6, name: "used_at",    kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 7, name: "is_revoked", kind: "scalar", T: 8 /* ScalarType.BOOL */  },
+    { no: 5, name: "is_used", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 6, name: "used_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 7, name: "is_revoked", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): InviteToken {

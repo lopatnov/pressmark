@@ -7,6 +7,7 @@
   "feedTitlePlaceholder": "Opcjonalne — wypełniane automatycznie",
   "lastFetched": "Ostatnia aktualizacja",
   "remove": "Usuń",
+  "fetch": "Odśwież",
   "removeConfirm": "Usunąć tę subskrypcję?",
   "import": "Importuj OPML",
   "export": "Eksportuj OPML",

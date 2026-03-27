@@ -7,6 +7,7 @@
   "feedTitlePlaceholder": "İsteğe bağlı — akıştan otomatik doldurulur",
   "lastFetched": "Son güncelleme",
   "remove": "Kaldır",
+  "fetch": "Güncelle",
   "removeConfirm": "Bu aboneliği kaldır?",
   "import": "OPML içe aktar",
   "export": "OPML dışa aktar",

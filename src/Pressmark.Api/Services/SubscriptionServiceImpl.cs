@@ -12,7 +12,7 @@ using Pressmark.Api.Protos;
 namespace Pressmark.Api.Services;
 
 [Authorize]
-public class SubscriptionServiceImpl(AppDbContext db, IHttpClientFactory httpClientFactory) : SubscriptionService.SubscriptionServiceBase
+public class SubscriptionServiceImpl(AppDbContext db, IHttpClientFactory httpClientFactory, FeedFetcherService feedFetcher) : SubscriptionService.SubscriptionServiceBase
 {
     public override async Task<Protos.Subscription> AddSubscription(
         AddSubscriptionRequest request, ServerCallContext context)
@@ -154,6 +154,25 @@ public class SubscriptionServiceImpl(AppDbContext db, IHttpClientFactory httpCli
         {
             OpmlContent = OpmlService.Generate(subs),
         };
+    }
+
+    public override async Task<TriggerFetchResponse> TriggerFetch(
+        TriggerFetchRequest request, ServerCallContext context)
+    {
+        var userId = GetUserId(context);
+        var ct     = context.CancellationToken;
+
+        if (!Guid.TryParse(request.SubscriptionId, out var subId))
+            throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid subscription ID"));
+
+        var sub = await db.Subscriptions
+            .FirstOrDefaultAsync(s => s.Id == subId && s.UserId == userId, ct);
+
+        if (sub is null)
+            throw new RpcException(new Status(StatusCode.NotFound, "Subscription not found"));
+
+        var newItems = await feedFetcher.FetchAndSaveAsync(db, sub, ct);
+        return new TriggerFetchResponse { NewItems = newItems };
     }
 
     // ── helpers ──────────────────────────────────────────────────────────────

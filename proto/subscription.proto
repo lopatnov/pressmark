@@ -12,6 +12,7 @@ service SubscriptionService {
   rpc ListSubscriptions  (google.protobuf.Empty)     returns (SubscriptionList);
   rpc ImportSubscriptions (ImportSubscriptionsRequest) returns (ImportSubscriptionsResponse);
   rpc ExportSubscriptions (google.protobuf.Empty)      returns (ExportSubscriptionsResponse);
+  rpc TriggerFetch       (TriggerFetchRequest)       returns (TriggerFetchResponse);
 }
 
 message AddSubscriptionRequest {
@@ -47,4 +48,12 @@ message ImportSubscriptionsResponse {
 
 message ExportSubscriptionsResponse {
   string opml_content = 1;
+}
+
+message TriggerFetchRequest {
+  string subscription_id = 1;
+}
+
+message TriggerFetchResponse {
+  int32 new_items = 1;
 }

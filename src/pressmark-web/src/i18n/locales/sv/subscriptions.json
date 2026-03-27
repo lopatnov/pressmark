@@ -7,6 +7,7 @@
   "feedTitlePlaceholder": "Valfritt — fylls i automatiskt",
   "lastFetched": "Senast hämtat",
   "remove": "Ta bort",
+  "fetch": "Uppdatera",
   "removeConfirm": "Ta bort denna prenumeration?",
   "import": "Importera OPML",
   "export": "Exportera OPML",

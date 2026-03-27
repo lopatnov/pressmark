@@ -7,6 +7,7 @@
   "feedTitlePlaceholder": "任意 — フィードから自動入力",
   "lastFetched": "最後に取得",
   "remove": "削除",
+  "fetch": "更新",
   "removeConfirm": "この購読を削除しますか？",
   "import": "OPML をインポート",
   "export": "OPML をエクスポート",

@@ -115,45 +115,6 @@ export class GetCommunityFeedRequest extends Message<GetCommunityFeedRequest> {
 }
 
 /**
- * @generated from message pressmark.feed.StreamFeedRequest
- */
-export class StreamFeedRequest extends Message<StreamFeedRequest> {
-  /**
-   * ISO 8601; empty = stream from connection time
-   *
-   * @generated from field: string since_timestamp = 1;
-   */
-  sinceTimestamp = "";
-
-  constructor(data?: PartialMessage<StreamFeedRequest>) {
-    super();
-    proto3.util.initPartial(data, this);
-  }
-
-  static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "pressmark.feed.StreamFeedRequest";
-  static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "since_timestamp", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-  ]);
-
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): StreamFeedRequest {
-    return new StreamFeedRequest().fromBinary(bytes, options);
-  }
-
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): StreamFeedRequest {
-    return new StreamFeedRequest().fromJson(jsonValue, options);
-  }
-
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): StreamFeedRequest {
-    return new StreamFeedRequest().fromJsonString(jsonString, options);
-  }
-
-  static equals(a: StreamFeedRequest | PlainMessage<StreamFeedRequest> | undefined, b: StreamFeedRequest | PlainMessage<StreamFeedRequest> | undefined): boolean {
-    return proto3.util.equals(StreamFeedRequest, a, b);
-  }
-}
-
-/**
  * @generated from message pressmark.feed.GetBookmarksRequest
  */
 export class GetBookmarksRequest extends Message<GetBookmarksRequest> {
@@ -193,6 +154,45 @@ export class GetBookmarksRequest extends Message<GetBookmarksRequest> {
 
   static equals(a: GetBookmarksRequest | PlainMessage<GetBookmarksRequest> | undefined, b: GetBookmarksRequest | PlainMessage<GetBookmarksRequest> | undefined): boolean {
     return proto3.util.equals(GetBookmarksRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message pressmark.feed.StreamFeedRequest
+ */
+export class StreamFeedRequest extends Message<StreamFeedRequest> {
+  /**
+   * ISO 8601; empty = stream from connection time
+   *
+   * @generated from field: string since_timestamp = 1;
+   */
+  sinceTimestamp = "";
+
+  constructor(data?: PartialMessage<StreamFeedRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "pressmark.feed.StreamFeedRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "since_timestamp", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): StreamFeedRequest {
+    return new StreamFeedRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): StreamFeedRequest {
+    return new StreamFeedRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): StreamFeedRequest {
+    return new StreamFeedRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: StreamFeedRequest | PlainMessage<StreamFeedRequest> | undefined, b: StreamFeedRequest | PlainMessage<StreamFeedRequest> | undefined): boolean {
+    return proto3.util.equals(StreamFeedRequest, a, b);
   }
 }
 

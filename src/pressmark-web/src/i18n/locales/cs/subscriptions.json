@@ -7,6 +7,7 @@
   "feedTitlePlaceholder": "Nepovinné — vyplní se automaticky",
   "lastFetched": "Poslední aktualizace",
   "remove": "Odebrat",
+  "fetch": "Aktualizovat",
   "removeConfirm": "Odebrat tento odběr?",
   "import": "Importovat OPML",
   "export": "Exportovat OPML",
