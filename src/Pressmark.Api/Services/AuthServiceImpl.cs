@@ -60,9 +60,9 @@ public class AuthServiceImpl(
 
         var user = new User
         {
-            Email        = request.Email,
+            Email = request.Email,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
-            Role         = isFirst ? "Admin" : "User",
+            Role = isFirst ? "Admin" : "User",
         };
 
         db.Users.Add(user);
@@ -72,9 +72,9 @@ public class AuthServiceImpl(
         {
             var invite = await db.InviteTokens
                 .FirstAsync(t => t.Token == request.InviteToken, ct);
-            invite.IsUsed        = true;
-            invite.UsedAt        = DateTime.UtcNow;
-            invite.UsedByUserId  = user.Id;
+            invite.IsUsed = true;
+            invite.UsedAt = DateTime.UtcNow;
+            invite.UsedByUserId = user.Id;
             await db.SaveChangesAsync(ct);
         }
 
@@ -99,7 +99,7 @@ public class AuthServiceImpl(
     public override async Task<AuthResponse> Refresh(
         RefreshRequest request, ServerCallContext context)
     {
-        var ct   = context.CancellationToken;
+        var ct = context.CancellationToken;
         var http = context.GetHttpContext();
         var rawToken = http.Request.Cookies[jwt.CookieName];
 
@@ -124,14 +124,14 @@ public class AuthServiceImpl(
                 "Refresh token revoked or not found"));
 
         var userId = Guid.Parse(principal.FindFirstValue(ClaimTypes.NameIdentifier)!);
-        var user   = await db.Users.FindAsync([userId], ct);
+        var user = await db.Users.FindAsync([userId], ct);
 
         if (user is null)
             throw new RpcException(new Status(StatusCode.Unauthenticated, "User not found"));
 
         // Revoke old token (rotation)
-        stored.IsRevoked  = true;
-        stored.RevokedAt  = DateTime.UtcNow;
+        stored.IsRevoked = true;
+        stored.RevokedAt = DateTime.UtcNow;
         await db.SaveChangesAsync(ct);
 
         return await IssueTokens(user, http, ct);
@@ -139,8 +139,8 @@ public class AuthServiceImpl(
 
     public override async Task<Empty> Logout(Empty request, ServerCallContext context)
     {
-        var ct       = context.CancellationToken;
-        var http     = context.GetHttpContext();
+        var ct = context.CancellationToken;
+        var http = context.GetHttpContext();
         var rawToken = http.Request.Cookies[jwt.CookieName];
 
         if (!string.IsNullOrEmpty(rawToken))
@@ -165,26 +165,26 @@ public class AuthServiceImpl(
     public override async Task<Empty> ForgotPassword(
         ForgotPasswordRequest request, ServerCallContext context)
     {
-        var ct   = context.CancellationToken;
+        var ct = context.CancellationToken;
         var user = await db.Users
             .FirstOrDefaultAsync(u => u.Email == request.Email, ct);
 
         // Always return success — don't reveal whether the email exists
         if (user is null) return new Empty();
 
-        var rawToken  = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32))
+        var rawToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32))
                             .Replace('+', '-').Replace('/', '_').TrimEnd('=');
         var tokenHash = JwtService.HashToken(rawToken);
 
         db.PasswordResetTokens.Add(new PasswordResetToken
         {
             TokenHash = tokenHash,
-            UserId    = user.Id,
+            UserId = user.Id,
             ExpiresAt = DateTime.UtcNow.AddHours(1),
         });
         await db.SaveChangesAsync(ct);
 
-        var baseUrl  = config["App:BaseUrl"] ?? "http://localhost:5173";
+        var baseUrl = config["App:BaseUrl"] ?? "http://localhost:5173";
         var resetUrl = $"{baseUrl.TrimEnd('/')}/reset-password?token={rawToken}";
 
         await emailService.SendPasswordResetAsync(user.Email, resetUrl, ct);
@@ -196,7 +196,7 @@ public class AuthServiceImpl(
     public override async Task<Empty> ResetPassword(
         ResetPasswordRequest request, ServerCallContext context)
     {
-        var ct        = context.CancellationToken;
+        var ct = context.CancellationToken;
         var tokenHash = JwtService.HashToken(request.Token);
 
         var record = await db.PasswordResetTokens
@@ -237,14 +237,14 @@ public class AuthServiceImpl(
     private async Task<AuthResponse> IssueTokens(
         User user, HttpContext http, CancellationToken ct)
     {
-        var accessToken  = jwt.GenerateAccessToken(user);
+        var accessToken = jwt.GenerateAccessToken(user);
         var refreshToken = jwt.GenerateRefreshToken(user);
 
         db.RefreshTokens.Add(new RefreshToken
         {
-            UserId    = user.Id,
+            UserId = user.Id,
             TokenHash = JwtService.HashToken(refreshToken),
-            IssuedAt  = DateTime.UtcNow,
+            IssuedAt = DateTime.UtcNow,
             ExpiresAt = DateTime.UtcNow.AddDays(jwt.RefreshExpiryDays),
         });
         await db.SaveChangesAsync(ct);
@@ -253,16 +253,16 @@ public class AuthServiceImpl(
         {
             HttpOnly = true,
             SameSite = SameSiteMode.Strict,
-            Secure   = http.Request.IsHttps,
-            Expires  = DateTimeOffset.UtcNow.AddDays(jwt.RefreshExpiryDays),
+            Secure = http.Request.IsHttps,
+            Expires = DateTimeOffset.UtcNow.AddDays(jwt.RefreshExpiryDays),
         });
 
         return new AuthResponse
         {
             AccessToken = accessToken,
-            Email       = user.Email,
-            UserId      = user.Id.ToString(),
-            Role        = user.Role,
+            Email = user.Email,
+            UserId = user.Id.ToString(),
+            Role = user.Role,
         };
     }
 }

@@ -146,9 +146,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
         // Seed SiteSettings
         modelBuilder.Entity<SiteSetting>().HasData(
-            new SiteSetting { Key = "site_name",             Value = "Pressmark" },
+            new SiteSetting { Key = "site_name", Value = "Pressmark" },
             new SiteSetting { Key = "community_window_days", Value = "1" },
-            new SiteSetting { Key = "registration_mode",     Value = "open" }
+            new SiteSetting { Key = "registration_mode", Value = "open" }
         );
     }
 }

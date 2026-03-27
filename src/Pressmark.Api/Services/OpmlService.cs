@@ -13,7 +13,7 @@ public static class OpmlService
             .Where(e => !string.IsNullOrEmpty(e.Attribute("xmlUrl")?.Value))
             .Select(e => (
                 RssUrl: e.Attribute("xmlUrl")!.Value.Trim(),
-                Title:  e.Attribute("text")?.Value.Trim()
+                Title: e.Attribute("text")?.Value.Trim()
                         ?? e.Attribute("title")?.Value.Trim()
                         ?? e.Attribute("xmlUrl")!.Value.Trim()
             ))
@@ -26,9 +26,9 @@ public static class OpmlService
     {
         var body = new XElement("body",
             subscriptions.Select(s => new XElement("outline",
-                new XAttribute("type",   "rss"),
-                new XAttribute("text",   s.Title),
-                new XAttribute("title",  s.Title),
+                new XAttribute("type", "rss"),
+                new XAttribute("text", s.Title),
+                new XAttribute("title", s.Title),
                 new XAttribute("xmlUrl", s.RssUrl)
             ))
         );

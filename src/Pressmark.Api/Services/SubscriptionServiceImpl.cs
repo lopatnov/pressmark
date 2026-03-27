@@ -18,7 +18,7 @@ public class SubscriptionServiceImpl(AppDbContext db, IHttpClientFactory httpCli
         AddSubscriptionRequest request, ServerCallContext context)
     {
         var userId = GetUserId(context);
-        var ct     = context.CancellationToken;
+        var ct = context.CancellationToken;
 
         if (!Uri.TryCreate(request.RssUrl, UriKind.Absolute, out var uri)
             || (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps))
@@ -51,7 +51,7 @@ public class SubscriptionServiceImpl(AppDbContext db, IHttpClientFactory httpCli
         {
             UserId = userId,
             RssUrl = request.RssUrl,
-            Title  = string.IsNullOrWhiteSpace(request.Title)
+            Title = string.IsNullOrWhiteSpace(request.Title)
                         ? (string.IsNullOrWhiteSpace(feedTitle) ? request.RssUrl : feedTitle)
                         : request.Title,
         };
@@ -66,7 +66,7 @@ public class SubscriptionServiceImpl(AppDbContext db, IHttpClientFactory httpCli
         RemoveSubscriptionRequest request, ServerCallContext context)
     {
         var userId = GetUserId(context);
-        var ct     = context.CancellationToken;
+        var ct = context.CancellationToken;
 
         var sub = await db.Subscriptions
             .FirstOrDefaultAsync(s =>
@@ -85,7 +85,7 @@ public class SubscriptionServiceImpl(AppDbContext db, IHttpClientFactory httpCli
         Empty request, ServerCallContext context)
     {
         var userId = GetUserId(context);
-        var ct     = context.CancellationToken;
+        var ct = context.CancellationToken;
 
         var subs = await db.Subscriptions
             .Where(s => s.UserId == userId)
@@ -101,7 +101,7 @@ public class SubscriptionServiceImpl(AppDbContext db, IHttpClientFactory httpCli
         ImportSubscriptionsRequest request, ServerCallContext context)
     {
         var userId = GetUserId(context);
-        var ct     = context.CancellationToken;
+        var ct = context.CancellationToken;
 
         List<(string RssUrl, string Title)> entries;
         try
@@ -127,7 +127,7 @@ public class SubscriptionServiceImpl(AppDbContext db, IHttpClientFactory httpCli
             {
                 UserId = userId,
                 RssUrl = rssUrl,
-                Title  = title,
+                Title = title,
             });
             existingUrls.Add(rssUrl);
             imported++;
@@ -143,7 +143,7 @@ public class SubscriptionServiceImpl(AppDbContext db, IHttpClientFactory httpCli
         Empty request, ServerCallContext context)
     {
         var userId = GetUserId(context);
-        var ct     = context.CancellationToken;
+        var ct = context.CancellationToken;
 
         var subs = await db.Subscriptions
             .Where(s => s.UserId == userId)
@@ -160,7 +160,7 @@ public class SubscriptionServiceImpl(AppDbContext db, IHttpClientFactory httpCli
         TriggerFetchRequest request, ServerCallContext context)
     {
         var userId = GetUserId(context);
-        var ct     = context.CancellationToken;
+        var ct = context.CancellationToken;
 
         if (!Guid.TryParse(request.SubscriptionId, out var subId))
             throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid subscription ID"));
@@ -190,11 +190,11 @@ public class SubscriptionServiceImpl(AppDbContext db, IHttpClientFactory httpCli
 
     private static Protos.Subscription ToProto(Entities.Subscription s) => new()
     {
-        Id            = s.Id.ToString(),
-        UserId        = s.UserId.ToString(),
-        RssUrl        = s.RssUrl,
-        Title         = s.Title,
+        Id = s.Id.ToString(),
+        UserId = s.UserId.ToString(),
+        RssUrl = s.RssUrl,
+        Title = s.Title,
         LastFetchedAt = s.LastFetchedAt?.ToString("o") ?? "",
-        CreatedAt     = s.CreatedAt.ToString("o"),
+        CreatedAt = s.CreatedAt.ToString("o"),
     };
 }

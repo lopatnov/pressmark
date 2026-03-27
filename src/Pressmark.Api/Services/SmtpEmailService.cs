@@ -13,12 +13,12 @@ public class SmtpEmailService(AppDbContext db, ILogger<SmtpEmailService> logger)
         var settings = await db.SiteSettings
             .ToDictionaryAsync(s => s.Key, s => s.Value, ct);
 
-        var host    = settings.GetValueOrDefault("smtp_host", "");
+        var host = settings.GetValueOrDefault("smtp_host", "");
         var portStr = settings.GetValueOrDefault("smtp_port", "587");
-        var user    = settings.GetValueOrDefault("smtp_user", "");
-        var pass    = settings.GetValueOrDefault("smtp_password", "");
-        var useTls  = settings.GetValueOrDefault("smtp_use_tls", "true") == "true";
-        var from    = settings.GetValueOrDefault("smtp_from_address", "noreply@pressmark.local");
+        var user = settings.GetValueOrDefault("smtp_user", "");
+        var pass = settings.GetValueOrDefault("smtp_password", "");
+        var useTls = settings.GetValueOrDefault("smtp_use_tls", "true") == "true";
+        var from = settings.GetValueOrDefault("smtp_from_address", "noreply@pressmark.local");
         var siteName = settings.GetValueOrDefault("site_name", "Pressmark");
 
         if (string.IsNullOrWhiteSpace(host))
@@ -33,7 +33,7 @@ public class SmtpEmailService(AppDbContext db, ILogger<SmtpEmailService> logger)
         message.From.Add(MailboxAddress.Parse(from));
         message.To.Add(MailboxAddress.Parse(toEmail));
         message.Subject = $"[{siteName}] Password reset";
-        message.Body    = new TextPart("plain")
+        message.Body = new TextPart("plain")
         {
             Text = $"You requested a password reset for {siteName}.\n\n"
                  + $"Click the link below to set a new password (valid for 1 hour):\n\n"

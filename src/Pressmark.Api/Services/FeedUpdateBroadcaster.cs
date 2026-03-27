@@ -3,14 +3,14 @@ using System.Threading.Channels;
 namespace Pressmark.Api.Services;
 
 public record FeedUpdateEvent(
-    Guid     Id,
-    Guid     SubscriptionId,
-    string   Title,
-    string   Url,
-    string   Summary,
+    Guid Id,
+    Guid SubscriptionId,
+    string Title,
+    string Url,
+    string Summary,
     DateTime PublishedAt,
-    string   ImageUrl,
-    string   SourceTitle
+    string ImageUrl,
+    string SourceTitle
 );
 
 /// <summary>

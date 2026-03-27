@@ -50,13 +50,13 @@ public class FeedFetcherService(
             .Where(i => i.Links.Count > 0)
             .Select(i => new
             {
-                Url         = i.Links.First().Uri.ToString(),
-                Title       = i.Title?.Text ?? "(no title)",
-                Summary     = StripHtml(i.Summary?.Text),
+                Url = i.Links.First().Uri.ToString(),
+                Title = i.Title?.Text ?? "(no title)",
+                Summary = StripHtml(i.Summary?.Text),
                 PublishedAt = i.PublishDate == DateTimeOffset.MinValue
                                 ? DateTime.UtcNow
                                 : i.PublishDate.UtcDateTime,
-                ImageUrl    = ExtractImageUrl(i),
+                ImageUrl = ExtractImageUrl(i),
             })
             .Where(i => !existingUrls.Contains(i.Url))
             .ToList();
@@ -68,11 +68,11 @@ public class FeedFetcherService(
             var feedItem = new FeedItem
             {
                 SubscriptionId = sub.Id,
-                Url            = item.Url,
-                Title          = item.Title,
-                Summary        = item.Summary,
-                PublishedAt    = item.PublishedAt,
-                ImageUrl       = item.ImageUrl,
+                Url = item.Url,
+                Title = item.Title,
+                Summary = item.Summary,
+                PublishedAt = item.PublishedAt,
+                ImageUrl = item.ImageUrl,
             };
             db.FeedItems.Add(feedItem);
             addedItems.Add(feedItem);
