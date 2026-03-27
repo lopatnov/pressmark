@@ -1,4 +1,6 @@
 using System.ServiceModel.Syndication;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml;
 using Microsoft.EntityFrameworkCore;
 using Pressmark.Api.Data;
@@ -84,6 +86,18 @@ public class FeedFetcherService(
             logger.LogInformation("Fetched {Count} new items for subscription {Id}",
                 newItems.Count, sub.Id);
 
+        // Enrich items without an RSS image by fetching og:image from the article page
+        var needOg = addedItems
+            .Where(i => i.ImageUrl == null && i.Url.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+            .ToList();
+        if (needOg.Count > 0)
+        {
+            var ogTasks = needOg.Select(i => TryFetchOgImageAsync(httpClient, i.Url, ct));
+            var ogImages = await Task.WhenAll(ogTasks);
+            for (var i = 0; i < needOg.Count; i++)
+                needOg[i].ImageUrl = ogImages[i];
+        }
+
         await db.SaveChangesAsync(ct);
 
         // Broadcast newly saved items (IDs are set after SaveChanges)
@@ -97,6 +111,44 @@ public class FeedFetcherService(
         return addedItems.Count;
     }
 
+
+    private static async Task<string?> TryFetchOgImageAsync(
+        HttpClient client, string url, CancellationToken ct)
+    {
+        try
+        {
+            using var cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+            cts.CancelAfter(TimeSpan.FromSeconds(5));
+
+            var response = await client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cts.Token);
+            if (!response.IsSuccessStatusCode) return null;
+
+            var contentType = response.Content.Headers.ContentType?.MediaType;
+            if (contentType?.StartsWith("text/html", StringComparison.OrdinalIgnoreCase) != true)
+                return null;
+
+            // Read only first 64 KB — og:image is always in <head>
+            var stream = await response.Content.ReadAsStreamAsync(cts.Token);
+            var buffer = new byte[65_536];
+            var bytesRead = await stream.ReadAsync(buffer, cts.Token);
+            var html = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+
+            // Try both attribute orders: property first, then content first
+            var match = Regex.Match(html,
+                @"<meta[^>]+property=[""']og:image[""'][^>]+content=[""']([^""'<>]+)[""']",
+                RegexOptions.IgnoreCase);
+            if (!match.Success)
+                match = Regex.Match(html,
+                    @"<meta[^>]+content=[""']([^""'<>]+)[""'][^>]+property=[""']og:image[""']",
+                    RegexOptions.IgnoreCase);
+
+            return match.Success ? match.Groups[1].Value.Trim() : null;
+        }
+        catch
+        {
+            return null; // timeout, 404, non-HTML — silently skip
+        }
+    }
 
     private static string? ExtractImageUrl(SyndicationItem item)
     {
