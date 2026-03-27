@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
 import { Heart } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
 import { feedClient } from '@/api/clients'
 import { useAuthStore } from '@/store/authStore'
 import { FeedItemCard } from '@/components/feed/FeedItemCard'
@@ -48,6 +50,8 @@ export function CommunityPage() {
         setItems(mapped)
       }
       setNextCursor(res.nextCursor)
+    } catch {
+      toast.error(t('common:error'))
     } finally {
       setIsLoading(false)
     }
@@ -68,6 +72,7 @@ export function CommunityPage() {
 
   useEffect(() => {
     loadFeed()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
@@ -97,30 +102,43 @@ export function CommunityPage() {
       )}
 
       <div className="space-y-2">
-        {items.map((item) => (
-          <FeedItemCard
-            key={item.id}
-            item={item}
-            actions={
-              isAuthenticated ? (
-                <button
-                  onClick={() => handleLike(item.id)}
-                  title={item.isLiked ? t('feed:unlike') : t('feed:like')}
-                  aria-label={item.isLiked ? t('feed:unlike') : t('feed:like')}
-                  className={`flex cursor-pointer items-center gap-1 rounded px-2 py-1 text-xs transition-colors hover:bg-muted ${item.isLiked ? 'text-rose-500' : 'text-muted-foreground'}`}
-                >
-                  <Heart className={`h-3.5 w-3.5 ${item.isLiked ? 'fill-current' : ''}`} />
-                  {item.likeCount > 0 && <span>{item.likeCount}</span>}
-                </button>
-              ) : (
-                <span className="flex items-center gap-1 px-2 py-1 text-xs text-muted-foreground">
-                  <Heart className="h-3.5 w-3.5" />
-                  {item.likeCount > 0 && <span>{item.likeCount}</span>}
-                </span>
-              )
-            }
-          />
-        ))}
+        {isLoading && items.length === 0
+          ? Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="rounded-lg border border-border bg-card p-4 space-y-2">
+                <Skeleton className="h-4 w-3/4" />
+                <div className="flex gap-2">
+                  <Skeleton className="h-3.5 w-3.5 rounded-sm" />
+                  <Skeleton className="h-3 w-24" />
+                  <Skeleton className="h-3 w-32" />
+                </div>
+                <Skeleton className="h-3 w-full" />
+                <Skeleton className="h-3 w-5/6" />
+              </div>
+            ))
+          : items.map((item) => (
+              <FeedItemCard
+                key={item.id}
+                item={item}
+                actions={
+                  isAuthenticated ? (
+                    <button
+                      onClick={() => handleLike(item.id)}
+                      title={item.isLiked ? t('feed:unlike') : t('feed:like')}
+                      aria-label={item.isLiked ? t('feed:unlike') : t('feed:like')}
+                      className={`flex cursor-pointer items-center gap-1 rounded px-2 py-1 text-xs transition-colors hover:bg-muted ${item.isLiked ? 'text-rose-500' : 'text-muted-foreground'}`}
+                    >
+                      <Heart className={`h-3.5 w-3.5 ${item.isLiked ? 'fill-current' : ''}`} />
+                      {item.likeCount > 0 && <span>{item.likeCount}</span>}
+                    </button>
+                  ) : (
+                    <span className="flex items-center gap-1 px-2 py-1 text-xs text-muted-foreground">
+                      <Heart className="h-3.5 w-3.5" />
+                      {item.likeCount > 0 && <span>{item.likeCount}</span>}
+                    </span>
+                  )
+                }
+              />
+            ))}
       </div>
 
       {nextCursor && (

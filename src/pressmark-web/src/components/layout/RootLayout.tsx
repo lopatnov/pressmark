@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { Outlet } from 'react-router-dom'
+import { Toaster } from '@/components/ui/sonner'
 import { useAuthStore } from '@/store/authStore'
 import { authClient } from '@/api/clients'
 
@@ -26,5 +27,10 @@ export function RootLayout() {
 
   if (!isInitialized) return null
 
-  return <Outlet />
+  return (
+    <>
+      <Outlet />
+      <Toaster richColors closeButton />
+    </>
+  )
 }

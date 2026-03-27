@@ -3,9 +3,11 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
 import { Download, Plus, RefreshCw, Trash2, Upload } from 'lucide-react'
 import { Code, ConnectError } from '@connectrpc/connect'
 import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
 import { subscriptionClient } from '@/api/clients'
 import { useSubscriptionStore } from '@/store/subscriptionStore'
 
@@ -92,7 +94,7 @@ export function SubscriptionsPage() {
       a.click()
       URL.revokeObjectURL(url)
     } catch {
-      // intentional — export failures are silent
+      toast.error(t('common:error'))
     }
   }
 
@@ -150,7 +152,7 @@ export function SubscriptionsPage() {
         })),
       )
     } catch {
-      // intentional — spinner stops via finally
+      toast.error(t('common:error'))
     } finally {
       setFetchingId(null)
     }
@@ -228,8 +230,21 @@ export function SubscriptionsPage() {
         </form>
       )}
 
-      {isLoading && (
-        <p className="text-center text-sm text-muted-foreground">{t('common:loading')}</p>
+      {isLoading && subscriptions.length === 0 && (
+        <div className="space-y-2">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div
+              key={i}
+              className="flex items-center justify-between rounded-lg border border-border bg-card px-4 py-3"
+            >
+              <div className="space-y-1.5 flex-1 min-w-0">
+                <Skeleton className="h-4 w-40" />
+                <Skeleton className="h-3 w-64" />
+              </div>
+              <Skeleton className="h-7 w-16 ml-2" />
+            </div>
+          ))}
+        </div>
       )}
 
       {!isLoading && subscriptions.length === 0 && (
