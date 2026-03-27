@@ -191,7 +191,9 @@ export function SubscriptionsPage() {
             </div>
             <button
               onClick={() => handleRemove(sub.id)}
-              className="ml-3 rounded p-1.5 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
+              title={t('subscriptions:remove')}
+              aria-label={t('subscriptions:remove')}
+              className="ml-3 cursor-pointer rounded p-1.5 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
             >
               <Trash2 className="h-4 w-4" />
             </button>

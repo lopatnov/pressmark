@@ -1,9 +1,11 @@
+import { useEffect } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Globe, Rss, Bookmark, Settings, LogOut, LogIn, UserPlus, BookOpen } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
 import { useFeedStore } from '@/store/feedStore'
-import { authClient } from '@/api/clients'
+import { useAdminStore } from '@/store/adminStore'
+import { authClient, adminClient } from '@/api/clients'
 import { LanguageSwitcher } from './LanguageSwitcher'
 
 export function Sidebar() {
@@ -14,6 +16,24 @@ export function Sidebar() {
   const isAdmin         = useAuthStore((s) => s.isAdmin())
   const clearAuth       = useAuthStore((s) => s.clearAuth)
   const totalUnread     = useFeedStore((s) => s.totalUnread)
+  const { settings, setSettings } = useAdminStore()
+
+  useEffect(() => {
+    if (!isAdmin || settings) return
+    adminClient.getSiteSettings({}).then((res) => {
+      setSettings({
+        siteName:            res.siteName,
+        communityWindowDays: res.communityWindowDays,
+        registrationMode:    res.registrationMode as 'open' | 'invite_only',
+        smtpHost:            res.smtpHost,
+        smtpPort:            res.smtpPort || 587,
+        smtpUser:            res.smtpUser,
+        smtpPassword:        '',
+        smtpUseTls:          res.smtpUseTls,
+        smtpFromAddress:     res.smtpFromAddress,
+      })
+    }).catch(() => {})
+  }, [isAdmin])
 
   const handleLogout = async () => {
     await authClient.logout({}).catch(() => {})
@@ -30,7 +50,7 @@ export function Sidebar() {
   return (
     <aside className="flex h-screen w-56 shrink-0 flex-col border-r border-sidebar-border bg-sidebar">
       <div className="flex flex-col border-b border-sidebar-border px-4 py-3">
-        <span className="text-sm font-semibold text-sidebar-foreground">{t('appName')}</span>
+        <span className="text-sm font-semibold text-sidebar-foreground">{settings?.siteName || t('appName')}</span>
         {user && (
           <span className="truncate text-xs text-muted-foreground" title={user.email}>
             {user.email}

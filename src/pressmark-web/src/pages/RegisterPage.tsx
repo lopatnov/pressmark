@@ -63,10 +63,6 @@ export function RegisterPage() {
       <div className="w-full max-w-sm space-y-6 p-6">
         <h1 className="text-2xl font-semibold">{t('register.title')}</h1>
 
-        <p className="rounded-md bg-muted px-3 py-2 text-sm text-muted-foreground">
-          {t('register.firstUserAdmin')}
-        </p>
-
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-1">
             <label className="text-sm font-medium">{t('register.email')}</label>

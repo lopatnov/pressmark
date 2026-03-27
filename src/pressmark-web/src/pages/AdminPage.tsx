@@ -157,7 +157,7 @@ function SiteSettingsSection() {
         </div>
 
         <div className="flex items-center gap-3">
-          <Button type="submit" size="sm" disabled={isSubmitting}>{t('common:save')}</Button>
+          <Button type="submit" size="sm" disabled={isSubmitting || !settings}>{t('common:save')}</Button>
           {saved && <span className="text-xs text-green-600">{t('admin:settings.saved')}</span>}
         </div>
       </form>

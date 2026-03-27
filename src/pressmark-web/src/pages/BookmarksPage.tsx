@@ -69,7 +69,9 @@ export function BookmarksPage() {
             actions={
               <button
                 onClick={() => handleRemoveBookmark(item.id)}
-                className="flex items-center gap-1 rounded px-2 py-1 text-xs text-amber-500 transition-colors hover:bg-muted"
+                title={t('feed:removeBookmark')}
+                aria-label={t('feed:removeBookmark')}
+                className="flex cursor-pointer items-center gap-1 rounded px-2 py-1 text-xs text-amber-500 transition-colors hover:bg-muted"
               >
                 <BookMarked className="h-3.5 w-3.5 fill-current" />
                 <span>{t('feed:removeBookmark')}</span>

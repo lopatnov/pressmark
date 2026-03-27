@@ -99,7 +99,9 @@ export function CommunityPage() {
               isAuthenticated ? (
                 <button
                   onClick={() => handleLike(item.id)}
-                  className={`flex items-center gap-1 rounded px-2 py-1 text-xs transition-colors hover:bg-muted ${item.isLiked ? 'text-rose-500' : 'text-muted-foreground'}`}
+                  title={item.isLiked ? t('feed:unlike') : t('feed:like')}
+                  aria-label={item.isLiked ? t('feed:unlike') : t('feed:like')}
+                  className={`flex cursor-pointer items-center gap-1 rounded px-2 py-1 text-xs transition-colors hover:bg-muted ${item.isLiked ? 'text-rose-500' : 'text-muted-foreground'}`}
                 >
                   <Heart className={`h-3.5 w-3.5 ${item.isLiked ? 'fill-current' : ''}`} />
                   {item.likeCount > 0 && <span>{item.likeCount}</span>}

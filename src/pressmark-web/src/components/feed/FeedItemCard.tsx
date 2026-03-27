@@ -53,7 +53,10 @@ export function FeedItemCard({
         {item.sourceTitle && <span>·</span>}
         <span>
           {item.publishedAt
-            ? new Date(item.publishedAt).toLocaleDateString()
+            ? new Date(item.publishedAt).toLocaleString(undefined, {
+                month: 'short', day: 'numeric', year: 'numeric',
+                hour: '2-digit', minute: '2-digit',
+              })
             : ""}
         </span>
       </div>
