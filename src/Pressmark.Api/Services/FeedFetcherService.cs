@@ -52,7 +52,7 @@ public class FeedFetcherService(
             {
                 Url = i.Links.First().Uri.ToString(),
                 Title = i.Title?.Text ?? "(no title)",
-                Summary = StripHtml(i.Summary?.Text),
+                Summary = string.IsNullOrWhiteSpace(i.Summary?.Text) ? null : i.Summary.Text.Trim(),
                 PublishedAt = i.PublishDate == DateTimeOffset.MinValue
                                 ? DateTime.UtcNow
                                 : i.PublishDate.UtcDateTime,
@@ -97,14 +97,6 @@ public class FeedFetcherService(
         return addedItems.Count;
     }
 
-    private static string? StripHtml(string? html)
-    {
-        if (string.IsNullOrEmpty(html)) return null;
-        var text = System.Text.RegularExpressions.Regex.Replace(html, "<[^>]+>", " ");
-        text = System.Net.WebUtility.HtmlDecode(text);
-        text = System.Text.RegularExpressions.Regex.Replace(text, @"\s{2,}", " ").Trim();
-        return text.Length == 0 ? null : text;
-    }
 
     private static string? ExtractImageUrl(SyndicationItem item)
     {

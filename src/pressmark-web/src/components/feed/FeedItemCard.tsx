@@ -1,5 +1,5 @@
+import DOMPurify from 'dompurify'
 import { ExternalLink } from 'lucide-react'
-import { stripHtml } from '@/lib/utils'
 
 export interface FeedItemData {
   id: string
@@ -16,6 +16,13 @@ interface FeedItemCardProps {
   item: FeedItemData
   onTitleClick?: () => void
   actions?: React.ReactNode
+}
+
+function sanitizeSummary(html: string): string {
+  return DOMPurify.sanitize(html, {
+    ALLOWED_TAGS: ['a', 'b', 'i', 'em', 'strong', 'p', 'ul', 'ol', 'li', 'br', 'code', 'pre'],
+    ALLOWED_ATTR: ['href'],
+  }) as string
 }
 
 function getYouTubeId(url: string): string | null {
@@ -99,7 +106,10 @@ export function FeedItemCard({ item, onTitleClick, actions }: FeedItemCardProps)
       </div>
 
       {item.summary && (
-        <p className="line-clamp-2 text-xs text-muted-foreground">{stripHtml(item.summary)}</p>
+        <div
+          className="max-h-16 overflow-hidden text-xs text-muted-foreground [&_a]:underline [&_ul]:list-disc [&_ul]:pl-4 [&_ol]:list-decimal [&_ol]:pl-4"
+          dangerouslySetInnerHTML={{ __html: sanitizeSummary(item.summary) }}
+        />
       )}
 
       {youtubeId ? (
