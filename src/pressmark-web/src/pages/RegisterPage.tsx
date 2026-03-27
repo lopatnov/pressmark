@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -14,6 +14,16 @@ export function RegisterPage() {
   const navigate = useNavigate()
   const setAuth = useAuthStore((s) => s.setAuth)
   const [showInvite, setShowInvite] = useState(false)
+  const [isFirstUser, setIsFirstUser] = useState(false)
+
+  useEffect(() => {
+    authClient
+      .getRegistrationStatus({})
+      .then((res) => setIsFirstUser(!res.hasAdmin))
+      .catch(() => {
+        // intentional — banner is informational, failure is non-critical
+      })
+  }, [])
 
   const schema = useMemo(
     () =>
@@ -70,6 +80,12 @@ export function RegisterPage() {
     <div className="flex min-h-screen items-center justify-center">
       <div className="w-full max-w-sm space-y-6 p-6">
         <h1 className="text-2xl font-semibold">{t('register.title')}</h1>
+
+        {isFirstUser && (
+          <p className="rounded-lg border border-border bg-muted/40 px-4 py-3 text-sm text-muted-foreground">
+            {t('firstUserAdmin')}
+          </p>
+        )}
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-1">

@@ -266,3 +266,50 @@ export class ResetPasswordRequest extends Message<ResetPasswordRequest> {
   }
 }
 
+/**
+ * @generated from message pressmark.auth.RegistrationStatus
+ */
+export class RegistrationStatus extends Message<RegistrationStatus> {
+  /**
+   * false = первый пользователь станет Admin
+   *
+   * @generated from field: bool has_admin = 1;
+   */
+  hasAdmin = false;
+
+  /**
+   * "open" | "invite_only"
+   *
+   * @generated from field: string registration_mode = 2;
+   */
+  registrationMode = "";
+
+  constructor(data?: PartialMessage<RegistrationStatus>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "pressmark.auth.RegistrationStatus";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "has_admin", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 2, name: "registration_mode", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): RegistrationStatus {
+    return new RegistrationStatus().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): RegistrationStatus {
+    return new RegistrationStatus().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): RegistrationStatus {
+    return new RegistrationStatus().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: RegistrationStatus | PlainMessage<RegistrationStatus> | undefined, b: RegistrationStatus | PlainMessage<RegistrationStatus> | undefined): boolean {
+    return proto3.util.equals(RegistrationStatus, a, b);
+  }
+}
+

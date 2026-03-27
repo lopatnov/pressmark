@@ -178,6 +178,19 @@ public class AuthServiceImpl(
     }
 
     [AllowAnonymous]
+    public override async Task<RegistrationStatus> GetRegistrationStatus(
+        Empty request, ServerCallContext context)
+    {
+        var ct = context.CancellationToken;
+        var hasAdmin = await db.Users.AnyAsync(ct);
+        var mode = await db.SiteSettings
+            .Where(s => s.Key == "registration_mode")
+            .Select(s => s.Value)
+            .FirstOrDefaultAsync(ct) ?? "open";
+        return new RegistrationStatus { HasAdmin = hasAdmin, RegistrationMode = mode };
+    }
+
+    [AllowAnonymous]
     public override async Task<Empty> ForgotPassword(
         ForgotPasswordRequest request, ServerCallContext context)
     {

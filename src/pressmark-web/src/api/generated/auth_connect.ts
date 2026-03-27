@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { AuthResponse, ForgotPasswordRequest, LoginRequest, RefreshRequest, RegisterRequest, ResetPasswordRequest } from "./auth_pb.js";
+import { AuthResponse, ForgotPasswordRequest, LoginRequest, RefreshRequest, RegisterRequest, RegistrationStatus, ResetPasswordRequest } from "./auth_pb.js";
 import { Empty, MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -64,6 +64,17 @@ export const AuthService = {
       name: "ResetPassword",
       I: ResetPasswordRequest,
       O: Empty,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * [AllowAnonymous]
+     *
+     * @generated from rpc pressmark.auth.AuthService.GetRegistrationStatus
+     */
+    getRegistrationStatus: {
+      name: "GetRegistrationStatus",
+      I: Empty,
+      O: RegistrationStatus,
       kind: MethodKind.Unary,
     },
   }
