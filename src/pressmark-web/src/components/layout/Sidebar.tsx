@@ -11,28 +11,32 @@ import { LanguageSwitcher } from './LanguageSwitcher'
 export function Sidebar() {
   const { t } = useTranslation('common')
   const navigate = useNavigate()
-  const user            = useAuthStore((s) => s.user)
+  const user = useAuthStore((s) => s.user)
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated())
-  const isAdmin         = useAuthStore((s) => s.isAdmin())
-  const clearAuth       = useAuthStore((s) => s.clearAuth)
-  const totalUnread     = useFeedStore((s) => s.totalUnread)
+  const isAdmin = useAuthStore((s) => s.isAdmin())
+  const clearAuth = useAuthStore((s) => s.clearAuth)
+  const totalUnread = useFeedStore((s) => s.totalUnread)
   const { settings, setSettings } = useAdminStore()
 
   useEffect(() => {
     if (!isAdmin || settings) return
-    adminClient.getSiteSettings({}).then((res) => {
-      setSettings({
-        siteName:            res.siteName,
-        communityWindowDays: res.communityWindowDays,
-        registrationMode:    res.registrationMode as 'open' | 'invite_only',
-        smtpHost:            res.smtpHost,
-        smtpPort:            res.smtpPort || 587,
-        smtpUser:            res.smtpUser,
-        smtpPassword:        '',
-        smtpUseTls:          res.smtpUseTls,
-        smtpFromAddress:     res.smtpFromAddress,
+    adminClient
+      .getSiteSettings({})
+      .then((res) => {
+        setSettings({
+          siteName: res.siteName,
+          communityWindowDays: res.communityWindowDays,
+          registrationMode: res.registrationMode as 'open' | 'invite_only',
+          smtpHost: res.smtpHost,
+          smtpPort: res.smtpPort || 587,
+          smtpUser: res.smtpUser,
+          smtpPassword: '',
+          smtpUseTls: res.smtpUseTls,
+          smtpFromAddress: res.smtpFromAddress,
+        })
       })
-    }).catch(() => {})
+      .catch(() => {})
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAdmin])
 
   const handleLogout = async () => {
@@ -50,7 +54,9 @@ export function Sidebar() {
   return (
     <aside className="flex h-screen w-56 shrink-0 flex-col border-r border-sidebar-border bg-sidebar">
       <div className="flex flex-col border-b border-sidebar-border px-4 py-3">
-        <span className="text-sm font-semibold text-sidebar-foreground">{settings?.siteName || t('appName')}</span>
+        <span className="text-sm font-semibold text-sidebar-foreground">
+          {settings?.siteName || t('appName')}
+        </span>
         {user && (
           <span className="truncate text-xs text-muted-foreground" title={user.email}>
             {user.email}

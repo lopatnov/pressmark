@@ -12,30 +12,38 @@ import { Code, ConnectError } from '@connectrpc/connect'
 export function RegisterPage() {
   const { t } = useTranslation('auth')
   const navigate = useNavigate()
-  const setAuth  = useAuthStore((s) => s.setAuth)
+  const setAuth = useAuthStore((s) => s.setAuth)
   const [showInvite, setShowInvite] = useState(false)
 
-  const schema = useMemo(() => z.object({
-    email:       z.string().email(t('errors.invalidEmail')),
-    password:    z.string().min(8, t('errors.passwordTooShort')),
-    inviteToken: z.string().optional(),
-  }), [t])
+  const schema = useMemo(
+    () =>
+      z.object({
+        email: z.string().email(t('errors.invalidEmail')),
+        password: z.string().min(8, t('errors.passwordTooShort')),
+        inviteToken: z.string().optional(),
+      }),
+    [t],
+  )
   type FormData = z.infer<typeof schema>
 
-  const { register, handleSubmit, formState: { errors, isSubmitting }, setError } =
-    useForm<FormData>({ resolver: zodResolver(schema) })
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    setError,
+  } = useForm<FormData>({ resolver: zodResolver(schema) })
 
   const onSubmit = async (data: FormData) => {
     try {
       const res = await authClient.register({
-        email:       data.email,
-        password:    data.password,
+        email: data.email,
+        password: data.password,
         inviteToken: data.inviteToken ?? '',
       })
       setAuth(res.accessToken, {
-        id:    res.userId,
+        id: res.userId,
         email: res.email,
-        role:  res.role as 'User' | 'Admin',
+        role: res.role as 'User' | 'Admin',
       })
       navigate('/feed')
     } catch (err) {
@@ -83,7 +91,9 @@ export function RegisterPage() {
               autoComplete="new-password"
               className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
             />
-            {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
+            {errors.password && (
+              <p className="text-xs text-destructive">{errors.password.message}</p>
+            )}
           </div>
 
           {showInvite && (
@@ -110,7 +120,9 @@ export function RegisterPage() {
 
         <p className="text-center text-sm text-muted-foreground">
           {t('register.hasAccount')}{' '}
-          <Link to="/login" className="underline">{t('register.login')}</Link>
+          <Link to="/login" className="underline">
+            {t('register.login')}
+          </Link>
         </p>
       </div>
     </div>

@@ -30,6 +30,6 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: () => !!get().accessToken,
       isAdmin: () => get().user?.role === 'Admin',
     }),
-    { name: 'auth' }
-  )
+    { name: 'auth' },
+  ),
 )

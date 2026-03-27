@@ -26,6 +26,10 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.5" />
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.16.0" />
     <PackageReference Include="System.ServiceModel.Syndication" Version="10.0.5" />
+    <PackageReference Include="Roslynator.Analyzers" Version="4.*">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
 </Project>

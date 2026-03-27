@@ -22,7 +22,7 @@ interface UserInfo {
 
 export interface InviteItem {
   id: string
-  token: string  // populated only on creation
+  token: string // populated only on creation
   note: string
   createdAt: string
   isUsed: boolean
@@ -50,15 +50,16 @@ export const useAdminStore = create<AdminState>()(
       users: [],
       invites: [],
       isLoading: false,
-      setSettings:  (settings)  => set({ settings }),
-      setUsers:     (users)     => set({ users }),
-      setInvites:   (invites)   => set({ invites }),
-      addInvite:    (invite)    => set((s) => ({ invites: [invite, ...s.invites] })),
-      removeInvite: (id)        => set((s) => ({ invites: s.invites.map((i) =>
-        i.id === id ? { ...i, isRevoked: true } : i
-      )})),
-      setLoading:   (isLoading) => set({ isLoading }),
+      setSettings: (settings) => set({ settings }),
+      setUsers: (users) => set({ users }),
+      setInvites: (invites) => set({ invites }),
+      addInvite: (invite) => set((s) => ({ invites: [invite, ...s.invites] })),
+      removeInvite: (id) =>
+        set((s) => ({
+          invites: s.invites.map((i) => (i.id === id ? { ...i, isRevoked: true } : i)),
+        })),
+      setLoading: (isLoading) => set({ isLoading }),
     }),
-    { name: 'admin' }
-  )
+    { name: 'admin' },
+  ),
 )

@@ -321,7 +321,7 @@ public class FeedServiceImpl(AppDbContext db, FeedUpdateBroadcaster broadcaster)
         {
             //logger.LogInformation("Client disconnected from feed stream.");
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             //logger.LogError(ex, "Unexpected error in feed stream.");
             throw;

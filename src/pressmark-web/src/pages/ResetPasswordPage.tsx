@@ -7,13 +7,15 @@ import { Button } from '@/components/ui/button'
 import { authClient } from '@/api/clients'
 import { ConnectError } from '@connectrpc/connect'
 
-const schema = z.object({
-  newPassword:     z.string().min(8, 'Minimum 8 characters'),
-  confirmPassword: z.string(),
-}).refine((d) => d.newPassword === d.confirmPassword, {
-  message: 'Passwords do not match',
-  path: ['confirmPassword'],
-})
+const schema = z
+  .object({
+    newPassword: z.string().min(8, 'Minimum 8 characters'),
+    confirmPassword: z.string(),
+  })
+  .refine((d) => d.newPassword === d.confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
+  })
 type FormData = z.infer<typeof schema>
 
 export function ResetPasswordPage() {
@@ -22,8 +24,12 @@ export function ResetPasswordPage() {
   const [params] = useSearchParams()
   const token = params.get('token') ?? ''
 
-  const { register, handleSubmit, formState: { errors, isSubmitting }, setError } =
-    useForm<FormData>({ resolver: zodResolver(schema) })
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    setError,
+  } = useForm<FormData>({ resolver: zodResolver(schema) })
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -86,7 +92,9 @@ export function ResetPasswordPage() {
         </form>
 
         <p className="text-center text-sm text-muted-foreground">
-          <Link to="/login" className="underline">{t('register.login')}</Link>
+          <Link to="/login" className="underline">
+            {t('register.login')}
+          </Link>
         </p>
       </div>
     </div>

@@ -4,22 +4,24 @@ import { useAuthStore } from '@/store/authStore'
 import { authClient } from '@/api/clients'
 
 export function RootLayout() {
-  const setAuth       = useAuthStore((s) => s.setAuth)
-  const clearAuth     = useAuthStore((s) => s.clearAuth)
+  const setAuth = useAuthStore((s) => s.setAuth)
+  const clearAuth = useAuthStore((s) => s.clearAuth)
   const setInitialized = useAuthStore((s) => s.setInitialized)
-  const isInitialized  = useAuthStore((s) => s.isInitialized)
+  const isInitialized = useAuthStore((s) => s.isInitialized)
 
   useEffect(() => {
-    authClient.refresh({})
+    authClient
+      .refresh({})
       .then((res) => {
         setAuth(res.accessToken, {
-          id:    res.userId,
+          id: res.userId,
           email: res.email,
-          role:  res.role as 'User' | 'Admin',
+          role: res.role as 'User' | 'Admin',
         })
       })
       .catch(() => clearAuth())
       .finally(() => setInitialized())
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   if (!isInitialized) return null

@@ -11,41 +11,65 @@ import { useSubscriptionStore } from '@/store/subscriptionStore'
 
 const schema = z.object({
   rssUrl: z.string().url(),
-  title:  z.string().optional(),
+  title: z.string().optional(),
 })
 type FormData = z.infer<typeof schema>
 
 export function SubscriptionsPage() {
   const { t } = useTranslation(['subscriptions', 'common'])
-  const { subscriptions, isLoading, setSubscriptions, addSubscription, removeSubscription, setLoading } =
-    useSubscriptionStore()
+  const {
+    subscriptions,
+    isLoading,
+    setSubscriptions,
+    addSubscription,
+    removeSubscription,
+    setLoading,
+  } = useSubscriptionStore()
   const [showForm, setShowForm] = useState(false)
   const [importStatus, setImportStatus] = useState<string | null>(null)
   const [fetchingId, setFetchingId] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const { register, handleSubmit, formState: { errors, isSubmitting }, setError, reset } =
-    useForm<FormData>({ resolver: zodResolver(schema) })
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    setError,
+    reset,
+  } = useForm<FormData>({ resolver: zodResolver(schema) })
 
   useEffect(() => {
     setLoading(true)
-    subscriptionClient.listSubscriptions({})
+    subscriptionClient
+      .listSubscriptions({})
       .then((res) => {
-        setSubscriptions(res.subscriptions.map((s) => ({
-          id:            s.id,
-          rssUrl:        s.rssUrl,
-          title:         s.title,
-          lastFetchedAt: s.lastFetchedAt,
-          createdAt:     s.createdAt,
-        })))
+        setSubscriptions(
+          res.subscriptions.map((s) => ({
+            id: s.id,
+            rssUrl: s.rssUrl,
+            title: s.title,
+            lastFetchedAt: s.lastFetchedAt,
+            createdAt: s.createdAt,
+          })),
+        )
       })
       .finally(() => setLoading(false))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const onSubmit = async (data: FormData) => {
     try {
-      const sub = await subscriptionClient.addSubscription({ rssUrl: data.rssUrl, title: data.title ?? '' })
-      addSubscription({ id: sub.id, rssUrl: sub.rssUrl, title: sub.title, lastFetchedAt: sub.lastFetchedAt, createdAt: sub.createdAt })
+      const sub = await subscriptionClient.addSubscription({
+        rssUrl: data.rssUrl,
+        title: data.title ?? '',
+      })
+      addSubscription({
+        id: sub.id,
+        rssUrl: sub.rssUrl,
+        title: sub.title,
+        lastFetchedAt: sub.lastFetchedAt,
+        createdAt: sub.createdAt,
+      })
       reset()
       setShowForm(false)
     } catch (err) {
@@ -61,13 +85,15 @@ export function SubscriptionsPage() {
     try {
       const res = await subscriptionClient.exportSubscriptions({})
       const blob = new Blob([res.opmlContent], { type: 'text/xml' })
-      const url  = URL.createObjectURL(blob)
-      const a    = document.createElement('a')
-      a.href     = url
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
       a.download = 'subscriptions.opml'
       a.click()
       URL.revokeObjectURL(url)
-    } catch {}
+    } catch {
+      // intentional — export failures are silent
+    }
   }
 
   const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -78,16 +104,23 @@ export function SubscriptionsPage() {
       const opmlContent = ev.target?.result as string
       try {
         const res = await subscriptionClient.importSubscriptions({ opmlContent })
-        setImportStatus(t('subscriptions:importSuccess', {
-          imported: res.imported,
-          skipped:  res.skipped,
-        }))
+        setImportStatus(
+          t('subscriptions:importSuccess', {
+            imported: res.imported,
+            skipped: res.skipped,
+          }),
+        )
         // Refresh the list
         const list = await subscriptionClient.listSubscriptions({})
-        setSubscriptions(list.subscriptions.map((s) => ({
-          id: s.id, rssUrl: s.rssUrl, title: s.title,
-          lastFetchedAt: s.lastFetchedAt, createdAt: s.createdAt,
-        })))
+        setSubscriptions(
+          list.subscriptions.map((s) => ({
+            id: s.id,
+            rssUrl: s.rssUrl,
+            title: s.title,
+            lastFetchedAt: s.lastFetchedAt,
+            createdAt: s.createdAt,
+          })),
+        )
       } catch {
         setImportStatus(t('subscriptions:importError'))
       } finally {
@@ -107,11 +140,18 @@ export function SubscriptionsPage() {
       await subscriptionClient.triggerFetch({ subscriptionId: id })
       // Refresh the subscription to get the updated lastFetchedAt
       const list = await subscriptionClient.listSubscriptions({})
-      setSubscriptions(list.subscriptions.map((s) => ({
-        id: s.id, rssUrl: s.rssUrl, title: s.title,
-        lastFetchedAt: s.lastFetchedAt, createdAt: s.createdAt,
-      })))
-    } catch {} finally {
+      setSubscriptions(
+        list.subscriptions.map((s) => ({
+          id: s.id,
+          rssUrl: s.rssUrl,
+          title: s.title,
+          lastFetchedAt: s.lastFetchedAt,
+          createdAt: s.createdAt,
+        })),
+      )
+    } catch {
+      // intentional — spinner stops via finally
+    } finally {
       setFetchingId(null)
     }
   }
@@ -149,12 +189,13 @@ export function SubscriptionsPage() {
         </div>
       </div>
 
-      {importStatus && (
-        <p className="rounded-md bg-muted px-3 py-2 text-sm">{importStatus}</p>
-      )}
+      {importStatus && <p className="rounded-md bg-muted px-3 py-2 text-sm">{importStatus}</p>}
 
       {showForm && (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 rounded-lg border border-border p-4">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="space-y-3 rounded-lg border border-border p-4"
+        >
           <div className="space-y-1">
             <label className="text-sm font-medium">{t('subscriptions:rssUrl')}</label>
             <input
@@ -177,7 +218,9 @@ export function SubscriptionsPage() {
           </div>
           {errors.root && <p className="text-sm text-destructive">{errors.root.message}</p>}
           <div className="flex gap-2">
-            <Button type="submit" size="sm" disabled={isSubmitting}>{t('common:save')}</Button>
+            <Button type="submit" size="sm" disabled={isSubmitting}>
+              {t('common:save')}
+            </Button>
             <Button type="button" variant="ghost" size="sm" onClick={() => setShowForm(false)}>
               {t('common:cancel')}
             </Button>
@@ -190,12 +233,17 @@ export function SubscriptionsPage() {
       )}
 
       {!isLoading && subscriptions.length === 0 && (
-        <p className="py-12 text-center text-sm text-muted-foreground">{t('subscriptions:empty')}</p>
+        <p className="py-12 text-center text-sm text-muted-foreground">
+          {t('subscriptions:empty')}
+        </p>
       )}
 
       <div className="space-y-2">
         {subscriptions.map((sub) => (
-          <div key={sub.id} className="flex items-center justify-between rounded-lg border border-border bg-card px-4 py-3">
+          <div
+            key={sub.id}
+            className="flex items-center justify-between rounded-lg border border-border bg-card px-4 py-3"
+          >
             <div className="min-w-0 space-y-0.5">
               <p className="truncate text-sm font-medium">{sub.title}</p>
               <p className="truncate text-xs text-muted-foreground">{sub.rssUrl}</p>

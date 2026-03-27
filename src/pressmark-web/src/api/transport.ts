@@ -19,9 +19,9 @@ async function refreshAccessToken(): Promise<string | null> {
       const client = createClient(AuthService, refreshTransport)
       const res = await client.refresh({})
       useAuthStore.getState().setAuth(res.accessToken, {
-        id:    res.userId,
+        id: res.userId,
         email: res.email,
-        role:  res.role as 'User' | 'Admin',
+        role: res.role as 'User' | 'Admin',
       })
       return res.accessToken
     } catch {

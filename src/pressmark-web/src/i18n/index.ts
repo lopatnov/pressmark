@@ -111,36 +111,142 @@ import trAdmin from './locales/tr/admin.json'
 
 const savedLocale = localStorage.getItem('i18n-locale') ?? 'en'
 
-i18n
-  .use(initReactI18next)
-  .init({
-    resources: {
-      en: { common: enCommon, auth: enAuth, feed: enFeed, subscriptions: enSubscriptions, admin: enAdmin },
-      uk: { common: ukCommon, auth: ukAuth, feed: ukFeed, subscriptions: ukSubscriptions, admin: ukAdmin },
-      ru: { common: ruCommon, auth: ruAuth, feed: ruFeed, subscriptions: ruSubscriptions, admin: ruAdmin },
-      es: { common: esCommon, auth: esAuth, feed: esFeed, subscriptions: esSubscriptions, admin: esAdmin },
-      fr: { common: frCommon, auth: frAuth, feed: frFeed, subscriptions: frSubscriptions, admin: frAdmin },
-      de: { common: deCommon, auth: deAuth, feed: deFeed, subscriptions: deSubscriptions, admin: deAdmin },
-      ko: { common: koCommon, auth: koAuth, feed: koFeed, subscriptions: koSubscriptions, admin: koAdmin },
-      zh: { common: zhCommon, auth: zhAuth, feed: zhFeed, subscriptions: zhSubscriptions, admin: zhAdmin },
-      ja: { common: jaCommon, auth: jaAuth, feed: jaFeed, subscriptions: jaSubscriptions, admin: jaAdmin },
-      pt: { common: ptCommon, auth: ptAuth, feed: ptFeed, subscriptions: ptSubscriptions, admin: ptAdmin },
-      it: { common: itCommon, auth: itAuth, feed: itFeed, subscriptions: itSubscriptions, admin: itAdmin },
-      pl: { common: plCommon, auth: plAuth, feed: plFeed, subscriptions: plSubscriptions, admin: plAdmin },
-      nl: { common: nlCommon, auth: nlAuth, feed: nlFeed, subscriptions: nlSubscriptions, admin: nlAdmin },
-      cs: { common: csCommon, auth: csAuth, feed: csFeed, subscriptions: csSubscriptions, admin: csAdmin },
-      sv: { common: svCommon, auth: svAuth, feed: svFeed, subscriptions: svSubscriptions, admin: svAdmin },
-      ro: { common: roCommon, auth: roAuth, feed: roFeed, subscriptions: roSubscriptions, admin: roAdmin },
-      hu: { common: huCommon, auth: huAuth, feed: huFeed, subscriptions: huSubscriptions, admin: huAdmin },
-      tr: { common: trCommon, auth: trAuth, feed: trFeed, subscriptions: trSubscriptions, admin: trAdmin },
+i18n.use(initReactI18next).init({
+  resources: {
+    en: {
+      common: enCommon,
+      auth: enAuth,
+      feed: enFeed,
+      subscriptions: enSubscriptions,
+      admin: enAdmin,
     },
-    lng: savedLocale,
-    fallbackLng: 'en',
-    ns: ['common', 'auth', 'feed', 'subscriptions', 'admin'],
-    defaultNS: 'common',
-    interpolation: {
-      escapeValue: false,
+    uk: {
+      common: ukCommon,
+      auth: ukAuth,
+      feed: ukFeed,
+      subscriptions: ukSubscriptions,
+      admin: ukAdmin,
     },
-  })
+    ru: {
+      common: ruCommon,
+      auth: ruAuth,
+      feed: ruFeed,
+      subscriptions: ruSubscriptions,
+      admin: ruAdmin,
+    },
+    es: {
+      common: esCommon,
+      auth: esAuth,
+      feed: esFeed,
+      subscriptions: esSubscriptions,
+      admin: esAdmin,
+    },
+    fr: {
+      common: frCommon,
+      auth: frAuth,
+      feed: frFeed,
+      subscriptions: frSubscriptions,
+      admin: frAdmin,
+    },
+    de: {
+      common: deCommon,
+      auth: deAuth,
+      feed: deFeed,
+      subscriptions: deSubscriptions,
+      admin: deAdmin,
+    },
+    ko: {
+      common: koCommon,
+      auth: koAuth,
+      feed: koFeed,
+      subscriptions: koSubscriptions,
+      admin: koAdmin,
+    },
+    zh: {
+      common: zhCommon,
+      auth: zhAuth,
+      feed: zhFeed,
+      subscriptions: zhSubscriptions,
+      admin: zhAdmin,
+    },
+    ja: {
+      common: jaCommon,
+      auth: jaAuth,
+      feed: jaFeed,
+      subscriptions: jaSubscriptions,
+      admin: jaAdmin,
+    },
+    pt: {
+      common: ptCommon,
+      auth: ptAuth,
+      feed: ptFeed,
+      subscriptions: ptSubscriptions,
+      admin: ptAdmin,
+    },
+    it: {
+      common: itCommon,
+      auth: itAuth,
+      feed: itFeed,
+      subscriptions: itSubscriptions,
+      admin: itAdmin,
+    },
+    pl: {
+      common: plCommon,
+      auth: plAuth,
+      feed: plFeed,
+      subscriptions: plSubscriptions,
+      admin: plAdmin,
+    },
+    nl: {
+      common: nlCommon,
+      auth: nlAuth,
+      feed: nlFeed,
+      subscriptions: nlSubscriptions,
+      admin: nlAdmin,
+    },
+    cs: {
+      common: csCommon,
+      auth: csAuth,
+      feed: csFeed,
+      subscriptions: csSubscriptions,
+      admin: csAdmin,
+    },
+    sv: {
+      common: svCommon,
+      auth: svAuth,
+      feed: svFeed,
+      subscriptions: svSubscriptions,
+      admin: svAdmin,
+    },
+    ro: {
+      common: roCommon,
+      auth: roAuth,
+      feed: roFeed,
+      subscriptions: roSubscriptions,
+      admin: roAdmin,
+    },
+    hu: {
+      common: huCommon,
+      auth: huAuth,
+      feed: huFeed,
+      subscriptions: huSubscriptions,
+      admin: huAdmin,
+    },
+    tr: {
+      common: trCommon,
+      auth: trAuth,
+      feed: trFeed,
+      subscriptions: trSubscriptions,
+      admin: trAdmin,
+    },
+  },
+  lng: savedLocale,
+  fallbackLng: 'en',
+  ns: ['common', 'auth', 'feed', 'subscriptions', 'admin'],
+  defaultNS: 'common',
+  interpolation: {
+    escapeValue: false,
+  },
+})
 
 export default i18n

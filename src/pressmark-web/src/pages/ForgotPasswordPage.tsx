@@ -16,8 +16,11 @@ export function ForgotPasswordPage() {
   const { t } = useTranslation('auth')
   const [submitted, setSubmitted] = useState(false)
 
-  const { register, handleSubmit, formState: { errors, isSubmitting } } =
-    useForm<FormData>({ resolver: zodResolver(schema) })
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<FormData>({ resolver: zodResolver(schema) })
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -55,7 +58,9 @@ export function ForgotPasswordPage() {
         )}
 
         <p className="text-center text-sm text-muted-foreground">
-          <Link to="/login" className="underline">{t('register.login')}</Link>
+          <Link to="/login" className="underline">
+            {t('register.login')}
+          </Link>
         </p>
       </div>
     </div>

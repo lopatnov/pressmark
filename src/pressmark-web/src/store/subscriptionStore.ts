@@ -24,14 +24,13 @@ export const useSubscriptionStore = create<SubscriptionState>()(
       subscriptions: [],
       isLoading: false,
       setSubscriptions: (subscriptions) => set({ subscriptions }),
-      addSubscription: (sub) =>
-        set((s) => ({ subscriptions: [...s.subscriptions, sub] })),
+      addSubscription: (sub) => set((s) => ({ subscriptions: [...s.subscriptions, sub] })),
       removeSubscription: (id) =>
         set((s) => ({
           subscriptions: s.subscriptions.filter((s) => s.id !== id),
         })),
       setLoading: (isLoading) => set({ isLoading }),
     }),
-    { name: 'subscriptions' }
-  )
+    { name: 'subscriptions' },
+  ),
 )

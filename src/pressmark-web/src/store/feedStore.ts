@@ -43,35 +43,28 @@ export const useFeedStore = create<FeedState>()(
       isLoading: false,
       unreadOnly: false,
       subscriptionIdFilter: '',
-      setItems: (items, cursor, unread) =>
-        set({ items, nextCursor: cursor, totalUnread: unread }),
+      setItems: (items, cursor, unread) => set({ items, nextCursor: cursor, totalUnread: unread }),
       appendItems: (items, cursor) =>
         set((s) => ({ items: [...s.items, ...items], nextCursor: cursor })),
       prependItem: (item) =>
         set((s) => ({ items: [item, ...s.items], totalUnread: s.totalUnread + 1 })),
       setLoading: (isLoading) => set({ isLoading }),
-      setFilter: (unreadOnly, subscriptionIdFilter) =>
-        set({ unreadOnly, subscriptionIdFilter }),
+      setFilter: (unreadOnly, subscriptionIdFilter) => set({ unreadOnly, subscriptionIdFilter }),
       updateLike: (id, isLiked, likeCount) =>
         set((s) => ({
-          items: s.items.map((i) =>
-            i.id === id ? { ...i, isLiked, likeCount } : i
-          ),
+          items: s.items.map((i) => (i.id === id ? { ...i, isLiked, likeCount } : i)),
         })),
       updateBookmark: (id, isBookmarked) =>
         set((s) => ({
-          items: s.items.map((i) =>
-            i.id === id ? { ...i, isBookmarked } : i
-          ),
+          items: s.items.map((i) => (i.id === id ? { ...i, isBookmarked } : i)),
         })),
       markRead: (id) =>
         set((s) => ({
           items: s.items.map((i) => (i.id === id ? { ...i, isRead: true } : i)),
           totalUnread: Math.max(0, s.totalUnread - 1),
         })),
-      reset: () =>
-        set({ items: [], nextCursor: '', totalUnread: 0, isLoading: true }),
+      reset: () => set({ items: [], nextCursor: '', totalUnread: 0, isLoading: true }),
     }),
-    { name: 'feed' }
-  )
+    { name: 'feed' },
+  ),
 )

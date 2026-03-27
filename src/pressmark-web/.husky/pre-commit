@@ -1,0 +1,1 @@
+cd src/pressmark-web && npx lint-staged

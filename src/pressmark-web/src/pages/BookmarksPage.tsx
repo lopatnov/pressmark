@@ -18,21 +18,21 @@ interface BookmarkItem {
 export function BookmarksPage() {
   const { t } = useTranslation(['feed', 'common'])
 
-  const [items, setItems]           = useState<BookmarkItem[]>([])
+  const [items, setItems] = useState<BookmarkItem[]>([])
   const [nextCursor, setNextCursor] = useState('')
-  const [isLoading, setIsLoading]   = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   const loadBookmarks = async (cursor = '') => {
     setIsLoading(true)
     try {
       const res = await feedClient.getBookmarks({ pageSize: 20, cursor })
       const mapped = res.items.map((item) => ({
-        id:          item.id,
-        title:       item.title,
-        url:         item.url,
-        summary:     item.summary,
+        id: item.id,
+        title: item.title,
+        url: item.url,
+        summary: item.summary,
         publishedAt: item.publishedAt,
-        likeCount:   item.likeCount,
+        likeCount: item.likeCount,
         sourceTitle: item.sourceTitle,
       }))
       if (cursor) {
@@ -51,7 +51,9 @@ export function BookmarksPage() {
     setItems((prev) => prev.filter((item) => item.id !== id))
   }
 
-  useEffect(() => { loadBookmarks() }, [])
+  useEffect(() => {
+    loadBookmarks()
+  }, [])
 
   return (
     <div className="mx-auto max-w-2xl space-y-4 p-4">

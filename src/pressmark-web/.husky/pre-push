@@ -1,0 +1,1 @@
+cd src/pressmark-web && npm run typecheck

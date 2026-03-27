@@ -9,9 +9,20 @@ import { FeedItemCard } from '@/components/feed/FeedItemCard'
 export function FeedPage() {
   const { t } = useTranslation(['feed', 'common'])
   const {
-    items, nextCursor, totalUnread, isLoading, unreadOnly,
-    setItems, appendItems, prependItem, setLoading, setFilter, updateLike,
-    updateBookmark, markRead, reset,
+    items,
+    nextCursor,
+    totalUnread,
+    isLoading,
+    unreadOnly,
+    setItems,
+    appendItems,
+    prependItem,
+    setLoading,
+    setFilter,
+    updateLike,
+    updateBookmark,
+    markRead,
+    reset,
   } = useFeedStore()
 
   const loadFeed = async (cursor = '', signal?: AbortSignal) => {
@@ -23,18 +34,18 @@ export function FeedPage() {
       )
       if (signal?.aborted) return
       const mapped = res.items.map((item) => ({
-        id:             item.id,
+        id: item.id,
         subscriptionId: item.subscriptionId,
-        title:          item.title,
-        url:            item.url,
-        summary:        item.summary,
-        publishedAt:    item.publishedAt,
-        isRead:         item.isRead,
-        likeCount:      item.likeCount,
-        isLiked:        item.isLiked,
-        isBookmarked:   item.isBookmarked,
-        sourceTitle:    item.sourceTitle,
-        imageUrl:       item.imageUrl,
+        title: item.title,
+        url: item.url,
+        summary: item.summary,
+        publishedAt: item.publishedAt,
+        isRead: item.isRead,
+        likeCount: item.likeCount,
+        isLiked: item.isLiked,
+        isBookmarked: item.isBookmarked,
+        sourceTitle: item.sourceTitle,
+        imageUrl: item.imageUrl,
       }))
       if (cursor) {
         appendItems(mapped, res.nextCursor)
@@ -54,6 +65,7 @@ export function FeedPage() {
     reset()
     loadFeed('', controller.signal)
     return () => controller.abort()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [unreadOnly])
 
   // Real-time streaming: prepend new items as they arrive from the server
@@ -69,18 +81,18 @@ export function FeedPage() {
         )
         for await (const item of stream) {
           prependItem({
-            id:             item.id,
+            id: item.id,
             subscriptionId: item.subscriptionId,
-            title:          item.title,
-            url:            item.url,
-            summary:        item.summary,
-            publishedAt:    item.publishedAt,
-            isRead:         item.isRead,
-            likeCount:      item.likeCount,
-            isLiked:        item.isLiked,
-            isBookmarked:   item.isBookmarked,
-            sourceTitle:    item.sourceTitle,
-            imageUrl:       item.imageUrl,
+            title: item.title,
+            url: item.url,
+            summary: item.summary,
+            publishedAt: item.publishedAt,
+            isRead: item.isRead,
+            likeCount: item.likeCount,
+            isLiked: item.isLiked,
+            isBookmarked: item.isBookmarked,
+            sourceTitle: item.sourceTitle,
+            imageUrl: item.imageUrl,
           })
         }
       } catch {
@@ -90,6 +102,7 @@ export function FeedPage() {
 
     connect()
     return () => controller.abort()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleLike = async (id: string) => {
@@ -169,10 +182,11 @@ export function FeedPage() {
                   aria-label={item.isBookmarked ? t('feed:removeBookmark') : t('feed:bookmark')}
                   className={`flex cursor-pointer items-center gap-1 rounded px-2 py-1 text-xs transition-colors hover:bg-muted ${item.isBookmarked ? 'text-amber-500' : 'text-muted-foreground'}`}
                 >
-                  {item.isBookmarked
-                    ? <BookMarked className="h-3.5 w-3.5 fill-current" />
-                    : <Bookmark className="h-3.5 w-3.5" />
-                  }
+                  {item.isBookmarked ? (
+                    <BookMarked className="h-3.5 w-3.5 fill-current" />
+                  ) : (
+                    <Bookmark className="h-3.5 w-3.5" />
+                  )}
                 </button>
               </>
             }
