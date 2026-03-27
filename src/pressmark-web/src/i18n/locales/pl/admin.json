@@ -1,0 +1,48 @@
+{
+  "title": "Admin",
+  "settings": {
+    "title": "Ustawienia strony",
+    "siteName": "Nazwa strony",
+    "communityWindowDays": "Okno kanału społeczności (dni)",
+    "registrationMode": "Tryb rejestracji",
+    "open": "Otwarty",
+    "inviteOnly": "Tylko na zaproszenie",
+    "saved": "Ustawienia zapisane",
+    "smtp": "E-mail (SMTP)",
+    "smtpHost": "Serwer SMTP",
+    "smtpPort": "Port",
+    "smtpUser": "Nazwa użytkownika",
+    "smtpPassword": "Hasło",
+    "smtpPasswordPlaceholder": "Pozostaw puste, aby zachować bieżące",
+    "smtpUseTls": "Użyj TLS (STARTTLS)",
+    "smtpFromAddress": "Adres nadawcy"
+  },
+  "moderation": {
+    "title": "Moderacja",
+    "hide": "Ukryj",
+    "unhide": "Pokaż",
+    "ban": "Zablokuj kanał",
+    "unban": "Odblokuj kanał"
+  },
+  "users": {
+    "title": "Użytkownicy",
+    "email": "E-mail",
+    "role": "Rola",
+    "joined": "Dołączył",
+    "empty": "Nie znaleziono użytkowników"
+  },
+  "invites": {
+    "title": "Tokeny zaproszeń",
+    "generate": "Generuj zaproszenie",
+    "note": "Notatka (opcjonalne)",
+    "notePlaceholder": "np. dla Alicji",
+    "tokenGenerated": "Token wygenerowany — skopiuj go teraz, nie zostanie ponownie wyświetlony",
+    "copy": "Kopiuj",
+    "copied": "Skopiowano!",
+    "revoke": "Unieważnij",
+    "statusActive": "Aktywny",
+    "statusUsed": "Użyty",
+    "statusRevoked": "Unieważniony",
+    "empty": "Brak tokenów zaproszeń"
+  }
+}

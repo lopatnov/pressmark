@@ -1,0 +1,48 @@
+{
+  "title": "Admin",
+  "settings": {
+    "title": "Impostazioni sito",
+    "siteName": "Nome del sito",
+    "communityWindowDays": "Finestra feed comunità (giorni)",
+    "registrationMode": "Modalità di registrazione",
+    "open": "Aperta",
+    "inviteOnly": "Solo su invito",
+    "saved": "Impostazioni salvate",
+    "smtp": "E-mail (SMTP)",
+    "smtpHost": "Server SMTP",
+    "smtpPort": "Porta",
+    "smtpUser": "Nome utente",
+    "smtpPassword": "Password",
+    "smtpPasswordPlaceholder": "Lascia vuoto per mantenere quello attuale",
+    "smtpUseTls": "Usa TLS (STARTTLS)",
+    "smtpFromAddress": "Indirizzo mittente"
+  },
+  "moderation": {
+    "title": "Moderazione",
+    "hide": "Nascondi",
+    "unhide": "Mostra",
+    "ban": "Blocca canale",
+    "unban": "Sblocca canale"
+  },
+  "users": {
+    "title": "Utenti",
+    "email": "E-mail",
+    "role": "Ruolo",
+    "joined": "Registrato il",
+    "empty": "Nessun utente trovato"
+  },
+  "invites": {
+    "title": "Token di invito",
+    "generate": "Genera invito",
+    "note": "Nota (opzionale)",
+    "notePlaceholder": "es. per Alice",
+    "tokenGenerated": "Token generato — copialo ora, non verrà mostrato di nuovo",
+    "copy": "Copia",
+    "copied": "Copiato!",
+    "revoke": "Revoca",
+    "statusActive": "Attivo",
+    "statusUsed": "Usato",
+    "statusRevoked": "Revocato",
+    "empty": "Nessun token di invito ancora"
+  }
+}

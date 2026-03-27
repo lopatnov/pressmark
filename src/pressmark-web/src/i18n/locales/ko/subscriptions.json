@@ -1,0 +1,19 @@
+{
+  "title": "구독",
+  "add": "구독 추가",
+  "empty": "아직 구독이 없습니다",
+  "rssUrl": "RSS URL",
+  "feedTitle": "피드 제목",
+  "feedTitlePlaceholder": "선택 사항 — 피드에서 자동 채워짐",
+  "lastFetched": "마지막 가져오기",
+  "remove": "제거",
+  "removeConfirm": "이 구독을 제거하시겠습니까?",
+  "import": "OPML 가져오기",
+  "export": "OPML 내보내기",
+  "importSuccess": "{{imported}}개 피드를 가져오고 {{skipped}}개 중복을 건너뛰었습니다",
+  "importError": "가져오기 실패: 유효하지 않은 OPML 파일",
+  "errors": {
+    "invalidUrl": "유효하지 않은 RSS URL",
+    "fetchFailed": "RSS 피드를 가져오지 못했습니다"
+  }
+}

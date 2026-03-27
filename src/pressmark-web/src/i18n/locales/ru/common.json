@@ -1,0 +1,21 @@
+{
+  "appName": "Pressmark",
+  "loading": "Загрузка...",
+  "error": "Что-то пошло не так",
+  "save": "Сохранить",
+  "cancel": "Отмена",
+  "delete": "Удалить",
+  "confirm": "Подтвердить",
+  "back": "Назад",
+  "language": "Язык",
+  "nav": {
+    "feed": "Лента",
+    "subscriptions": "Подписки",
+    "bookmarks": "Закладки",
+    "admin": "Админ",
+    "community": "Сообщество",
+    "login": "Войти",
+    "register": "Зарегистрироваться",
+    "logout": "Выйти"
+  }
+}

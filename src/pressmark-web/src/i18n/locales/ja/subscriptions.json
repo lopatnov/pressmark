@@ -1,0 +1,19 @@
+{
+  "title": "購読",
+  "add": "購読を追加",
+  "empty": "購読がまだありません",
+  "rssUrl": "RSS URL",
+  "feedTitle": "フィードのタイトル",
+  "feedTitlePlaceholder": "任意 — フィードから自動入力",
+  "lastFetched": "最後に取得",
+  "remove": "削除",
+  "removeConfirm": "この購読を削除しますか？",
+  "import": "OPML をインポート",
+  "export": "OPML をエクスポート",
+  "importSuccess": "{{imported}} 件のフィードをインポートし、{{skipped}} 件の重複をスキップしました",
+  "importError": "インポート失敗: 無効な OPML ファイル",
+  "errors": {
+    "invalidUrl": "無効な RSS URL",
+    "fetchFailed": "RSS フィードを取得できませんでした"
+  }
+}

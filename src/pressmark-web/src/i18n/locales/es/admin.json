@@ -1,0 +1,48 @@
+{
+  "title": "Admin",
+  "settings": {
+    "title": "Configuración del sitio",
+    "siteName": "Nombre del sitio",
+    "communityWindowDays": "Ventana del feed comunitario (días)",
+    "registrationMode": "Modo de registro",
+    "open": "Abierto",
+    "inviteOnly": "Solo por invitación",
+    "saved": "Configuración guardada",
+    "smtp": "Correo (SMTP)",
+    "smtpHost": "Servidor SMTP",
+    "smtpPort": "Puerto",
+    "smtpUser": "Usuario",
+    "smtpPassword": "Contraseña",
+    "smtpPasswordPlaceholder": "Dejar en blanco para mantener la actual",
+    "smtpUseTls": "Usar TLS (STARTTLS)",
+    "smtpFromAddress": "Dirección de remitente"
+  },
+  "moderation": {
+    "title": "Moderación",
+    "hide": "Ocultar",
+    "unhide": "Mostrar",
+    "ban": "Bloquear canal",
+    "unban": "Desbloquear canal"
+  },
+  "users": {
+    "title": "Usuarios",
+    "email": "Correo electrónico",
+    "role": "Rol",
+    "joined": "Fecha de registro",
+    "empty": "No se encontraron usuarios"
+  },
+  "invites": {
+    "title": "Tokens de invitación",
+    "generate": "Generar invitación",
+    "note": "Nota (opcional)",
+    "notePlaceholder": "p. ej. para Alicia",
+    "tokenGenerated": "Token generado — cópialo ahora, no se mostrará de nuevo",
+    "copy": "Copiar",
+    "copied": "¡Copiado!",
+    "revoke": "Revocar",
+    "statusActive": "Activo",
+    "statusUsed": "Usado",
+    "statusRevoked": "Revocado",
+    "empty": "Aún no hay tokens de invitación"
+  }
+}

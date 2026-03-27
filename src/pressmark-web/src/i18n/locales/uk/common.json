@@ -1,0 +1,21 @@
+{
+  "appName": "Pressmark",
+  "loading": "Завантаження...",
+  "error": "Щось пішло не так",
+  "save": "Зберегти",
+  "cancel": "Скасувати",
+  "delete": "Видалити",
+  "confirm": "Підтвердити",
+  "back": "Назад",
+  "language": "Мова",
+  "nav": {
+    "feed": "Стрічка",
+    "subscriptions": "Підписки",
+    "bookmarks": "Закладки",
+    "admin": "Адмін",
+    "community": "Спільнота",
+    "login": "Увійти",
+    "register": "Зареєструватись",
+    "logout": "Вийти"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "title": "フィード",
+  "empty": "記事がまだありません",
+  "loadMore": "もっと読む",
+  "markAllRead": "すべて既読にする",
+  "unreadOnly": "未読のみ",
+  "unreadCount": "未読 {{count}} 件",
+  "like": "いいね",
+  "unlike": "いいねを取り消す",
+  "bookmark": "ブックマーク",
+  "removeBookmark": "ブックマークを削除",
+  "readMore": "続きを読む",
+  "community": {
+    "title": "コミュニティ",
+    "subtitle": "過去 {{days}} 日間にコミュニティがいいねした記事",
+    "subtitle_plural": "過去 {{days}} 日間にコミュニティがいいねした記事",
+    "empty": "いいねされた記事はまだありません。ログインして記事にいいねしましょう。"
+  }
+}

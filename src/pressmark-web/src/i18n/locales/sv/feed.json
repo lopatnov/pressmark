@@ -1,0 +1,19 @@
+{
+  "title": "Flöde",
+  "empty": "Inga artiklar ännu",
+  "loadMore": "Ladda mer",
+  "markAllRead": "Markera allt som läst",
+  "unreadOnly": "Bara olästa",
+  "unreadCount": "{{count}} olästa",
+  "like": "Gilla",
+  "unlike": "Sluta gilla",
+  "bookmark": "Bokmärke",
+  "removeBookmark": "Ta bort bokmärke",
+  "readMore": "Läs mer",
+  "community": {
+    "title": "Community",
+    "subtitle": "Artiklar som communityn gillade de senaste {{days}} dagen",
+    "subtitle_plural": "Artiklar som communityn gillade de senaste {{days}} dagarna",
+    "empty": "Inga gillade artiklar än. Logga in för att gilla artiklar."
+  }
+}

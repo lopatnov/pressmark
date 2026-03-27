@@ -1,0 +1,19 @@
+{
+  "title": "Feed",
+  "empty": "Nessun articolo ancora",
+  "loadMore": "Carica altro",
+  "markAllRead": "Segna tutto come letto",
+  "unreadOnly": "Solo non letti",
+  "unreadCount": "{{count}} non letto/i",
+  "like": "Mi piace",
+  "unlike": "Non mi piace più",
+  "bookmark": "Segnalibro",
+  "removeBookmark": "Rimuovi segnalibro",
+  "readMore": "Leggi di più",
+  "community": {
+    "title": "Comunità",
+    "subtitle": "Articoli apprezzati dalla comunità nell'ultimo {{days}} giorno",
+    "subtitle_plural": "Articoli apprezzati dalla comunità negli ultimi {{days}} giorni",
+    "empty": "Nessun articolo apprezzato ancora. Accedi per mettere mi piace."
+  }
+}

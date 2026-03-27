@@ -1,0 +1,19 @@
+{
+  "title": "Suscripciones",
+  "add": "Añadir suscripción",
+  "empty": "Aún no hay suscripciones",
+  "rssUrl": "URL RSS",
+  "feedTitle": "Título del feed",
+  "feedTitlePlaceholder": "Opcional — se rellenará automáticamente",
+  "lastFetched": "Última actualización",
+  "remove": "Eliminar",
+  "removeConfirm": "¿Eliminar esta suscripción?",
+  "import": "Importar OPML",
+  "export": "Exportar OPML",
+  "importSuccess": "Importados {{imported}} feeds, omitidos {{skipped}} duplicados",
+  "importError": "Error al importar: archivo OPML inválido",
+  "errors": {
+    "invalidUrl": "URL RSS inválida",
+    "fetchFailed": "No se pudo cargar el feed RSS"
+  }
+}

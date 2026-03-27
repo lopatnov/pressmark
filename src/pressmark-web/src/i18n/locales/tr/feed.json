@@ -1,0 +1,19 @@
+{
+  "title": "Akış",
+  "empty": "Henüz makale yok",
+  "loadMore": "Daha fazla yükle",
+  "markAllRead": "Tümünü okundu olarak işaretle",
+  "unreadOnly": "Yalnızca okunmamış",
+  "unreadCount": "{{count}} okunmamış",
+  "like": "Beğen",
+  "unlike": "Beğeniyi kaldır",
+  "bookmark": "Yer imi ekle",
+  "removeBookmark": "Yer imini kaldır",
+  "readMore": "Devamını oku",
+  "community": {
+    "title": "Topluluk",
+    "subtitle": "Son {{days}} günde topluluk tarafından beğenilen makaleler",
+    "subtitle_plural": "Son {{days}} günde topluluk tarafından beğenilen makaleler",
+    "empty": "Henüz beğenilen makale yok. Beğenmek için giriş yapın."
+  }
+}

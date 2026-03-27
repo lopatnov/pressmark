@@ -1,0 +1,48 @@
+{
+  "title": "Yönetim",
+  "settings": {
+    "title": "Site ayarları",
+    "siteName": "Site adı",
+    "communityWindowDays": "Topluluk akış penceresi (gün)",
+    "registrationMode": "Kayıt modu",
+    "open": "Açık",
+    "inviteOnly": "Yalnızca davetli",
+    "saved": "Ayarlar kaydedildi",
+    "smtp": "E-posta (SMTP)",
+    "smtpHost": "SMTP sunucusu",
+    "smtpPort": "Port",
+    "smtpUser": "Kullanıcı adı",
+    "smtpPassword": "Şifre",
+    "smtpPasswordPlaceholder": "Mevcut şifreyi korumak için boş bırakın",
+    "smtpUseTls": "TLS kullan (STARTTLS)",
+    "smtpFromAddress": "Gönderen adresi"
+  },
+  "moderation": {
+    "title": "Moderasyon",
+    "hide": "Gizle",
+    "unhide": "Göster",
+    "ban": "Kanalı engelle",
+    "unban": "Kanalın engelini kaldır"
+  },
+  "users": {
+    "title": "Kullanıcılar",
+    "email": "E-posta",
+    "role": "Rol",
+    "joined": "Katılım tarihi",
+    "empty": "Kullanıcı bulunamadı"
+  },
+  "invites": {
+    "title": "Davet tokenleri",
+    "generate": "Davet oluştur",
+    "note": "Not (isteğe bağlı)",
+    "notePlaceholder": "örn. Alice için",
+    "tokenGenerated": "Token oluşturuldu — şimdi kopyalayın, bir daha gösterilmeyecek",
+    "copy": "Kopyala",
+    "copied": "Kopyalandı!",
+    "revoke": "İptal et",
+    "statusActive": "Aktif",
+    "statusUsed": "Kullanılmış",
+    "statusRevoked": "İptal edilmiş",
+    "empty": "Henüz davet tokeni yok"
+  }
+}

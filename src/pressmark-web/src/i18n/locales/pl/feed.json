@@ -1,0 +1,19 @@
+{
+  "title": "Kanał",
+  "empty": "Brak artykułów",
+  "loadMore": "Wczytaj więcej",
+  "markAllRead": "Oznacz wszystkie jako przeczytane",
+  "unreadOnly": "Tylko nieprzeczytane",
+  "unreadCount": "{{count}} nieprzeczytanych",
+  "like": "Lubię to",
+  "unlike": "Przestań lubić",
+  "bookmark": "Zakładka",
+  "removeBookmark": "Usuń zakładkę",
+  "readMore": "Czytaj więcej",
+  "community": {
+    "title": "Społeczność",
+    "subtitle": "Artykuły polubione przez społeczność w ciągu ostatniego {{days}} dnia",
+    "subtitle_plural": "Artykuły polubione przez społeczność w ciągu ostatnich {{days}} dni",
+    "empty": "Brak polubionych artykułów. Zaloguj się, aby polubić artykuły."
+  }
+}

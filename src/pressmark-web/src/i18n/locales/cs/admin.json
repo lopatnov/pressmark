@@ -1,0 +1,48 @@
+{
+  "title": "Admin",
+  "settings": {
+    "title": "Nastavení webu",
+    "siteName": "Název webu",
+    "communityWindowDays": "Okno komunitního kanálu (dny)",
+    "registrationMode": "Režim registrace",
+    "open": "Otevřená",
+    "inviteOnly": "Pouze na pozvánku",
+    "saved": "Nastavení uložena",
+    "smtp": "E-mail (SMTP)",
+    "smtpHost": "SMTP server",
+    "smtpPort": "Port",
+    "smtpUser": "Uživatelské jméno",
+    "smtpPassword": "Heslo",
+    "smtpPasswordPlaceholder": "Ponechte prázdné pro zachování stávajícího",
+    "smtpUseTls": "Použít TLS (STARTTLS)",
+    "smtpFromAddress": "Adresa odesílatele"
+  },
+  "moderation": {
+    "title": "Moderace",
+    "hide": "Skrýt",
+    "unhide": "Zobrazit",
+    "ban": "Zablokovat kanál",
+    "unban": "Odblokovat kanál"
+  },
+  "users": {
+    "title": "Uživatelé",
+    "email": "E-mail",
+    "role": "Role",
+    "joined": "Registrován",
+    "empty": "Žádní uživatelé nenalezeni"
+  },
+  "invites": {
+    "title": "Pozvánkové tokeny",
+    "generate": "Generovat pozvánku",
+    "note": "Poznámka (nepovinné)",
+    "notePlaceholder": "např. pro Alici",
+    "tokenGenerated": "Token vygenerován — zkopírujte ho nyní, nebude zobrazen znovu",
+    "copy": "Kopírovat",
+    "copied": "Zkopírováno!",
+    "revoke": "Odvolat",
+    "statusActive": "Aktivní",
+    "statusUsed": "Použitý",
+    "statusRevoked": "Odvolaný",
+    "empty": "Žádné pozvánkové tokeny zatím"
+  }
+}

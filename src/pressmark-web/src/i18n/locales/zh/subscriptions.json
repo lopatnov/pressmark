@@ -1,0 +1,19 @@
+{
+  "title": "订阅",
+  "add": "添加订阅",
+  "empty": "暂无订阅",
+  "rssUrl": "RSS 链接",
+  "feedTitle": "订阅源标题",
+  "feedTitlePlaceholder": "可选 — 从订阅源自动填充",
+  "lastFetched": "上次获取",
+  "remove": "移除",
+  "removeConfirm": "移除此订阅？",
+  "import": "导入 OPML",
+  "export": "导出 OPML",
+  "importSuccess": "已导入 {{imported}} 个订阅源，跳过 {{skipped}} 个重复",
+  "importError": "导入失败：无效的 OPML 文件",
+  "errors": {
+    "invalidUrl": "无效的 RSS 链接",
+    "fetchFailed": "无法获取 RSS 订阅源"
+  }
+}

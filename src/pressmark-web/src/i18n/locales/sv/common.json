@@ -1,0 +1,21 @@
+{
+  "appName": "Pressmark",
+  "loading": "Laddar...",
+  "error": "Något gick fel",
+  "save": "Spara",
+  "cancel": "Avbryt",
+  "delete": "Ta bort",
+  "confirm": "Bekräfta",
+  "back": "Tillbaka",
+  "language": "Språk",
+  "nav": {
+    "feed": "Flöde",
+    "subscriptions": "Prenumerationer",
+    "bookmarks": "Bokmärken",
+    "admin": "Admin",
+    "community": "Community",
+    "login": "Logga in",
+    "register": "Registrera",
+    "logout": "Logga ut"
+  }
+}

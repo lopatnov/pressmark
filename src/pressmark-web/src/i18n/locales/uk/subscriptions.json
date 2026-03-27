@@ -1,0 +1,19 @@
+{
+  "title": "Підписки",
+  "add": "Додати підписку",
+  "empty": "Підписок поки немає",
+  "rssUrl": "RSS URL",
+  "feedTitle": "Назва стрічки",
+  "feedTitlePlaceholder": "Необов'язково — заповниться автоматично",
+  "lastFetched": "Останнє оновлення",
+  "remove": "Видалити",
+  "removeConfirm": "Видалити цю підписку?",
+  "import": "Імпорт OPML",
+  "export": "Експорт OPML",
+  "importSuccess": "Імпортовано {{imported}} стрічки, пропущено {{skipped}} дублікатів",
+  "importError": "Помилка імпорту: недійсний файл OPML",
+  "errors": {
+    "invalidUrl": "Недійсний RSS URL",
+    "fetchFailed": "Не вдалося завантажити RSS-стрічку"
+  }
+}

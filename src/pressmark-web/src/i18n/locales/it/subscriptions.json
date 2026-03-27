@@ -1,0 +1,19 @@
+{
+  "title": "Abbonamenti",
+  "add": "Aggiungi abbonamento",
+  "empty": "Nessun abbonamento ancora",
+  "rssUrl": "URL RSS",
+  "feedTitle": "Titolo del feed",
+  "feedTitlePlaceholder": "Facoltativo — compilato automaticamente",
+  "lastFetched": "Ultimo aggiornamento",
+  "remove": "Rimuovi",
+  "removeConfirm": "Rimuovere questo abbonamento?",
+  "import": "Importa OPML",
+  "export": "Esporta OPML",
+  "importSuccess": "{{imported}} feed importati, {{skipped}} duplicati ignorati",
+  "importError": "Importazione fallita: file OPML non valido",
+  "errors": {
+    "invalidUrl": "URL RSS non valido",
+    "fetchFailed": "Impossibile recuperare il feed RSS"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "appName": "Pressmark",
+  "loading": "Yükleniyor...",
+  "error": "Bir şeyler ters gitti",
+  "save": "Kaydet",
+  "cancel": "İptal",
+  "delete": "Sil",
+  "confirm": "Onayla",
+  "back": "Geri",
+  "language": "Dil",
+  "nav": {
+    "feed": "Akış",
+    "subscriptions": "Abonelikler",
+    "bookmarks": "Yer imleri",
+    "admin": "Yönetim",
+    "community": "Topluluk",
+    "login": "Giriş yap",
+    "register": "Kayıt ol",
+    "logout": "Çıkış yap"
+  }
+}

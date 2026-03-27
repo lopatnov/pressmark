@@ -1,0 +1,19 @@
+{
+  "title": "Feed",
+  "empty": "Nog geen artikelen",
+  "loadMore": "Meer laden",
+  "markAllRead": "Alles als gelezen markeren",
+  "unreadOnly": "Alleen ongelezen",
+  "unreadCount": "{{count}} ongelezen",
+  "like": "Vind ik leuk",
+  "unlike": "Vind ik niet meer leuk",
+  "bookmark": "Bladwijzer",
+  "removeBookmark": "Bladwijzer verwijderen",
+  "readMore": "Lees meer",
+  "community": {
+    "title": "Community",
+    "subtitle": "Artikelen die de community in de afgelopen {{days}} dag leuk vond",
+    "subtitle_plural": "Artikelen die de community in de afgelopen {{days}} dagen leuk vond",
+    "empty": "Nog geen gelikte artikelen. Log in om artikelen leuk te vinden."
+  }
+}

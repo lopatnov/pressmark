@@ -1,0 +1,19 @@
+{
+  "title": "Hírfolyam",
+  "empty": "Még nincsenek cikkek",
+  "loadMore": "Több betöltése",
+  "markAllRead": "Összes olvasottnak jelölése",
+  "unreadOnly": "Csak olvasatlan",
+  "unreadCount": "{{count}} olvasatlan",
+  "like": "Tetszik",
+  "unlike": "Nem tetszik",
+  "bookmark": "Könyvjelző",
+  "removeBookmark": "Könyvjelző eltávolítása",
+  "readMore": "Tovább olvasom",
+  "community": {
+    "title": "Közösség",
+    "subtitle": "A közösség által az elmúlt {{days}} napban kedvelt cikkek",
+    "subtitle_plural": "A közösség által az elmúlt {{days}} napban kedvelt cikkek",
+    "empty": "Még nincsenek kedvelt cikkek. Jelentkezzen be a kedveléshez."
+  }
+}

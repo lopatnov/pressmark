@@ -1,0 +1,19 @@
+{
+  "title": "Prenumerationer",
+  "add": "Lägg till prenumeration",
+  "empty": "Inga prenumerationer än",
+  "rssUrl": "RSS-URL",
+  "feedTitle": "Flödestitel",
+  "feedTitlePlaceholder": "Valfritt — fylls i automatiskt",
+  "lastFetched": "Senast hämtat",
+  "remove": "Ta bort",
+  "removeConfirm": "Ta bort denna prenumeration?",
+  "import": "Importera OPML",
+  "export": "Exportera OPML",
+  "importSuccess": "Importerade {{imported}} flöde(n), hoppade över {{skipped}} duplikat",
+  "importError": "Import misslyckades: ogiltig OPML-fil",
+  "errors": {
+    "invalidUrl": "Ogiltig RSS-URL",
+    "fetchFailed": "Kunde inte hämta RSS-flöde"
+  }
+}

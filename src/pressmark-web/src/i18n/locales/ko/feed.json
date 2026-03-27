@@ -1,0 +1,19 @@
+{
+  "title": "피드",
+  "empty": "아직 기사가 없습니다",
+  "loadMore": "더 보기",
+  "markAllRead": "모두 읽음으로 표시",
+  "unreadOnly": "읽지 않은 것만",
+  "unreadCount": "읽지 않음 {{count}}개",
+  "like": "좋아요",
+  "unlike": "좋아요 취소",
+  "bookmark": "북마크",
+  "removeBookmark": "북마크 제거",
+  "readMore": "더 읽기",
+  "community": {
+    "title": "커뮤니티",
+    "subtitle": "지난 {{days}}일 동안 커뮤니티가 좋아요한 기사",
+    "subtitle_plural": "지난 {{days}}일 동안 커뮤니티가 좋아요한 기사",
+    "empty": "좋아요한 기사가 없습니다. 로그인하여 기사에 좋아요를 누르세요."
+  }
+}

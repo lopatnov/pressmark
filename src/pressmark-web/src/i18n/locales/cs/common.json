@@ -1,0 +1,21 @@
+{
+  "appName": "Pressmark",
+  "loading": "Načítání...",
+  "error": "Něco se pokazilo",
+  "save": "Uložit",
+  "cancel": "Zrušit",
+  "delete": "Smazat",
+  "confirm": "Potvrdit",
+  "back": "Zpět",
+  "language": "Jazyk",
+  "nav": {
+    "feed": "Kanál",
+    "subscriptions": "Odběry",
+    "bookmarks": "Záložky",
+    "admin": "Admin",
+    "community": "Komunita",
+    "login": "Přihlásit se",
+    "register": "Registrovat se",
+    "logout": "Odhlásit se"
+  }
+}

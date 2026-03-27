@@ -1,0 +1,19 @@
+{
+  "title": "Abonelikler",
+  "add": "Abonelik ekle",
+  "empty": "Henüz abonelik yok",
+  "rssUrl": "RSS URL",
+  "feedTitle": "Akış başlığı",
+  "feedTitlePlaceholder": "İsteğe bağlı — akıştan otomatik doldurulur",
+  "lastFetched": "Son güncelleme",
+  "remove": "Kaldır",
+  "removeConfirm": "Bu aboneliği kaldır?",
+  "import": "OPML içe aktar",
+  "export": "OPML dışa aktar",
+  "importSuccess": "{{imported}} akış içe aktarıldı, {{skipped}} yinelenen atlandı",
+  "importError": "İçe aktarma başarısız: geçersiz OPML dosyası",
+  "errors": {
+    "invalidUrl": "Geçersiz RSS URL",
+    "fetchFailed": "RSS akışı alınamadı"
+  }
+}

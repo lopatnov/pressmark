@@ -1,0 +1,19 @@
+{
+  "title": "Assinaturas",
+  "add": "Adicionar assinatura",
+  "empty": "Nenhuma assinatura ainda",
+  "rssUrl": "URL do RSS",
+  "feedTitle": "Título do feed",
+  "feedTitlePlaceholder": "Opcional — preenchido automaticamente",
+  "lastFetched": "Última atualização",
+  "remove": "Remover",
+  "removeConfirm": "Remover esta assinatura?",
+  "import": "Importar OPML",
+  "export": "Exportar OPML",
+  "importSuccess": "{{imported}} feed(s) importado(s), {{skipped}} duplicata(s) ignorada(s)",
+  "importError": "Falha ao importar: arquivo OPML inválido",
+  "errors": {
+    "invalidUrl": "URL do RSS inválido",
+    "fetchFailed": "Não foi possível buscar o feed RSS"
+  }
+}

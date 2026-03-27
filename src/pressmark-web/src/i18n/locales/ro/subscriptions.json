@@ -1,0 +1,19 @@
+{
+  "title": "Abonamente",
+  "add": "Adaugă abonament",
+  "empty": "Nu există abonamente încă",
+  "rssUrl": "URL RSS",
+  "feedTitle": "Titlu flux",
+  "feedTitlePlaceholder": "Opțional — completat automat",
+  "lastFetched": "Ultima actualizare",
+  "remove": "Elimină",
+  "removeConfirm": "Eliminați acest abonament?",
+  "import": "Importă OPML",
+  "export": "Exportă OPML",
+  "importSuccess": "Importate {{imported}} flux(uri), sărite {{skipped}} duplicate",
+  "importError": "Import eșuat: fișier OPML invalid",
+  "errors": {
+    "invalidUrl": "URL RSS invalid",
+    "fetchFailed": "Nu s-a putut prelua fluxul RSS"
+  }
+}

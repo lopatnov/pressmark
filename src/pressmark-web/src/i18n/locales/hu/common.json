@@ -1,0 +1,21 @@
+{
+  "appName": "Pressmark",
+  "loading": "Betöltés...",
+  "error": "Valami hiba történt",
+  "save": "Mentés",
+  "cancel": "Mégse",
+  "delete": "Törlés",
+  "confirm": "Megerősítés",
+  "back": "Vissza",
+  "language": "Nyelv",
+  "nav": {
+    "feed": "Hírfolyam",
+    "subscriptions": "Feliratkozások",
+    "bookmarks": "Könyvjelzők",
+    "admin": "Admin",
+    "community": "Közösség",
+    "login": "Bejelentkezés",
+    "register": "Regisztráció",
+    "logout": "Kijelentkezés"
+  }
+}

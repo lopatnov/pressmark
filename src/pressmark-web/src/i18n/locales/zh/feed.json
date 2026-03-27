@@ -1,0 +1,19 @@
+{
+  "title": "动态",
+  "empty": "暂无文章",
+  "loadMore": "加载更多",
+  "markAllRead": "全部标记为已读",
+  "unreadOnly": "仅未读",
+  "unreadCount": "{{count}} 条未读",
+  "like": "点赞",
+  "unlike": "取消点赞",
+  "bookmark": "收藏",
+  "removeBookmark": "取消收藏",
+  "readMore": "阅读更多",
+  "community": {
+    "title": "社区",
+    "subtitle": "过去 {{days}} 天内社区点赞的文章",
+    "subtitle_plural": "过去 {{days}} 天内社区点赞的文章",
+    "empty": "暂无点赞文章。请登录后点赞文章。"
+  }
+}

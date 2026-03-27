@@ -1,0 +1,19 @@
+{
+  "title": "Flux",
+  "empty": "Nu există articole încă",
+  "loadMore": "Încarcă mai mult",
+  "markAllRead": "Marchează tot ca citit",
+  "unreadOnly": "Doar necitite",
+  "unreadCount": "{{count}} necitite",
+  "like": "Apreciez",
+  "unlike": "Nu mai apreciez",
+  "bookmark": "Marcaj",
+  "removeBookmark": "Șterge marcaj",
+  "readMore": "Citește mai mult",
+  "community": {
+    "title": "Comunitate",
+    "subtitle": "Articole apreciate de comunitate în ultima {{days}} zi",
+    "subtitle_plural": "Articole apreciate de comunitate în ultimele {{days}} zile",
+    "empty": "Nu există articole apreciate. Conectați-vă pentru a aprecia articole."
+  }
+}

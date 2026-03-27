@@ -1,0 +1,19 @@
+{
+  "title": "Feed",
+  "empty": "Noch keine Artikel",
+  "loadMore": "Mehr laden",
+  "markAllRead": "Alle als gelesen markieren",
+  "unreadOnly": "Nur ungelesen",
+  "unreadCount": "{{count}} ungelesen",
+  "like": "Gefällt mir",
+  "unlike": "Gefällt mir nicht mehr",
+  "bookmark": "Lesezeichen",
+  "removeBookmark": "Lesezeichen entfernen",
+  "readMore": "Weiterlesen",
+  "community": {
+    "title": "Community",
+    "subtitle": "Artikel, die der Community im letzten {{days}} Tag gefallen haben",
+    "subtitle_plural": "Artikel, die der Community in den letzten {{days}} Tagen gefallen haben",
+    "empty": "Noch keine gelikten Artikel. Melden Sie sich an, um Artikel zu liken."
+  }
+}

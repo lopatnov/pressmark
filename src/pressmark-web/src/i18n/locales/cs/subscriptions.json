@@ -1,0 +1,19 @@
+{
+  "title": "Odběry",
+  "add": "Přidat odběr",
+  "empty": "Žádné odběry zatím",
+  "rssUrl": "URL RSS",
+  "feedTitle": "Název kanálu",
+  "feedTitlePlaceholder": "Nepovinné — vyplní se automaticky",
+  "lastFetched": "Poslední aktualizace",
+  "remove": "Odebrat",
+  "removeConfirm": "Odebrat tento odběr?",
+  "import": "Importovat OPML",
+  "export": "Exportovat OPML",
+  "importSuccess": "Importováno {{imported}} kanál(ů), přeskočeno {{skipped}} duplikát(ů)",
+  "importError": "Import se nezdařil: neplatný soubor OPML",
+  "errors": {
+    "invalidUrl": "Neplatná URL RSS",
+    "fetchFailed": "Nepodařilo se načíst RSS kanál"
+  }
+}

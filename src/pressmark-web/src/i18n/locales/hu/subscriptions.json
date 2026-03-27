@@ -1,0 +1,19 @@
+{
+  "title": "Feliratkozások",
+  "add": "Feliratkozás hozzáadása",
+  "empty": "Még nincsenek feliratkozások",
+  "rssUrl": "RSS URL",
+  "feedTitle": "Hírfolyam neve",
+  "feedTitlePlaceholder": "Opcionális — automatikusan kitöltve",
+  "lastFetched": "Utoljára frissítve",
+  "remove": "Eltávolítás",
+  "removeConfirm": "Eltávolítja ezt a feliratkozást?",
+  "import": "OPML importálása",
+  "export": "OPML exportálása",
+  "importSuccess": "{{imported}} hírfolyam importálva, {{skipped}} duplikátum kihagyva",
+  "importError": "Importálás sikertelen: érvénytelen OPML fájl",
+  "errors": {
+    "invalidUrl": "Érvénytelen RSS URL",
+    "fetchFailed": "Az RSS hírfolyam betöltése nem sikerült"
+  }
+}

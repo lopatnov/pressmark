@@ -1,0 +1,48 @@
+{
+  "title": "Admin",
+  "settings": {
+    "title": "Website-Einstellungen",
+    "siteName": "Website-Name",
+    "communityWindowDays": "Community-Feed-Zeitraum (Tage)",
+    "registrationMode": "Registrierungsmodus",
+    "open": "Offen",
+    "inviteOnly": "Nur auf Einladung",
+    "saved": "Einstellungen gespeichert",
+    "smtp": "E-Mail (SMTP)",
+    "smtpHost": "SMTP-Server",
+    "smtpPort": "Port",
+    "smtpUser": "Benutzername",
+    "smtpPassword": "Passwort",
+    "smtpPasswordPlaceholder": "Leer lassen, um das aktuelle beizubehalten",
+    "smtpUseTls": "TLS verwenden (STARTTLS)",
+    "smtpFromAddress": "Absenderadresse"
+  },
+  "moderation": {
+    "title": "Moderation",
+    "hide": "Ausblenden",
+    "unhide": "Einblenden",
+    "ban": "Kanal sperren",
+    "unban": "Kanal entsperren"
+  },
+  "users": {
+    "title": "Benutzer",
+    "email": "E-Mail",
+    "role": "Rolle",
+    "joined": "Registriert am",
+    "empty": "Keine Benutzer gefunden"
+  },
+  "invites": {
+    "title": "Einladungs-Token",
+    "generate": "Einladung generieren",
+    "note": "Notiz (optional)",
+    "notePlaceholder": "z. B. für Alice",
+    "tokenGenerated": "Token generiert — jetzt kopieren, er wird nicht erneut angezeigt",
+    "copy": "Kopieren",
+    "copied": "Kopiert!",
+    "revoke": "Widerrufen",
+    "statusActive": "Aktiv",
+    "statusUsed": "Verwendet",
+    "statusRevoked": "Widerrufen",
+    "empty": "Noch keine Einladungs-Token"
+  }
+}

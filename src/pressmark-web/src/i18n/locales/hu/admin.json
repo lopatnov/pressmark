@@ -1,0 +1,48 @@
+{
+  "title": "Admin",
+  "settings": {
+    "title": "Webhely beállításai",
+    "siteName": "Webhely neve",
+    "communityWindowDays": "Közösségi hírfolyam ablak (nap)",
+    "registrationMode": "Regisztrációs mód",
+    "open": "Nyílt",
+    "inviteOnly": "Csak meghívóval",
+    "saved": "Beállítások mentve",
+    "smtp": "E-mail (SMTP)",
+    "smtpHost": "SMTP szerver",
+    "smtpPort": "Port",
+    "smtpUser": "Felhasználónév",
+    "smtpPassword": "Jelszó",
+    "smtpPasswordPlaceholder": "Hagyja üresen a megtartáshoz",
+    "smtpUseTls": "TLS használata (STARTTLS)",
+    "smtpFromAddress": "Feladó címe"
+  },
+  "moderation": {
+    "title": "Moderáció",
+    "hide": "Elrejtés",
+    "unhide": "Megjelenítés",
+    "ban": "Csatorna tiltása",
+    "unban": "Csatorna tiltásának feloldása"
+  },
+  "users": {
+    "title": "Felhasználók",
+    "email": "E-mail",
+    "role": "Szerepkör",
+    "joined": "Csatlakozott",
+    "empty": "Nem találhatók felhasználók"
+  },
+  "invites": {
+    "title": "Meghívó tokenek",
+    "generate": "Meghívó létrehozása",
+    "note": "Megjegyzés (opcionális)",
+    "notePlaceholder": "pl. Alice számára",
+    "tokenGenerated": "Token létrehozva — másolja most, nem jelenik meg újra",
+    "copy": "Másolás",
+    "copied": "Másolva!",
+    "revoke": "Visszavonás",
+    "statusActive": "Aktív",
+    "statusUsed": "Felhasznált",
+    "statusRevoked": "Visszavont",
+    "empty": "Még nincsenek meghívó tokenek"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "title": "Подписки",
+  "add": "Добавить подписку",
+  "empty": "Подписок пока нет",
+  "rssUrl": "RSS URL",
+  "feedTitle": "Название ленты",
+  "feedTitlePlaceholder": "Необязательно — заполнится автоматически",
+  "lastFetched": "Последнее обновление",
+  "remove": "Удалить",
+  "removeConfirm": "Удалить эту подписку?",
+  "import": "Импорт OPML",
+  "export": "Экспорт OPML",
+  "importSuccess": "Импортировано {{imported}} лент, пропущено {{skipped}} дублей",
+  "importError": "Ошибка импорта: недействительный файл OPML",
+  "errors": {
+    "invalidUrl": "Недействительный RSS URL",
+    "fetchFailed": "Не удалось загрузить RSS-ленту"
+  }
+}

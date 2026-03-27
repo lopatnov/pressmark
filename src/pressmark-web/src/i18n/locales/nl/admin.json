@@ -1,0 +1,48 @@
+{
+  "title": "Beheer",
+  "settings": {
+    "title": "Site-instellingen",
+    "siteName": "Sitenaam",
+    "communityWindowDays": "Community-feedvenster (dagen)",
+    "registrationMode": "Registratiemodus",
+    "open": "Open",
+    "inviteOnly": "Alleen op uitnodiging",
+    "saved": "Instellingen opgeslagen",
+    "smtp": "E-mail (SMTP)",
+    "smtpHost": "SMTP-server",
+    "smtpPort": "Poort",
+    "smtpUser": "Gebruikersnaam",
+    "smtpPassword": "Wachtwoord",
+    "smtpPasswordPlaceholder": "Leeg laten om huidig te behouden",
+    "smtpUseTls": "TLS gebruiken (STARTTLS)",
+    "smtpFromAddress": "Afzenderadres"
+  },
+  "moderation": {
+    "title": "Moderatie",
+    "hide": "Verbergen",
+    "unhide": "Tonen",
+    "ban": "Kanaal blokkeren",
+    "unban": "Kanaal deblokkeren"
+  },
+  "users": {
+    "title": "Gebruikers",
+    "email": "E-mailadres",
+    "role": "Rol",
+    "joined": "Lid geworden",
+    "empty": "Geen gebruikers gevonden"
+  },
+  "invites": {
+    "title": "Uitnodigingstokens",
+    "generate": "Uitnodiging genereren",
+    "note": "Notitie (optioneel)",
+    "notePlaceholder": "bijv. voor Alice",
+    "tokenGenerated": "Token gegenereerd — kopieer het nu, het wordt niet opnieuw getoond",
+    "copy": "Kopiëren",
+    "copied": "Gekopieerd!",
+    "revoke": "Intrekken",
+    "statusActive": "Actief",
+    "statusUsed": "Gebruikt",
+    "statusRevoked": "Ingetrokken",
+    "empty": "Nog geen uitnodigingstokens"
+  }
+}

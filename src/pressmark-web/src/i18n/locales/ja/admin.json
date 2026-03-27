@@ -1,0 +1,48 @@
+{
+  "title": "管理",
+  "settings": {
+    "title": "サイト設定",
+    "siteName": "サイト名",
+    "communityWindowDays": "コミュニティフィード期間（日）",
+    "registrationMode": "登録モード",
+    "open": "公開",
+    "inviteOnly": "招待のみ",
+    "saved": "設定を保存しました",
+    "smtp": "メール（SMTP）",
+    "smtpHost": "SMTPサーバー",
+    "smtpPort": "ポート",
+    "smtpUser": "ユーザー名",
+    "smtpPassword": "パスワード",
+    "smtpPasswordPlaceholder": "現在のパスワードを保持するには空のままにしてください",
+    "smtpUseTls": "TLS を使用（STARTTLS）",
+    "smtpFromAddress": "送信者アドレス"
+  },
+  "moderation": {
+    "title": "モデレーション",
+    "hide": "非表示",
+    "unhide": "表示",
+    "ban": "チャンネルをブロック",
+    "unban": "チャンネルのブロックを解除"
+  },
+  "users": {
+    "title": "ユーザー",
+    "email": "メールアドレス",
+    "role": "ロール",
+    "joined": "参加日",
+    "empty": "ユーザーが見つかりません"
+  },
+  "invites": {
+    "title": "招待トークン",
+    "generate": "招待を生成",
+    "note": "メモ（任意）",
+    "notePlaceholder": "例: Alice のために",
+    "tokenGenerated": "トークンが生成されました — 今すぐコピーしてください、再表示されません",
+    "copy": "コピー",
+    "copied": "コピー済み！",
+    "revoke": "取り消す",
+    "statusActive": "有効",
+    "statusUsed": "使用済み",
+    "statusRevoked": "取り消し済み",
+    "empty": "招待トークンがまだありません"
+  }
+}

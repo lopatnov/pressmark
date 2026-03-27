@@ -1,0 +1,48 @@
+{
+  "title": "管理",
+  "settings": {
+    "title": "网站设置",
+    "siteName": "网站名称",
+    "communityWindowDays": "社区动态时间窗口（天）",
+    "registrationMode": "注册模式",
+    "open": "开放",
+    "inviteOnly": "仅邀请",
+    "saved": "设置已保存",
+    "smtp": "电子邮件（SMTP）",
+    "smtpHost": "SMTP 服务器",
+    "smtpPort": "端口",
+    "smtpUser": "用户名",
+    "smtpPassword": "密码",
+    "smtpPasswordPlaceholder": "留空保持当前密码",
+    "smtpUseTls": "使用 TLS（STARTTLS）",
+    "smtpFromAddress": "发件人地址"
+  },
+  "moderation": {
+    "title": "内容审核",
+    "hide": "隐藏",
+    "unhide": "显示",
+    "ban": "封禁频道",
+    "unban": "解封频道"
+  },
+  "users": {
+    "title": "用户",
+    "email": "电子邮件",
+    "role": "角色",
+    "joined": "注册时间",
+    "empty": "未找到用户"
+  },
+  "invites": {
+    "title": "邀请码",
+    "generate": "生成邀请",
+    "note": "备注（可选）",
+    "notePlaceholder": "例如：为 Alice",
+    "tokenGenerated": "邀请码已生成 — 请现在复制，之后将不再显示",
+    "copy": "复制",
+    "copied": "已复制！",
+    "revoke": "撤销",
+    "statusActive": "有效",
+    "statusUsed": "已使用",
+    "statusRevoked": "已撤销",
+    "empty": "暂无邀请码"
+  }
+}

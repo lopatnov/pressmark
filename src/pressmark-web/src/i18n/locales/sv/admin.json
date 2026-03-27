@@ -1,0 +1,48 @@
+{
+  "title": "Admin",
+  "settings": {
+    "title": "Webbplatsinställningar",
+    "siteName": "Webbplatsnamn",
+    "communityWindowDays": "Community-flödesfönster (dagar)",
+    "registrationMode": "Registreringsläge",
+    "open": "Öppen",
+    "inviteOnly": "Endast inbjudan",
+    "saved": "Inställningarna sparades",
+    "smtp": "E-post (SMTP)",
+    "smtpHost": "SMTP-server",
+    "smtpPort": "Port",
+    "smtpUser": "Användarnamn",
+    "smtpPassword": "Lösenord",
+    "smtpPasswordPlaceholder": "Lämna tomt för att behålla nuvarande",
+    "smtpUseTls": "Använd TLS (STARTTLS)",
+    "smtpFromAddress": "Avsändaradress"
+  },
+  "moderation": {
+    "title": "Moderering",
+    "hide": "Dölj",
+    "unhide": "Visa",
+    "ban": "Blockera kanal",
+    "unban": "Avblockera kanal"
+  },
+  "users": {
+    "title": "Användare",
+    "email": "E-post",
+    "role": "Roll",
+    "joined": "Registrerades",
+    "empty": "Inga användare hittades"
+  },
+  "invites": {
+    "title": "Inbjudningstokens",
+    "generate": "Generera inbjudan",
+    "note": "Anteckning (valfritt)",
+    "notePlaceholder": "t.ex. för Alice",
+    "tokenGenerated": "Token genererad — kopiera den nu, den visas inte igen",
+    "copy": "Kopiera",
+    "copied": "Kopierad!",
+    "revoke": "Återkalla",
+    "statusActive": "Aktiv",
+    "statusUsed": "Använd",
+    "statusRevoked": "Återkallad",
+    "empty": "Inga inbjudningstokens än"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "appName": "Pressmark",
+  "loading": "Cargando...",
+  "error": "Algo salió mal",
+  "save": "Guardar",
+  "cancel": "Cancelar",
+  "delete": "Eliminar",
+  "confirm": "Confirmar",
+  "back": "Volver",
+  "language": "Idioma",
+  "nav": {
+    "feed": "Noticias",
+    "subscriptions": "Suscripciones",
+    "bookmarks": "Marcadores",
+    "admin": "Admin",
+    "community": "Comunidad",
+    "login": "Iniciar sesión",
+    "register": "Registrarse",
+    "logout": "Cerrar sesión"
+  }
+}

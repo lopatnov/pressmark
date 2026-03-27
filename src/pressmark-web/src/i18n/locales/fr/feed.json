@@ -1,0 +1,20 @@
+{
+  "title": "Fil d'actualité",
+  "empty": "Aucun article pour l'instant",
+  "loadMore": "Charger plus",
+  "markAllRead": "Tout marquer comme lu",
+  "unreadOnly": "Non lus uniquement",
+  "unreadCount": "{{count}} non lu",
+  "unreadCount_plural": "{{count}} non lus",
+  "like": "J'aime",
+  "unlike": "Je n'aime plus",
+  "bookmark": "Favori",
+  "removeBookmark": "Supprimer le favori",
+  "readMore": "Lire la suite",
+  "community": {
+    "title": "Communauté",
+    "subtitle": "Articles aimés par la communauté lors du dernier {{days}} jour",
+    "subtitle_plural": "Articles aimés par la communauté lors des {{days}} derniers jours",
+    "empty": "Aucun article aimé pour l'instant. Connectez-vous pour aimer des articles."
+  }
+}

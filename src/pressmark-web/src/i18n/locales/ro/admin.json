@@ -1,0 +1,48 @@
+{
+  "title": "Admin",
+  "settings": {
+    "title": "Setări site",
+    "siteName": "Nume site",
+    "communityWindowDays": "Fereastra flux comunitate (zile)",
+    "registrationMode": "Mod înregistrare",
+    "open": "Deschis",
+    "inviteOnly": "Numai pe invitație",
+    "saved": "Setările au fost salvate",
+    "smtp": "E-mail (SMTP)",
+    "smtpHost": "Server SMTP",
+    "smtpPort": "Port",
+    "smtpUser": "Utilizator",
+    "smtpPassword": "Parolă",
+    "smtpPasswordPlaceholder": "Lăsați gol pentru a păstra parola curentă",
+    "smtpUseTls": "Folosiți TLS (STARTTLS)",
+    "smtpFromAddress": "Adresă expeditor"
+  },
+  "moderation": {
+    "title": "Moderare",
+    "hide": "Ascunde",
+    "unhide": "Arată",
+    "ban": "Blochează canal",
+    "unban": "Deblochează canal"
+  },
+  "users": {
+    "title": "Utilizatori",
+    "email": "E-mail",
+    "role": "Rol",
+    "joined": "Înregistrat",
+    "empty": "Niciun utilizator găsit"
+  },
+  "invites": {
+    "title": "Tokeni de invitație",
+    "generate": "Generează invitație",
+    "note": "Notă (opțional)",
+    "notePlaceholder": "ex. pentru Alice",
+    "tokenGenerated": "Token generat — copiați-l acum, nu va mai fi afișat",
+    "copy": "Copiază",
+    "copied": "Copiat!",
+    "revoke": "Revocă",
+    "statusActive": "Activ",
+    "statusUsed": "Folosit",
+    "statusRevoked": "Revocat",
+    "empty": "Nu există tokeni de invitație"
+  }
+}

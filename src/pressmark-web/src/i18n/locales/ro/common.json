@@ -1,0 +1,21 @@
+{
+  "appName": "Pressmark",
+  "loading": "Se încarcă...",
+  "error": "Ceva a mers prost",
+  "save": "Salvează",
+  "cancel": "Anulează",
+  "delete": "Șterge",
+  "confirm": "Confirmă",
+  "back": "Înapoi",
+  "language": "Limbă",
+  "nav": {
+    "feed": "Flux",
+    "subscriptions": "Abonamente",
+    "bookmarks": "Marcaje",
+    "admin": "Admin",
+    "community": "Comunitate",
+    "login": "Conectare",
+    "register": "Înregistrare",
+    "logout": "Deconectare"
+  }
+}

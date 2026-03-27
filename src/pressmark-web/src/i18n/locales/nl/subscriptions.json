@@ -1,0 +1,19 @@
+{
+  "title": "Abonnementen",
+  "add": "Abonnement toevoegen",
+  "empty": "Nog geen abonnementen",
+  "rssUrl": "RSS-URL",
+  "feedTitle": "Feedtitel",
+  "feedTitlePlaceholder": "Optioneel — automatisch ingevuld",
+  "lastFetched": "Laatst bijgewerkt",
+  "remove": "Verwijderen",
+  "removeConfirm": "Dit abonnement verwijderen?",
+  "import": "OPML importeren",
+  "export": "OPML exporteren",
+  "importSuccess": "{{imported}} feed(s) geïmporteerd, {{skipped}} duplicaat/duplicaten overgeslagen",
+  "importError": "Import mislukt: ongeldig OPML-bestand",
+  "errors": {
+    "invalidUrl": "Ongeldige RSS-URL",
+    "fetchFailed": "Kan RSS-feed niet ophalen"
+  }
+}

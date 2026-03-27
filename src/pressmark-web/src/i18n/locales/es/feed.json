@@ -1,0 +1,20 @@
+{
+  "title": "Noticias",
+  "empty": "Aún no hay artículos",
+  "loadMore": "Cargar más",
+  "markAllRead": "Marcar todo como leído",
+  "unreadOnly": "Solo no leídos",
+  "unreadCount": "{{count}} no leído",
+  "unreadCount_plural": "{{count}} no leídos",
+  "like": "Me gusta",
+  "unlike": "Ya no me gusta",
+  "bookmark": "Marcador",
+  "removeBookmark": "Eliminar marcador",
+  "readMore": "Leer más",
+  "community": {
+    "title": "Comunidad",
+    "subtitle": "Artículos que le gustaron a la comunidad en el último {{days}} día",
+    "subtitle_plural": "Artículos que le gustaron a la comunidad en los últimos {{days}} días",
+    "empty": "Aún no hay artículos con me gusta. Inicia sesión para dar me gusta."
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "appName": "Pressmark",
+  "loading": "로딩 중...",
+  "error": "오류가 발생했습니다",
+  "save": "저장",
+  "cancel": "취소",
+  "delete": "삭제",
+  "confirm": "확인",
+  "back": "뒤로",
+  "language": "언어",
+  "nav": {
+    "feed": "피드",
+    "subscriptions": "구독",
+    "bookmarks": "북마크",
+    "admin": "관리자",
+    "community": "커뮤니티",
+    "login": "로그인",
+    "register": "회원가입",
+    "logout": "로그아웃"
+  }
+}

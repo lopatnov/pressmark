@@ -4,6 +4,7 @@ import { Globe, Rss, Bookmark, Settings, LogOut, LogIn, UserPlus, BookOpen } fro
 import { useAuthStore } from '@/store/authStore'
 import { useFeedStore } from '@/store/feedStore'
 import { authClient } from '@/api/clients'
+import { LanguageSwitcher } from './LanguageSwitcher'
 
 export function Sidebar() {
   const { t } = useTranslation('common')
@@ -90,6 +91,9 @@ export function Sidebar() {
           </>
         )}
       </nav>
+      <div className="border-t border-sidebar-border">
+        <LanguageSwitcher />
+      </div>
     </aside>
   )
 }

@@ -1,0 +1,21 @@
+{
+  "appName": "Pressmark",
+  "loading": "Laden...",
+  "error": "Er is iets misgegaan",
+  "save": "Opslaan",
+  "cancel": "Annuleren",
+  "delete": "Verwijderen",
+  "confirm": "Bevestigen",
+  "back": "Terug",
+  "language": "Taal",
+  "nav": {
+    "feed": "Feed",
+    "subscriptions": "Abonnementen",
+    "bookmarks": "Bladwijzers",
+    "admin": "Beheer",
+    "community": "Community",
+    "login": "Inloggen",
+    "register": "Registreren",
+    "logout": "Uitloggen"
+  }
+}

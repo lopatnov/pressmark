@@ -1,85 +1,104 @@
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
-import { Link, useNavigate } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
-import { Button } from '@/components/ui/button'
-import { authClient } from '@/api/clients'
-import { useAuthStore } from '@/store/authStore'
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { Button } from "@/components/ui/button";
+import { authClient } from "@/api/clients";
+import { useAuthStore } from "@/store/authStore";
 
 const schema = z.object({
-  email:    z.string().email(),
+  email: z.email(),
   password: z.string().min(1),
-})
-type FormData = z.infer<typeof schema>
+});
+type FormData = z.infer<typeof schema>;
 
 export function LoginPage() {
-  const { t } = useTranslation('auth')
-  const navigate = useNavigate()
-  const setAuth  = useAuthStore((s) => s.setAuth)
+  const { t } = useTranslation("auth");
+  const navigate = useNavigate();
+  const setAuth = useAuthStore((s) => s.setAuth);
 
-  const { register, handleSubmit, formState: { errors, isSubmitting }, setError } =
-    useForm<FormData>({ resolver: zodResolver(schema) })
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    setError,
+  } = useForm<FormData>({ resolver: zodResolver(schema) });
 
   const onSubmit = async (data: FormData) => {
     try {
-      const res = await authClient.login({ email: data.email, password: data.password })
+      const res = await authClient.login({
+        email: data.email,
+        password: data.password,
+      });
       setAuth(res.accessToken, {
-        id:    res.userId,
+        id: res.userId,
         email: res.email,
-        role:  res.role as 'User' | 'Admin',
-      })
-      navigate('/feed')
+        role: res.role as "User" | "Admin",
+      });
+      navigate("/feed");
     } catch {
-      setError('root', { message: t('errors.invalidCredentials') })
+      setError("root", { message: t("errors.invalidCredentials") });
     }
-  }
+  };
 
   return (
     <div className="flex min-h-screen items-center justify-center">
       <div className="w-full max-w-sm space-y-6 p-6">
-        <h1 className="text-2xl font-semibold">{t('login.title')}</h1>
+        <h1 className="text-2xl font-semibold">{t("login.title")}</h1>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-1">
-            <label className="text-sm font-medium">{t('login.email')}</label>
+            <label className="text-sm font-medium">{t("login.email")}</label>
             <input
-              {...register('email')}
+              {...register("email")}
               type="email"
               autoComplete="email"
               className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
             />
-            {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
+            {errors.email && (
+              <p className="text-xs text-destructive">{errors.email.message}</p>
+            )}
           </div>
 
           <div className="space-y-1">
-            <label className="text-sm font-medium">{t('login.password')}</label>
+            <label className="text-sm font-medium">{t("login.password")}</label>
             <input
-              {...register('password')}
+              {...register("password")}
               type="password"
               autoComplete="current-password"
               className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
             />
-            {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
+            {errors.password && (
+              <p className="text-xs text-destructive">
+                {errors.password.message}
+              </p>
+            )}
           </div>
 
-          {errors.root && <p className="text-sm text-destructive">{errors.root.message}</p>}
+          {errors.root && (
+            <p className="text-sm text-destructive">{errors.root.message}</p>
+          )}
 
           <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {t('login.submit')}
+            {t("login.submit")}
           </Button>
         </form>
 
         <div className="space-y-1 text-center text-sm text-muted-foreground">
           <p>
-            {t('login.noAccount')}{' '}
-            <Link to="/register" className="underline">{t('login.register')}</Link>
+            {t("login.noAccount")}{" "}
+            <Link to="/register" className="underline">
+              {t("login.register")}
+            </Link>
           </p>
           <p>
-            <Link to="/forgot-password" className="underline">{t('login.forgotPassword')}</Link>
+            <Link to="/forgot-password" className="underline">
+              {t("login.forgotPassword")}
+            </Link>
           </p>
         </div>
       </div>
     </div>
-  )
+  );
 }

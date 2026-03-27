@@ -1,0 +1,19 @@
+{
+  "title": "Kanál",
+  "empty": "Žádné články zatím",
+  "loadMore": "Načíst více",
+  "markAllRead": "Označit vše jako přečtené",
+  "unreadOnly": "Pouze nepřečtené",
+  "unreadCount": "{{count}} nepřečtených",
+  "like": "Líbí se mi",
+  "unlike": "Nelíbí se mi",
+  "bookmark": "Záložka",
+  "removeBookmark": "Odebrat záložku",
+  "readMore": "Číst dále",
+  "community": {
+    "title": "Komunita",
+    "subtitle": "Články, které se komunitě líbily za poslední {{days}} den",
+    "subtitle_plural": "Články, které se komunitě líbily za posledních {{days}} dnů",
+    "empty": "Žádné oblíbené články. Přihlaste se a začněte označovat."
+  }
+}

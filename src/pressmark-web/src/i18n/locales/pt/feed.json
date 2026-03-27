@@ -1,0 +1,19 @@
+{
+  "title": "Feed",
+  "empty": "Ainda não há artigos",
+  "loadMore": "Carregar mais",
+  "markAllRead": "Marcar todos como lidos",
+  "unreadOnly": "Apenas não lidos",
+  "unreadCount": "{{count}} não lido(s)",
+  "like": "Curtir",
+  "unlike": "Descurtir",
+  "bookmark": "Favoritar",
+  "removeBookmark": "Remover favorito",
+  "readMore": "Leia mais",
+  "community": {
+    "title": "Comunidade",
+    "subtitle": "Artigos curtidos pela comunidade no último {{days}} dia",
+    "subtitle_plural": "Artigos curtidos pela comunidade nos últimos {{days}} dias",
+    "empty": "Ainda não há artigos curtidos. Entre para curtir artigos."
+  }
+}

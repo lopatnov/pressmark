@@ -1,0 +1,19 @@
+{
+  "title": "Subskrypcje",
+  "add": "Dodaj subskrypcję",
+  "empty": "Brak subskrypcji",
+  "rssUrl": "URL RSS",
+  "feedTitle": "Tytuł kanału",
+  "feedTitlePlaceholder": "Opcjonalne — wypełniane automatycznie",
+  "lastFetched": "Ostatnia aktualizacja",
+  "remove": "Usuń",
+  "removeConfirm": "Usunąć tę subskrypcję?",
+  "import": "Importuj OPML",
+  "export": "Eksportuj OPML",
+  "importSuccess": "Zaimportowano {{imported}} kanał(y), pominięto {{skipped}} duplikat(ów)",
+  "importError": "Błąd importu: nieprawidłowy plik OPML",
+  "errors": {
+    "invalidUrl": "Nieprawidłowy URL RSS",
+    "fetchFailed": "Nie udało się pobrać kanału RSS"
+  }
+}
