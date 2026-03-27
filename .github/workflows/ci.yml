@@ -25,7 +25,9 @@ jobs:
         run: dotnet build --no-restore --configuration Release
 
       - name: Format check
-        run: dotnet format --verify-no-changes
+        run: |
+          dotnet format src/Pressmark.Api/Pressmark.Api.csproj --verify-no-changes
+          dotnet format src/Pressmark.Api.Tests/Pressmark.Api.Tests.csproj --verify-no-changes
 
       - name: Test
         run: dotnet test --no-build --configuration Release --verbosity normal
