@@ -11,6 +11,7 @@
     "generate": "buf generate",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "prepare": "cd ../.. && npx husky src/pressmark-web/.husky"
   },
@@ -51,17 +52,20 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
+    "@vitest/coverage-v8": "^4.1.2",
     "eslint": "^9.39.4",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.4.0",
     "husky": "^9.1.7",
+    "jsdom": "^29.0.1",
     "lint-staged": "^16.4.0",
     "prettier": "^3.8.1",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.57.0",
-    "vite": "^8.0.1"
+    "vite": "^8.0.1",
+    "vitest": "^4.1.2"
   },
   "lint-staged": {
     "!(src/api/generated/**)*.{ts,tsx}": [
