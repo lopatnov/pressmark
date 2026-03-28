@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSearchParams, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
@@ -24,7 +24,6 @@ interface CommunityItem {
   imageUrl: string
   subscriptionId: string
   sourceRssUrl: string
-  hidden: boolean
 }
 
 export function CommunityPage() {
@@ -40,9 +39,7 @@ export function CommunityPage() {
   const [items, setItems] = useState<CommunityItem[]>([])
   const [nextCursor, setNextCursor] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [subscribedUrls, setSubscribedUrls] = useState<Set<string>>(
-    () => new Set(subscriptions.map((s) => s.rssUrl)),
-  )
+  const subscribedUrls = useMemo(() => new Set(subscriptions.map((s) => s.rssUrl)), [subscriptions])
   const [reportedSubs, setReportedSubs] = useState<Set<string>>(new Set())
 
   const loadFeed = useCallback(
@@ -66,7 +63,6 @@ export function CommunityPage() {
           imageUrl: item.imageUrl,
           subscriptionId: item.subscriptionId,
           sourceRssUrl: item.sourceRssUrl,
-          hidden: false,
         }))
         if (cursor) {
           setItems((prev) => [...prev, ...mapped])
@@ -113,7 +109,6 @@ export function CommunityPage() {
   }
 
   const handleSubscribe = async (rssUrl: string, title: string) => {
-    setSubscribedUrls((prev) => new Set(prev).add(rssUrl))
     const alreadyHave = subscriptions.some((s) => s.rssUrl === rssUrl)
     if (alreadyHave) {
       toast.info(t('feed:alreadySubscribed'))
@@ -130,11 +125,6 @@ export function CommunityPage() {
       })
       toast.success(t('feed:subscribeSuccess'))
     } catch {
-      setSubscribedUrls((prev) => {
-        const next = new Set(prev)
-        next.delete(rssUrl)
-        return next
-      })
       toast.error(t('common:error'))
     }
   }
