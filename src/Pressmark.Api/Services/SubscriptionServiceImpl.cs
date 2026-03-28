@@ -53,6 +53,11 @@ public class SubscriptionServiceImpl(AppDbContext db, IHttpClientFactory httpCli
                 "Could not parse RSS feed: the URL does not appear to be a valid RSS/Atom feed"));
         }
 
+        var existing = await db.Subscriptions
+            .FirstOrDefaultAsync(s => s.UserId == userId && s.RssUrl == request.RssUrl, ct);
+        if (existing != null)
+            return ToProto(existing);
+
         var entity = new Entities.Subscription
         {
             UserId = userId,

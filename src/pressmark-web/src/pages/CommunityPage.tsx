@@ -107,6 +107,7 @@ export function CommunityPage() {
   }
 
   const handleSubscribe = async (rssUrl: string, title: string) => {
+    setSubscribedUrls((prev) => new Set(prev).add(rssUrl))
     try {
       const res = await subscriptionClient.addSubscription({ rssUrl, title })
       addSubscription({
@@ -116,9 +117,13 @@ export function CommunityPage() {
         lastFetchedAt: res.lastFetchedAt,
         createdAt: '',
       })
-      setSubscribedUrls((prev) => new Set(prev).add(rssUrl))
       toast.success(t('feed:subscribeSuccess'))
     } catch {
+      setSubscribedUrls((prev) => {
+        const next = new Set(prev)
+        next.delete(rssUrl)
+        return next
+      })
       toast.error(t('common:error'))
     }
   }
