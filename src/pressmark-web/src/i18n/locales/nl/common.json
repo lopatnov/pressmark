@@ -16,6 +16,7 @@
     "community": "Community",
     "login": "Inloggen",
     "register": "Registreren",
-    "logout": "Uitloggen"
+    "logout": "Uitloggen",
+    "openMenu": "Menu openen"
   }
 }

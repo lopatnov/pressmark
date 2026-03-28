@@ -1,16 +1,28 @@
 import { useEffect } from 'react'
-import { NavLink, useNavigate } from 'react-router-dom'
+import { NavLink, useNavigate, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Globe, Rss, Bookmark, Settings, LogOut, LogIn, UserPlus, BookOpen } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/store/authStore'
 import { useFeedStore } from '@/store/feedStore'
 import { useAdminStore } from '@/store/adminStore'
 import { authClient, adminClient } from '@/api/clients'
 import { LanguageSwitcher } from './LanguageSwitcher'
 
-export function Sidebar() {
+interface SidebarProps {
+  isOpen: boolean
+  onClose: () => void
+}
+
+export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const { t } = useTranslation('common')
   const navigate = useNavigate()
+  const location = useLocation()
+
+  useEffect(() => {
+    onClose()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname])
   const user = useAuthStore((s) => s.user)
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated())
   const isAdmin = useAuthStore((s) => s.isAdmin())
@@ -53,7 +65,12 @@ export function Sidebar() {
       : 'text-sidebar-foreground hover:bg-sidebar-accent/60')
 
   return (
-    <aside className="flex h-screen w-56 shrink-0 flex-col border-r border-sidebar-border bg-sidebar">
+    <aside
+      className={cn(
+        'fixed inset-y-0 left-0 z-40 flex h-screen w-56 shrink-0 flex-col border-r border-sidebar-border bg-sidebar transition-transform duration-200 ease-in-out md:relative md:translate-x-0',
+        isOpen ? 'translate-x-0' : '-translate-x-full',
+      )}
+    >
       <div className="flex flex-col border-b border-sidebar-border px-4 py-3">
         <span className="text-sm font-semibold text-sidebar-foreground">
           {settings?.siteName || t('appName')}

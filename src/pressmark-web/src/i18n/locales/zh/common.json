@@ -16,6 +16,7 @@
     "community": "社区",
     "login": "登录",
     "register": "注册",
-    "logout": "退出登录"
+    "logout": "退出登录",
+    "openMenu": "打开菜单"
   }
 }

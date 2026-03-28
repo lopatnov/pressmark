@@ -16,6 +16,7 @@
     "community": "Comunidad",
     "login": "Iniciar sesión",
     "register": "Registrarse",
-    "logout": "Cerrar sesión"
+    "logout": "Cerrar sesión",
+    "openMenu": "Abrir menú"
   }
 }

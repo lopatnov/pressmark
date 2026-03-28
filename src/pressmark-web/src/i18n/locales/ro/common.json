@@ -16,6 +16,7 @@
     "community": "Comunitate",
     "login": "Conectare",
     "register": "Înregistrare",
-    "logout": "Deconectare"
+    "logout": "Deconectare",
+    "openMenu": "Deschide meniu"
   }
 }

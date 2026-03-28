@@ -16,6 +16,7 @@
     "community": "Comunidade",
     "login": "Entrar",
     "register": "Cadastrar",
-    "logout": "Sair"
+    "logout": "Sair",
+    "openMenu": "Abrir menu"
   }
 }
