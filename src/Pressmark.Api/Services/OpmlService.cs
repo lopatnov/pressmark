@@ -1,4 +1,5 @@
 using System.Text;
+using System.Xml;
 using System.Xml.Linq;
 using Pressmark.Api.Entities;
 
@@ -8,7 +9,13 @@ public static class OpmlService
 {
     public static List<(string RssUrl, string Title)> Parse(string opml)
     {
-        var doc = XDocument.Parse(opml);
+        var settings = new XmlReaderSettings
+        {
+            DtdProcessing = DtdProcessing.Prohibit,
+            XmlResolver = null,
+        };
+        using var reader = XmlReader.Create(new StringReader(opml), settings);
+        var doc = XDocument.Load(reader);
         return doc.Descendants("outline")
             .Where(e => !string.IsNullOrEmpty(e.Attribute("xmlUrl")?.Value))
             .Select(e => (

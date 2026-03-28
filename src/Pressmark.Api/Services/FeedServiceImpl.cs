@@ -25,6 +25,7 @@ public class FeedServiceImpl(AppDbContext db, FeedUpdateBroadcaster broadcaster)
                                   1, MaxPageSize);
 
         var query = db.FeedItems
+            .AsNoTracking()
             .Include(f => f.Subscription)
             .Where(f => f.Subscription.UserId == userId
                      && !f.IsCommunityHidden
@@ -64,7 +65,8 @@ public class FeedServiceImpl(AppDbContext db, FeedUpdateBroadcaster broadcaster)
         MarkAsReadRequest request, ServerCallContext context)
     {
         var userId = GetUserId(context);
-        var itemId = Guid.Parse(request.FeedItemId);
+        if (!Guid.TryParse(request.FeedItemId, out var itemId))
+            throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid feed_item_id"));
         var ct = context.CancellationToken;
 
         var exists = await db.ReadItems
@@ -121,7 +123,8 @@ public class FeedServiceImpl(AppDbContext db, FeedUpdateBroadcaster broadcaster)
         ToggleLikeRequest request, ServerCallContext context)
     {
         var userId = GetUserId(context);
-        var itemId = Guid.Parse(request.FeedItemId);
+        if (!Guid.TryParse(request.FeedItemId, out var itemId))
+            throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid feed_item_id"));
         var ct = context.CancellationToken;
 
         var like = await db.Likes
@@ -144,7 +147,8 @@ public class FeedServiceImpl(AppDbContext db, FeedUpdateBroadcaster broadcaster)
         ToggleBookmarkRequest request, ServerCallContext context)
     {
         var userId = GetUserId(context);
-        var itemId = Guid.Parse(request.FeedItemId);
+        if (!Guid.TryParse(request.FeedItemId, out var itemId))
+            throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid feed_item_id"));
         var ct = context.CancellationToken;
 
         var bookmark = await db.Bookmarks
@@ -169,6 +173,7 @@ public class FeedServiceImpl(AppDbContext db, FeedUpdateBroadcaster broadcaster)
                                   1, MaxPageSize);
 
         var query = db.FeedItems
+            .AsNoTracking()
             .Include(f => f.Subscription)
             .Where(f => db.Bookmarks.Any(b => b.UserId == userId && b.FeedItemId == f.Id));
 
@@ -210,6 +215,7 @@ public class FeedServiceImpl(AppDbContext db, FeedUpdateBroadcaster broadcaster)
         var since = DateTime.UtcNow.AddDays(-windowDays);
 
         var query = db.FeedItems
+            .AsNoTracking()
             .Include(f => f.Subscription)
             .Where(f => !f.IsCommunityHidden
                      && !f.Subscription.IsCommunityBanned
@@ -432,9 +438,11 @@ public class FeedServiceImpl(AppDbContext db, FeedUpdateBroadcaster broadcaster)
             throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid feed_item_id"));
 
         var comments = await db.Comments
+            .AsNoTracking()
             .Where(c => c.FeedItemId == feedItemId)
             .OrderBy(c => c.CreatedAt)
             .Include(c => c.User)
+            .Take(200)
             .ToListAsync(ct);
 
         var result = new CommentList();
@@ -475,6 +483,10 @@ public class FeedServiceImpl(AppDbContext db, FeedUpdateBroadcaster broadcaster)
 
         if (user.IsCommentingBanned)
             throw new RpcException(new Status(StatusCode.PermissionDenied, "You are not allowed to comment"));
+
+        var feedItemExists = await db.FeedItems.AnyAsync(f => f.Id == feedItemId, ct);
+        if (!feedItemExists)
+            throw new RpcException(new Status(StatusCode.NotFound, "Feed item not found"));
 
         var comment = new Entities.Comment
         {

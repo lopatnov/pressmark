@@ -42,10 +42,11 @@ export function CommunityPage() {
   )
 
   const loadFeed = useCallback(
-    async (cursor = '') => {
+    async (cursor = '', signal?: AbortSignal) => {
       setIsLoading(true)
       try {
-        const res = await feedClient.getCommunityFeed({ pageSize: 20, cursor })
+        const res = await feedClient.getCommunityFeed({ pageSize: 20, cursor }, { signal })
+        if (signal?.aborted) return
         const mapped = res.items.map((item) => ({
           id: item.id,
           title: item.title,
@@ -66,7 +67,8 @@ export function CommunityPage() {
           setItems(mapped)
         }
         setNextCursor(res.nextCursor)
-      } catch {
+      } catch (err) {
+        if (err instanceof Error && err.name === 'AbortError') return
         toast.error(t('common:error'))
       } finally {
         setIsLoading(false)
@@ -90,7 +92,7 @@ export function CommunityPage() {
         ),
       )
     } catch {
-      // intentional — UI already reflects optimistic state
+      toast.error(t('common:error'))
     }
   }
 
@@ -132,7 +134,9 @@ export function CommunityPage() {
   }
 
   useEffect(() => {
-    loadFeed()
+    const controller = new AbortController()
+    loadFeed('', controller.signal)
+    return () => controller.abort()
   }, [loadFeed])
 
   return (

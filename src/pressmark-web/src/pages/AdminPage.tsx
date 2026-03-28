@@ -46,23 +46,27 @@ function SiteSettingsSection() {
   }, [settings])
 
   const onSubmit = async (data: SettingsForm) => {
-    await adminClient.updateSiteSettings({
-      settings: {
-        siteName: data.siteName,
-        communityWindowDays: data.communityWindowDays,
-        registrationMode: data.registrationMode,
-        smtpHost: data.smtpHost,
-        smtpPort: data.smtpPort,
-        smtpUser: data.smtpUser,
-        smtpPassword: data.smtpPassword,
-        smtpUseTls: data.smtpUseTls,
-        smtpFromAddress: data.smtpFromAddress,
-        commentsEnabled: data.commentsEnabled,
-      },
-    })
-    setSettings(data)
-    setSaved(true)
-    setTimeout(() => setSaved(false), 2000)
+    try {
+      await adminClient.updateSiteSettings({
+        settings: {
+          siteName: data.siteName,
+          communityWindowDays: data.communityWindowDays,
+          registrationMode: data.registrationMode,
+          smtpHost: data.smtpHost,
+          smtpPort: data.smtpPort,
+          smtpUser: data.smtpUser,
+          smtpPassword: data.smtpPassword,
+          smtpUseTls: data.smtpUseTls,
+          smtpFromAddress: data.smtpFromAddress,
+          commentsEnabled: data.commentsEnabled,
+        },
+      })
+      setSettings(data)
+      setSaved(true)
+      setTimeout(() => setSaved(false), 2000)
+    } catch {
+      toast.error(t('common:error'))
+    }
   }
 
   return (
@@ -195,16 +199,24 @@ function ModerationSection() {
 
   const handleHide = async (hidden: boolean) => {
     if (!itemId.trim()) return
-    await adminClient.hideFeedItem({ feedItemId: itemId.trim(), hidden })
-    setItemMsg(hidden ? t('admin:moderation.hide') : t('admin:moderation.unhide'))
-    setTimeout(() => setItemMsg(''), 2000)
+    try {
+      await adminClient.hideFeedItem({ feedItemId: itemId.trim(), hidden })
+      setItemMsg(hidden ? t('admin:moderation.hide') : t('admin:moderation.unhide'))
+      setTimeout(() => setItemMsg(''), 2000)
+    } catch {
+      toast.error(t('common:error'))
+    }
   }
 
   const handleBan = async (banned: boolean) => {
     if (!subId.trim()) return
-    await adminClient.banSubscription({ subscriptionId: subId.trim(), banned })
-    setSubMsg(banned ? t('admin:moderation.ban') : t('admin:moderation.unban'))
-    setTimeout(() => setSubMsg(''), 2000)
+    try {
+      await adminClient.banSubscription({ subscriptionId: subId.trim(), banned })
+      setSubMsg(banned ? t('admin:moderation.ban') : t('admin:moderation.unban'))
+      setTimeout(() => setSubMsg(''), 2000)
+    } catch {
+      toast.error(t('common:error'))
+    }
   }
 
   return (
@@ -274,6 +286,7 @@ function BannedSubscriptionsSection() {
           res.items.map((b) => ({ id: b.id, rssUrl: b.rssUrl, title: b.title })),
         ),
       )
+      .catch(() => toast.error(t('common:error')))
       .finally(() => setLoading(false))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -348,6 +361,7 @@ function UsersSection() {
           })),
         ),
       )
+      .catch(() => toast.error(t('common:error')))
       .finally(() => setLoading(false))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -434,32 +448,39 @@ function InvitesSection() {
   const [copiedId, setCopiedId] = useState<string | null>(null)
 
   useEffect(() => {
-    adminClient.listInvites({}).then((res) =>
-      setInvites(
-        res.items.map((i) => ({
-          id: i.id,
-          token: '',
-          note: i.note,
-          createdAt: i.createdAt,
-          expiresAt: i.expiresAt,
-        })),
-      ),
-    )
+    adminClient
+      .listInvites({})
+      .then((res) =>
+        setInvites(
+          res.items.map((i) => ({
+            id: i.id,
+            token: '',
+            note: i.note,
+            createdAt: i.createdAt,
+            expiresAt: i.expiresAt,
+          })),
+        ),
+      )
+      .catch(() => toast.error(t('common:error')))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleGenerate = async () => {
-    const res = await adminClient.generateInvite({ note, expiresDays })
-    const item: InviteItem = {
-      id: res.id,
-      token: res.token,
-      note: res.note,
-      createdAt: res.createdAt,
-      expiresAt: res.expiresAt,
+    try {
+      const res = await adminClient.generateInvite({ note, expiresDays })
+      const item: InviteItem = {
+        id: res.id,
+        token: res.token,
+        note: res.note,
+        createdAt: res.createdAt,
+        expiresAt: res.expiresAt,
+      }
+      addInvite(item)
+      setNewToken(item)
+      setNote('')
+    } catch {
+      toast.error(t('common:error'))
     }
-    addInvite(item)
-    setNewToken(item)
-    setNote('')
   }
 
   const handleCopy = (token: string, id: string) => {
@@ -469,9 +490,13 @@ function InvitesSection() {
   }
 
   const handleDelete = async (id: string) => {
-    await adminClient.deleteInvite({ id })
-    removeInvite(id)
-    if (newToken?.id === id) setNewToken(null)
+    try {
+      await adminClient.deleteInvite({ id })
+      removeInvite(id)
+      if (newToken?.id === id) setNewToken(null)
+    } catch {
+      toast.error(t('common:error'))
+    }
   }
 
   return (

@@ -35,7 +35,22 @@ public class AuthServiceImpl(
             if (string.IsNullOrWhiteSpace(request.InviteToken))
                 throw new RpcException(new Status(StatusCode.PermissionDenied,
                     "An invite token is required"));
+        }
+        else if (mode != "open")
+            throw new RpcException(new Status(StatusCode.FailedPrecondition,
+                "Registration is closed"));
 
+        if (await db.Users.AnyAsync(u => u.Email == request.Email, ct))
+            throw new RpcException(new Status(StatusCode.AlreadyExists,
+                "Email already registered"));
+
+        // Use a serializable transaction to prevent two concurrent registrations
+        // from consuming the same invite token simultaneously.
+        await using var tx = await db.Database.BeginTransactionAsync(
+            System.Data.IsolationLevel.Serializable, ct);
+
+        if (mode == "invite_only")
+        {
             var invite = await db.InviteTokens
                 .FirstOrDefaultAsync(t =>
                     t.Token == request.InviteToken &&
@@ -45,16 +60,7 @@ public class AuthServiceImpl(
             if (invite is null)
                 throw new RpcException(new Status(StatusCode.PermissionDenied,
                     "Invalid or expired invite token"));
-
-            // Mark invite as used after user is created (below)
         }
-        else if (mode != "open")
-            throw new RpcException(new Status(StatusCode.FailedPrecondition,
-                "Registration is closed"));
-
-        if (await db.Users.AnyAsync(u => u.Email == request.Email, ct))
-            throw new RpcException(new Status(StatusCode.AlreadyExists,
-                "Email already registered"));
 
         var isFirst = !await db.Users.AnyAsync(ct);
 
@@ -77,6 +83,8 @@ public class AuthServiceImpl(
             invite.UsedByUserId = user.Id;
             await db.SaveChangesAsync(ct);
         }
+
+        await tx.CommitAsync(ct);
 
         return await IssueTokens(user, context.GetHttpContext(), ct);
     }

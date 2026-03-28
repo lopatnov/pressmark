@@ -51,6 +51,7 @@ interface AdminState {
   unbanSubscription: (id: string) => void
   updateUserCommentBan: (userId: string, banned: boolean) => void
   setLoading: (loading: boolean) => void
+  reset: () => void
 }
 
 export const useAdminStore = create<AdminState>()(
@@ -74,6 +75,8 @@ export const useAdminStore = create<AdminState>()(
           users: s.users.map((u) => (u.id === userId ? { ...u, isCommentingBanned: banned } : u)),
         })),
       setLoading: (isLoading) => set({ isLoading }),
+      reset: () =>
+        set({ settings: null, users: [], invites: [], bannedSubscriptions: [], isLoading: false }),
     }),
     { name: 'admin' },
   ),

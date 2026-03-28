@@ -1,5 +1,8 @@
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
+import { useFeedStore } from './feedStore'
+import { useSubscriptionStore } from './subscriptionStore'
+import { useAdminStore } from './adminStore'
 
 interface AuthUser {
   id: string
@@ -28,7 +31,12 @@ export const useAuthStore = create<AuthState>()(
       isInitialized: false,
       registrationMode: 'open',
       setAuth: (token, user) => set({ accessToken: token, user }),
-      clearAuth: () => set({ accessToken: null, user: null }),
+      clearAuth: () => {
+        set({ accessToken: null, user: null })
+        useFeedStore.getState().reset()
+        useSubscriptionStore.getState().reset()
+        useAdminStore.getState().reset()
+      },
       setInitialized: () => set({ isInitialized: true }),
       setRegistrationMode: (mode) => set({ registrationMode: mode }),
       isAuthenticated: () => !!get().accessToken,

@@ -42,15 +42,15 @@ public class SubscriptionServiceImpl(AppDbContext db, IHttpClientFactory httpCli
         {
             throw;
         }
-        catch (HttpRequestException ex)
+        catch (HttpRequestException)
         {
             throw new RpcException(new Status(StatusCode.InvalidArgument,
-                $"Could not fetch RSS feed: {ex.Message}"));
+                "Could not fetch RSS feed: the URL is unreachable or returned an error"));
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             throw new RpcException(new Status(StatusCode.InvalidArgument,
-                $"Could not parse RSS feed: {ex.GetType().Name}: {ex.Message}"));
+                "Could not parse RSS feed: the URL does not appear to be a valid RSS/Atom feed"));
         }
 
         var entity = new Entities.Subscription
@@ -74,9 +74,11 @@ public class SubscriptionServiceImpl(AppDbContext db, IHttpClientFactory httpCli
         var userId = GetUserId(context);
         var ct = context.CancellationToken;
 
+        if (!Guid.TryParse(request.SubscriptionId, out var subId))
+            throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid subscription_id"));
+
         var sub = await db.Subscriptions
-            .FirstOrDefaultAsync(s =>
-                s.Id == Guid.Parse(request.SubscriptionId) && s.UserId == userId, ct);
+            .FirstOrDefaultAsync(s => s.Id == subId && s.UserId == userId, ct);
 
         if (sub is null)
             throw new RpcException(new Status(StatusCode.NotFound, "Subscription not found"));

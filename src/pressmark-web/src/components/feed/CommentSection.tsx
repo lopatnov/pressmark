@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { MessageSquare, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
@@ -29,7 +29,7 @@ export function CommentSection({ feedItemId }: CommentSectionProps) {
   const [body, setBody] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
-  const load = async () => {
+  const load = useCallback(async () => {
     try {
       const res = await feedClient.listComments({ feedItemId })
       setComments(
@@ -45,7 +45,7 @@ export function CommentSection({ feedItemId }: CommentSectionProps) {
     } catch {
       toast.error(t('comments.loadError'))
     }
-  }
+  }, [feedItemId, t])
 
   const handleToggle = () => {
     const next = !open
