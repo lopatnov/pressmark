@@ -32,6 +32,7 @@ export function CommunityPage() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated())
   const isAdmin = useAuthStore((s) => s.isAdmin())
   const registrationMode = useAuthStore((s) => s.registrationMode)
+  const communityWindowDays = useAuthStore((s) => s.communityWindowDays)
   const { subscriptions, addSubscription } = useSubscriptionStore()
 
   const [items, setItems] = useState<CommunityItem[]>([])
@@ -163,7 +164,9 @@ export function CommunityPage() {
     <div className="mx-auto max-w-2xl space-y-6 p-4">
       <div className="space-y-1">
         <h1 className="text-2xl font-semibold">{t('feed:community.title')}</h1>
-        <p className="text-sm text-muted-foreground">{t('feed:community.subtitle', { days: 1 })}</p>
+        <p className="text-sm text-muted-foreground">
+          {t('feed:community.subtitle', { count: communityWindowDays, days: communityWindowDays })}
+        </p>
       </div>
 
       {!isAuthenticated && (

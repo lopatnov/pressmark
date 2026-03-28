@@ -46,6 +46,7 @@ message ResetPasswordRequest {
 }
 
 message RegistrationStatus {
-  bool   has_admin          = 1;  // false = first registered user becomes Admin
-  string registration_mode  = 2;  // "open" | "invite_only"
+  bool   has_admin             = 1;  // false = first registered user becomes Admin
+  string registration_mode     = 2;  // "open" | "invite_only"
+  int32  community_window_days = 3;
 }
