@@ -128,7 +128,7 @@ export function ArticlePage() {
         </div>
       )}
 
-      {id && <CommentSection feedItemId={id} />}
+      {id && <CommentSection feedItemId={id} initiallyOpen />}
     </div>
   )
 }

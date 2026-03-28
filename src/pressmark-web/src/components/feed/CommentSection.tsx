@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { MessageSquare, Trash2, Flag, Check } from 'lucide-react'
 import { toast } from 'sonner'
@@ -16,15 +16,20 @@ interface CommentItem {
 
 interface CommentSectionProps {
   feedItemId: string
+  initiallyOpen?: boolean
 }
 
-export function CommentSection({ feedItemId }: CommentSectionProps) {
+export function CommentSection({ feedItemId, initiallyOpen = false }: CommentSectionProps) {
   const { t } = useTranslation(['feed', 'common'])
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated())
   const isAdmin = useAuthStore((s) => s.isAdmin())
 
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(initiallyOpen)
   const [loaded, setLoaded] = useState(false)
+
+  useEffect(() => {
+    if (initiallyOpen) load()
+  }, [initiallyOpen, load])
   const [comments, setComments] = useState<CommentItem[]>([])
   const [body, setBody] = useState('')
   const [submitting, setSubmitting] = useState(false)
