@@ -10,12 +10,15 @@ export interface FeedItemData {
   sourceTitle: string
   imageUrl?: string
   isRead?: boolean
+  subscriptionId?: string
+  sourceRssUrl?: string
 }
 
 interface FeedItemCardProps {
   item: FeedItemData
   onTitleClick?: () => void
   actions?: React.ReactNode
+  footer?: React.ReactNode
 }
 
 function sanitizeSummary(html: string): string {
@@ -49,7 +52,7 @@ function getFaviconUrl(url: string): string | null {
   }
 }
 
-export function FeedItemCard({ item, onTitleClick, actions }: FeedItemCardProps) {
+export function FeedItemCard({ item, onTitleClick, actions, footer }: FeedItemCardProps) {
   const isUnread = item.isRead === false
   const youtubeId = getYouTubeId(item.url)
   const faviconUrl = getFaviconUrl(item.url)
@@ -138,6 +141,7 @@ export function FeedItemCard({ item, onTitleClick, actions }: FeedItemCardProps)
       ) : null}
 
       {actions && <div className="flex items-center gap-1 pt-1">{actions}</div>}
+      {footer}
     </article>
   )
 }

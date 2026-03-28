@@ -15,21 +15,32 @@
     "smtpPassword": "Parolă",
     "smtpPasswordPlaceholder": "Lăsați gol pentru a păstra parola curentă",
     "smtpUseTls": "Folosiți TLS (STARTTLS)",
-    "smtpFromAddress": "Adresă expeditor"
+    "smtpFromAddress": "Adresă expeditor",
+    "commentsEnabled": "Activează comentariile"
   },
   "moderation": {
     "title": "Moderare",
-    "hide": "Ascunde",
+    "hide": "Ascunde articol",
     "unhide": "Arată",
-    "ban": "Blochează canal",
-    "unban": "Deblochează canal"
+    "ban": "Interzice sursa",
+    "unban": "Deblochează canal",
+    "hidden": "Articol ascuns",
+    "banned": "Sursă interzisă"
+  },
+  "bannedSubs": {
+    "title": "Surse interzise",
+    "empty": "Nicio sursă interzisă",
+    "unban": "Deblochează"
   },
   "users": {
     "title": "Utilizatori",
     "email": "E-mail",
     "role": "Rol",
     "joined": "Înregistrat",
-    "empty": "Niciun utilizator găsit"
+    "empty": "Niciun utilizator găsit",
+    "comments": "Comentarii",
+    "banComments": "Interzice",
+    "unbanComments": "Permite"
   },
   "invites": {
     "title": "Tokeni de invitație",

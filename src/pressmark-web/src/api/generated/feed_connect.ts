@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { FeedItem, FeedPage, GetBookmarksRequest, GetCommunityFeedRequest, GetFeedRequest, MarkAllAsReadRequest, MarkAsReadRequest, StreamFeedRequest, ToggleBookmarkRequest, ToggleBookmarkResponse, ToggleLikeRequest, ToggleLikeResponse, UnreadCount } from "./feed_pb.js";
+import { AddCommentRequest, Comment, CommentList, FeedItem, FeedPage, GetBookmarksRequest, GetCommunityFeedRequest, GetFeedRequest, ListCommentsRequest, MarkAllAsReadRequest, MarkAsReadRequest, StreamFeedRequest, ToggleBookmarkRequest, ToggleBookmarkResponse, ToggleLikeRequest, ToggleLikeResponse, UnreadCount } from "./feed_pb.js";
 import { Empty, MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -102,6 +102,26 @@ export const FeedService = {
       I: StreamFeedRequest,
       O: FeedItem,
       kind: MethodKind.ServerStreaming,
+    },
+    /**
+     * @generated from rpc pressmark.feed.FeedService.AddComment
+     */
+    addComment: {
+      name: "AddComment",
+      I: AddCommentRequest,
+      O: Comment,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * AllowAnonymous
+     *
+     * @generated from rpc pressmark.feed.FeedService.ListComments
+     */
+    listComments: {
+      name: "ListComments",
+      I: ListCommentsRequest,
+      O: CommentList,
+      kind: MethodKind.Unary,
     },
   }
 } as const;

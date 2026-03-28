@@ -15,21 +15,32 @@
     "smtpPassword": "Wachtwoord",
     "smtpPasswordPlaceholder": "Leeg laten om huidig te behouden",
     "smtpUseTls": "TLS gebruiken (STARTTLS)",
-    "smtpFromAddress": "Afzenderadres"
+    "smtpFromAddress": "Afzenderadres",
+    "commentsEnabled": "Reacties inschakelen"
   },
   "moderation": {
     "title": "Moderatie",
-    "hide": "Verbergen",
+    "hide": "Artikel verbergen",
     "unhide": "Tonen",
-    "ban": "Kanaal blokkeren",
-    "unban": "Kanaal deblokkeren"
+    "ban": "Bron blokkeren",
+    "unban": "Kanaal deblokkeren",
+    "hidden": "Artikel verborgen",
+    "banned": "Bron geblokkeerd"
+  },
+  "bannedSubs": {
+    "title": "Geblokkeerde bronnen",
+    "empty": "Geen geblokkeerde bronnen",
+    "unban": "Deblokkeren"
   },
   "users": {
     "title": "Gebruikers",
     "email": "E-mailadres",
     "role": "Rol",
     "joined": "Lid geworden",
-    "empty": "Geen gebruikers gevonden"
+    "empty": "Geen gebruikers gevonden",
+    "comments": "Reacties",
+    "banComments": "Blokkeren",
+    "unbanComments": "Deblokkeren"
   },
   "invites": {
     "title": "Uitnodigingstokens",

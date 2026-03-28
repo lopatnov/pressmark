@@ -15,21 +15,32 @@
     "smtpPassword": "Hasło",
     "smtpPasswordPlaceholder": "Pozostaw puste, aby zachować bieżące",
     "smtpUseTls": "Użyj TLS (STARTTLS)",
-    "smtpFromAddress": "Adres nadawcy"
+    "smtpFromAddress": "Adres nadawcy",
+    "commentsEnabled": "Włącz komentarze"
   },
   "moderation": {
     "title": "Moderacja",
-    "hide": "Ukryj",
+    "hide": "Ukryj artykuł",
     "unhide": "Pokaż",
-    "ban": "Zablokuj kanał",
-    "unban": "Odblokuj kanał"
+    "ban": "Zablokuj źródło",
+    "unban": "Odblokuj kanał",
+    "hidden": "Artykuł ukryty",
+    "banned": "Źródło zablokowane"
+  },
+  "bannedSubs": {
+    "title": "Zablokowane źródła",
+    "empty": "Brak zablokowanych źródeł",
+    "unban": "Odblokuj"
   },
   "users": {
     "title": "Użytkownicy",
     "email": "E-mail",
     "role": "Rola",
     "joined": "Dołączył",
-    "empty": "Nie znaleziono użytkowników"
+    "empty": "Nie znaleziono użytkowników",
+    "comments": "Komentarze",
+    "banComments": "Zablokuj",
+    "unbanComments": "Odblokuj"
   },
   "invites": {
     "title": "Tokeny zaproszeń",

@@ -10,10 +10,27 @@
   "bookmark": "Yer imi ekle",
   "removeBookmark": "Yer imini kaldır",
   "readMore": "Devamını oku",
+  "subscribe": "Abone ol",
+  "subscribed": "Abone olundu",
+  "subscribeSuccess": "Abonelik başarılı",
   "community": {
     "title": "Topluluk",
     "subtitle": "Son {{days}} günde topluluk tarafından beğenilen makaleler",
     "subtitle_plural": "Son {{days}} günde topluluk tarafından beğenilen makaleler",
     "empty": "Henüz beğenilen makale yok. Beğenmek için giriş yapın."
+  },
+  "comments": {
+    "title": "Yorumlar",
+    "count": "{{count}} yorum",
+    "count_plural": "{{count}} yorum",
+    "empty": "Henüz yorum yok",
+    "placeholder": "Yorum yaz...",
+    "submit": "Gönder",
+    "remove": "Yorumu kaldır",
+    "removed": "Mesaj yönetici tarafından kaldırıldı",
+    "toggle": "Yorumları göster/gizle",
+    "loadError": "Yorumlar yüklenemedi",
+    "submitError": "Yorum gönderilemedi",
+    "removeError": "Yorum kaldırılamadı"
   }
 }

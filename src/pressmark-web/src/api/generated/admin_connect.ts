@@ -4,7 +4,7 @@
 // @ts-nocheck
 
 import { Empty, MethodKind } from "@bufbuild/protobuf";
-import { BanSubscriptionRequest, DeleteInviteRequest, GenerateInviteRequest, HideFeedItemRequest, InviteList, InviteToken, SiteSettings, UpdateSiteSettingsRequest, UserList } from "./admin_pb.js";
+import { BanSubscriptionRequest, BanUserFromCommentingRequest, BannedSubscriptionList, DeleteInviteRequest, GenerateInviteRequest, HideFeedItemRequest, InviteList, InviteToken, RemoveCommentRequest, SiteSettings, UpdateSiteSettingsRequest, UserList } from "./admin_pb.js";
 
 /**
  * @generated from service pressmark.admin.AdminService
@@ -82,6 +82,33 @@ export const AdminService = {
       name: "ListInvites",
       I: Empty,
       O: InviteList,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc pressmark.admin.AdminService.ListBannedSubscriptions
+     */
+    listBannedSubscriptions: {
+      name: "ListBannedSubscriptions",
+      I: Empty,
+      O: BannedSubscriptionList,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc pressmark.admin.AdminService.RemoveComment
+     */
+    removeComment: {
+      name: "RemoveComment",
+      I: RemoveCommentRequest,
+      O: Empty,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc pressmark.admin.AdminService.BanUserFromCommenting
+     */
+    banUserFromCommenting: {
+      name: "BanUserFromCommenting",
+      I: BanUserFromCommentingRequest,
+      O: Empty,
       kind: MethodKind.Unary,
     },
   }

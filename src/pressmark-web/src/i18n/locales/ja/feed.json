@@ -10,10 +10,27 @@
   "bookmark": "ブックマーク",
   "removeBookmark": "ブックマークを削除",
   "readMore": "続きを読む",
+  "subscribe": "購読",
+  "subscribed": "購読中",
+  "subscribeSuccess": "購読しました",
   "community": {
     "title": "コミュニティ",
     "subtitle": "過去 {{days}} 日間にコミュニティがいいねした記事",
     "subtitle_plural": "過去 {{days}} 日間にコミュニティがいいねした記事",
     "empty": "いいねされた記事はまだありません。ログインして記事にいいねしましょう。"
+  },
+  "comments": {
+    "title": "コメント",
+    "count": "{{count}}件のコメント",
+    "count_plural": "{{count}}件のコメント",
+    "empty": "まだコメントはありません",
+    "placeholder": "コメントを書く...",
+    "submit": "送信",
+    "remove": "コメントを削除",
+    "removed": "管理者によってメッセージが削除されました",
+    "toggle": "コメントの表示/非表示",
+    "loadError": "コメントの読み込みに失敗しました",
+    "submitError": "コメントの送信に失敗しました",
+    "removeError": "コメントの削除に失敗しました"
   }
 }

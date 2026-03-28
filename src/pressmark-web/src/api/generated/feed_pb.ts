@@ -313,6 +313,13 @@ export class FeedItem extends Message<FeedItem> {
    */
   imageUrl = "";
 
+  /**
+   * RSS URL of the source subscription
+   *
+   * @generated from field: string source_rss_url = 13;
+   */
+  sourceRssUrl = "";
+
   constructor(data?: PartialMessage<FeedItem>) {
     super();
     proto3.util.initPartial(data, this);
@@ -333,6 +340,7 @@ export class FeedItem extends Message<FeedItem> {
     { no: 10, name: "is_bookmarked", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
     { no: 11, name: "source_title", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 12, name: "image_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 13, name: "source_rss_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): FeedItem {
@@ -616,6 +624,184 @@ export class ToggleBookmarkResponse extends Message<ToggleBookmarkResponse> {
 
   static equals(a: ToggleBookmarkResponse | PlainMessage<ToggleBookmarkResponse> | undefined, b: ToggleBookmarkResponse | PlainMessage<ToggleBookmarkResponse> | undefined): boolean {
     return proto3.util.equals(ToggleBookmarkResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message pressmark.feed.AddCommentRequest
+ */
+export class AddCommentRequest extends Message<AddCommentRequest> {
+  /**
+   * @generated from field: string feed_item_id = 1;
+   */
+  feedItemId = "";
+
+  /**
+   * @generated from field: string body = 2;
+   */
+  body = "";
+
+  constructor(data?: PartialMessage<AddCommentRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "pressmark.feed.AddCommentRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "feed_item_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "body", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AddCommentRequest {
+    return new AddCommentRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AddCommentRequest {
+    return new AddCommentRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AddCommentRequest {
+    return new AddCommentRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AddCommentRequest | PlainMessage<AddCommentRequest> | undefined, b: AddCommentRequest | PlainMessage<AddCommentRequest> | undefined): boolean {
+    return proto3.util.equals(AddCommentRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message pressmark.feed.ListCommentsRequest
+ */
+export class ListCommentsRequest extends Message<ListCommentsRequest> {
+  /**
+   * @generated from field: string feed_item_id = 1;
+   */
+  feedItemId = "";
+
+  constructor(data?: PartialMessage<ListCommentsRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "pressmark.feed.ListCommentsRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "feed_item_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListCommentsRequest {
+    return new ListCommentsRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListCommentsRequest {
+    return new ListCommentsRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListCommentsRequest {
+    return new ListCommentsRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ListCommentsRequest | PlainMessage<ListCommentsRequest> | undefined, b: ListCommentsRequest | PlainMessage<ListCommentsRequest> | undefined): boolean {
+    return proto3.util.equals(ListCommentsRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message pressmark.feed.Comment
+ */
+export class Comment extends Message<Comment> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  /**
+   * @generated from field: string user_email = 2;
+   */
+  userEmail = "";
+
+  /**
+   * @generated from field: string body = 3;
+   */
+  body = "";
+
+  /**
+   * @generated from field: string created_at = 4;
+   */
+  createdAt = "";
+
+  /**
+   * @generated from field: bool removed_by_admin = 5;
+   */
+  removedByAdmin = false;
+
+  constructor(data?: PartialMessage<Comment>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "pressmark.feed.Comment";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "user_email", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "body", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "created_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "removed_by_admin", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Comment {
+    return new Comment().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Comment {
+    return new Comment().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Comment {
+    return new Comment().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: Comment | PlainMessage<Comment> | undefined, b: Comment | PlainMessage<Comment> | undefined): boolean {
+    return proto3.util.equals(Comment, a, b);
+  }
+}
+
+/**
+ * @generated from message pressmark.feed.CommentList
+ */
+export class CommentList extends Message<CommentList> {
+  /**
+   * @generated from field: repeated pressmark.feed.Comment items = 1;
+   */
+  items: Comment[] = [];
+
+  constructor(data?: PartialMessage<CommentList>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "pressmark.feed.CommentList";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "items", kind: "message", T: Comment, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CommentList {
+    return new CommentList().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): CommentList {
+    return new CommentList().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): CommentList {
+    return new CommentList().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: CommentList | PlainMessage<CommentList> | undefined, b: CommentList | PlainMessage<CommentList> | undefined): boolean {
+    return proto3.util.equals(CommentList, a, b);
   }
 }
 

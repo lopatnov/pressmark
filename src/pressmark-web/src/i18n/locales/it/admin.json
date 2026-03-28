@@ -15,21 +15,32 @@
     "smtpPassword": "Password",
     "smtpPasswordPlaceholder": "Lascia vuoto per mantenere quello attuale",
     "smtpUseTls": "Usa TLS (STARTTLS)",
-    "smtpFromAddress": "Indirizzo mittente"
+    "smtpFromAddress": "Indirizzo mittente",
+    "commentsEnabled": "Abilita commenti"
   },
   "moderation": {
     "title": "Moderazione",
-    "hide": "Nascondi",
+    "hide": "Nascondi articolo",
     "unhide": "Mostra",
-    "ban": "Blocca canale",
-    "unban": "Sblocca canale"
+    "ban": "Vieta fonte",
+    "unban": "Sblocca canale",
+    "hidden": "Articolo nascosto",
+    "banned": "Fonte vietata"
+  },
+  "bannedSubs": {
+    "title": "Fonti vietate",
+    "empty": "Nessuna fonte vietata",
+    "unban": "Revoca divieto"
   },
   "users": {
     "title": "Utenti",
     "email": "E-mail",
     "role": "Ruolo",
     "joined": "Registrato il",
-    "empty": "Nessun utente trovato"
+    "empty": "Nessun utente trovato",
+    "comments": "Commenti",
+    "banComments": "Vieta",
+    "unbanComments": "Consenti"
   },
   "invites": {
     "title": "Token di invito",

@@ -10,10 +10,27 @@
   "bookmark": "Lesezeichen",
   "removeBookmark": "Lesezeichen entfernen",
   "readMore": "Weiterlesen",
+  "subscribe": "Abonnieren",
+  "subscribed": "Abonniert",
+  "subscribeSuccess": "Erfolgreich abonniert",
   "community": {
     "title": "Community",
     "subtitle": "Artikel, die der Community im letzten {{days}} Tag gefallen haben",
     "subtitle_plural": "Artikel, die der Community in den letzten {{days}} Tagen gefallen haben",
     "empty": "Noch keine gelikten Artikel. Melden Sie sich an, um Artikel zu liken."
+  },
+  "comments": {
+    "title": "Kommentare",
+    "count": "{{count}} Kommentar",
+    "count_plural": "{{count}} Kommentare",
+    "empty": "Noch keine Kommentare",
+    "placeholder": "Kommentar schreiben...",
+    "submit": "Senden",
+    "remove": "Kommentar entfernen",
+    "removed": "Nachricht vom Administrator entfernt",
+    "toggle": "Kommentare ein-/ausblenden",
+    "loadError": "Kommentare konnten nicht geladen werden",
+    "submitError": "Kommentar konnte nicht gesendet werden",
+    "removeError": "Kommentar konnte nicht entfernt werden"
   }
 }

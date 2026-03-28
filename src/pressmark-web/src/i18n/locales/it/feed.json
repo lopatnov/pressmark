@@ -10,10 +10,27 @@
   "bookmark": "Segnalibro",
   "removeBookmark": "Rimuovi segnalibro",
   "readMore": "Leggi di più",
+  "subscribe": "Iscriviti",
+  "subscribed": "Iscritto",
+  "subscribeSuccess": "Iscrizione avvenuta con successo",
   "community": {
     "title": "Comunità",
     "subtitle": "Articoli apprezzati dalla comunità nell'ultimo {{days}} giorno",
     "subtitle_plural": "Articoli apprezzati dalla comunità negli ultimi {{days}} giorni",
     "empty": "Nessun articolo apprezzato ancora. Accedi per mettere mi piace."
+  },
+  "comments": {
+    "title": "Commenti",
+    "count": "{{count}} commento",
+    "count_plural": "{{count}} commenti",
+    "empty": "Nessun commento ancora",
+    "placeholder": "Scrivi un commento...",
+    "submit": "Invia",
+    "remove": "Rimuovi commento",
+    "removed": "Messaggio rimosso dall'amministratore",
+    "toggle": "Mostra/nascondi commenti",
+    "loadError": "Impossibile caricare i commenti",
+    "submitError": "Impossibile inviare il commento",
+    "removeError": "Impossibile rimuovere il commento"
   }
 }

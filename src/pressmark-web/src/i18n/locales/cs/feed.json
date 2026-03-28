@@ -10,10 +10,27 @@
   "bookmark": "Záložka",
   "removeBookmark": "Odebrat záložku",
   "readMore": "Číst dále",
+  "subscribe": "Odebírat",
+  "subscribed": "Odebíráno",
+  "subscribeSuccess": "Odběr byl přidán",
   "community": {
     "title": "Komunita",
     "subtitle": "Články, které se komunitě líbily za poslední {{days}} den",
     "subtitle_plural": "Články, které se komunitě líbily za posledních {{days}} dnů",
     "empty": "Žádné oblíbené články. Přihlaste se a začněte označovat."
+  },
+  "comments": {
+    "title": "Komentáře",
+    "count": "{{count}} komentář",
+    "count_plural": "{{count}} komentářů",
+    "empty": "Zatím žádné komentáře",
+    "placeholder": "Napište komentář...",
+    "submit": "Odeslat",
+    "remove": "Odstranit komentář",
+    "removed": "Zpráva odstraněna správcem",
+    "toggle": "Zobrazit/skrýt komentáře",
+    "loadError": "Nepodařilo se načíst komentáře",
+    "submitError": "Nepodařilo se odeslat komentář",
+    "removeError": "Nepodařilo se odstranit komentář"
   }
 }

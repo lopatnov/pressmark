@@ -10,10 +10,27 @@
   "bookmark": "Bookmark",
   "removeBookmark": "Remove bookmark",
   "readMore": "Read more",
+  "subscribe": "Subscribe",
+  "subscribed": "Subscribed",
+  "subscribeSuccess": "Subscribed successfully",
   "community": {
     "title": "Community",
     "subtitle": "Articles liked by the community in the last {{days}} day",
     "subtitle_plural": "Articles liked by the community in the last {{days}} days",
     "empty": "No liked articles yet. Sign in to like articles."
+  },
+  "comments": {
+    "title": "Comments",
+    "count": "{{count}} comment",
+    "count_plural": "{{count}} comments",
+    "empty": "No comments yet",
+    "placeholder": "Write a comment...",
+    "submit": "Send",
+    "remove": "Remove comment",
+    "removed": "Message removed by administrator",
+    "toggle": "Toggle comments",
+    "loadError": "Failed to load comments",
+    "submitError": "Failed to post comment",
+    "removeError": "Failed to remove comment"
   }
 }

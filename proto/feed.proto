@@ -25,6 +25,10 @@ service FeedService {
 
   // Real-time streaming of new feed items (authenticated)
   rpc StreamFeedUpdates (StreamFeedRequest) returns (stream FeedItem);
+
+  // Comments
+  rpc AddComment   (AddCommentRequest)   returns (Comment);
+  rpc ListComments (ListCommentsRequest) returns (CommentList); // AllowAnonymous
 }
 
 message GetFeedRequest {
@@ -67,6 +71,7 @@ message FeedItem {
   bool   is_bookmarked   = 10;
   string source_title    = 11;
   string image_url       = 12; // empty if RSS has no image
+  string source_rss_url  = 13; // RSS URL of the source subscription
 }
 
 message MarkAsReadRequest {
@@ -96,4 +101,25 @@ message ToggleBookmarkRequest {
 
 message ToggleBookmarkResponse {
   bool is_bookmarked = 1;
+}
+
+message AddCommentRequest {
+  string feed_item_id = 1;
+  string body         = 2;
+}
+
+message ListCommentsRequest {
+  string feed_item_id = 1;
+}
+
+message Comment {
+  string id               = 1;
+  string user_email       = 2;
+  string body             = 3;
+  string created_at       = 4;
+  bool   removed_by_admin = 5;
+}
+
+message CommentList {
+  repeated Comment items = 1;
 }

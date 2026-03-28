@@ -1,13 +1,15 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { Heart } from 'lucide-react'
+import { Heart, EyeOff, Ban, Rss, Check } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import { feedClient } from '@/api/clients'
+import { adminClient, feedClient, subscriptionClient } from '@/api/clients'
 import { useAuthStore } from '@/store/authStore'
+import { useSubscriptionStore } from '@/store/subscriptionStore'
 import { FeedItemCard } from '@/components/feed/FeedItemCard'
+import { CommentSection } from '@/components/feed/CommentSection'
 import { useIntersectionLoader } from '@/hooks/useIntersectionLoader'
 
 interface CommunityItem {
@@ -20,16 +22,24 @@ interface CommunityItem {
   isLiked: boolean
   sourceTitle: string
   imageUrl: string
+  subscriptionId: string
+  sourceRssUrl: string
+  hidden: boolean
 }
 
 export function CommunityPage() {
-  const { t } = useTranslation(['feed', 'common'])
+  const { t } = useTranslation(['feed', 'common', 'admin'])
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated())
+  const isAdmin = useAuthStore((s) => s.isAdmin())
   const registrationMode = useAuthStore((s) => s.registrationMode)
+  const { subscriptions, addSubscription } = useSubscriptionStore()
 
   const [items, setItems] = useState<CommunityItem[]>([])
   const [nextCursor, setNextCursor] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [subscribedUrls, setSubscribedUrls] = useState<Set<string>>(
+    () => new Set(subscriptions.map((s) => s.rssUrl)),
+  )
 
   const loadFeed = useCallback(
     async (cursor = '') => {
@@ -46,6 +56,9 @@ export function CommunityPage() {
           isLiked: item.isLiked,
           sourceTitle: item.sourceTitle,
           imageUrl: item.imageUrl,
+          subscriptionId: item.subscriptionId,
+          sourceRssUrl: item.sourceRssUrl,
+          hidden: false,
         }))
         if (cursor) {
           setItems((prev) => [...prev, ...mapped])
@@ -78,6 +91,43 @@ export function CommunityPage() {
       )
     } catch {
       // intentional — UI already reflects optimistic state
+    }
+  }
+
+  const handleHide = async (id: string) => {
+    try {
+      await adminClient.hideFeedItem({ feedItemId: id, hidden: true })
+      setItems((prev) => prev.filter((item) => item.id !== id))
+      toast.success(t('admin:moderation.hidden'))
+    } catch {
+      toast.error(t('common:error'))
+    }
+  }
+
+  const handleSubscribe = async (rssUrl: string, title: string) => {
+    try {
+      const res = await subscriptionClient.addSubscription({ rssUrl, title })
+      addSubscription({
+        id: res.id,
+        rssUrl: res.rssUrl,
+        title: res.title,
+        lastFetchedAt: res.lastFetchedAt,
+        createdAt: '',
+      })
+      setSubscribedUrls((prev) => new Set(prev).add(rssUrl))
+      toast.success(t('feed:subscribeSuccess'))
+    } catch {
+      toast.error(t('common:error'))
+    }
+  }
+
+  const handleBanSubscription = async (subscriptionId: string) => {
+    try {
+      await adminClient.banSubscription({ subscriptionId, banned: true })
+      setItems((prev) => prev.filter((item) => item.subscriptionId !== subscriptionId))
+      toast.success(t('admin:moderation.banned'))
+    } catch {
+      toast.error(t('common:error'))
     }
   }
 
@@ -135,23 +185,63 @@ export function CommunityPage() {
                 key={item.id}
                 item={item}
                 actions={
-                  isAuthenticated ? (
-                    <button
-                      onClick={() => handleLike(item.id)}
-                      title={item.isLiked ? t('feed:unlike') : t('feed:like')}
-                      aria-label={item.isLiked ? t('feed:unlike') : t('feed:like')}
-                      className={`flex cursor-pointer items-center gap-1 rounded px-2 py-1 text-xs transition-colors hover:bg-muted ${item.isLiked ? 'text-rose-500' : 'text-muted-foreground'}`}
-                    >
-                      <Heart className={`h-3.5 w-3.5 ${item.isLiked ? 'fill-current' : ''}`} />
-                      {item.likeCount > 0 && <span>{item.likeCount}</span>}
-                    </button>
-                  ) : (
-                    <span className="flex items-center gap-1 px-2 py-1 text-xs text-muted-foreground">
-                      <Heart className="h-3.5 w-3.5" />
-                      {item.likeCount > 0 && <span>{item.likeCount}</span>}
-                    </span>
-                  )
+                  <div className="flex items-center gap-1 flex-wrap">
+                    {isAuthenticated ? (
+                      <button
+                        onClick={() => handleLike(item.id)}
+                        title={item.isLiked ? t('feed:unlike') : t('feed:like')}
+                        aria-label={item.isLiked ? t('feed:unlike') : t('feed:like')}
+                        className={`flex cursor-pointer items-center gap-1 rounded px-2 py-1 text-xs transition-colors hover:bg-muted ${item.isLiked ? 'text-rose-500' : 'text-muted-foreground'}`}
+                      >
+                        <Heart className={`h-3.5 w-3.5 ${item.isLiked ? 'fill-current' : ''}`} />
+                        {item.likeCount > 0 && <span>{item.likeCount}</span>}
+                      </button>
+                    ) : (
+                      <span className="flex items-center gap-1 px-2 py-1 text-xs text-muted-foreground">
+                        <Heart className="h-3.5 w-3.5" />
+                        {item.likeCount > 0 && <span>{item.likeCount}</span>}
+                      </span>
+                    )}
+                    {item.sourceRssUrl && !subscribedUrls.has(item.sourceRssUrl) && (
+                      <button
+                        onClick={() => handleSubscribe(item.sourceRssUrl, item.sourceTitle)}
+                        title={t('feed:subscribe')}
+                        aria-label={t('feed:subscribe')}
+                        className="flex cursor-pointer items-center gap-1 rounded px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                      >
+                        <Rss className="h-3.5 w-3.5" />
+                        <span>{t('feed:subscribe')}</span>
+                      </button>
+                    )}
+                    {item.sourceRssUrl && subscribedUrls.has(item.sourceRssUrl) && (
+                      <span className="flex items-center gap-1 px-2 py-1 text-xs text-muted-foreground">
+                        <Check className="h-3.5 w-3.5" />
+                        <span>{t('feed:subscribed')}</span>
+                      </span>
+                    )}
+                    {isAdmin && (
+                      <>
+                        <button
+                          onClick={() => handleHide(item.id)}
+                          title={t('admin:moderation.hide')}
+                          aria-label={t('admin:moderation.hide')}
+                          className="flex cursor-pointer items-center gap-1 rounded px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-destructive"
+                        >
+                          <EyeOff className="h-3.5 w-3.5" />
+                        </button>
+                        <button
+                          onClick={() => handleBanSubscription(item.subscriptionId)}
+                          title={t('admin:moderation.ban')}
+                          aria-label={t('admin:moderation.ban')}
+                          className="flex cursor-pointer items-center gap-1 rounded px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-destructive"
+                        >
+                          <Ban className="h-3.5 w-3.5" />
+                        </button>
+                      </>
+                    )}
+                  </div>
                 }
+                footer={<CommentSection feedItemId={item.id} />}
               />
             ))}
       </div>

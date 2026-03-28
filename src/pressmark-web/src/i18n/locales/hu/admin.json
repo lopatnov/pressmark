@@ -15,21 +15,32 @@
     "smtpPassword": "Jelszó",
     "smtpPasswordPlaceholder": "Hagyja üresen a megtartáshoz",
     "smtpUseTls": "TLS használata (STARTTLS)",
-    "smtpFromAddress": "Feladó címe"
+    "smtpFromAddress": "Feladó címe",
+    "commentsEnabled": "Hozzászólások engedélyezése"
   },
   "moderation": {
     "title": "Moderáció",
-    "hide": "Elrejtés",
+    "hide": "Cikk elrejtése",
     "unhide": "Megjelenítés",
-    "ban": "Csatorna tiltása",
-    "unban": "Csatorna tiltásának feloldása"
+    "ban": "Forrás tiltása",
+    "unban": "Csatorna tiltásának feloldása",
+    "hidden": "Cikk elrejtve",
+    "banned": "Forrás tiltva"
+  },
+  "bannedSubs": {
+    "title": "Tiltott források",
+    "empty": "Nincsenek tiltott források",
+    "unban": "Tiltás feloldása"
   },
   "users": {
     "title": "Felhasználók",
     "email": "E-mail",
     "role": "Szerepkör",
     "joined": "Csatlakozott",
-    "empty": "Nem találhatók felhasználók"
+    "empty": "Nem találhatók felhasználók",
+    "comments": "Hozzászólások",
+    "banComments": "Tiltás",
+    "unbanComments": "Engedélyezés"
   },
   "invites": {
     "title": "Meghívó tokenek",

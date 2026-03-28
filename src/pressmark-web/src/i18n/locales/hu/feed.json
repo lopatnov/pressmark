@@ -10,10 +10,27 @@
   "bookmark": "Könyvjelző",
   "removeBookmark": "Könyvjelző eltávolítása",
   "readMore": "Tovább olvasom",
+  "subscribe": "Feliratkozás",
+  "subscribed": "Feliratkozva",
+  "subscribeSuccess": "Sikeres feliratkozás",
   "community": {
     "title": "Közösség",
     "subtitle": "A közösség által az elmúlt {{days}} napban kedvelt cikkek",
     "subtitle_plural": "A közösség által az elmúlt {{days}} napban kedvelt cikkek",
     "empty": "Még nincsenek kedvelt cikkek. Jelentkezzen be a kedveléshez."
+  },
+  "comments": {
+    "title": "Hozzászólások",
+    "count": "{{count}} hozzászólás",
+    "count_plural": "{{count}} hozzászólás",
+    "empty": "Még nincsenek hozzászólások",
+    "placeholder": "Írj hozzászólást...",
+    "submit": "Küldés",
+    "remove": "Hozzászólás eltávolítása",
+    "removed": "Az üzenetet az adminisztrátor eltávolította",
+    "toggle": "Hozzászólások megjelenítése/elrejtése",
+    "loadError": "Nem sikerült betölteni a hozzászólásokat",
+    "submitError": "Nem sikerült elküldeni a hozzászólást",
+    "removeError": "Nem sikerült eltávolítani a hozzászólást"
   }
 }

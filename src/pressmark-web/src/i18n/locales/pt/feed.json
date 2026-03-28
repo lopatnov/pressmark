@@ -10,10 +10,27 @@
   "bookmark": "Favoritar",
   "removeBookmark": "Remover favorito",
   "readMore": "Leia mais",
+  "subscribe": "Assinar",
+  "subscribed": "Assinado",
+  "subscribeSuccess": "Assinatura bem-sucedida",
   "community": {
     "title": "Comunidade",
     "subtitle": "Artigos curtidos pela comunidade no último {{days}} dia",
     "subtitle_plural": "Artigos curtidos pela comunidade nos últimos {{days}} dias",
     "empty": "Ainda não há artigos curtidos. Entre para curtir artigos."
+  },
+  "comments": {
+    "title": "Comentários",
+    "count": "{{count}} comentário",
+    "count_plural": "{{count}} comentários",
+    "empty": "Ainda não há comentários",
+    "placeholder": "Escreva um comentário...",
+    "submit": "Enviar",
+    "remove": "Remover comentário",
+    "removed": "Mensagem removida pelo administrador",
+    "toggle": "Mostrar/ocultar comentários",
+    "loadError": "Falha ao carregar comentários",
+    "submitError": "Falha ao publicar comentário",
+    "removeError": "Falha ao remover comentário"
   }
 }

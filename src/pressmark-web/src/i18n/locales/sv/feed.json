@@ -10,10 +10,27 @@
   "bookmark": "Bokmärke",
   "removeBookmark": "Ta bort bokmärke",
   "readMore": "Läs mer",
+  "subscribe": "Prenumerera",
+  "subscribed": "Prenumererar",
+  "subscribeSuccess": "Prenumeration lyckades",
   "community": {
     "title": "Community",
     "subtitle": "Artiklar som communityn gillade de senaste {{days}} dagen",
     "subtitle_plural": "Artiklar som communityn gillade de senaste {{days}} dagarna",
     "empty": "Inga gillade artiklar än. Logga in för att gilla artiklar."
+  },
+  "comments": {
+    "title": "Kommentarer",
+    "count": "{{count}} kommentar",
+    "count_plural": "{{count}} kommentarer",
+    "empty": "Inga kommentarer ännu",
+    "placeholder": "Skriv en kommentar...",
+    "submit": "Skicka",
+    "remove": "Ta bort kommentar",
+    "removed": "Meddelande borttaget av administratör",
+    "toggle": "Visa/dölj kommentarer",
+    "loadError": "Det gick inte att ladda kommentarer",
+    "submitError": "Det gick inte att skicka kommentaren",
+    "removeError": "Det gick inte att ta bort kommentaren"
   }
 }

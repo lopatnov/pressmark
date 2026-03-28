@@ -59,6 +59,13 @@ export class SiteSettings extends Message<SiteSettings> {
    */
   smtpFromAddress = "";
 
+  /**
+   * default true
+   *
+   * @generated from field: bool comments_enabled = 10;
+   */
+  commentsEnabled = false;
+
   constructor(data?: PartialMessage<SiteSettings>) {
     super();
     proto3.util.initPartial(data, this);
@@ -76,6 +83,7 @@ export class SiteSettings extends Message<SiteSettings> {
     { no: 7, name: "smtp_password", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 8, name: "smtp_use_tls", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
     { no: 9, name: "smtp_from_address", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 10, name: "comments_enabled", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): SiteSettings {
@@ -279,6 +287,11 @@ export class UserInfo extends Message<UserInfo> {
    */
   createdAt = "";
 
+  /**
+   * @generated from field: bool is_commenting_banned = 5;
+   */
+  isCommentingBanned = false;
+
   constructor(data?: PartialMessage<UserInfo>) {
     super();
     proto3.util.initPartial(data, this);
@@ -291,6 +304,7 @@ export class UserInfo extends Message<UserInfo> {
     { no: 2, name: "email", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "role", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 4, name: "created_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "is_commenting_banned", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UserInfo {
@@ -503,6 +517,172 @@ export class InviteList extends Message<InviteList> {
 
   static equals(a: InviteList | PlainMessage<InviteList> | undefined, b: InviteList | PlainMessage<InviteList> | undefined): boolean {
     return proto3.util.equals(InviteList, a, b);
+  }
+}
+
+/**
+ * @generated from message pressmark.admin.BannedSubscription
+ */
+export class BannedSubscription extends Message<BannedSubscription> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  /**
+   * @generated from field: string rss_url = 2;
+   */
+  rssUrl = "";
+
+  /**
+   * @generated from field: string title = 3;
+   */
+  title = "";
+
+  constructor(data?: PartialMessage<BannedSubscription>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "pressmark.admin.BannedSubscription";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "rss_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "title", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): BannedSubscription {
+    return new BannedSubscription().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): BannedSubscription {
+    return new BannedSubscription().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): BannedSubscription {
+    return new BannedSubscription().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: BannedSubscription | PlainMessage<BannedSubscription> | undefined, b: BannedSubscription | PlainMessage<BannedSubscription> | undefined): boolean {
+    return proto3.util.equals(BannedSubscription, a, b);
+  }
+}
+
+/**
+ * @generated from message pressmark.admin.BannedSubscriptionList
+ */
+export class BannedSubscriptionList extends Message<BannedSubscriptionList> {
+  /**
+   * @generated from field: repeated pressmark.admin.BannedSubscription items = 1;
+   */
+  items: BannedSubscription[] = [];
+
+  constructor(data?: PartialMessage<BannedSubscriptionList>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "pressmark.admin.BannedSubscriptionList";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "items", kind: "message", T: BannedSubscription, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): BannedSubscriptionList {
+    return new BannedSubscriptionList().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): BannedSubscriptionList {
+    return new BannedSubscriptionList().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): BannedSubscriptionList {
+    return new BannedSubscriptionList().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: BannedSubscriptionList | PlainMessage<BannedSubscriptionList> | undefined, b: BannedSubscriptionList | PlainMessage<BannedSubscriptionList> | undefined): boolean {
+    return proto3.util.equals(BannedSubscriptionList, a, b);
+  }
+}
+
+/**
+ * @generated from message pressmark.admin.RemoveCommentRequest
+ */
+export class RemoveCommentRequest extends Message<RemoveCommentRequest> {
+  /**
+   * @generated from field: string comment_id = 1;
+   */
+  commentId = "";
+
+  constructor(data?: PartialMessage<RemoveCommentRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "pressmark.admin.RemoveCommentRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "comment_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): RemoveCommentRequest {
+    return new RemoveCommentRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): RemoveCommentRequest {
+    return new RemoveCommentRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): RemoveCommentRequest {
+    return new RemoveCommentRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: RemoveCommentRequest | PlainMessage<RemoveCommentRequest> | undefined, b: RemoveCommentRequest | PlainMessage<RemoveCommentRequest> | undefined): boolean {
+    return proto3.util.equals(RemoveCommentRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message pressmark.admin.BanUserFromCommentingRequest
+ */
+export class BanUserFromCommentingRequest extends Message<BanUserFromCommentingRequest> {
+  /**
+   * @generated from field: string user_id = 1;
+   */
+  userId = "";
+
+  /**
+   * @generated from field: bool banned = 2;
+   */
+  banned = false;
+
+  constructor(data?: PartialMessage<BanUserFromCommentingRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "pressmark.admin.BanUserFromCommentingRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "user_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "banned", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): BanUserFromCommentingRequest {
+    return new BanUserFromCommentingRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): BanUserFromCommentingRequest {
+    return new BanUserFromCommentingRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): BanUserFromCommentingRequest {
+    return new BanUserFromCommentingRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: BanUserFromCommentingRequest | PlainMessage<BanUserFromCommentingRequest> | undefined, b: BanUserFromCommentingRequest | PlainMessage<BanUserFromCommentingRequest> | undefined): boolean {
+    return proto3.util.equals(BanUserFromCommentingRequest, a, b);
   }
 }
 

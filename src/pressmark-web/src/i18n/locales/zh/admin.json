@@ -15,21 +15,32 @@
     "smtpPassword": "密码",
     "smtpPasswordPlaceholder": "留空保持当前密码",
     "smtpUseTls": "使用 TLS（STARTTLS）",
-    "smtpFromAddress": "发件人地址"
+    "smtpFromAddress": "发件人地址",
+    "commentsEnabled": "启用评论"
   },
   "moderation": {
     "title": "内容审核",
-    "hide": "隐藏",
+    "hide": "隐藏文章",
     "unhide": "显示",
-    "ban": "封禁频道",
-    "unban": "解封频道"
+    "ban": "封禁来源",
+    "unban": "解封频道",
+    "hidden": "文章已隐藏",
+    "banned": "来源已封禁"
+  },
+  "bannedSubs": {
+    "title": "已封禁来源",
+    "empty": "无封禁来源",
+    "unban": "解除封禁"
   },
   "users": {
     "title": "用户",
     "email": "电子邮件",
     "role": "角色",
     "joined": "注册时间",
-    "empty": "未找到用户"
+    "empty": "未找到用户",
+    "comments": "评论",
+    "banComments": "禁止",
+    "unbanComments": "允许"
   },
   "invites": {
     "title": "邀请码",

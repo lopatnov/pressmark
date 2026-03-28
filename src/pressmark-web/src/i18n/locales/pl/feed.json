@@ -10,10 +10,27 @@
   "bookmark": "Zakładka",
   "removeBookmark": "Usuń zakładkę",
   "readMore": "Czytaj więcej",
+  "subscribe": "Subskrybuj",
+  "subscribed": "Subskrybowany",
+  "subscribeSuccess": "Subskrypcja dodana",
   "community": {
     "title": "Społeczność",
     "subtitle": "Artykuły polubione przez społeczność w ciągu ostatniego {{days}} dnia",
     "subtitle_plural": "Artykuły polubione przez społeczność w ciągu ostatnich {{days}} dni",
     "empty": "Brak polubionych artykułów. Zaloguj się, aby polubić artykuły."
+  },
+  "comments": {
+    "title": "Komentarze",
+    "count": "{{count}} komentarz",
+    "count_plural": "{{count}} komentarzy",
+    "empty": "Brak komentarzy",
+    "placeholder": "Napisz komentarz...",
+    "submit": "Wyślij",
+    "remove": "Usuń komentarz",
+    "removed": "Wiadomość usunięta przez administratora",
+    "toggle": "Pokaż/ukryj komentarze",
+    "loadError": "Nie udało się załadować komentarzy",
+    "submitError": "Nie udało się wysłać komentarza",
+    "removeError": "Nie udało się usunąć komentarza"
   }
 }

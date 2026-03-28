@@ -15,21 +15,32 @@
     "smtpPassword": "Mot de passe",
     "smtpPasswordPlaceholder": "Laisser vide pour conserver l'actuel",
     "smtpUseTls": "Utiliser TLS (STARTTLS)",
-    "smtpFromAddress": "Adresse d'expéditeur"
+    "smtpFromAddress": "Adresse d'expéditeur",
+    "commentsEnabled": "Activer les commentaires"
   },
   "moderation": {
     "title": "Modération",
-    "hide": "Masquer",
+    "hide": "Masquer l'article",
     "unhide": "Afficher",
-    "ban": "Bannir le canal",
-    "unban": "Débannir le canal"
+    "ban": "Bannir la source",
+    "unban": "Débannir le canal",
+    "hidden": "Article masqué",
+    "banned": "Source bannie"
+  },
+  "bannedSubs": {
+    "title": "Sources bannies",
+    "empty": "Aucune source bannie",
+    "unban": "Débannir"
   },
   "users": {
     "title": "Utilisateurs",
     "email": "E-mail",
     "role": "Rôle",
     "joined": "Date d'inscription",
-    "empty": "Aucun utilisateur trouvé"
+    "empty": "Aucun utilisateur trouvé",
+    "comments": "Commentaires",
+    "banComments": "Bannir",
+    "unbanComments": "Débannir"
   },
   "invites": {
     "title": "Tokens d'invitation",

@@ -15,21 +15,32 @@
     "smtpPassword": "パスワード",
     "smtpPasswordPlaceholder": "現在のパスワードを保持するには空のままにしてください",
     "smtpUseTls": "TLS を使用（STARTTLS）",
-    "smtpFromAddress": "送信者アドレス"
+    "smtpFromAddress": "送信者アドレス",
+    "commentsEnabled": "コメントを有効にする"
   },
   "moderation": {
     "title": "モデレーション",
-    "hide": "非表示",
+    "hide": "記事を非表示",
     "unhide": "表示",
-    "ban": "チャンネルをブロック",
-    "unban": "チャンネルのブロックを解除"
+    "ban": "ソースをBAN",
+    "unban": "チャンネルのブロックを解除",
+    "hidden": "記事を非表示にしました",
+    "banned": "ソースをBANしました"
+  },
+  "bannedSubs": {
+    "title": "BANされたソース",
+    "empty": "BANされたソースはありません",
+    "unban": "BAN解除"
   },
   "users": {
     "title": "ユーザー",
     "email": "メールアドレス",
     "role": "ロール",
     "joined": "参加日",
-    "empty": "ユーザーが見つかりません"
+    "empty": "ユーザーが見つかりません",
+    "comments": "コメント",
+    "banComments": "禁止",
+    "unbanComments": "許可"
   },
   "invites": {
     "title": "招待トークン",

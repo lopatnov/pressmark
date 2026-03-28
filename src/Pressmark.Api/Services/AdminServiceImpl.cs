@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Security.Cryptography;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
@@ -27,6 +28,7 @@ public class AdminServiceImpl(AppDbContext db, ISmtpPasswordProtector passwordPr
             SmtpPassword = "",  // write-only: never returned
             SmtpUseTls = settings.GetValueOrDefault("smtp_use_tls", "true") == "true",
             SmtpFromAddress = settings.GetValueOrDefault("smtp_from_address", ""),
+            CommentsEnabled = settings.GetValueOrDefault("comments_enabled", "true") == "true",
         };
     }
 
@@ -47,6 +49,8 @@ public class AdminServiceImpl(AppDbContext db, ISmtpPasswordProtector passwordPr
         // Only update the password if a new value was provided; encrypt before storing
         if (!string.IsNullOrEmpty(s.SmtpPassword))
             await UpsertSetting("smtp_password", passwordProtector.Protect(s.SmtpPassword), ct);
+
+        await UpsertSetting("comments_enabled", s.CommentsEnabled ? "true" : "false", ct);
 
         return new Empty();
     }
@@ -94,12 +98,66 @@ public class AdminServiceImpl(AppDbContext db, ISmtpPasswordProtector passwordPr
                 Email = u.Email,
                 Role = u.Role,
                 CreatedAt = u.CreatedAt.ToString("O"),
+                IsCommentingBanned = u.IsCommentingBanned,
             })
             .ToListAsync(ct);
 
         var result = new UserList();
         result.Users.AddRange(users);
         return result;
+    }
+
+    public override async Task<BannedSubscriptionList> ListBannedSubscriptions(
+        Empty request, ServerCallContext context)
+    {
+        var ct = context.CancellationToken;
+        var subs = await db.Subscriptions
+            .Where(s => s.IsCommunityBanned)
+            .OrderBy(s => s.Title)
+            .ToListAsync(ct);
+
+        var result = new BannedSubscriptionList();
+        result.Items.AddRange(subs.Select(s => new BannedSubscription
+        {
+            Id = s.Id.ToString(),
+            RssUrl = s.RssUrl,
+            Title = s.Title,
+        }));
+        return result;
+    }
+
+    public override async Task<Empty> RemoveComment(
+        RemoveCommentRequest request, ServerCallContext context)
+    {
+        var ct = context.CancellationToken;
+
+        if (!Guid.TryParse(request.CommentId, out var id))
+            throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid comment_id"));
+
+        var comment = await db.Comments.FindAsync([id], ct)
+            ?? throw new RpcException(new Status(StatusCode.NotFound, "Comment not found"));
+
+        comment.RemovedByAdmin = true;
+        await db.SaveChangesAsync(ct);
+
+        return new Empty();
+    }
+
+    public override async Task<Empty> BanUserFromCommenting(
+        BanUserFromCommentingRequest request, ServerCallContext context)
+    {
+        var ct = context.CancellationToken;
+
+        if (!Guid.TryParse(request.UserId, out var userId))
+            throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid user_id"));
+
+        var user = await db.Users.FindAsync([userId], ct)
+            ?? throw new RpcException(new Status(StatusCode.NotFound, "User not found"));
+
+        user.IsCommentingBanned = request.Banned;
+        await db.SaveChangesAsync(ct);
+
+        return new Empty();
     }
 
     public override async Task<Protos.InviteToken> GenerateInvite(

@@ -15,21 +15,32 @@
     "smtpPassword": "Lösenord",
     "smtpPasswordPlaceholder": "Lämna tomt för att behålla nuvarande",
     "smtpUseTls": "Använd TLS (STARTTLS)",
-    "smtpFromAddress": "Avsändaradress"
+    "smtpFromAddress": "Avsändaradress",
+    "commentsEnabled": "Aktivera kommentarer"
   },
   "moderation": {
     "title": "Moderering",
-    "hide": "Dölj",
+    "hide": "Dölj artikel",
     "unhide": "Visa",
-    "ban": "Blockera kanal",
-    "unban": "Avblockera kanal"
+    "ban": "Förbjud källa",
+    "unban": "Avblockera kanal",
+    "hidden": "Artikel dold",
+    "banned": "Källa förbjuden"
+  },
+  "bannedSubs": {
+    "title": "Förbjudna källor",
+    "empty": "Inga förbjudna källor",
+    "unban": "Avblockera"
   },
   "users": {
     "title": "Användare",
     "email": "E-post",
     "role": "Roll",
     "joined": "Registrerades",
-    "empty": "Inga användare hittades"
+    "empty": "Inga användare hittades",
+    "comments": "Kommentarer",
+    "banComments": "Förbjud",
+    "unbanComments": "Tillåt"
   },
   "invites": {
     "title": "Inbjudningstokens",

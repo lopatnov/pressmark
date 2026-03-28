@@ -15,21 +15,32 @@
     "smtpPassword": "Heslo",
     "smtpPasswordPlaceholder": "Ponechte prázdné pro zachování stávajícího",
     "smtpUseTls": "Použít TLS (STARTTLS)",
-    "smtpFromAddress": "Adresa odesílatele"
+    "smtpFromAddress": "Adresa odesílatele",
+    "commentsEnabled": "Povolit komentáře"
   },
   "moderation": {
     "title": "Moderace",
-    "hide": "Skrýt",
+    "hide": "Skrýt článek",
     "unhide": "Zobrazit",
-    "ban": "Zablokovat kanál",
-    "unban": "Odblokovat kanál"
+    "ban": "Zakázat zdroj",
+    "unban": "Odblokovat kanál",
+    "hidden": "Článek skryt",
+    "banned": "Zdroj zakázán"
+  },
+  "bannedSubs": {
+    "title": "Zakázané zdroje",
+    "empty": "Žádné zakázané zdroje",
+    "unban": "Odblokovat"
   },
   "users": {
     "title": "Uživatelé",
     "email": "E-mail",
     "role": "Role",
     "joined": "Registrován",
-    "empty": "Žádní uživatelé nenalezeni"
+    "empty": "Žádní uživatelé nenalezeni",
+    "comments": "Komentáře",
+    "banComments": "Zakázat",
+    "unbanComments": "Povolit"
   },
   "invites": {
     "title": "Pozvánkové tokeny",

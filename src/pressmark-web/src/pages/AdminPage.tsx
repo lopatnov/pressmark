@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { adminClient } from '@/api/clients'
 import { useAdminStore, type InviteItem } from '@/store/adminStore'
+import { toast } from 'sonner'
 
 // ── Site settings form ──────────────────────────────────────────────────────
 
@@ -19,6 +20,7 @@ const settingsSchema = z.object({
   smtpPassword: z.string(),
   smtpUseTls: z.boolean(),
   smtpFromAddress: z.string(),
+  commentsEnabled: z.boolean(),
 })
 type SettingsForm = z.infer<typeof settingsSchema>
 
@@ -55,6 +57,7 @@ function SiteSettingsSection() {
         smtpPassword: data.smtpPassword,
         smtpUseTls: data.smtpUseTls,
         smtpFromAddress: data.smtpFromAddress,
+        commentsEnabled: data.commentsEnabled,
       },
     })
     setSettings(data)
@@ -163,6 +166,13 @@ function SiteSettingsSection() {
           </label>
         </div>
 
+        <div className="border-t border-border pt-3">
+          <label className="flex items-center gap-2 text-sm font-medium cursor-pointer">
+            <input {...register('commentsEnabled')} type="checkbox" className="h-4 w-4" />
+            {t('admin:settings.commentsEnabled')}
+          </label>
+        </div>
+
         <div className="flex items-center gap-3">
           <Button type="submit" size="sm" disabled={isSubmitting || !settings}>
             {t('common:save')}
@@ -249,11 +259,79 @@ function ModerationSection() {
   )
 }
 
+// ── Banned subscriptions section ────────────────────────────────────────────
+
+function BannedSubscriptionsSection() {
+  const { t } = useTranslation(['admin', 'common'])
+  const { bannedSubscriptions, setBannedSubscriptions, unbanSubscription } = useAdminStore()
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    adminClient
+      .listBannedSubscriptions({})
+      .then((res) =>
+        setBannedSubscriptions(
+          res.items.map((b) => ({ id: b.id, rssUrl: b.rssUrl, title: b.title })),
+        ),
+      )
+      .finally(() => setLoading(false))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const handleUnban = async (id: string) => {
+    try {
+      await adminClient.banSubscription({ subscriptionId: id, banned: false })
+      unbanSubscription(id)
+    } catch {
+      toast.error(t('common:error'))
+    }
+  }
+
+  return (
+    <section className="space-y-3">
+      <h2 className="text-base font-semibold">{t('admin:bannedSubs.title')}</h2>
+      <div className="rounded-lg border border-border">
+        {loading ? (
+          <p className="px-4 py-6 text-center text-sm text-muted-foreground">
+            {t('common:loading')}
+          </p>
+        ) : bannedSubscriptions.length === 0 ? (
+          <p className="px-4 py-6 text-center text-sm text-muted-foreground">
+            {t('admin:bannedSubs.empty')}
+          </p>
+        ) : (
+          <table className="w-full text-sm">
+            <tbody>
+              {bannedSubscriptions.map((sub) => (
+                <tr key={sub.id} className="border-b border-border last:border-0">
+                  <td className="px-4 py-2">
+                    <p className="font-medium">{sub.title || sub.rssUrl}</p>
+                    {sub.title && (
+                      <p className="text-xs text-muted-foreground truncate max-w-xs">
+                        {sub.rssUrl}
+                      </p>
+                    )}
+                  </td>
+                  <td className="px-4 py-2 text-right">
+                    <Button size="sm" variant="outline" onClick={() => handleUnban(sub.id)}>
+                      {t('admin:bannedSubs.unban')}
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </section>
+  )
+}
+
 // ── Users section ───────────────────────────────────────────────────────────
 
 function UsersSection() {
   const { t } = useTranslation(['admin', 'common'])
-  const { users, setUsers } = useAdminStore()
+  const { users, setUsers, updateUserCommentBan } = useAdminStore()
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -266,12 +344,22 @@ function UsersSection() {
             email: u.email,
             role: u.role,
             createdAt: u.createdAt,
+            isCommentingBanned: u.isCommentingBanned,
           })),
         ),
       )
       .finally(() => setLoading(false))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  const handleToggleCommentBan = async (userId: string, currentlyBanned: boolean) => {
+    try {
+      await adminClient.banUserFromCommenting({ userId, banned: !currentlyBanned })
+      updateUserCommentBan(userId, !currentlyBanned)
+    } catch {
+      toast.error(t('common:error'))
+    }
+  }
 
   return (
     <section className="space-y-3">
@@ -292,6 +380,7 @@ function UsersSection() {
                 <th className="px-4 py-2 text-left font-medium">{t('admin:users.email')}</th>
                 <th className="px-4 py-2 text-left font-medium">{t('admin:users.role')}</th>
                 <th className="px-4 py-2 text-left font-medium">{t('admin:users.joined')}</th>
+                <th className="px-4 py-2 text-left font-medium">{t('admin:users.comments')}</th>
               </tr>
             </thead>
             <tbody>
@@ -307,6 +396,22 @@ function UsersSection() {
                   </td>
                   <td className="px-4 py-2 text-xs text-muted-foreground">
                     {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : '—'}
+                  </td>
+                  <td className="px-4 py-2">
+                    <Button
+                      size="sm"
+                      variant={user.isCommentingBanned ? 'destructive' : 'outline'}
+                      onClick={() => handleToggleCommentBan(user.id, user.isCommentingBanned)}
+                      title={
+                        user.isCommentingBanned
+                          ? t('admin:users.unbanComments')
+                          : t('admin:users.banComments')
+                      }
+                    >
+                      {user.isCommentingBanned
+                        ? t('admin:users.unbanComments')
+                        : t('admin:users.banComments')}
+                    </Button>
                   </td>
                 </tr>
               ))}
@@ -468,6 +573,7 @@ export function AdminPage() {
           smtpPassword: '', // write-only
           smtpUseTls: res.smtpUseTls,
           smtpFromAddress: res.smtpFromAddress,
+          commentsEnabled: res.commentsEnabled,
         }),
       )
       .finally(() => setLoading(false))
@@ -480,6 +586,7 @@ export function AdminPage() {
       <SiteSettingsSection />
       <InvitesSection />
       <ModerationSection />
+      <BannedSubscriptionsSection />
       <UsersSection />
     </div>
   )

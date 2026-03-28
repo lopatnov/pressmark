@@ -10,10 +10,27 @@
   "bookmark": "북마크",
   "removeBookmark": "북마크 제거",
   "readMore": "더 읽기",
+  "subscribe": "구독",
+  "subscribed": "구독 중",
+  "subscribeSuccess": "구독 완료",
   "community": {
     "title": "커뮤니티",
     "subtitle": "지난 {{days}}일 동안 커뮤니티가 좋아요한 기사",
     "subtitle_plural": "지난 {{days}}일 동안 커뮤니티가 좋아요한 기사",
     "empty": "좋아요한 기사가 없습니다. 로그인하여 기사에 좋아요를 누르세요."
+  },
+  "comments": {
+    "title": "댓글",
+    "count": "댓글 {{count}}개",
+    "count_plural": "댓글 {{count}}개",
+    "empty": "아직 댓글이 없습니다",
+    "placeholder": "댓글 작성...",
+    "submit": "전송",
+    "remove": "댓글 삭제",
+    "removed": "관리자에 의해 삭제된 메시지",
+    "toggle": "댓글 표시/숨기기",
+    "loadError": "댓글을 불러오지 못했습니다",
+    "submitError": "댓글을 게시하지 못했습니다",
+    "removeError": "댓글을 삭제하지 못했습니다"
   }
 }

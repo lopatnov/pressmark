@@ -385,6 +385,7 @@ public class FeedServiceImpl(AppDbContext db, FeedUpdateBroadcaster broadcaster)
             IsBookmarked = bookmarkIds.Contains(item.Id),
             SourceTitle = item.Subscription?.Title ?? "",
             ImageUrl = item.ImageUrl ?? "",
+            SourceRssUrl = item.Subscription?.RssUrl ?? "",
         };
 
     // New items are never read/liked/bookmarked by definition
@@ -402,6 +403,7 @@ public class FeedServiceImpl(AppDbContext db, FeedUpdateBroadcaster broadcaster)
         IsBookmarked = false,
         SourceTitle = item.Subscription?.Title ?? "",
         ImageUrl = item.ImageUrl ?? "",
+        SourceRssUrl = item.Subscription?.RssUrl ?? "",
     };
 
     private static Protos.FeedItem MapBroadcastEvent(FeedUpdateEvent evt) => new()
@@ -419,6 +421,80 @@ public class FeedServiceImpl(AppDbContext db, FeedUpdateBroadcaster broadcaster)
         SourceTitle = evt.SourceTitle,
         ImageUrl = evt.ImageUrl,
     };
+
+    [AllowAnonymous]
+    public override async Task<CommentList> ListComments(
+        ListCommentsRequest request, ServerCallContext context)
+    {
+        var ct = context.CancellationToken;
+
+        if (!Guid.TryParse(request.FeedItemId, out var feedItemId))
+            throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid feed_item_id"));
+
+        var comments = await db.Comments
+            .Where(c => c.FeedItemId == feedItemId)
+            .OrderBy(c => c.CreatedAt)
+            .Include(c => c.User)
+            .ToListAsync(ct);
+
+        var result = new CommentList();
+        result.Items.AddRange(comments.Select(c => new Protos.Comment
+        {
+            Id = c.Id.ToString(),
+            UserEmail = c.RemovedByAdmin ? "" : c.User.Email,
+            Body = c.RemovedByAdmin ? "" : c.Body,
+            CreatedAt = c.CreatedAt.ToString("o"),
+            RemovedByAdmin = c.RemovedByAdmin,
+        }));
+        return result;
+    }
+
+    public override async Task<Protos.Comment> AddComment(
+        AddCommentRequest request, ServerCallContext context)
+    {
+        var ct = context.CancellationToken;
+        var userId = GetUserId(context);
+
+        if (string.IsNullOrWhiteSpace(request.Body) || request.Body.Length > 1000)
+            throw new RpcException(new Status(StatusCode.InvalidArgument,
+                "Comment body must be between 1 and 1000 characters"));
+
+        if (!Guid.TryParse(request.FeedItemId, out var feedItemId))
+            throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid feed_item_id"));
+
+        var commentsEnabled = await db.SiteSettings
+            .Where(s => s.Key == "comments_enabled")
+            .Select(s => s.Value)
+            .FirstOrDefaultAsync(ct) ?? "true";
+
+        if (commentsEnabled != "true")
+            throw new RpcException(new Status(StatusCode.FailedPrecondition, "Comments are disabled"));
+
+        var user = await db.Users.FindAsync([userId], ct)
+            ?? throw new RpcException(new Status(StatusCode.Unauthenticated, "User not found"));
+
+        if (user.IsCommentingBanned)
+            throw new RpcException(new Status(StatusCode.PermissionDenied, "You are not allowed to comment"));
+
+        var comment = new Entities.Comment
+        {
+            UserId = userId,
+            FeedItemId = feedItemId,
+            Body = request.Body.Trim(),
+        };
+
+        db.Comments.Add(comment);
+        await db.SaveChangesAsync(ct);
+
+        return new Protos.Comment
+        {
+            Id = comment.Id.ToString(),
+            UserEmail = user.Email,
+            Body = comment.Body,
+            CreatedAt = comment.CreatedAt.ToString("o"),
+            RemovedByAdmin = false,
+        };
+    }
 
     /// <summary>
     /// Enriches a page of feed items with per-user read/like/bookmark state and assembles a FeedPage.
