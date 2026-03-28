@@ -32,12 +32,13 @@ public class FeedFetcherService(
     {
         var httpClient = httpClientFactory.CreateClient("Pressmark");
         httpClient.Timeout = TimeSpan.FromSeconds(15);
-        var xml = await httpClient.GetStringAsync(sub.RssUrl, ct);
+        var bytes = await httpClient.GetByteArrayAsync(sub.RssUrl, ct);
+        var xml = LenientUtf8.GetString(bytes);
 
         SyndicationFeed feed;
         using (var reader = XmlReader.Create(
             new StringReader(xml),
-            new XmlReaderSettings { DtdProcessing = DtdProcessing.Ignore }))
+            new XmlReaderSettings { DtdProcessing = DtdProcessing.Ignore, CheckCharacters = false }))
         {
             feed = SyndicationFeed.Load(reader);
         }
