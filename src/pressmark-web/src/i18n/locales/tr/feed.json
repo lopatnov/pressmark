@@ -42,6 +42,8 @@
   "reportSent": "Rapor gönderildi",
   "reportAlreadySent": "Zaten raporlandı",
   "reportSubmitError": "Rapor gönderilemedi",
+  "filterBySource": "Kaynağa göre filtreli",
+  "clearFilter": "Filtreyi temizle",
   "article": {
     "notFound": "Makale bulunamadı",
     "backToCommunity": "Topluluğa dön"

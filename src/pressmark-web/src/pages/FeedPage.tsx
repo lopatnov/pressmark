@@ -1,7 +1,8 @@
 import { useCallback, useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { Heart, Bookmark, BookMarked } from 'lucide-react'
+import { Heart, Bookmark, BookMarked, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { feedClient } from '@/api/clients'
@@ -26,6 +27,8 @@ function FeedCardSkeleton() {
 
 export function FeedPage() {
   const { t } = useTranslation(['feed', 'common'])
+  const [searchParams, setSearchParams] = useSearchParams()
+  const activeSubId = searchParams.get('sub') ?? ''
   const {
     items,
     nextCursor,
@@ -52,7 +55,7 @@ export function FeedPage() {
             pageSize: 20,
             cursor,
             unreadOnly: useFeedStore.getState().unreadOnly,
-            subscriptionId: '',
+            subscriptionId: activeSubId,
           },
           { signal },
         )
@@ -82,7 +85,7 @@ export function FeedPage() {
         if (!signal?.aborted) setLoading(false)
       }
     },
-    [setLoading, appendItems, setItems, t],
+    [setLoading, appendItems, setItems, t, activeSubId],
   )
 
   const handleLoadMore = useCallback(() => {
@@ -98,7 +101,7 @@ export function FeedPage() {
     reset()
     loadFeed('', controller.signal)
     return () => controller.abort()
-  }, [unreadOnly, loadFeed, reset])
+  }, [unreadOnly, activeSubId, loadFeed, reset])
 
   // Real-time streaming: prepend new items as they arrive from the server
   useEffect(() => {
@@ -187,6 +190,23 @@ export function FeedPage() {
         </div>
       </div>
 
+      {activeSubId && items.length > 0 && (
+        <div className="flex items-center gap-2 rounded-md border border-border bg-muted/40 px-3 py-1.5 text-xs text-muted-foreground">
+          <span className="flex-1">
+            {t('feed:filterBySource')}:{' '}
+            <span className="font-medium text-foreground">{items[0].sourceTitle}</span>
+          </span>
+          <button
+            onClick={() => setSearchParams({})}
+            className="cursor-pointer hover:text-foreground transition-colors"
+            title={t('feed:clearFilter')}
+            aria-label={t('feed:clearFilter')}
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      )}
+
       {items.length === 0 && !isLoading && (
         <p className="py-12 text-center text-sm text-muted-foreground">{t('feed:empty')}</p>
       )}
@@ -199,6 +219,7 @@ export function FeedPage() {
                 key={item.id}
                 item={item}
                 articleId={item.id}
+                sourceHref={item.subscriptionId ? `/feed?sub=${item.subscriptionId}` : undefined}
                 onTitleClick={!item.isRead ? () => handleRead(item.id) : undefined}
                 actions={
                   <>

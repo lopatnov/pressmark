@@ -219,6 +219,9 @@ public class FeedServiceImpl(AppDbContext db, FeedUpdateBroadcaster broadcaster)
                      && !f.Subscription.IsCommunityBanned
                      && db.Likes.Any(l => l.FeedItemId == f.Id && l.CreatedAt >= since));
 
+        if (!string.IsNullOrEmpty(request.SourceRssUrl))
+            query = query.Where(f => f.Subscription.RssUrl == request.SourceRssUrl);
+
         if (!string.IsNullOrEmpty(request.Cursor) && TryParseCursor(request.Cursor,
                 out var cursorDate, out var cursorId))
         {

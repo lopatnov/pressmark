@@ -42,6 +42,8 @@
   "reportSent": "Скаргу надіслано",
   "reportAlreadySent": "Вже поскаржено",
   "reportSubmitError": "Не вдалося надіслати скаргу",
+  "filterBySource": "Фільтр за джерелом",
+  "clearFilter": "Скинути фільтр",
   "article": {
     "notFound": "Статтю не знайдено",
     "backToCommunity": "Назад до спільноти"

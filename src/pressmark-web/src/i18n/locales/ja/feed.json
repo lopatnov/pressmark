@@ -42,6 +42,8 @@
   "reportSent": "報告を送信しました",
   "reportAlreadySent": "既に報告済み",
   "reportSubmitError": "報告の送信に失敗しました",
+  "filterBySource": "ソースでフィルタ中",
+  "clearFilter": "フィルタを解除",
   "article": {
     "notFound": "記事が見つかりません",
     "backToCommunity": "コミュニティに戻る"

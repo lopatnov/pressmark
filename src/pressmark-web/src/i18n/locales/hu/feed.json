@@ -42,6 +42,8 @@
   "reportSent": "Bejelentés elküldve",
   "reportAlreadySent": "Már bejelentve",
   "reportSubmitError": "A bejelentés küldése sikertelen",
+  "filterBySource": "Forrás szerint szűrve",
+  "clearFilter": "Szűrő törlése",
   "article": {
     "notFound": "A cikk nem található",
     "backToCommunity": "Vissza a közösségbe"

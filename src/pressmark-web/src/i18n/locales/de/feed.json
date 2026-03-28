@@ -42,6 +42,8 @@
   "reportSent": "Meldung gesendet",
   "reportAlreadySent": "Bereits gemeldet",
   "reportSubmitError": "Meldung konnte nicht gesendet werden",
+  "filterBySource": "Nach Quelle filtern",
+  "clearFilter": "Filter löschen",
   "article": {
     "notFound": "Artikel nicht gefunden",
     "backToCommunity": "Zurück zur Community"

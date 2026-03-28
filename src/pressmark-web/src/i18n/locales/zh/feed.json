@@ -42,6 +42,8 @@
   "reportSent": "举报已发送",
   "reportAlreadySent": "已举报",
   "reportSubmitError": "发送举报失败",
+  "filterBySource": "按来源过滤",
+  "clearFilter": "清除筛选",
   "article": {
     "notFound": "文章未找到",
     "backToCommunity": "返回社区"

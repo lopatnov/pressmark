@@ -22,6 +22,7 @@ interface FeedItemCardProps {
   actions?: React.ReactNode
   footer?: React.ReactNode
   articleId?: string
+  sourceHref?: string
 }
 
 function sanitizeSummary(html: string): string {
@@ -61,6 +62,7 @@ export function FeedItemCard({
   actions,
   footer,
   articleId,
+  sourceHref,
 }: FeedItemCardProps) {
   const isUnread = item.isRead === false
   const youtubeId = getYouTubeId(item.url)
@@ -112,7 +114,17 @@ export function FeedItemCard({
                 }}
               />
             )}
-            <span className="font-medium">{item.sourceTitle}</span>
+            {sourceHref ? (
+              <Link
+                to={sourceHref}
+                className="font-medium hover:underline"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {item.sourceTitle}
+              </Link>
+            ) : (
+              <span className="font-medium">{item.sourceTitle}</span>
+            )}
             <span>·</span>
           </>
         )}

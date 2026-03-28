@@ -45,8 +45,9 @@ message GetFeedRequest {
 }
 
 message GetCommunityFeedRequest {
-  int32  page_size = 1; // default: 20, max: 100
-  string cursor    = 2; // empty = first page
+  int32  page_size       = 1; // default: 20, max: 100
+  string cursor          = 2; // empty = first page
+  string source_rss_url  = 3; // empty = all sources
 }
 
 message GetBookmarksRequest {

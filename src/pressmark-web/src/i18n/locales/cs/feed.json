@@ -42,6 +42,8 @@
   "reportSent": "Hlášení odeslané",
   "reportAlreadySent": "Již nahlášeno",
   "reportSubmitError": "Nepodařilo se odeslat hlášení",
+  "filterBySource": "Filtrováno podle zdroje",
+  "clearFilter": "Vymazat filtr",
   "article": {
     "notFound": "Článek nenalezen",
     "backToCommunity": "Zpět do komunity"

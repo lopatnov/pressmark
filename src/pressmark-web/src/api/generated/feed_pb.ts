@@ -85,6 +85,13 @@ export class GetCommunityFeedRequest extends Message<GetCommunityFeedRequest> {
    */
   cursor = "";
 
+  /**
+   * empty = all sources
+   *
+   * @generated from field: string source_rss_url = 3;
+   */
+  sourceRssUrl = "";
+
   constructor(data?: PartialMessage<GetCommunityFeedRequest>) {
     super();
     proto3.util.initPartial(data, this);
@@ -95,6 +102,7 @@ export class GetCommunityFeedRequest extends Message<GetCommunityFeedRequest> {
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "page_size", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
     { no: 2, name: "cursor", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "source_rss_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetCommunityFeedRequest {

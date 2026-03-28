@@ -42,6 +42,8 @@
   "reportSent": "Raport trimis",
   "reportAlreadySent": "Deja raportat",
   "reportSubmitError": "Nu s-a putut trimite raportul",
+  "filterBySource": "Filtrat după sursă",
+  "clearFilter": "Șterge filtrul",
   "article": {
     "notFound": "Articol negăsit",
     "backToCommunity": "Înapoila comunitate"

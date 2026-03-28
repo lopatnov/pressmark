@@ -42,6 +42,8 @@
   "reportSent": "Rapport skickad",
   "reportAlreadySent": "Redan rapporterat",
   "reportSubmitError": "Det gick inte att skicka rapporten",
+  "filterBySource": "Filtrerat efter källa",
+  "clearFilter": "Rensa filter",
   "article": {
     "notFound": "Artikel hittades inte",
     "backToCommunity": "Tillbaka till gemenskapen"

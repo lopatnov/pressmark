@@ -43,6 +43,8 @@
   "reportSent": "Reporte enviado",
   "reportAlreadySent": "Ya reportado",
   "reportSubmitError": "Error al enviar el reporte",
+  "filterBySource": "Filtrado por fuente",
+  "clearFilter": "Limpiar filtro",
   "article": {
     "notFound": "Artículo no encontrado",
     "backToCommunity": "Volver a la comunidad"

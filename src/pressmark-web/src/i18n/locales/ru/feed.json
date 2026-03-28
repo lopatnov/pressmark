@@ -42,6 +42,8 @@
   "reportSent": "Жалоба отправлена",
   "reportAlreadySent": "Уже пожаловано",
   "reportSubmitError": "Не удалось отправить жалобу",
+  "filterBySource": "Фильтр по источнику",
+  "clearFilter": "Сбросить фильтр",
   "article": {
     "notFound": "Статья не найдена",
     "backToCommunity": "Назад к сообществу"

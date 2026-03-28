@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
+import { useSearchParams, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { Heart, EyeOff, Ban, Rss, Check, Flag } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Heart, EyeOff, Ban, Rss, Check, Flag, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { adminClient, feedClient, subscriptionClient } from '@/api/clients'
@@ -29,6 +29,8 @@ interface CommunityItem {
 
 export function CommunityPage() {
   const { t } = useTranslation(['feed', 'common', 'admin'])
+  const [searchParams, setSearchParams] = useSearchParams()
+  const activeSrcUrl = searchParams.get('src') ?? ''
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated())
   const isAdmin = useAuthStore((s) => s.isAdmin())
   const registrationMode = useAuthStore((s) => s.registrationMode)
@@ -47,7 +49,10 @@ export function CommunityPage() {
     async (cursor = '', signal?: AbortSignal) => {
       setIsLoading(true)
       try {
-        const res = await feedClient.getCommunityFeed({ pageSize: 20, cursor }, { signal })
+        const res = await feedClient.getCommunityFeed(
+          { pageSize: 20, cursor, sourceRssUrl: activeSrcUrl },
+          { signal },
+        )
         if (signal?.aborted) return
         const mapped = res.items.map((item) => ({
           id: item.id,
@@ -75,7 +80,7 @@ export function CommunityPage() {
         setIsLoading(false)
       }
     },
-    [t],
+    [t, activeSrcUrl],
   )
 
   const handleLoadMore = useCallback(() => {
@@ -158,7 +163,7 @@ export function CommunityPage() {
     const controller = new AbortController()
     loadFeed('', controller.signal)
     return () => controller.abort()
-  }, [loadFeed])
+  }, [activeSrcUrl, loadFeed])
 
   return (
     <div className="mx-auto max-w-2xl space-y-6 p-4">
@@ -187,6 +192,23 @@ export function CommunityPage() {
         </p>
       )}
 
+      {activeSrcUrl && items.length > 0 && (
+        <div className="flex items-center gap-2 rounded-md border border-border bg-muted/40 px-3 py-1.5 text-xs text-muted-foreground">
+          <span className="flex-1">
+            {t('feed:filterBySource')}:{' '}
+            <span className="font-medium text-foreground">{items[0].sourceTitle}</span>
+          </span>
+          <button
+            onClick={() => setSearchParams({})}
+            className="cursor-pointer hover:text-foreground transition-colors"
+            title={t('feed:clearFilter')}
+            aria-label={t('feed:clearFilter')}
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      )}
+
       {items.length === 0 && !isLoading && isAuthenticated && (
         <p className="py-12 text-center text-sm text-muted-foreground">
           {t('feed:community.empty')}
@@ -212,6 +234,9 @@ export function CommunityPage() {
                 key={item.id}
                 item={item}
                 articleId={item.id}
+                sourceHref={
+                  item.sourceRssUrl ? `/?src=${encodeURIComponent(item.sourceRssUrl)}` : undefined
+                }
                 actions={
                   <div className="flex items-center gap-1 flex-wrap">
                     {isAuthenticated ? (

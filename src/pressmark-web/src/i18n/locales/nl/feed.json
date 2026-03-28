@@ -42,6 +42,8 @@
   "reportSent": "Melding verstuurd",
   "reportAlreadySent": "Al gemeld",
   "reportSubmitError": "Melding versturen mislukt",
+  "filterBySource": "Gefilterd op bron",
+  "clearFilter": "Filter wissen",
   "article": {
     "notFound": "Artikel niet gevonden",
     "backToCommunity": "Terug naar gemeenschap"

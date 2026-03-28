@@ -42,6 +42,8 @@
   "reportSent": "Segnalazione inviata",
   "reportAlreadySent": "Già segnalato",
   "reportSubmitError": "Impossibile inviare la segnalazione",
+  "filterBySource": "Filtrato per fonte",
+  "clearFilter": "Cancella filtro",
   "article": {
     "notFound": "Articolo non trovato",
     "backToCommunity": "Torna alla community"

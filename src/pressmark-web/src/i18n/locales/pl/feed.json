@@ -42,6 +42,8 @@
   "reportSent": "Zgłoszenie wysłane",
   "reportAlreadySent": "Już zgłoszono",
   "reportSubmitError": "Nie udało się wysłać zgłoszenia",
+  "filterBySource": "Filtruj według źródła",
+  "clearFilter": "Wyczyść filtr",
   "article": {
     "notFound": "Artykuł nie znaleziony",
     "backToCommunity": "Powrót do społeczności"

@@ -42,6 +42,8 @@
   "reportSent": "Denúncia enviada",
   "reportAlreadySent": "Já denunciado",
   "reportSubmitError": "Falha ao enviar denúncia",
+  "filterBySource": "Filtrado por fonte",
+  "clearFilter": "Limpar filtro",
   "article": {
     "notFound": "Artigo não encontrado",
     "backToCommunity": "Voltar à comunidade"

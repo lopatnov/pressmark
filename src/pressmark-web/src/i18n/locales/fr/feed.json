@@ -43,6 +43,8 @@
   "reportSent": "Signalement envoyé",
   "reportAlreadySent": "Déjà signalé",
   "reportSubmitError": "Impossible d’envoyer le signalement",
+  "filterBySource": "Filtré par source",
+  "clearFilter": "Effacer le filtre",
   "article": {
     "notFound": "Article introuvable",
     "backToCommunity": "Retour à la communauté"

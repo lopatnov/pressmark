@@ -43,6 +43,8 @@
   "reportSent": "Report sent",
   "reportAlreadySent": "Already reported",
   "reportSubmitError": "Failed to send report",
+  "filterBySource": "Filtered by source",
+  "clearFilter": "Clear filter",
   "article": {
     "notFound": "Article not found",
     "backToCommunity": "Back to community"
