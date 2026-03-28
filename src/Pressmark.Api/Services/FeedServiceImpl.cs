@@ -11,7 +11,7 @@ using Pressmark.Api.Protos;
 namespace Pressmark.Api.Services;
 
 [Authorize]
-public class FeedServiceImpl(AppDbContext db, FeedUpdateBroadcaster broadcaster) : FeedService.FeedServiceBase
+public class FeedServiceImpl(AppDbContext db, IDbContextFactory<AppDbContext> dbFactory, FeedUpdateBroadcaster broadcaster) : FeedService.FeedServiceBase
 {
     private const int DefaultPageSize = 20;
     private const int MaxPageSize = 100;
@@ -56,7 +56,7 @@ public class FeedServiceImpl(AppDbContext db, FeedUpdateBroadcaster broadcaster)
         var pageItems = items.Take(pageSize).ToList();
 
         return await BuildPageResponseAsync(pageItems, hasMore, userId,
-            allBookmarked: false, includeTotalUnread: true, ct);
+            allBookmarked: false, includeTotalUnread: string.IsNullOrEmpty(request.Cursor), ct);
     }
 
     public override async Task<Empty> MarkAsRead(
@@ -613,22 +613,36 @@ public class FeedServiceImpl(AppDbContext db, FeedUpdateBroadcaster broadcaster)
     {
         var ids = pageItems.Select(f => f.Id).ToList();
 
-        var readIds = await db.ReadItems
+        // Parallel lookups — each query gets its own DbContext instance because EF Core
+        // does not allow concurrent operations on the same context.
+        await using var ctx1 = await dbFactory.CreateDbContextAsync(ct);
+        await using var ctx2 = await dbFactory.CreateDbContextAsync(ct);
+        await using var ctx3 = await dbFactory.CreateDbContextAsync(ct);
+        await using var ctx4 = await dbFactory.CreateDbContextAsync(ct);
+
+        var readIdsTask = ctx1.ReadItems
             .Where(r => r.UserId == userId && ids.Contains(r.FeedItemId))
             .Select(r => r.FeedItemId).ToHashSetAsync(ct);
-        var likedIds = await db.Likes
+        var likedIdsTask = ctx2.Likes
             .Where(l => l.UserId == userId && ids.Contains(l.FeedItemId))
             .Select(l => l.FeedItemId).ToHashSetAsync(ct);
-        var bookmarkIds = allBookmarked
-            ? ids.ToHashSet()
-            : await db.Bookmarks
+        var bookmarkIdsTask = allBookmarked
+            ? Task.FromResult(ids.ToHashSet())
+            : ctx3.Bookmarks
                 .Where(b => b.UserId == userId && ids.Contains(b.FeedItemId))
                 .Select(b => b.FeedItemId).ToHashSetAsync(ct);
-        var likeCounts = await db.Likes
+        var likeCountsTask = ctx4.Likes
             .Where(l => ids.Contains(l.FeedItemId))
             .GroupBy(l => l.FeedItemId)
             .Select(g => new { g.Key, Count = g.Count() })
             .ToDictionaryAsync(x => x.Key, x => x.Count, ct);
+
+        await Task.WhenAll(readIdsTask, likedIdsTask, bookmarkIdsTask, likeCountsTask);
+
+        var readIds = readIdsTask.Result;
+        var likedIds = likedIdsTask.Result;
+        var bookmarkIds = bookmarkIdsTask.Result;
+        var likeCounts = likeCountsTask.Result;
 
         var page = new FeedPage();
 

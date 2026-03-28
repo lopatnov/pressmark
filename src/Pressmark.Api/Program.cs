@@ -17,6 +17,8 @@ var config = builder.Configuration;
 // EF Core
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(config.GetConnectionString("Default")));
+builder.Services.AddDbContextFactory<AppDbContext>(options =>
+    options.UseSqlServer(config.GetConnectionString("Default")));
 
 // gRPC
 builder.Services.AddGrpc();
