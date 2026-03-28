@@ -4,7 +4,7 @@ on:
   push:
     branches: [main, dev]
   pull_request:
-    branches: [main]
+    branches: [main, dev]
 
 jobs:
   backend:
@@ -47,6 +47,43 @@ jobs:
         run: dotnet test --no-build --configuration Release --verbosity normal
         env:
           TEST_MSSQL_CONNECTION_STRING: "Server=localhost,1433;Database=pressmark_migration_test;User Id=sa;Password=TestP4ssword!;TrustServerCertificate=True;"
+
+  coverage:
+    name: Coverage gate (≥ 70% line)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' && github.base_ref == 'main'
+    services:
+      mssql:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        env:
+          SA_PASSWORD: TestP4ssword!
+          ACCEPT_EULA: Y
+        ports:
+          - 1433:1433
+        options: >-
+          --health-cmd "/opt/mssql-tools18/bin/sqlcmd -S localhost -U SA -P TestP4ssword! -Q 'SELECT 1' -No"
+          --health-interval 15s
+          --health-timeout 10s
+          --health-retries 10
+          --health-start-period 30s
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Build
+        run: dotnet build --configuration Release
+
+      - name: Test with coverage
+        run: >
+          dotnet test --no-build --configuration Release
+          --settings src/Pressmark.Api.Tests/coverlet.runsettings
+          --results-directory ./coverage
+        env:
+          TEST_MSSQL_CONNECTION_STRING: "Server=localhost,1433;Database=pressmark_coverage_test;User Id=sa;Password=TestP4ssword!;TrustServerCertificate=True;"
 
   frontend:
     name: Frontend (Node 22 + Vite)
