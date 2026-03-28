@@ -25,7 +25,10 @@
     "ban": "소스 차단",
     "unban": "채널 차단 해제",
     "hidden": "게시글 숨겨짐",
-    "banned": "소스 차단됨"
+    "unhidden": "게시글 표시됨",
+    "banned": "소스 차단됨",
+    "hiddenArticles": "숨겨진 게시글",
+    "noHiddenArticles": "숨겨진 게시글 없음"
   },
   "bannedSubs": {
     "title": "차단된 소스",

@@ -25,7 +25,10 @@
     "ban": "Quelle sperren",
     "unban": "Kanal entsperren",
     "hidden": "Artikel ausgeblendet",
-    "banned": "Quelle gesperrt"
+    "unhidden": "Artikel eingeblendet",
+    "banned": "Quelle gesperrt",
+    "hiddenArticles": "Ausgeblendete Artikel",
+    "noHiddenArticles": "Keine ausgeblendeten Artikel"
   },
   "bannedSubs": {
     "title": "Gesperrte Quellen",

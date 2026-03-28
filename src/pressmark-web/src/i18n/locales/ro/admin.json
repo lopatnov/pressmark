@@ -25,7 +25,10 @@
     "ban": "Interzice sursa",
     "unban": "Deblochează canal",
     "hidden": "Articol ascuns",
-    "banned": "Sursă interzisă"
+    "unhidden": "Articol afișat",
+    "banned": "Sursă interzisă",
+    "hiddenArticles": "Articole ascunse",
+    "noHiddenArticles": "Niciun articol ascuns"
   },
   "bannedSubs": {
     "title": "Surse interzise",

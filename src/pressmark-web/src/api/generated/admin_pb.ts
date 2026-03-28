@@ -864,3 +864,95 @@ export class ResolveReportRequest extends Message<ResolveReportRequest> {
   }
 }
 
+/**
+ * @generated from message pressmark.admin.HiddenFeedItem
+ */
+export class HiddenFeedItem extends Message<HiddenFeedItem> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  /**
+   * @generated from field: string title = 2;
+   */
+  title = "";
+
+  /**
+   * @generated from field: string url = 3;
+   */
+  url = "";
+
+  /**
+   * @generated from field: string source_title = 4;
+   */
+  sourceTitle = "";
+
+  constructor(data?: PartialMessage<HiddenFeedItem>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "pressmark.admin.HiddenFeedItem";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "title", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "source_title", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): HiddenFeedItem {
+    return new HiddenFeedItem().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): HiddenFeedItem {
+    return new HiddenFeedItem().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): HiddenFeedItem {
+    return new HiddenFeedItem().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: HiddenFeedItem | PlainMessage<HiddenFeedItem> | undefined, b: HiddenFeedItem | PlainMessage<HiddenFeedItem> | undefined): boolean {
+    return proto3.util.equals(HiddenFeedItem, a, b);
+  }
+}
+
+/**
+ * @generated from message pressmark.admin.HiddenFeedItemList
+ */
+export class HiddenFeedItemList extends Message<HiddenFeedItemList> {
+  /**
+   * @generated from field: repeated pressmark.admin.HiddenFeedItem items = 1;
+   */
+  items: HiddenFeedItem[] = [];
+
+  constructor(data?: PartialMessage<HiddenFeedItemList>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "pressmark.admin.HiddenFeedItemList";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "items", kind: "message", T: HiddenFeedItem, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): HiddenFeedItemList {
+    return new HiddenFeedItemList().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): HiddenFeedItemList {
+    return new HiddenFeedItemList().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): HiddenFeedItemList {
+    return new HiddenFeedItemList().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: HiddenFeedItemList | PlainMessage<HiddenFeedItemList> | undefined, b: HiddenFeedItemList | PlainMessage<HiddenFeedItemList> | undefined): boolean {
+    return proto3.util.equals(HiddenFeedItemList, a, b);
+  }
+}
+

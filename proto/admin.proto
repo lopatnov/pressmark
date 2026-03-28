@@ -21,6 +21,7 @@ service AdminService {
   rpc GetPendingReportCount    (google.protobuf.Empty)           returns (PendingReportCount);
   rpc ListReports              (google.protobuf.Empty)           returns (ReportList);
   rpc ResolveReport            (ResolveReportRequest)            returns (google.protobuf.Empty);
+  rpc ListHiddenFeedItems      (google.protobuf.Empty)           returns (HiddenFeedItemList);
 }
 
 message SiteSettings {
@@ -123,4 +124,15 @@ message ReportList {
 
 message ResolveReportRequest {
   string id = 1;
+}
+
+message HiddenFeedItem {
+  string id           = 1;
+  string title        = 2;
+  string url          = 3;
+  string source_title = 4;
+}
+
+message HiddenFeedItemList {
+  repeated HiddenFeedItem items = 1;
 }

@@ -27,9 +27,7 @@ public class FeedServiceImpl(AppDbContext db, FeedUpdateBroadcaster broadcaster)
         var query = db.FeedItems
             .AsNoTracking()
             .Include(f => f.Subscription)
-            .Where(f => f.Subscription.UserId == userId
-                     && !f.IsCommunityHidden
-                     && !f.Subscription.IsCommunityBanned);
+            .Where(f => f.Subscription.UserId == userId);
 
         if (!string.IsNullOrEmpty(request.SubscriptionId)
             && Guid.TryParse(request.SubscriptionId, out var subId))
@@ -517,12 +515,13 @@ public class FeedServiceImpl(AppDbContext db, FeedUpdateBroadcaster broadcaster)
         if (!Guid.TryParse(request.FeedItemId, out var feedItemId))
             throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid feed_item_id"));
 
+        var isAdmin = context.GetHttpContext().User.IsInRole("Admin");
+
         var item = await db.FeedItems
             .AsNoTracking()
             .Include(f => f.Subscription)
             .Where(f => f.Id == feedItemId
-                     && !f.IsCommunityHidden
-                     && !f.Subscription.IsCommunityBanned)
+                     && (isAdmin || (!f.IsCommunityHidden && !f.Subscription.IsCommunityBanned)))
             .FirstOrDefaultAsync(ct)
             ?? throw new RpcException(new Status(StatusCode.NotFound, "Feed item not found"));
 
@@ -546,7 +545,9 @@ public class FeedServiceImpl(AppDbContext db, FeedUpdateBroadcaster broadcaster)
         var bookmarkIds = isBookmarked ? new HashSet<Guid> { feedItemId } : new HashSet<Guid>();
         var readIds = isRead ? new HashSet<Guid> { feedItemId } : new HashSet<Guid>();
 
-        return ToProto(item, readIds, likedIds, bookmarkIds, likeCounts);
+        var proto = ToProto(item, readIds, likedIds, bookmarkIds, likeCounts);
+        if (isAdmin) proto.IsHidden = item.IsCommunityHidden;
+        return proto;
     }
 
     public override async Task<Empty> ReportContent(

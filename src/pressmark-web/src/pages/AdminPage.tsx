@@ -340,6 +340,86 @@ function BannedSubscriptionsSection() {
   )
 }
 
+// ── Hidden articles section ──────────────────────────────────────────────────
+
+function HiddenArticlesSection() {
+  const { t } = useTranslation(['admin', 'common'])
+  const [hiddenItems, setHiddenItems] = useState<
+    { id: string; title: string; url: string; sourceTitle: string }[]
+  >([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    adminClient
+      .listHiddenFeedItems({})
+      .then((res) =>
+        setHiddenItems(
+          res.items.map((item) => ({
+            id: item.id,
+            title: item.title,
+            url: item.url,
+            sourceTitle: item.sourceTitle,
+          })),
+        ),
+      )
+      .catch(() => toast.error(t('common:error')))
+      .finally(() => setLoading(false))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const handleUnhide = async (id: string) => {
+    try {
+      await adminClient.hideFeedItem({ feedItemId: id, hidden: false })
+      setHiddenItems((prev) => prev.filter((item) => item.id !== id))
+      toast.success(t('admin:moderation.unhidden'))
+    } catch {
+      toast.error(t('common:error'))
+    }
+  }
+
+  return (
+    <section className="space-y-3">
+      <h2 className="text-base font-semibold">{t('admin:moderation.hiddenArticles')}</h2>
+      <div className="rounded-lg border border-border">
+        {loading ? (
+          <p className="px-4 py-6 text-center text-sm text-muted-foreground">
+            {t('common:loading')}
+          </p>
+        ) : hiddenItems.length === 0 ? (
+          <p className="px-4 py-6 text-center text-sm text-muted-foreground">
+            {t('admin:moderation.noHiddenArticles')}
+          </p>
+        ) : (
+          <table className="w-full text-sm">
+            <tbody>
+              {hiddenItems.map((item) => (
+                <tr key={item.id} className="border-b border-border last:border-0">
+                  <td className="px-4 py-2">
+                    <a
+                      href={item.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-medium hover:underline line-clamp-2"
+                    >
+                      {item.title}
+                    </a>
+                    <p className="text-xs text-muted-foreground">{item.sourceTitle}</p>
+                  </td>
+                  <td className="px-4 py-2 text-right">
+                    <Button size="sm" variant="outline" onClick={() => handleUnhide(item.id)}>
+                      {t('admin:moderation.unhide')}
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </section>
+  )
+}
+
 // ── Users section ───────────────────────────────────────────────────────────
 
 function UsersSection() {
@@ -699,6 +779,7 @@ export function AdminPage() {
       <InvitesSection />
       <ModerationSection />
       <BannedSubscriptionsSection />
+      <HiddenArticlesSection />
       <UsersSection />
     </div>
   )

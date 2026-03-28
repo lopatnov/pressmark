@@ -25,7 +25,10 @@
     "ban": "Bannir la source",
     "unban": "Débannir le canal",
     "hidden": "Article masqué",
-    "banned": "Source bannie"
+    "unhidden": "Article affiché",
+    "banned": "Source bannie",
+    "hiddenArticles": "Articles masqués",
+    "noHiddenArticles": "Aucun article masqué"
   },
   "bannedSubs": {
     "title": "Sources bannies",

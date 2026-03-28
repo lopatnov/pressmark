@@ -11,6 +11,7 @@ export interface FeedItemData {
   sourceTitle: string
   imageUrl?: string
   isRead?: boolean
+  isHidden?: boolean
   subscriptionId?: string
   sourceRssUrl?: string
 }

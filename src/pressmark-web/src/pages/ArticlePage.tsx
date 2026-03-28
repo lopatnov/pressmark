@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Flag } from 'lucide-react'
+import { EyeOff, Eye, Flag } from 'lucide-react'
 import { toast } from 'sonner'
-import { feedClient } from '@/api/clients'
+import { adminClient, feedClient } from '@/api/clients'
 import { FeedItemCard, type FeedItemData } from '@/components/feed/FeedItemCard'
 import { CommentSection } from '@/components/feed/CommentSection'
 import { Button } from '@/components/ui/button'
@@ -11,7 +11,7 @@ import { useAuthStore } from '@/store/authStore'
 
 export function ArticlePage() {
   const { id } = useParams<{ id: string }>()
-  const { t } = useTranslation(['feed', 'common'])
+  const { t } = useTranslation(['feed', 'common', 'admin'])
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated())
   const isAdmin = useAuthStore((s) => s.isAdmin())
 
@@ -38,6 +38,7 @@ export function ArticlePage() {
           imageUrl: res.imageUrl || undefined,
           subscriptionId: res.subscriptionId,
           sourceRssUrl: res.sourceRssUrl,
+          isHidden: res.isHidden,
         })
       })
       .catch(() => setNotFound(true))
@@ -91,6 +92,39 @@ export function ArticlePage() {
       </Link>
 
       <FeedItemCard item={item} />
+
+      {isAdmin && (
+        <div className="flex items-center gap-2">
+          <button
+            onClick={async () => {
+              try {
+                const hidden = !item.isHidden
+                await adminClient.hideFeedItem({ feedItemId: item.id, hidden })
+                setItem((prev) => prev && { ...prev, isHidden: hidden })
+                toast.success(
+                  hidden ? t('admin:moderation.hidden') : t('admin:moderation.unhidden'),
+                )
+              } catch {
+                toast.error(t('common:error'))
+              }
+            }}
+            className="flex cursor-pointer items-center gap-1 text-xs text-muted-foreground hover:text-destructive transition-colors"
+            title={item.isHidden ? t('admin:moderation.unhide') : t('admin:moderation.hide')}
+          >
+            {item.isHidden ? (
+              <>
+                <Eye className="h-3.5 w-3.5" />
+                {t('admin:moderation.unhide')}
+              </>
+            ) : (
+              <>
+                <EyeOff className="h-3.5 w-3.5" />
+                {t('admin:moderation.hide')}
+              </>
+            )}
+          </button>
+        </div>
+      )}
 
       {isAuthenticated && !isAdmin && (
         <div className="flex items-center gap-2">

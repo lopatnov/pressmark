@@ -25,7 +25,10 @@
     "ban": "Forrás tiltása",
     "unban": "Csatorna tiltásának feloldása",
     "hidden": "Cikk elrejtve",
-    "banned": "Forrás tiltva"
+    "unhidden": "Cikk megjelenítve",
+    "banned": "Forrás tiltva",
+    "hiddenArticles": "Rejtett cikkek",
+    "noHiddenArticles": "Nincsenek rejtett cikkek"
   },
   "bannedSubs": {
     "title": "Tiltott források",

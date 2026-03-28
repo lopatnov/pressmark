@@ -277,6 +277,30 @@ public class AdminServiceImpl(AppDbContext db, ISmtpPasswordProtector passwordPr
         return new Empty();
     }
 
+    public override async Task<HiddenFeedItemList> ListHiddenFeedItems(
+        Empty request, ServerCallContext context)
+    {
+        var ct = context.CancellationToken;
+        var items = await db.FeedItems
+            .Where(f => f.IsCommunityHidden)
+            .Include(f => f.Subscription)
+            .OrderByDescending(f => f.PublishedAt)
+            .Take(200)
+            .AsNoTracking()
+            .Select(f => new HiddenFeedItem
+            {
+                Id = f.Id.ToString(),
+                Title = f.Title,
+                Url = f.Url,
+                SourceTitle = f.Subscription.Title,
+            })
+            .ToListAsync(ct);
+
+        var result = new HiddenFeedItemList();
+        result.Items.AddRange(items);
+        return result;
+    }
+
     private async Task UpsertSetting(string key, string value, CancellationToken ct)
     {
         var setting = await db.SiteSettings.FindAsync([key], ct);

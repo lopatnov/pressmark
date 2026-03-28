@@ -78,6 +78,7 @@ message FeedItem {
   string source_title    = 11;
   string image_url       = 12; // empty if RSS has no image
   string source_rss_url  = 13; // RSS URL of the source subscription
+  bool   is_hidden       = 14; // true if community-hidden (only set for Admin callers)
 }
 
 message MarkAsReadRequest {

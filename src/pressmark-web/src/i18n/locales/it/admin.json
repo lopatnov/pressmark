@@ -25,7 +25,10 @@
     "ban": "Vieta fonte",
     "unban": "Sblocca canale",
     "hidden": "Articolo nascosto",
-    "banned": "Fonte vietata"
+    "unhidden": "Articolo mostrato",
+    "banned": "Fonte vietata",
+    "hiddenArticles": "Articoli nascosti",
+    "noHiddenArticles": "Nessun articolo nascosto"
   },
   "bannedSubs": {
     "title": "Fonti vietate",

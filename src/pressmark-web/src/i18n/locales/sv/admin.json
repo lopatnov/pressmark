@@ -25,7 +25,10 @@
     "ban": "Förbjud källa",
     "unban": "Avblockera kanal",
     "hidden": "Artikel dold",
-    "banned": "Källa förbjuden"
+    "unhidden": "Artikel visad",
+    "banned": "Källa förbjuden",
+    "hiddenArticles": "Dolda artiklar",
+    "noHiddenArticles": "Inga dolda artiklar"
   },
   "bannedSubs": {
     "title": "Förbjudna källor",

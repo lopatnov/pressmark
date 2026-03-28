@@ -25,7 +25,10 @@
     "ban": "Bron blokkeren",
     "unban": "Kanaal deblokkeren",
     "hidden": "Artikel verborgen",
-    "banned": "Bron geblokkeerd"
+    "unhidden": "Artikel getoond",
+    "banned": "Bron geblokkeerd",
+    "hiddenArticles": "Verborgen artikelen",
+    "noHiddenArticles": "Geen verborgen artikelen"
   },
   "bannedSubs": {
     "title": "Geblokkeerde bronnen",

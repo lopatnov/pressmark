@@ -25,7 +25,10 @@
     "ban": "ソースをBAN",
     "unban": "チャンネルのブロックを解除",
     "hidden": "記事を非表示にしました",
-    "banned": "ソースをBANしました"
+    "unhidden": "記事を表示しました",
+    "banned": "ソースをBANしました",
+    "hiddenArticles": "非表示の記事",
+    "noHiddenArticles": "非表示の記事はありません"
   },
   "bannedSubs": {
     "title": "BANされたソース",

@@ -25,7 +25,10 @@
     "ban": "Zakázat zdroj",
     "unban": "Odblokovat kanál",
     "hidden": "Článek skryt",
-    "banned": "Zdroj zakázán"
+    "unhidden": "Článek zobrazen",
+    "banned": "Zdroj zakázán",
+    "hiddenArticles": "Skryté články",
+    "noHiddenArticles": "Žádné skryté články"
   },
   "bannedSubs": {
     "title": "Zakázané zdroje",

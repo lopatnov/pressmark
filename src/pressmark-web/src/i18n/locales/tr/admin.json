@@ -25,7 +25,10 @@
     "ban": "Kaynağı yasakla",
     "unban": "Kanalın engelini kaldır",
     "hidden": "Makale gizlendi",
-    "banned": "Kaynak yasaklandı"
+    "unhidden": "Makale gösterildi",
+    "banned": "Kaynak yasaklandı",
+    "hiddenArticles": "Gizli Makaleler",
+    "noHiddenArticles": "Gizli makale yok"
   },
   "bannedSubs": {
     "title": "Yasaklı kaynaklar",

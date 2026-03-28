@@ -25,7 +25,10 @@
     "ban": "封禁来源",
     "unban": "解封频道",
     "hidden": "文章已隐藏",
-    "banned": "来源已封禁"
+    "unhidden": "文章已显示",
+    "banned": "来源已封禁",
+    "hiddenArticles": "隐藏的文章",
+    "noHiddenArticles": "没有隐藏的文章"
   },
   "bannedSubs": {
     "title": "已封禁来源",
