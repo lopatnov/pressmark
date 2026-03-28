@@ -357,7 +357,9 @@ public class FeedServiceImpl(AppDbContext db, FeedUpdateBroadcaster broadcaster)
             var raw = Encoding.UTF8.GetString(Convert.FromBase64String(cursor));
             var parts = raw.Split('|');
             if (parts.Length != 2) return false;
-            date = new DateTime(long.Parse(parts[0]), DateTimeKind.Utc);
+            if (!long.TryParse(parts[0], out var ticks)) return false;
+            if (ticks < DateTime.MinValue.Ticks || ticks > DateTime.MaxValue.Ticks) return false;
+            date = new DateTime(ticks, DateTimeKind.Utc);
             id = Guid.Parse(parts[1]);
             return true;
         }

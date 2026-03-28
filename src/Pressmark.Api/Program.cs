@@ -1,7 +1,9 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using System.Threading.RateLimiting;
 using Grpc.AspNetCore.Web;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Pressmark.Api.BackgroundServices;
@@ -25,7 +27,25 @@ builder.Services.AddSingleton<JwtService>();
 builder.Services.AddSingleton<FeedUpdateBroadcaster>();
 
 // Email
+builder.Services.AddDataProtection();
+builder.Services.AddScoped<ISmtpPasswordProtector, SmtpPasswordProtector>();
 builder.Services.AddScoped<IEmailService, SmtpEmailService>();
+
+// Rate limiting — auth endpoints: 10 requests per minute per IP
+builder.Services.AddRateLimiter(options =>
+{
+    options.AddPolicy("auth", context =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: context.Connection.RemoteIpAddress?.ToString() ?? "anon",
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 10,
+                Window = TimeSpan.FromMinutes(1),
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = 0,
+            }));
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+});
 
 // HTTP client (pooled — used by SubscriptionServiceImpl and RssFetcherService)
 builder.Services.AddHttpClient("Pressmark", c =>
@@ -99,11 +119,12 @@ using (var scope = app.Services.CreateScope())
 app.MapGet("/health", () => Results.Ok(new { status = "healthy" }));
 
 app.UseCors("GrpcWeb");
+app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseGrpcWeb(new GrpcWebOptions { DefaultEnabled = true });
 
-app.MapGrpcService<AuthServiceImpl>();
+app.MapGrpcService<AuthServiceImpl>().RequireRateLimiting("auth");
 app.MapGrpcService<SubscriptionServiceImpl>();
 app.MapGrpcService<FeedServiceImpl>();
 app.MapGrpcService<AdminServiceImpl>();

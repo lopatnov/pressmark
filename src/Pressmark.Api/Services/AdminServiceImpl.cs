@@ -9,7 +9,7 @@ using Pressmark.Api.Protos;
 namespace Pressmark.Api.Services;
 
 [Authorize(Roles = "Admin")]
-public class AdminServiceImpl(AppDbContext db) : AdminService.AdminServiceBase
+public class AdminServiceImpl(AppDbContext db, ISmtpPasswordProtector passwordProtector) : AdminService.AdminServiceBase
 {
     public override async Task<SiteSettings> GetSiteSettings(Empty request, ServerCallContext context)
     {
@@ -44,9 +44,9 @@ public class AdminServiceImpl(AppDbContext db) : AdminService.AdminServiceBase
         await UpsertSetting("smtp_use_tls", s.SmtpUseTls ? "true" : "false", ct);
         await UpsertSetting("smtp_from_address", s.SmtpFromAddress, ct);
 
-        // Only update the password if a new value was provided
+        // Only update the password if a new value was provided; encrypt before storing
         if (!string.IsNullOrEmpty(s.SmtpPassword))
-            await UpsertSetting("smtp_password", s.SmtpPassword, ct);
+            await UpsertSetting("smtp_password", passwordProtector.Protect(s.SmtpPassword), ct);
 
         return new Empty();
     }
