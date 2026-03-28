@@ -45,5 +45,6 @@
   "article": {
     "notFound": "Статтю не знайдено",
     "backToCommunity": "Назад до спільноти"
-  }
+  },
+  "alreadySubscribed": "Це джерело вже є у вас"
 }

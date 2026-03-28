@@ -45,5 +45,6 @@
   "article": {
     "notFound": "Artikel hittades inte",
     "backToCommunity": "Tillbaka till gemenskapen"
-  }
+  },
+  "alreadySubscribed": "Du har redan den här källan"
 }

@@ -45,5 +45,6 @@
   "article": {
     "notFound": "Makale bulunamadı",
     "backToCommunity": "Topluluğa dön"
-  }
+  },
+  "alreadySubscribed": "Bu kaynağa zaten sahipsiniz"
 }

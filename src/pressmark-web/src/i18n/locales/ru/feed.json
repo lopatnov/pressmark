@@ -45,5 +45,6 @@
   "article": {
     "notFound": "Статья не найдена",
     "backToCommunity": "Назад к сообществу"
-  }
+  },
+  "alreadySubscribed": "Этот источник уже есть у вас"
 }

@@ -45,5 +45,6 @@
   "article": {
     "notFound": "記事が見つかりません",
     "backToCommunity": "コミュニティに戻る"
-  }
+  },
+  "alreadySubscribed": "このソースはすでにあります"
 }

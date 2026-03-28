@@ -108,6 +108,11 @@ export function CommunityPage() {
 
   const handleSubscribe = async (rssUrl: string, title: string) => {
     setSubscribedUrls((prev) => new Set(prev).add(rssUrl))
+    const alreadyHave = subscriptions.some((s) => s.rssUrl === rssUrl)
+    if (alreadyHave) {
+      toast.info(t('feed:alreadySubscribed'))
+      return
+    }
     try {
       const res = await subscriptionClient.addSubscription({ rssUrl, title })
       addSubscription({

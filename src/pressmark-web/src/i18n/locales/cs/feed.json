@@ -45,5 +45,6 @@
   "article": {
     "notFound": "Článek nenalezen",
     "backToCommunity": "Zpět do komunity"
-  }
+  },
+  "alreadySubscribed": "Tento zdroj již máte"
 }

@@ -45,5 +45,6 @@
   "article": {
     "notFound": "Articol negăsit",
     "backToCommunity": "Înapoila comunitate"
-  }
+  },
+  "alreadySubscribed": "Aveți deja această sursă"
 }

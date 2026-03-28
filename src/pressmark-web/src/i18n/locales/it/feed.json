@@ -45,5 +45,6 @@
   "article": {
     "notFound": "Articolo non trovato",
     "backToCommunity": "Torna alla community"
-  }
+  },
+  "alreadySubscribed": "Hai già questa fonte"
 }

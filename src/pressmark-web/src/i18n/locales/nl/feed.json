@@ -45,5 +45,6 @@
   "article": {
     "notFound": "Artikel niet gevonden",
     "backToCommunity": "Terug naar gemeenschap"
-  }
+  },
+  "alreadySubscribed": "U heeft deze bron al"
 }

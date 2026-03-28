@@ -45,5 +45,6 @@
   "article": {
     "notFound": "A cikk nem található",
     "backToCommunity": "Vissza a közösségbe"
-  }
+  },
+  "alreadySubscribed": "Ez a forrás már megvan"
 }

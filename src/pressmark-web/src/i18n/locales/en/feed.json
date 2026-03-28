@@ -13,6 +13,7 @@
   "subscribe": "Subscribe",
   "subscribed": "Subscribed",
   "subscribeSuccess": "Subscribed successfully",
+  "alreadySubscribed": "You already have this source",
   "community": {
     "title": "Community",
     "subtitle": "Articles liked by the community in the last {{days}} day",

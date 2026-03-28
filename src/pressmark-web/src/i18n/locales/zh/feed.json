@@ -45,5 +45,6 @@
   "article": {
     "notFound": "文章未找到",
     "backToCommunity": "返回社区"
-  }
+  },
+  "alreadySubscribed": "您已拥有此来源"
 }
