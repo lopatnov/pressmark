@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { Heart } from 'lucide-react'
@@ -8,6 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { feedClient } from '@/api/clients'
 import { useAuthStore } from '@/store/authStore'
 import { FeedItemCard } from '@/components/feed/FeedItemCard'
+import { useIntersectionLoader } from '@/hooks/useIntersectionLoader'
 
 interface CommunityItem {
   id: string
@@ -29,7 +30,7 @@ export function CommunityPage() {
   const [nextCursor, setNextCursor] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
-  const loadFeed = async (cursor = '') => {
+  const loadFeed = useCallback(async (cursor = '') => {
     setIsLoading(true)
     try {
       const res = await feedClient.getCommunityFeed({ pageSize: 20, cursor })
@@ -55,7 +56,13 @@ export function CommunityPage() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleLoadMore = useCallback(() => {
+    if (!isLoading) loadFeed(nextCursor)
+  }, [nextCursor, isLoading, loadFeed])
+
+  const sentinelRef = useIntersectionLoader(handleLoadMore, !!nextCursor && !isLoading)
 
   const handleLike = async (id: string) => {
     try {
@@ -142,8 +149,8 @@ export function CommunityPage() {
       </div>
 
       {nextCursor && (
-        <div className="pt-2 text-center">
-          <Button variant="outline" disabled={isLoading} onClick={() => loadFeed(nextCursor)}>
+        <div ref={sentinelRef} className="pt-2 text-center">
+          <Button variant="outline" disabled={isLoading} onClick={handleLoadMore}>
             {t('feed:loadMore')}
           </Button>
         </div>

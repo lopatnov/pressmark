@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { Heart, Bookmark, BookMarked } from 'lucide-react'
@@ -7,6 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { feedClient } from '@/api/clients'
 import { useFeedStore } from '@/store/feedStore'
 import { FeedItemCard } from '@/components/feed/FeedItemCard'
+import { useIntersectionLoader } from '@/hooks/useIntersectionLoader'
 
 function FeedCardSkeleton() {
   return (
@@ -42,7 +43,7 @@ export function FeedPage() {
     reset,
   } = useFeedStore()
 
-  const loadFeed = async (cursor = '', signal?: AbortSignal) => {
+  const loadFeed = useCallback(async (cursor = '', signal?: AbortSignal) => {
     setLoading(true)
     try {
       const res = await feedClient.getFeed(
@@ -74,7 +75,14 @@ export function FeedPage() {
     } finally {
       if (!signal?.aborted) setLoading(false)
     }
-  }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleLoadMore = useCallback(() => {
+    const cursor = useFeedStore.getState().nextCursor
+    if (cursor && !useFeedStore.getState().isLoading) loadFeed(cursor)
+  }, [loadFeed])
+
+  const sentinelRef = useIntersectionLoader(handleLoadMore, !!nextCursor && !isLoading)
 
   // Reload when filter changes; abort the previous in-flight request
   useEffect(() => {
@@ -214,8 +222,8 @@ export function FeedPage() {
       </div>
 
       {nextCursor && (
-        <div className="pt-2 text-center">
-          <Button variant="outline" disabled={isLoading} onClick={() => loadFeed(nextCursor)}>
+        <div ref={sentinelRef} className="pt-2 text-center">
+          <Button variant="outline" disabled={isLoading} onClick={handleLoadMore}>
             {t('feed:loadMore')}
           </Button>
         </div>

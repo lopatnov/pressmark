@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { BookMarked } from 'lucide-react'
@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { feedClient } from '@/api/clients'
 import { FeedItemCard } from '@/components/feed/FeedItemCard'
+import { useIntersectionLoader } from '@/hooks/useIntersectionLoader'
 
 interface BookmarkItem {
   id: string
@@ -24,7 +25,7 @@ export function BookmarksPage() {
   const [nextCursor, setNextCursor] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
-  const loadBookmarks = async (cursor = '') => {
+  const loadBookmarks = useCallback(async (cursor = '') => {
     setIsLoading(true)
     try {
       const res = await feedClient.getBookmarks({ pageSize: 20, cursor })
@@ -48,7 +49,13 @@ export function BookmarksPage() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleLoadMore = useCallback(() => {
+    if (!isLoading) loadBookmarks(nextCursor)
+  }, [nextCursor, isLoading, loadBookmarks])
+
+  const sentinelRef = useIntersectionLoader(handleLoadMore, !!nextCursor && !isLoading)
 
   const handleRemoveBookmark = async (id: string) => {
     await feedClient.toggleBookmark({ feedItemId: id })
@@ -102,8 +109,8 @@ export function BookmarksPage() {
       </div>
 
       {nextCursor && (
-        <div className="pt-2 text-center">
-          <Button variant="outline" disabled={isLoading} onClick={() => loadBookmarks(nextCursor)}>
+        <div ref={sentinelRef} className="pt-2 text-center">
+          <Button variant="outline" disabled={isLoading} onClick={handleLoadMore}>
             {t('feed:loadMore')}
           </Button>
         </div>
