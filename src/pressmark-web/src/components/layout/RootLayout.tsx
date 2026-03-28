@@ -10,11 +10,15 @@ export function RootLayout() {
   const setInitialized = useAuthStore((s) => s.setInitialized)
   const isInitialized = useAuthStore((s) => s.isInitialized)
   const setRegistrationMode = useAuthStore((s) => s.setRegistrationMode)
+  const setCommunityWindowDays = useAuthStore((s) => s.setCommunityWindowDays)
 
   useEffect(() => {
     authClient
       .getRegistrationStatus({})
-      .then((res) => setRegistrationMode(res.registrationMode as 'open' | 'invite_only'))
+      .then((res) => {
+        setRegistrationMode(res.registrationMode as 'open' | 'invite_only')
+        if (res.communityWindowDays > 0) setCommunityWindowDays(res.communityWindowDays)
+      })
       .catch(() => {})
 
     authClient

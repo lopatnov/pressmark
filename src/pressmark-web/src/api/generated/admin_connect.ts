@@ -4,7 +4,7 @@
 // @ts-nocheck
 
 import { Empty, MethodKind } from "@bufbuild/protobuf";
-import { BanSubscriptionRequest, DeleteInviteRequest, GenerateInviteRequest, HideFeedItemRequest, InviteList, InviteToken, SiteSettings, UpdateSiteSettingsRequest, UserList } from "./admin_pb.js";
+import { BanSubscriptionRequest, BanUserFromCommentingRequest, BannedSubscriptionList, DeleteInviteRequest, GenerateInviteRequest, HiddenFeedItemList, HideFeedItemRequest, InviteList, InviteToken, PendingReportCount, RemoveCommentRequest, ReportList, ResolveReportRequest, SiteSettings, UpdateSiteSettingsRequest, UserList } from "./admin_pb.js";
 
 /**
  * @generated from service pressmark.admin.AdminService
@@ -82,6 +82,69 @@ export const AdminService = {
       name: "ListInvites",
       I: Empty,
       O: InviteList,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc pressmark.admin.AdminService.ListBannedSubscriptions
+     */
+    listBannedSubscriptions: {
+      name: "ListBannedSubscriptions",
+      I: Empty,
+      O: BannedSubscriptionList,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc pressmark.admin.AdminService.RemoveComment
+     */
+    removeComment: {
+      name: "RemoveComment",
+      I: RemoveCommentRequest,
+      O: Empty,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc pressmark.admin.AdminService.BanUserFromCommenting
+     */
+    banUserFromCommenting: {
+      name: "BanUserFromCommenting",
+      I: BanUserFromCommentingRequest,
+      O: Empty,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc pressmark.admin.AdminService.GetPendingReportCount
+     */
+    getPendingReportCount: {
+      name: "GetPendingReportCount",
+      I: Empty,
+      O: PendingReportCount,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc pressmark.admin.AdminService.ListReports
+     */
+    listReports: {
+      name: "ListReports",
+      I: Empty,
+      O: ReportList,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc pressmark.admin.AdminService.ResolveReport
+     */
+    resolveReport: {
+      name: "ResolveReport",
+      I: ResolveReportRequest,
+      O: Empty,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc pressmark.admin.AdminService.ListHiddenFeedItems
+     */
+    listHiddenFeedItems: {
+      name: "ListHiddenFeedItems",
+      I: Empty,
+      O: HiddenFeedItemList,
       kind: MethodKind.Unary,
     },
   }

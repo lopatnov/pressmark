@@ -7,14 +7,21 @@ package pressmark.admin;
 import "google/protobuf/empty.proto";
 
 service AdminService {
-  rpc GetSiteSettings    (google.protobuf.Empty)       returns (SiteSettings);
-  rpc UpdateSiteSettings (UpdateSiteSettingsRequest)   returns (google.protobuf.Empty);
-  rpc HideFeedItem       (HideFeedItemRequest)         returns (google.protobuf.Empty);
-  rpc BanSubscription    (BanSubscriptionRequest)      returns (google.protobuf.Empty);
-  rpc ListUsers          (google.protobuf.Empty)       returns (UserList);
-  rpc GenerateInvite     (GenerateInviteRequest)       returns (InviteToken);
-  rpc DeleteInvite       (DeleteInviteRequest)         returns (google.protobuf.Empty);
-  rpc ListInvites        (google.protobuf.Empty)       returns (InviteList);
+  rpc GetSiteSettings          (google.protobuf.Empty)          returns (SiteSettings);
+  rpc UpdateSiteSettings       (UpdateSiteSettingsRequest)       returns (google.protobuf.Empty);
+  rpc HideFeedItem             (HideFeedItemRequest)             returns (google.protobuf.Empty);
+  rpc BanSubscription          (BanSubscriptionRequest)          returns (google.protobuf.Empty);
+  rpc ListUsers                (google.protobuf.Empty)           returns (UserList);
+  rpc GenerateInvite           (GenerateInviteRequest)           returns (InviteToken);
+  rpc DeleteInvite             (DeleteInviteRequest)             returns (google.protobuf.Empty);
+  rpc ListInvites              (google.protobuf.Empty)           returns (InviteList);
+  rpc ListBannedSubscriptions  (google.protobuf.Empty)           returns (BannedSubscriptionList);
+  rpc RemoveComment            (RemoveCommentRequest)            returns (google.protobuf.Empty);
+  rpc BanUserFromCommenting    (BanUserFromCommentingRequest)    returns (google.protobuf.Empty);
+  rpc GetPendingReportCount    (google.protobuf.Empty)           returns (PendingReportCount);
+  rpc ListReports              (google.protobuf.Empty)           returns (ReportList);
+  rpc ResolveReport            (ResolveReportRequest)            returns (google.protobuf.Empty);
+  rpc ListHiddenFeedItems      (google.protobuf.Empty)           returns (HiddenFeedItemList);
 }
 
 message SiteSettings {
@@ -27,6 +34,7 @@ message SiteSettings {
   string smtp_password          = 7; // write-only: always returned as "" by GetSiteSettings
   bool   smtp_use_tls           = 8;
   string smtp_from_address      = 9;
+  bool   comments_enabled       = 10; // default true
 }
 
 message UpdateSiteSettingsRequest {
@@ -48,10 +56,11 @@ message UserList {
 }
 
 message UserInfo {
-  string id         = 1;
-  string email      = 2;
-  string role       = 3;
-  string created_at = 4;
+  string id                   = 1;
+  string email                = 2;
+  string role                 = 3;
+  string created_at           = 4;
+  bool   is_commenting_banned = 5;
 }
 
 message GenerateInviteRequest {
@@ -75,4 +84,55 @@ message InviteToken {
 
 message InviteList {
   repeated InviteToken items = 1;
+}
+
+message BannedSubscription {
+  string id      = 1;
+  string rss_url = 2;
+  string title   = 3;
+}
+
+message BannedSubscriptionList {
+  repeated BannedSubscription items = 1;
+}
+
+message RemoveCommentRequest {
+  string comment_id = 1;
+}
+
+message BanUserFromCommentingRequest {
+  string user_id = 1;
+  bool   banned  = 2;
+}
+
+message PendingReportCount {
+  int32 count = 1;
+}
+
+message Report {
+  string id          = 1;
+  string type        = 2;
+  string target_id   = 3;
+  string reason      = 4;
+  string created_at  = 5;
+  bool   is_resolved = 6;
+}
+
+message ReportList {
+  repeated Report items = 1;
+}
+
+message ResolveReportRequest {
+  string id = 1;
+}
+
+message HiddenFeedItem {
+  string id           = 1;
+  string title        = 2;
+  string url          = 3;
+  string source_title = 4;
+}
+
+message HiddenFeedItemList {
+  repeated HiddenFeedItem items = 1;
 }

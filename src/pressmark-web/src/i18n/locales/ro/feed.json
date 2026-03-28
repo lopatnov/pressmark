@@ -10,10 +10,43 @@
   "bookmark": "Marcaj",
   "removeBookmark": "Șterge marcaj",
   "readMore": "Citește mai mult",
+  "subscribe": "Abonează-te",
+  "subscribed": "Abonat",
+  "subscribeSuccess": "Abonare reușită",
   "community": {
     "title": "Comunitate",
     "subtitle": "Articole apreciate de comunitate în ultima {{days}} zi",
     "subtitle_plural": "Articole apreciate de comunitate în ultimele {{days}} zile",
     "empty": "Nu există articole apreciate. Conectați-vă pentru a aprecia articole."
-  }
+  },
+  "comments": {
+    "title": "Comentarii",
+    "count": "{{count}} comentariu",
+    "count_plural": "{{count}} comentarii",
+    "empty": "Niciun comentariu încă",
+    "placeholder": "Scrieți un comentariu...",
+    "submit": "Trimite",
+    "remove": "Elimină comentariu",
+    "removed": "Mesaj eliminat de administrator",
+    "toggle": "Arată/ascunde comentariile",
+    "loadError": "Nu s-au putut încărca comentariile",
+    "submitError": "Nu s-a putut trimite comentariul",
+    "removeError": "Nu s-a putut elimina comentariul"
+  },
+  "report": "Raportează",
+  "reportComment": "Raportează comentariu",
+  "reportSource": "Raportează sursă",
+  "reportReason": "Motiv (opțional)",
+  "reportSend": "Trimite raport",
+  "reportCancel": "Anulează",
+  "reportSent": "Raport trimis",
+  "reportAlreadySent": "Deja raportat",
+  "reportSubmitError": "Nu s-a putut trimite raportul",
+  "filterBySource": "Filtrat după sursă",
+  "clearFilter": "Șterge filtrul",
+  "article": {
+    "notFound": "Articol negăsit",
+    "backToCommunity": "Înapoila comunitate"
+  },
+  "alreadySubscribed": "Aveți deja această sursă"
 }

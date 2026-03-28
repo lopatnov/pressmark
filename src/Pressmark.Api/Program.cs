@@ -3,6 +3,7 @@ using System.Text;
 using System.Threading.RateLimiting;
 using Grpc.AspNetCore.Web;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -109,14 +110,32 @@ builder.Services.AddHostedService<RssFetcherService>();
 
 var app = builder.Build();
 
-// Auto-apply pending migrations on startup
-using (var scope = app.Services.CreateScope())
+// Auto-apply pending migrations on startup, retrying until the DB container is ready
 {
+    using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    db.Database.Migrate();
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<AppDbContext>>();
+    for (var attempt = 1; ; attempt++)
+    {
+        try
+        {
+            db.Database.Migrate();
+            break;
+        }
+        catch (Exception ex) when (attempt < 10)
+        {
+            logger.LogWarning("DB not ready (attempt {Attempt}/10): {Message}. Retrying in 3s…", attempt, ex.Message);
+            await Task.Delay(TimeSpan.FromSeconds(3));
+        }
+    }
 }
 
 app.MapGet("/health", () => Results.Ok(new { status = "healthy" }));
+
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedFor,
+});
 
 app.UseCors("GrpcWeb");
 app.UseRateLimiter();

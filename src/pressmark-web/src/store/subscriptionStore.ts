@@ -16,6 +16,7 @@ interface SubscriptionState {
   addSubscription: (sub: Subscription) => void
   removeSubscription: (id: string) => void
   setLoading: (loading: boolean) => void
+  reset: () => void
 }
 
 export const useSubscriptionStore = create<SubscriptionState>()(
@@ -30,6 +31,7 @@ export const useSubscriptionStore = create<SubscriptionState>()(
           subscriptions: s.subscriptions.filter((s) => s.id !== id),
         })),
       setLoading: (isLoading) => set({ isLoading }),
+      reset: () => set({ subscriptions: [], isLoading: false }),
     }),
     { name: 'subscriptions' },
   ),

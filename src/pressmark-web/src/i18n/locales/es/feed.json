@@ -11,10 +11,43 @@
   "bookmark": "Marcador",
   "removeBookmark": "Eliminar marcador",
   "readMore": "Leer más",
+  "subscribe": "Suscribirse",
+  "subscribed": "Suscrito",
+  "subscribeSuccess": "Suscripción exitosa",
   "community": {
     "title": "Comunidad",
     "subtitle": "Artículos que le gustaron a la comunidad en el último {{days}} día",
     "subtitle_plural": "Artículos que le gustaron a la comunidad en los últimos {{days}} días",
     "empty": "Aún no hay artículos con me gusta. Inicia sesión para dar me gusta."
-  }
+  },
+  "comments": {
+    "title": "Comentarios",
+    "count": "{{count}} comentario",
+    "count_plural": "{{count}} comentarios",
+    "empty": "Aún no hay comentarios",
+    "placeholder": "Escribe un comentario...",
+    "submit": "Enviar",
+    "remove": "Eliminar comentario",
+    "removed": "Mensaje eliminado por el administrador",
+    "toggle": "Mostrar/ocultar comentarios",
+    "loadError": "No se pudieron cargar los comentarios",
+    "submitError": "No se pudo publicar el comentario",
+    "removeError": "No se pudo eliminar el comentario"
+  },
+  "report": "Reportar",
+  "reportComment": "Reportar comentario",
+  "reportSource": "Reportar fuente",
+  "reportReason": "Razón (opcional)",
+  "reportSend": "Enviar reporte",
+  "reportCancel": "Cancelar",
+  "reportSent": "Reporte enviado",
+  "reportAlreadySent": "Ya reportado",
+  "reportSubmitError": "Error al enviar el reporte",
+  "filterBySource": "Filtrado por fuente",
+  "clearFilter": "Limpiar filtro",
+  "article": {
+    "notFound": "Artículo no encontrado",
+    "backToCommunity": "Volver a la comunidad"
+  },
+  "alreadySubscribed": "Ya tienes esta fuente"
 }

@@ -25,6 +25,16 @@ service FeedService {
 
   // Real-time streaming of new feed items (authenticated)
   rpc StreamFeedUpdates (StreamFeedRequest) returns (stream FeedItem);
+
+  // Comments
+  rpc AddComment   (AddCommentRequest)   returns (Comment);
+  rpc ListComments (ListCommentsRequest) returns (CommentList); // AllowAnonymous
+
+  // Article page (anonymous)
+  rpc GetFeedItem (GetFeedItemRequest) returns (FeedItem); // AllowAnonymous
+
+  // Reporting
+  rpc ReportContent (ReportContentRequest) returns (google.protobuf.Empty); // Authenticated
 }
 
 message GetFeedRequest {
@@ -35,8 +45,9 @@ message GetFeedRequest {
 }
 
 message GetCommunityFeedRequest {
-  int32  page_size = 1; // default: 20, max: 100
-  string cursor    = 2; // empty = first page
+  int32  page_size       = 1; // default: 20, max: 100
+  string cursor          = 2; // empty = first page
+  string source_rss_url  = 3; // empty = all sources
 }
 
 message GetBookmarksRequest {
@@ -67,6 +78,8 @@ message FeedItem {
   bool   is_bookmarked   = 10;
   string source_title    = 11;
   string image_url       = 12; // empty if RSS has no image
+  string source_rss_url  = 13; // RSS URL of the source subscription
+  bool   is_hidden       = 14; // true if community-hidden (only set for Admin callers)
 }
 
 message MarkAsReadRequest {
@@ -96,4 +109,35 @@ message ToggleBookmarkRequest {
 
 message ToggleBookmarkResponse {
   bool is_bookmarked = 1;
+}
+
+message AddCommentRequest {
+  string feed_item_id = 1;
+  string body         = 2;
+}
+
+message ListCommentsRequest {
+  string feed_item_id = 1;
+}
+
+message Comment {
+  string id               = 1;
+  string user_email       = 2;
+  string body             = 3;
+  string created_at       = 4;
+  bool   removed_by_admin = 5;
+}
+
+message CommentList {
+  repeated Comment items = 1;
+}
+
+message GetFeedItemRequest {
+  string feed_item_id = 1;
+}
+
+message ReportContentRequest {
+  string type      = 1; // "comment" | "subscription"
+  string target_id = 2;
+  string reason    = 3; // optional
 }

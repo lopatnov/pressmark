@@ -15,21 +15,46 @@
     "smtpPassword": "Hasło",
     "smtpPasswordPlaceholder": "Pozostaw puste, aby zachować bieżące",
     "smtpUseTls": "Użyj TLS (STARTTLS)",
-    "smtpFromAddress": "Adres nadawcy"
+    "smtpFromAddress": "Adres nadawcy",
+    "commentsEnabled": "Włącz komentarze"
   },
   "moderation": {
     "title": "Moderacja",
-    "hide": "Ukryj",
+    "hide": "Ukryj artykuł",
     "unhide": "Pokaż",
-    "ban": "Zablokuj kanał",
-    "unban": "Odblokuj kanał"
+    "ban": "Zablokuj źródło",
+    "unban": "Odblokuj kanał",
+    "hidden": "Artykuł ukryty",
+    "unhidden": "Artykuł pokazany",
+    "banned": "Źródło zablokowane",
+    "hiddenArticles": "Ukryte artykuły",
+    "noHiddenArticles": "Brak ukrytych artykułów"
+  },
+  "bannedSubs": {
+    "title": "Zablokowane źródła",
+    "empty": "Brak zablokowanych źródeł",
+    "unban": "Odblokuj"
   },
   "users": {
     "title": "Użytkownicy",
     "email": "E-mail",
     "role": "Rola",
     "joined": "Dołączył",
-    "empty": "Nie znaleziono użytkowników"
+    "empty": "Nie znaleziono użytkowników",
+    "comments": "Komentarze",
+    "banComments": "Zablokuj",
+    "unbanComments": "Odblokuj"
+  },
+  "reports": {
+    "title": "Zgłoszenia",
+    "empty": "Brak oczekujących zgłoszeń",
+    "type": "Typ",
+    "reason": "Powód",
+    "resolve": "Rozwiąż",
+    "comment": "Komentarz",
+    "subscription": "Źródło",
+    "loadError": "Nie udało się załadować zgłoszeń",
+    "resolveError": "Nie udało się rozwiązać zgłoszenia"
   },
   "invites": {
     "title": "Tokeny zaproszeń",

@@ -46,6 +46,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           smtpPassword: '',
           smtpUseTls: res.smtpUseTls,
           smtpFromAddress: res.smtpFromAddress,
+          commentsEnabled: res.commentsEnabled,
         })
       })
       .catch(() => {})

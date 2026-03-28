@@ -12,6 +12,7 @@ import { FeedPage } from '@/pages/FeedPage'
 import { SubscriptionsPage } from '@/pages/SubscriptionsPage'
 import { BookmarksPage } from '@/pages/BookmarksPage'
 import { AdminPage } from '@/pages/AdminPage'
+import { ArticlePage } from '@/pages/ArticlePage'
 
 export const router = createBrowserRouter([
   {
@@ -25,6 +26,7 @@ export const router = createBrowserRouter([
         element: <AppLayout />,
         children: [
           { path: '/', element: <CommunityPage /> },
+          { path: '/article/:id', element: <ArticlePage /> },
           {
             element: <ProtectedRoute />,
             children: [

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -260,7 +261,12 @@ export function SubscriptionsPage() {
             className="flex items-center justify-between rounded-lg border border-border bg-card px-4 py-3"
           >
             <div className="min-w-0 space-y-0.5">
-              <p className="truncate text-sm font-medium">{sub.title}</p>
+              <Link
+                to={`/feed?sub=${sub.id}`}
+                className="block truncate text-sm font-medium hover:underline"
+              >
+                {sub.title}
+              </Link>
               <p className="truncate text-xs text-muted-foreground">{sub.rssUrl}</p>
               {sub.lastFetchedAt && (
                 <p className="text-xs text-muted-foreground">

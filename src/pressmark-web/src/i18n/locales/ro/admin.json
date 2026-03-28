@@ -15,21 +15,46 @@
     "smtpPassword": "Parolă",
     "smtpPasswordPlaceholder": "Lăsați gol pentru a păstra parola curentă",
     "smtpUseTls": "Folosiți TLS (STARTTLS)",
-    "smtpFromAddress": "Adresă expeditor"
+    "smtpFromAddress": "Adresă expeditor",
+    "commentsEnabled": "Activează comentariile"
   },
   "moderation": {
     "title": "Moderare",
-    "hide": "Ascunde",
+    "hide": "Ascunde articol",
     "unhide": "Arată",
-    "ban": "Blochează canal",
-    "unban": "Deblochează canal"
+    "ban": "Interzice sursa",
+    "unban": "Deblochează canal",
+    "hidden": "Articol ascuns",
+    "unhidden": "Articol afișat",
+    "banned": "Sursă interzisă",
+    "hiddenArticles": "Articole ascunse",
+    "noHiddenArticles": "Niciun articol ascuns"
+  },
+  "bannedSubs": {
+    "title": "Surse interzise",
+    "empty": "Nicio sursă interzisă",
+    "unban": "Deblochează"
   },
   "users": {
     "title": "Utilizatori",
     "email": "E-mail",
     "role": "Rol",
     "joined": "Înregistrat",
-    "empty": "Niciun utilizator găsit"
+    "empty": "Niciun utilizator găsit",
+    "comments": "Comentarii",
+    "banComments": "Interzice",
+    "unbanComments": "Permite"
+  },
+  "reports": {
+    "title": "Rapoarte",
+    "empty": "Niciun raport în aşteptare",
+    "type": "Tip",
+    "reason": "Motiv",
+    "resolve": "Rezolvă",
+    "comment": "Comentariu",
+    "subscription": "Sursă",
+    "loadError": "Nu s-au putut încărca rapoartele",
+    "resolveError": "Nu s-a putut rezolva raportul"
   },
   "invites": {
     "title": "Tokeni de invitație",

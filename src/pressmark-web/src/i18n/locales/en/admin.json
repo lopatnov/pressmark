@@ -15,21 +15,46 @@
     "smtpPassword": "Password",
     "smtpPasswordPlaceholder": "Leave blank to keep current",
     "smtpUseTls": "Use TLS (STARTTLS)",
-    "smtpFromAddress": "From address"
+    "smtpFromAddress": "From address",
+    "commentsEnabled": "Enable comments"
   },
   "moderation": {
     "title": "Moderation",
-    "hide": "Hide",
+    "hide": "Hide article",
     "unhide": "Unhide",
-    "ban": "Ban channel",
-    "unban": "Unban channel"
+    "ban": "Ban source",
+    "unban": "Unban channel",
+    "hidden": "Article hidden",
+    "unhidden": "Article unhidden",
+    "banned": "Source banned",
+    "hiddenArticles": "Hidden Articles",
+    "noHiddenArticles": "No hidden articles"
+  },
+  "bannedSubs": {
+    "title": "Banned sources",
+    "empty": "No banned sources",
+    "unban": "Unban"
   },
   "users": {
     "title": "Users",
     "email": "Email",
     "role": "Role",
     "joined": "Joined",
-    "empty": "No users found"
+    "empty": "No users found",
+    "comments": "Comments",
+    "banComments": "Ban",
+    "unbanComments": "Unban"
+  },
+  "reports": {
+    "title": "Reports",
+    "empty": "No pending reports",
+    "type": "Type",
+    "reason": "Reason",
+    "resolve": "Resolve",
+    "comment": "Comment",
+    "subscription": "Source",
+    "loadError": "Failed to load reports",
+    "resolveError": "Failed to resolve report"
   },
   "invites": {
     "title": "Invite tokens",

@@ -15,21 +15,46 @@
     "smtpPassword": "パスワード",
     "smtpPasswordPlaceholder": "現在のパスワードを保持するには空のままにしてください",
     "smtpUseTls": "TLS を使用（STARTTLS）",
-    "smtpFromAddress": "送信者アドレス"
+    "smtpFromAddress": "送信者アドレス",
+    "commentsEnabled": "コメントを有効にする"
   },
   "moderation": {
     "title": "モデレーション",
-    "hide": "非表示",
+    "hide": "記事を非表示",
     "unhide": "表示",
-    "ban": "チャンネルをブロック",
-    "unban": "チャンネルのブロックを解除"
+    "ban": "ソースをBAN",
+    "unban": "チャンネルのブロックを解除",
+    "hidden": "記事を非表示にしました",
+    "unhidden": "記事を表示しました",
+    "banned": "ソースをBANしました",
+    "hiddenArticles": "非表示の記事",
+    "noHiddenArticles": "非表示の記事はありません"
+  },
+  "bannedSubs": {
+    "title": "BANされたソース",
+    "empty": "BANされたソースはありません",
+    "unban": "BAN解除"
   },
   "users": {
     "title": "ユーザー",
     "email": "メールアドレス",
     "role": "ロール",
     "joined": "参加日",
-    "empty": "ユーザーが見つかりません"
+    "empty": "ユーザーが見つかりません",
+    "comments": "コメント",
+    "banComments": "禁止",
+    "unbanComments": "許可"
+  },
+  "reports": {
+    "title": "報告",
+    "empty": "保留中の報告はありません",
+    "type": "タイプ",
+    "reason": "理由",
+    "resolve": "解決",
+    "comment": "コメント",
+    "subscription": "ソース",
+    "loadError": "報告の読み込みに失敗しました",
+    "resolveError": "報告の解決に失敗しました"
   },
   "invites": {
     "title": "招待トークン",

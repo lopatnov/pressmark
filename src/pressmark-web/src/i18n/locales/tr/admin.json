@@ -15,21 +15,46 @@
     "smtpPassword": "Şifre",
     "smtpPasswordPlaceholder": "Mevcut şifreyi korumak için boş bırakın",
     "smtpUseTls": "TLS kullan (STARTTLS)",
-    "smtpFromAddress": "Gönderen adresi"
+    "smtpFromAddress": "Gönderen adresi",
+    "commentsEnabled": "Yorumları etkinleştir"
   },
   "moderation": {
     "title": "Moderasyon",
-    "hide": "Gizle",
+    "hide": "Makaleyi gizle",
     "unhide": "Göster",
-    "ban": "Kanalı engelle",
-    "unban": "Kanalın engelini kaldır"
+    "ban": "Kaynağı yasakla",
+    "unban": "Kanalın engelini kaldır",
+    "hidden": "Makale gizlendi",
+    "unhidden": "Makale gösterildi",
+    "banned": "Kaynak yasaklandı",
+    "hiddenArticles": "Gizli Makaleler",
+    "noHiddenArticles": "Gizli makale yok"
+  },
+  "bannedSubs": {
+    "title": "Yasaklı kaynaklar",
+    "empty": "Yasaklı kaynak yok",
+    "unban": "Yasağı kaldır"
   },
   "users": {
     "title": "Kullanıcılar",
     "email": "E-posta",
     "role": "Rol",
     "joined": "Katılım tarihi",
-    "empty": "Kullanıcı bulunamadı"
+    "empty": "Kullanıcı bulunamadı",
+    "comments": "Yorumlar",
+    "banComments": "Yasakla",
+    "unbanComments": "İzin ver"
+  },
+  "reports": {
+    "title": "Raporlar",
+    "empty": "Bekleyen rapor yok",
+    "type": "Tür",
+    "reason": "Sebep",
+    "resolve": "Çöz",
+    "comment": "Yorum",
+    "subscription": "Kaynak",
+    "loadError": "Raporlar yüklenemedi",
+    "resolveError": "Rapor çözümlenemedi"
   },
   "invites": {
     "title": "Davet tokenleri",

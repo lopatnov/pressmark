@@ -15,21 +15,46 @@
     "smtpPassword": "Heslo",
     "smtpPasswordPlaceholder": "Ponechte prázdné pro zachování stávajícího",
     "smtpUseTls": "Použít TLS (STARTTLS)",
-    "smtpFromAddress": "Adresa odesílatele"
+    "smtpFromAddress": "Adresa odesílatele",
+    "commentsEnabled": "Povolit komentáře"
   },
   "moderation": {
     "title": "Moderace",
-    "hide": "Skrýt",
+    "hide": "Skrýt článek",
     "unhide": "Zobrazit",
-    "ban": "Zablokovat kanál",
-    "unban": "Odblokovat kanál"
+    "ban": "Zakázat zdroj",
+    "unban": "Odblokovat kanál",
+    "hidden": "Článek skryt",
+    "unhidden": "Článek zobrazen",
+    "banned": "Zdroj zakázán",
+    "hiddenArticles": "Skryté články",
+    "noHiddenArticles": "Žádné skryté články"
+  },
+  "bannedSubs": {
+    "title": "Zakázané zdroje",
+    "empty": "Žádné zakázané zdroje",
+    "unban": "Odblokovat"
   },
   "users": {
     "title": "Uživatelé",
     "email": "E-mail",
     "role": "Role",
     "joined": "Registrován",
-    "empty": "Žádní uživatelé nenalezeni"
+    "empty": "Žádní uživatelé nenalezeni",
+    "comments": "Komentáře",
+    "banComments": "Zakázat",
+    "unbanComments": "Povolit"
+  },
+  "reports": {
+    "title": "Hlášení",
+    "empty": "Žádná čekající hlášení",
+    "type": "Typ",
+    "reason": "Důvod",
+    "resolve": "Vyřešit",
+    "comment": "Komentář",
+    "subscription": "Zdroj",
+    "loadError": "Nepodařilo se načíst hlášení",
+    "resolveError": "Nepodařilo se vyřešit hlášení"
   },
   "invites": {
     "title": "Pozvánkové tokeny",

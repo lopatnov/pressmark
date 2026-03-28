@@ -15,21 +15,46 @@
     "smtpPassword": "Passwort",
     "smtpPasswordPlaceholder": "Leer lassen, um das aktuelle beizubehalten",
     "smtpUseTls": "TLS verwenden (STARTTLS)",
-    "smtpFromAddress": "Absenderadresse"
+    "smtpFromAddress": "Absenderadresse",
+    "commentsEnabled": "Kommentare aktivieren"
   },
   "moderation": {
     "title": "Moderation",
-    "hide": "Ausblenden",
+    "hide": "Artikel ausblenden",
     "unhide": "Einblenden",
-    "ban": "Kanal sperren",
-    "unban": "Kanal entsperren"
+    "ban": "Quelle sperren",
+    "unban": "Kanal entsperren",
+    "hidden": "Artikel ausgeblendet",
+    "unhidden": "Artikel eingeblendet",
+    "banned": "Quelle gesperrt",
+    "hiddenArticles": "Ausgeblendete Artikel",
+    "noHiddenArticles": "Keine ausgeblendeten Artikel"
+  },
+  "bannedSubs": {
+    "title": "Gesperrte Quellen",
+    "empty": "Keine gesperrten Quellen",
+    "unban": "Entsperren"
   },
   "users": {
     "title": "Benutzer",
     "email": "E-Mail",
     "role": "Rolle",
     "joined": "Registriert am",
-    "empty": "Keine Benutzer gefunden"
+    "empty": "Keine Benutzer gefunden",
+    "comments": "Kommentare",
+    "banComments": "Sperren",
+    "unbanComments": "Entsperren"
+  },
+  "reports": {
+    "title": "Meldungen",
+    "empty": "Keine ausstehenden Meldungen",
+    "type": "Typ",
+    "reason": "Grund",
+    "resolve": "Erledigen",
+    "comment": "Kommentar",
+    "subscription": "Quelle",
+    "loadError": "Meldungen konnten nicht geladen werden",
+    "resolveError": "Meldung konnte nicht erledigt werden"
   },
   "invites": {
     "title": "Einladungs-Token",

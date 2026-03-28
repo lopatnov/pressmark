@@ -15,6 +15,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
     public DbSet<InviteToken> InviteTokens => Set<InviteToken>();
     public DbSet<PasswordResetToken> PasswordResetTokens => Set<PasswordResetToken>();
+    public DbSet<Comment> Comments => Set<Comment>();
+    public DbSet<Report> Reports => Set<Report>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -137,6 +139,34 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
+        // Comments
+        modelBuilder.Entity<Comment>(e =>
+        {
+            e.ToTable("comments");
+            e.HasKey(x => x.Id);
+            e.HasIndex(x => x.FeedItemId);
+            e.HasOne(x => x.User)
+                .WithMany()
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+            e.HasOne(x => x.FeedItem)
+                .WithMany()
+                .HasForeignKey(x => x.FeedItemId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // Reports
+        modelBuilder.Entity<Report>(e =>
+        {
+            e.ToTable("reports");
+            e.HasKey(x => x.Id);
+            e.HasIndex(x => new { x.IsResolved, x.CreatedAt });
+            e.HasOne(x => x.Reporter)
+                .WithMany()
+                .HasForeignKey(x => x.ReporterUserId)
+                .OnDelete(DeleteBehavior.NoAction);
+        });
+
         // SiteSettings
         modelBuilder.Entity<SiteSetting>(e =>
         {
@@ -148,7 +178,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         modelBuilder.Entity<SiteSetting>().HasData(
             new SiteSetting { Key = "site_name", Value = "Pressmark" },
             new SiteSetting { Key = "community_window_days", Value = "1" },
-            new SiteSetting { Key = "registration_mode", Value = "open" }
+            new SiteSetting { Key = "registration_mode", Value = "open" },
+            new SiteSetting { Key = "comments_enabled", Value = "true" }
         );
     }
 }

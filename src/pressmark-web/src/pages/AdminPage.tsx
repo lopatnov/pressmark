@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { adminClient } from '@/api/clients'
 import { useAdminStore, type InviteItem } from '@/store/adminStore'
+import { toast } from 'sonner'
 
 // ── Site settings form ──────────────────────────────────────────────────────
 
@@ -19,6 +20,7 @@ const settingsSchema = z.object({
   smtpPassword: z.string(),
   smtpUseTls: z.boolean(),
   smtpFromAddress: z.string(),
+  commentsEnabled: z.boolean(),
 })
 type SettingsForm = z.infer<typeof settingsSchema>
 
@@ -44,22 +46,27 @@ function SiteSettingsSection() {
   }, [settings])
 
   const onSubmit = async (data: SettingsForm) => {
-    await adminClient.updateSiteSettings({
-      settings: {
-        siteName: data.siteName,
-        communityWindowDays: data.communityWindowDays,
-        registrationMode: data.registrationMode,
-        smtpHost: data.smtpHost,
-        smtpPort: data.smtpPort,
-        smtpUser: data.smtpUser,
-        smtpPassword: data.smtpPassword,
-        smtpUseTls: data.smtpUseTls,
-        smtpFromAddress: data.smtpFromAddress,
-      },
-    })
-    setSettings(data)
-    setSaved(true)
-    setTimeout(() => setSaved(false), 2000)
+    try {
+      await adminClient.updateSiteSettings({
+        settings: {
+          siteName: data.siteName,
+          communityWindowDays: data.communityWindowDays,
+          registrationMode: data.registrationMode,
+          smtpHost: data.smtpHost,
+          smtpPort: data.smtpPort,
+          smtpUser: data.smtpUser,
+          smtpPassword: data.smtpPassword,
+          smtpUseTls: data.smtpUseTls,
+          smtpFromAddress: data.smtpFromAddress,
+          commentsEnabled: data.commentsEnabled,
+        },
+      })
+      setSettings(data)
+      setSaved(true)
+      setTimeout(() => setSaved(false), 2000)
+    } catch {
+      toast.error(t('common:error'))
+    }
   }
 
   return (
@@ -163,6 +170,13 @@ function SiteSettingsSection() {
           </label>
         </div>
 
+        <div className="border-t border-border pt-3">
+          <label className="flex items-center gap-2 text-sm font-medium cursor-pointer">
+            <input {...register('commentsEnabled')} type="checkbox" className="h-4 w-4" />
+            {t('admin:settings.commentsEnabled')}
+          </label>
+        </div>
+
         <div className="flex items-center gap-3">
           <Button type="submit" size="sm" disabled={isSubmitting || !settings}>
             {t('common:save')}
@@ -185,16 +199,24 @@ function ModerationSection() {
 
   const handleHide = async (hidden: boolean) => {
     if (!itemId.trim()) return
-    await adminClient.hideFeedItem({ feedItemId: itemId.trim(), hidden })
-    setItemMsg(hidden ? t('admin:moderation.hide') : t('admin:moderation.unhide'))
-    setTimeout(() => setItemMsg(''), 2000)
+    try {
+      await adminClient.hideFeedItem({ feedItemId: itemId.trim(), hidden })
+      setItemMsg(hidden ? t('admin:moderation.hide') : t('admin:moderation.unhide'))
+      setTimeout(() => setItemMsg(''), 2000)
+    } catch {
+      toast.error(t('common:error'))
+    }
   }
 
   const handleBan = async (banned: boolean) => {
     if (!subId.trim()) return
-    await adminClient.banSubscription({ subscriptionId: subId.trim(), banned })
-    setSubMsg(banned ? t('admin:moderation.ban') : t('admin:moderation.unban'))
-    setTimeout(() => setSubMsg(''), 2000)
+    try {
+      await adminClient.banSubscription({ subscriptionId: subId.trim(), banned })
+      setSubMsg(banned ? t('admin:moderation.ban') : t('admin:moderation.unban'))
+      setTimeout(() => setSubMsg(''), 2000)
+    } catch {
+      toast.error(t('common:error'))
+    }
   }
 
   return (
@@ -249,11 +271,160 @@ function ModerationSection() {
   )
 }
 
+// ── Banned subscriptions section ────────────────────────────────────────────
+
+function BannedSubscriptionsSection() {
+  const { t } = useTranslation(['admin', 'common'])
+  const { bannedSubscriptions, setBannedSubscriptions, unbanSubscription } = useAdminStore()
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    adminClient
+      .listBannedSubscriptions({})
+      .then((res) =>
+        setBannedSubscriptions(
+          res.items.map((b) => ({ id: b.id, rssUrl: b.rssUrl, title: b.title })),
+        ),
+      )
+      .catch(() => toast.error(t('common:error')))
+      .finally(() => setLoading(false))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const handleUnban = async (id: string) => {
+    try {
+      await adminClient.banSubscription({ subscriptionId: id, banned: false })
+      unbanSubscription(id)
+    } catch {
+      toast.error(t('common:error'))
+    }
+  }
+
+  return (
+    <section className="space-y-3">
+      <h2 className="text-base font-semibold">{t('admin:bannedSubs.title')}</h2>
+      <div className="rounded-lg border border-border">
+        {loading ? (
+          <p className="px-4 py-6 text-center text-sm text-muted-foreground">
+            {t('common:loading')}
+          </p>
+        ) : bannedSubscriptions.length === 0 ? (
+          <p className="px-4 py-6 text-center text-sm text-muted-foreground">
+            {t('admin:bannedSubs.empty')}
+          </p>
+        ) : (
+          <table className="w-full text-sm">
+            <tbody>
+              {bannedSubscriptions.map((sub) => (
+                <tr key={sub.id} className="border-b border-border last:border-0">
+                  <td className="px-4 py-2">
+                    <p className="font-medium">{sub.title || sub.rssUrl}</p>
+                    {sub.title && (
+                      <p className="text-xs text-muted-foreground truncate max-w-xs">
+                        {sub.rssUrl}
+                      </p>
+                    )}
+                  </td>
+                  <td className="px-4 py-2 text-right">
+                    <Button size="sm" variant="outline" onClick={() => handleUnban(sub.id)}>
+                      {t('admin:bannedSubs.unban')}
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </section>
+  )
+}
+
+// ── Hidden articles section ──────────────────────────────────────────────────
+
+function HiddenArticlesSection() {
+  const { t } = useTranslation(['admin', 'common'])
+  const [hiddenItems, setHiddenItems] = useState<
+    { id: string; title: string; url: string; sourceTitle: string }[]
+  >([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    adminClient
+      .listHiddenFeedItems({})
+      .then((res) =>
+        setHiddenItems(
+          res.items.map((item) => ({
+            id: item.id,
+            title: item.title,
+            url: item.url,
+            sourceTitle: item.sourceTitle,
+          })),
+        ),
+      )
+      .catch(() => toast.error(t('common:error')))
+      .finally(() => setLoading(false))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const handleUnhide = async (id: string) => {
+    try {
+      await adminClient.hideFeedItem({ feedItemId: id, hidden: false })
+      setHiddenItems((prev) => prev.filter((item) => item.id !== id))
+      toast.success(t('admin:moderation.unhidden'))
+    } catch {
+      toast.error(t('common:error'))
+    }
+  }
+
+  return (
+    <section className="space-y-3">
+      <h2 className="text-base font-semibold">{t('admin:moderation.hiddenArticles')}</h2>
+      <div className="rounded-lg border border-border">
+        {loading ? (
+          <p className="px-4 py-6 text-center text-sm text-muted-foreground">
+            {t('common:loading')}
+          </p>
+        ) : hiddenItems.length === 0 ? (
+          <p className="px-4 py-6 text-center text-sm text-muted-foreground">
+            {t('admin:moderation.noHiddenArticles')}
+          </p>
+        ) : (
+          <table className="w-full text-sm">
+            <tbody>
+              {hiddenItems.map((item) => (
+                <tr key={item.id} className="border-b border-border last:border-0">
+                  <td className="px-4 py-2">
+                    <a
+                      href={item.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-medium hover:underline line-clamp-2"
+                    >
+                      {item.title}
+                    </a>
+                    <p className="text-xs text-muted-foreground">{item.sourceTitle}</p>
+                  </td>
+                  <td className="px-4 py-2 text-right">
+                    <Button size="sm" variant="outline" onClick={() => handleUnhide(item.id)}>
+                      {t('admin:moderation.unhide')}
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </section>
+  )
+}
+
 // ── Users section ───────────────────────────────────────────────────────────
 
 function UsersSection() {
   const { t } = useTranslation(['admin', 'common'])
-  const { users, setUsers } = useAdminStore()
+  const { users, setUsers, updateUserCommentBan } = useAdminStore()
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -266,12 +437,23 @@ function UsersSection() {
             email: u.email,
             role: u.role,
             createdAt: u.createdAt,
+            isCommentingBanned: u.isCommentingBanned,
           })),
         ),
       )
+      .catch(() => toast.error(t('common:error')))
       .finally(() => setLoading(false))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  const handleToggleCommentBan = async (userId: string, currentlyBanned: boolean) => {
+    try {
+      await adminClient.banUserFromCommenting({ userId, banned: !currentlyBanned })
+      updateUserCommentBan(userId, !currentlyBanned)
+    } catch {
+      toast.error(t('common:error'))
+    }
+  }
 
   return (
     <section className="space-y-3">
@@ -292,6 +474,7 @@ function UsersSection() {
                 <th className="px-4 py-2 text-left font-medium">{t('admin:users.email')}</th>
                 <th className="px-4 py-2 text-left font-medium">{t('admin:users.role')}</th>
                 <th className="px-4 py-2 text-left font-medium">{t('admin:users.joined')}</th>
+                <th className="px-4 py-2 text-left font-medium">{t('admin:users.comments')}</th>
               </tr>
             </thead>
             <tbody>
@@ -308,12 +491,114 @@ function UsersSection() {
                   <td className="px-4 py-2 text-xs text-muted-foreground">
                     {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : '—'}
                   </td>
+                  <td className="px-4 py-2">
+                    <Button
+                      size="sm"
+                      variant={user.isCommentingBanned ? 'destructive' : 'outline'}
+                      onClick={() => handleToggleCommentBan(user.id, user.isCommentingBanned)}
+                      title={
+                        user.isCommentingBanned
+                          ? t('admin:users.unbanComments')
+                          : t('admin:users.banComments')
+                      }
+                    >
+                      {user.isCommentingBanned
+                        ? t('admin:users.unbanComments')
+                        : t('admin:users.banComments')}
+                    </Button>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         )}
       </div>
+    </section>
+  )
+}
+
+// ── Reports section ─────────────────────────────────────────────────────────
+
+interface ReportItem {
+  id: string
+  type: string
+  targetId: string
+  reason: string
+  createdAt: string
+}
+
+function ReportsSection() {
+  const { t } = useTranslation(['admin', 'common'])
+  const [reports, setReports] = useState<ReportItem[]>([])
+
+  useEffect(() => {
+    adminClient
+      .listReports({})
+      .then((res) =>
+        setReports(
+          res.items.map((r) => ({
+            id: r.id,
+            type: r.type,
+            targetId: r.targetId,
+            reason: r.reason,
+            createdAt: r.createdAt,
+          })),
+        ),
+      )
+      .catch(() => toast.error(t('reports.loadError')))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const handleResolve = async (id: string) => {
+    try {
+      await adminClient.resolveReport({ id })
+      setReports((prev) => prev.filter((r) => r.id !== id))
+    } catch {
+      toast.error(t('reports.resolveError'))
+    }
+  }
+
+  return (
+    <section className="space-y-3">
+      <h2 className="text-base font-medium">{t('reports.title')}</h2>
+      {reports.length === 0 ? (
+        <p className="text-sm text-muted-foreground">{t('reports.empty')}</p>
+      ) : (
+        <div className="overflow-x-auto rounded-lg border border-border">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-border bg-muted/40">
+                <th className="px-4 py-2 text-left font-medium">{t('reports.type')}</th>
+                <th className="px-4 py-2 text-left font-medium">ID</th>
+                <th className="px-4 py-2 text-left font-medium">{t('reports.reason')}</th>
+                <th className="px-4 py-2 text-left font-medium">{t('admin:users.joined')}</th>
+                <th className="px-4 py-2" />
+              </tr>
+            </thead>
+            <tbody>
+              {reports.map((r) => (
+                <tr key={r.id} className="border-b border-border last:border-0">
+                  <td className="px-4 py-2 text-xs text-muted-foreground">
+                    {r.type === 'comment' ? t('reports.comment') : t('reports.subscription')}
+                  </td>
+                  <td className="px-4 py-2 text-xs font-mono text-muted-foreground truncate max-w-[8rem]">
+                    {r.targetId.slice(0, 8)}…
+                  </td>
+                  <td className="px-4 py-2 text-xs text-muted-foreground">{r.reason || '—'}</td>
+                  <td className="px-4 py-2 text-xs text-muted-foreground">
+                    {r.createdAt ? new Date(r.createdAt).toLocaleDateString() : '—'}
+                  </td>
+                  <td className="px-4 py-2">
+                    <Button size="sm" variant="outline" onClick={() => handleResolve(r.id)}>
+                      {t('reports.resolve')}
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </section>
   )
 }
@@ -329,32 +614,39 @@ function InvitesSection() {
   const [copiedId, setCopiedId] = useState<string | null>(null)
 
   useEffect(() => {
-    adminClient.listInvites({}).then((res) =>
-      setInvites(
-        res.items.map((i) => ({
-          id: i.id,
-          token: '',
-          note: i.note,
-          createdAt: i.createdAt,
-          expiresAt: i.expiresAt,
-        })),
-      ),
-    )
+    adminClient
+      .listInvites({})
+      .then((res) =>
+        setInvites(
+          res.items.map((i) => ({
+            id: i.id,
+            token: '',
+            note: i.note,
+            createdAt: i.createdAt,
+            expiresAt: i.expiresAt,
+          })),
+        ),
+      )
+      .catch(() => toast.error(t('common:error')))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleGenerate = async () => {
-    const res = await adminClient.generateInvite({ note, expiresDays })
-    const item: InviteItem = {
-      id: res.id,
-      token: res.token,
-      note: res.note,
-      createdAt: res.createdAt,
-      expiresAt: res.expiresAt,
+    try {
+      const res = await adminClient.generateInvite({ note, expiresDays })
+      const item: InviteItem = {
+        id: res.id,
+        token: res.token,
+        note: res.note,
+        createdAt: res.createdAt,
+        expiresAt: res.expiresAt,
+      }
+      addInvite(item)
+      setNewToken(item)
+      setNote('')
+    } catch {
+      toast.error(t('common:error'))
     }
-    addInvite(item)
-    setNewToken(item)
-    setNote('')
   }
 
   const handleCopy = (token: string, id: string) => {
@@ -364,9 +656,13 @@ function InvitesSection() {
   }
 
   const handleDelete = async (id: string) => {
-    await adminClient.deleteInvite({ id })
-    removeInvite(id)
-    if (newToken?.id === id) setNewToken(null)
+    try {
+      await adminClient.deleteInvite({ id })
+      removeInvite(id)
+      if (newToken?.id === id) setNewToken(null)
+    } catch {
+      toast.error(t('common:error'))
+    }
   }
 
   return (
@@ -468,6 +764,7 @@ export function AdminPage() {
           smtpPassword: '', // write-only
           smtpUseTls: res.smtpUseTls,
           smtpFromAddress: res.smtpFromAddress,
+          commentsEnabled: res.commentsEnabled,
         }),
       )
       .finally(() => setLoading(false))
@@ -478,8 +775,11 @@ export function AdminPage() {
     <div className="mx-auto max-w-2xl space-y-8 p-4">
       <h1 className="text-xl font-semibold">{t('title')}</h1>
       <SiteSettingsSection />
+      <ReportsSection />
       <InvitesSection />
       <ModerationSection />
+      <BannedSubscriptionsSection />
+      <HiddenArticlesSection />
       <UsersSection />
     </div>
   )

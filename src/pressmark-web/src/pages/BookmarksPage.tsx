@@ -61,8 +61,12 @@ export function BookmarksPage() {
   const sentinelRef = useIntersectionLoader(handleLoadMore, !!nextCursor && !isLoading)
 
   const handleRemoveBookmark = async (id: string) => {
-    await feedClient.toggleBookmark({ feedItemId: id })
-    setItems((prev) => prev.filter((item) => item.id !== id))
+    try {
+      await feedClient.toggleBookmark({ feedItemId: id })
+      setItems((prev) => prev.filter((item) => item.id !== id))
+    } catch {
+      toast.error(t('common:error'))
+    }
   }
 
   useEffect(() => {
@@ -95,6 +99,7 @@ export function BookmarksPage() {
               <FeedItemCard
                 key={item.id}
                 item={item}
+                articleId={item.id}
                 actions={
                   <button
                     onClick={() => handleRemoveBookmark(item.id)}

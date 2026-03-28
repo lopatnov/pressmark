@@ -19,6 +19,9 @@ public class User
     [Column("created_at")]
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
+    [Column("is_commenting_banned")]
+    public bool IsCommentingBanned { get; set; }
+
     public ICollection<Subscription> Subscriptions { get; set; } = [];
     public ICollection<ReadItem> ReadItems { get; set; } = [];
     public ICollection<Like> Likes { get; set; } = [];

@@ -1,5 +1,6 @@
 import DOMPurify from 'dompurify'
 import { ExternalLink } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 export interface FeedItemData {
   id: string
@@ -10,12 +11,18 @@ export interface FeedItemData {
   sourceTitle: string
   imageUrl?: string
   isRead?: boolean
+  isHidden?: boolean
+  subscriptionId?: string
+  sourceRssUrl?: string
 }
 
 interface FeedItemCardProps {
   item: FeedItemData
   onTitleClick?: () => void
   actions?: React.ReactNode
+  footer?: React.ReactNode
+  articleId?: string
+  sourceHref?: string
 }
 
 function sanitizeSummary(html: string): string {
@@ -49,7 +56,14 @@ function getFaviconUrl(url: string): string | null {
   }
 }
 
-export function FeedItemCard({ item, onTitleClick, actions }: FeedItemCardProps) {
+export function FeedItemCard({
+  item,
+  onTitleClick,
+  actions,
+  footer,
+  articleId,
+  sourceHref,
+}: FeedItemCardProps) {
   const isUnread = item.isRead === false
   const youtubeId = getYouTubeId(item.url)
   const faviconUrl = getFaviconUrl(item.url)
@@ -72,7 +86,18 @@ export function FeedItemCard({ item, onTitleClick, actions }: FeedItemCardProps)
         >
           {item.title}
         </a>
-        <ExternalLink className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+        {articleId ? (
+          <Link
+            to={`/article/${articleId}`}
+            title="Open article page"
+            aria-label="Open article page"
+            className="shrink-0 text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <ExternalLink className="mt-0.5 h-3.5 w-3.5" />
+          </Link>
+        ) : (
+          <ExternalLink className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+        )}
       </div>
 
       <div className="flex items-center gap-2 text-xs text-muted-foreground">
@@ -89,7 +114,17 @@ export function FeedItemCard({ item, onTitleClick, actions }: FeedItemCardProps)
                 }}
               />
             )}
-            <span className="font-medium">{item.sourceTitle}</span>
+            {sourceHref ? (
+              <Link
+                to={sourceHref}
+                className="font-medium hover:underline"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {item.sourceTitle}
+              </Link>
+            ) : (
+              <span className="font-medium">{item.sourceTitle}</span>
+            )}
             <span>·</span>
           </>
         )}
@@ -138,6 +173,7 @@ export function FeedItemCard({ item, onTitleClick, actions }: FeedItemCardProps)
       ) : null}
 
       {actions && <div className="flex items-center gap-1 pt-1">{actions}</div>}
+      {footer}
     </article>
   )
 }

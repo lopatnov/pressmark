@@ -15,21 +15,46 @@
     "smtpPassword": "Contraseña",
     "smtpPasswordPlaceholder": "Dejar en blanco para mantener la actual",
     "smtpUseTls": "Usar TLS (STARTTLS)",
-    "smtpFromAddress": "Dirección de remitente"
+    "smtpFromAddress": "Dirección de remitente",
+    "commentsEnabled": "Habilitar comentarios"
   },
   "moderation": {
     "title": "Moderación",
-    "hide": "Ocultar",
+    "hide": "Ocultar artículo",
     "unhide": "Mostrar",
-    "ban": "Bloquear canal",
-    "unban": "Desbloquear canal"
+    "ban": "Prohibir fuente",
+    "unban": "Desbloquear canal",
+    "hidden": "Artículo oculto",
+    "unhidden": "Artículo mostrado",
+    "banned": "Fuente prohibida",
+    "hiddenArticles": "Artículos ocultos",
+    "noHiddenArticles": "No hay artículos ocultos"
+  },
+  "bannedSubs": {
+    "title": "Fuentes prohibidas",
+    "empty": "No hay fuentes prohibidas",
+    "unban": "Desbloquear"
   },
   "users": {
     "title": "Usuarios",
     "email": "Correo electrónico",
     "role": "Rol",
     "joined": "Fecha de registro",
-    "empty": "No se encontraron usuarios"
+    "empty": "No se encontraron usuarios",
+    "comments": "Comentarios",
+    "banComments": "Prohibir",
+    "unbanComments": "Permitir"
+  },
+  "reports": {
+    "title": "Reportes",
+    "empty": "No hay reportes pendientes",
+    "type": "Tipo",
+    "reason": "Razón",
+    "resolve": "Resolver",
+    "comment": "Comentario",
+    "subscription": "Fuente",
+    "loadError": "Error al cargar los reportes",
+    "resolveError": "Error al resolver el reporte"
   },
   "invites": {
     "title": "Tokens de invitación",

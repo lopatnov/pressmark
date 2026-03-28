@@ -28,8 +28,8 @@ public class FeedUpdateBroadcaster
     /// </summary>
     public (ChannelReader<FeedUpdateEvent> reader, ChannelWriter<FeedUpdateEvent> writer) Subscribe()
     {
-        var channel = Channel.CreateUnbounded<FeedUpdateEvent>(
-            new UnboundedChannelOptions { SingleReader = true });
+        var channel = Channel.CreateBounded<FeedUpdateEvent>(
+            new BoundedChannelOptions(500) { FullMode = BoundedChannelFullMode.DropOldest, SingleReader = true });
         lock (_lock)
         {
             _writers.Add(channel.Writer);
@@ -57,7 +57,8 @@ public class FeedUpdateBroadcaster
         }
         foreach (var w in snapshot)
         {
-            // TryWrite is non-blocking; channel is unbounded so it always succeeds.
+            // TryWrite is non-blocking; if the bounded channel is full, DropOldest
+            // evicts the oldest unread event rather than blocking the fetcher.
             w.TryWrite(evt);
         }
         return Task.CompletedTask;

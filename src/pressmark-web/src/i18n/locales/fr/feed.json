@@ -11,10 +11,43 @@
   "bookmark": "Favori",
   "removeBookmark": "Supprimer le favori",
   "readMore": "Lire la suite",
+  "subscribe": "S'abonner",
+  "subscribed": "Abonné",
+  "subscribeSuccess": "Abonnement réussi",
   "community": {
     "title": "Communauté",
     "subtitle": "Articles aimés par la communauté lors du dernier {{days}} jour",
     "subtitle_plural": "Articles aimés par la communauté lors des {{days}} derniers jours",
     "empty": "Aucun article aimé pour l'instant. Connectez-vous pour aimer des articles."
-  }
+  },
+  "comments": {
+    "title": "Commentaires",
+    "count": "{{count}} commentaire",
+    "count_plural": "{{count}} commentaires",
+    "empty": "Pas encore de commentaires",
+    "placeholder": "Écrire un commentaire...",
+    "submit": "Envoyer",
+    "remove": "Supprimer le commentaire",
+    "removed": "Message supprimé par l'administrateur",
+    "toggle": "Afficher/masquer les commentaires",
+    "loadError": "Impossible de charger les commentaires",
+    "submitError": "Impossible d'envoyer le commentaire",
+    "removeError": "Impossible de supprimer le commentaire"
+  },
+  "report": "Signaler",
+  "reportComment": "Signaler un commentaire",
+  "reportSource": "Signaler une source",
+  "reportReason": "Raison (facultatif)",
+  "reportSend": "Envoyer le signalement",
+  "reportCancel": "Annuler",
+  "reportSent": "Signalement envoyé",
+  "reportAlreadySent": "Déjà signalé",
+  "reportSubmitError": "Impossible d’envoyer le signalement",
+  "filterBySource": "Filtré par source",
+  "clearFilter": "Effacer le filtre",
+  "article": {
+    "notFound": "Article introuvable",
+    "backToCommunity": "Retour à la communauté"
+  },
+  "alreadySubscribed": "Vous avez déjà cette source"
 }
