@@ -4,13 +4,14 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { authClient } from '@/api/clients'
 import { useAuthStore } from '@/store/authStore'
 import { Code, ConnectError } from '@connectrpc/connect'
 
 export function RegisterPage() {
-  const { t } = useTranslation('auth')
+  const { t } = useTranslation(['auth', 'common'])
   const navigate = useNavigate()
   const setAuth = useAuthStore((s) => s.setAuth)
   const [showInvite, setShowInvite] = useState(false)
@@ -79,6 +80,13 @@ export function RegisterPage() {
   return (
     <div className="flex min-h-screen items-center justify-center">
       <div className="w-full max-w-sm space-y-6 p-6">
+        <Link
+          to="/"
+          className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" />
+          {t('common:nav.community')}
+        </Link>
         <h1 className="text-2xl font-semibold">{t('register.title')}</h1>
 
         {isFirstUser && (

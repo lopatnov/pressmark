@@ -25,6 +25,7 @@ interface CommunityItem {
 export function CommunityPage() {
   const { t } = useTranslation(['feed', 'common'])
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated())
+  const registrationMode = useAuthStore((s) => s.registrationMode)
 
   const [items, setItems] = useState<CommunityItem[]>([])
   const [nextCursor, setNextCursor] = useState('')
@@ -94,11 +95,16 @@ export function CommunityPage() {
           {t('feed:community.empty')}{' '}
           <Link to="/login" className="underline">
             {t('common:nav.login')}
-          </Link>{' '}
-          &middot;{' '}
-          <Link to="/register" className="underline">
-            {t('common:nav.register')}
           </Link>
+          {registrationMode === 'open' && (
+            <>
+              {' '}
+              &middot;{' '}
+              <Link to="/register" className="underline">
+                {t('common:nav.register')}
+              </Link>
+            </>
+          )}
         </p>
       )}
 
@@ -160,7 +166,7 @@ export function CommunityPage() {
         <p className="text-center text-sm text-muted-foreground">{t('common:loading')}</p>
       )}
 
-      {!isAuthenticated && (
+      {!isAuthenticated && registrationMode === 'open' && (
         <div className="pt-4 text-center">
           <Link to="/register">
             <Button>{t('common:nav.register')}</Button>

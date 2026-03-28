@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { authClient } from '@/api/clients'
 import { useAuthStore } from '@/store/authStore'
+import { ArrowLeft } from 'lucide-react'
 
 const schema = z.object({
   email: z.email(),
@@ -14,9 +15,10 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>
 
 export function LoginPage() {
-  const { t } = useTranslation('auth')
+  const { t } = useTranslation(['auth', 'common'])
   const navigate = useNavigate()
   const setAuth = useAuthStore((s) => s.setAuth)
+  const registrationMode = useAuthStore((s) => s.registrationMode)
 
   const {
     register,
@@ -45,6 +47,13 @@ export function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center">
       <div className="w-full max-w-sm space-y-6 p-6">
+        <Link
+          to="/"
+          className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" />
+          {t('common:nav.community')}
+        </Link>
         <h1 className="text-2xl font-semibold">{t('login.title')}</h1>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -80,12 +89,14 @@ export function LoginPage() {
         </form>
 
         <div className="space-y-1 text-center text-sm text-muted-foreground">
-          <p>
-            {t('login.noAccount')}{' '}
-            <Link to="/register" className="underline">
-              {t('login.register')}
-            </Link>
-          </p>
+          {registrationMode === 'open' && (
+            <p>
+              {t('login.noAccount')}{' '}
+              <Link to="/register" className="underline">
+                {t('login.register')}
+              </Link>
+            </p>
+          )}
           <p>
             <Link to="/forgot-password" className="underline">
               {t('login.forgotPassword')}

@@ -15,6 +15,7 @@ export function Sidebar() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated())
   const isAdmin = useAuthStore((s) => s.isAdmin())
   const clearAuth = useAuthStore((s) => s.clearAuth)
+  const registrationMode = useAuthStore((s) => s.registrationMode)
   const totalUnread = useFeedStore((s) => s.totalUnread)
   const { settings, setSettings } = useAdminStore()
 
@@ -99,7 +100,7 @@ export function Sidebar() {
         {isAuthenticated ? (
           <button
             onClick={handleLogout}
-            className="flex items-center gap-2.5 rounded-md px-3 py-2 text-left text-sm text-sidebar-foreground transition-colors hover:bg-sidebar-accent/60"
+            className="flex cursor-pointer items-center gap-2.5 rounded-md px-3 py-2 text-left text-sm text-sidebar-foreground transition-colors hover:bg-sidebar-accent/60"
           >
             <LogOut className="h-4 w-4 shrink-0" />
             {t('nav.logout')}
@@ -110,10 +111,12 @@ export function Sidebar() {
               <LogIn className="h-4 w-4 shrink-0" />
               {t('nav.login')}
             </NavLink>
-            <NavLink to="/register" className={cls}>
-              <UserPlus className="h-4 w-4 shrink-0" />
-              {t('nav.register')}
-            </NavLink>
+            {registrationMode === 'open' && (
+              <NavLink to="/register" className={cls}>
+                <UserPlus className="h-4 w-4 shrink-0" />
+                {t('nav.register')}
+              </NavLink>
+            )}
           </>
         )}
       </nav>
