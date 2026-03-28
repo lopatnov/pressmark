@@ -80,13 +80,6 @@ export function RegisterPage() {
   return (
     <div className="flex min-h-screen items-center justify-center">
       <div className="w-full max-w-sm space-y-6 p-6">
-        <Link
-          to="/"
-          className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
-        >
-          <ArrowLeft className="h-3.5 w-3.5" />
-          {t('common:nav.community')}
-        </Link>
         <h1 className="text-2xl font-semibold">{t('register.title')}</h1>
 
         {isFirstUser && (
@@ -148,6 +141,15 @@ export function RegisterPage() {
             {t('register.login')}
           </Link>
         </p>
+        <div className="text-center">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" />
+            {t('common:nav.community')}
+          </Link>
+        </div>
       </div>
     </div>
   )
