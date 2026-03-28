@@ -15,10 +15,11 @@ var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
 
 // EF Core
+var connectionString = config.GetConnectionString("Default");
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(config.GetConnectionString("Default")));
+    options.UseSqlServer(connectionString));
 builder.Services.AddDbContextFactory<AppDbContext>(options =>
-    options.UseSqlServer(config.GetConnectionString("Default")));
+    options.UseSqlServer(connectionString));
 
 // gRPC
 builder.Services.AddGrpc();
