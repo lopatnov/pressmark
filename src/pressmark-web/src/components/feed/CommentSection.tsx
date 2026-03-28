@@ -26,10 +26,6 @@ export function CommentSection({ feedItemId, initiallyOpen = false }: CommentSec
 
   const [open, setOpen] = useState(initiallyOpen)
   const [loaded, setLoaded] = useState(false)
-
-  useEffect(() => {
-    if (initiallyOpen) load()
-  }, [initiallyOpen, load])
   const [comments, setComments] = useState<CommentItem[]>([])
   const [body, setBody] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -54,6 +50,10 @@ export function CommentSection({ feedItemId, initiallyOpen = false }: CommentSec
       toast.error(t('comments.loadError'))
     }
   }, [feedItemId, t])
+
+  useEffect(() => {
+    if (initiallyOpen) load()
+  }, [initiallyOpen, load])
 
   const handleToggle = () => {
     const next = !open
