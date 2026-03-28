@@ -21,8 +21,8 @@ internal static class LenientUtf8
         RegexOptions.Compiled);
 
     private static readonly Regex DeclaredPrefix = new(@"xmlns:([a-zA-Z]\w*)", RegexOptions.Compiled);
-    private static readonly Regex UsedPrefix     = new(@"</?([a-zA-Z]\w*):[a-zA-Z\w]", RegexOptions.Compiled);
-    private static readonly Regex FirstElement   = new(@"(<[a-zA-Z][^>]*)(>)", RegexOptions.Compiled);
+    private static readonly Regex UsedPrefix = new(@"</?([a-zA-Z]\w*):[a-zA-Z\w]", RegexOptions.Compiled);
+    private static readonly Regex FirstElement = new(@"(<[a-zA-Z][^>]*)(>)", RegexOptions.Compiled);
 
     public static string GetString(byte[] bytes)
     {
