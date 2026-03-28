@@ -39,10 +39,13 @@
     "tokenGenerated": "Token vygenerován — zkopírujte ho nyní, nebude zobrazen znovu",
     "copy": "Kopírovat",
     "copied": "Zkopírováno!",
-    "revoke": "Odvolat",
-    "statusActive": "Aktivní",
-    "statusUsed": "Použitý",
-    "statusRevoked": "Odvolaný",
-    "empty": "Žádné pozvánkové tokeny zatím"
+    "empty": "Žádné pozvánkové tokeny zatím",
+    "delete": "Smazat",
+    "expiresAt": "Platnost do",
+    "expiryNever": "Bez platnosti",
+    "expiry1Day": "1 den",
+    "expiry7Days": "7 dní",
+    "expiry30Days": "30 dní",
+    "expiryNone": "Bez platnosti"
   }
 }

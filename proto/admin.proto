@@ -13,7 +13,7 @@ service AdminService {
   rpc BanSubscription    (BanSubscriptionRequest)      returns (google.protobuf.Empty);
   rpc ListUsers          (google.protobuf.Empty)       returns (UserList);
   rpc GenerateInvite     (GenerateInviteRequest)       returns (InviteToken);
-  rpc RevokeInvite       (RevokeInviteRequest)         returns (google.protobuf.Empty);
+  rpc DeleteInvite       (DeleteInviteRequest)         returns (google.protobuf.Empty);
   rpc ListInvites        (google.protobuf.Empty)       returns (InviteList);
 }
 
@@ -55,10 +55,11 @@ message UserInfo {
 }
 
 message GenerateInviteRequest {
-  string note = 1;
+  string note         = 1;
+  int32  expires_days = 2;  // 0 = no expiry; default 7 days recommended by frontend
 }
 
-message RevokeInviteRequest {
+message DeleteInviteRequest {
   string id = 1;
 }
 
@@ -69,7 +70,7 @@ message InviteToken {
   string created_at = 4;
   bool   is_used    = 5;
   string used_at    = 6;
-  bool   is_revoked = 7;
+  string expires_at = 7;  // empty = no expiry
 }
 
 message InviteList {

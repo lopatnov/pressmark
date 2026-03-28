@@ -16,6 +16,7 @@
     "community": "Topluluk",
     "login": "Giriş yap",
     "register": "Kayıt ol",
-    "logout": "Çıkış yap"
+    "logout": "Çıkış yap",
+    "openMenu": "Menüyü aç"
   }
 }

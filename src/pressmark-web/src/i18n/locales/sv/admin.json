@@ -39,10 +39,13 @@
     "tokenGenerated": "Token genererad — kopiera den nu, den visas inte igen",
     "copy": "Kopiera",
     "copied": "Kopierad!",
-    "revoke": "Återkalla",
-    "statusActive": "Aktiv",
-    "statusUsed": "Använd",
-    "statusRevoked": "Återkallad",
-    "empty": "Inga inbjudningstokens än"
+    "empty": "Inga inbjudningstokens än",
+    "delete": "Ta bort",
+    "expiresAt": "Går ut",
+    "expiryNever": "Ingen giltighetstid",
+    "expiry1Day": "1 dag",
+    "expiry7Days": "7 dagar",
+    "expiry30Days": "30 dagar",
+    "expiryNone": "Ingen giltighetstid"
   }
 }

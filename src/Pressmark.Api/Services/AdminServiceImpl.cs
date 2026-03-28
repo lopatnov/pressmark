@@ -9,7 +9,7 @@ using Pressmark.Api.Protos;
 namespace Pressmark.Api.Services;
 
 [Authorize(Roles = "Admin")]
-public class AdminServiceImpl(AppDbContext db) : AdminService.AdminServiceBase
+public class AdminServiceImpl(AppDbContext db, ISmtpPasswordProtector passwordProtector) : AdminService.AdminServiceBase
 {
     public override async Task<SiteSettings> GetSiteSettings(Empty request, ServerCallContext context)
     {
@@ -44,9 +44,9 @@ public class AdminServiceImpl(AppDbContext db) : AdminService.AdminServiceBase
         await UpsertSetting("smtp_use_tls", s.SmtpUseTls ? "true" : "false", ct);
         await UpsertSetting("smtp_from_address", s.SmtpFromAddress, ct);
 
-        // Only update the password if a new value was provided
+        // Only update the password if a new value was provided; encrypt before storing
         if (!string.IsNullOrEmpty(s.SmtpPassword))
-            await UpsertSetting("smtp_password", s.SmtpPassword, ct);
+            await UpsertSetting("smtp_password", passwordProtector.Protect(s.SmtpPassword), ct);
 
         return new Empty();
     }
@@ -112,6 +112,9 @@ public class AdminServiceImpl(AppDbContext db) : AdminService.AdminServiceBase
         {
             Token = token,
             Note = string.IsNullOrWhiteSpace(request.Note) ? null : request.Note.Trim(),
+            ExpiresAt = request.ExpiresDays > 0
+                ? DateTime.UtcNow.AddDays(request.ExpiresDays)
+                : (DateTime?)null,
         };
 
         db.InviteTokens.Add(entity);
@@ -124,12 +127,12 @@ public class AdminServiceImpl(AppDbContext db) : AdminService.AdminServiceBase
             Note = entity.Note ?? "",
             CreatedAt = entity.CreatedAt.ToString("O"),
             IsUsed = false,
-            IsRevoked = false,
+            ExpiresAt = entity.ExpiresAt?.ToString("O") ?? "",
         };
     }
 
-    public override async Task<Empty> RevokeInvite(
-        RevokeInviteRequest request, ServerCallContext context)
+    public override async Task<Empty> DeleteInvite(
+        DeleteInviteRequest request, ServerCallContext context)
     {
         var ct = context.CancellationToken;
 
@@ -139,8 +142,7 @@ public class AdminServiceImpl(AppDbContext db) : AdminService.AdminServiceBase
         var entity = await db.InviteTokens.FindAsync([id], ct)
             ?? throw new RpcException(new Status(StatusCode.NotFound, "Invite not found"));
 
-        entity.IsRevoked = true;
-        entity.RevokedAt = DateTime.UtcNow;
+        db.InviteTokens.Remove(entity);
         await db.SaveChangesAsync(ct);
 
         return new Empty();
@@ -151,6 +153,7 @@ public class AdminServiceImpl(AppDbContext db) : AdminService.AdminServiceBase
     {
         var ct = context.CancellationToken;
         var invites = await db.InviteTokens
+            .Where(t => !t.IsUsed && (t.ExpiresAt == null || t.ExpiresAt > DateTime.UtcNow))
             .OrderByDescending(t => t.CreatedAt)
             .ToListAsync(ct);
 
@@ -161,9 +164,8 @@ public class AdminServiceImpl(AppDbContext db) : AdminService.AdminServiceBase
             Token = "",   // not exposed in list
             Note = t.Note ?? "",
             CreatedAt = t.CreatedAt.ToString("O"),
-            IsUsed = t.IsUsed,
-            UsedAt = t.UsedAt?.ToString("O") ?? "",
-            IsRevoked = t.IsRevoked,
+            IsUsed = false,
+            ExpiresAt = t.ExpiresAt?.ToString("O") ?? "",
         }));
         return result;
     }

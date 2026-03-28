@@ -16,6 +16,7 @@
     "community": "Komunita",
     "login": "Přihlásit se",
     "register": "Registrovat se",
-    "logout": "Odhlásit se"
+    "logout": "Odhlásit se",
+    "openMenu": "Otevřít nabídku"
   }
 }

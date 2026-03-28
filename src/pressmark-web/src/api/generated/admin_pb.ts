@@ -319,6 +319,13 @@ export class GenerateInviteRequest extends Message<GenerateInviteRequest> {
    */
   note = "";
 
+  /**
+   * 0 = no expiry; default 7 days recommended by frontend
+   *
+   * @generated from field: int32 expires_days = 2;
+   */
+  expiresDays = 0;
+
   constructor(data?: PartialMessage<GenerateInviteRequest>) {
     super();
     proto3.util.initPartial(data, this);
@@ -328,6 +335,7 @@ export class GenerateInviteRequest extends Message<GenerateInviteRequest> {
   static readonly typeName = "pressmark.admin.GenerateInviteRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "note", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "expires_days", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GenerateInviteRequest {
@@ -348,39 +356,39 @@ export class GenerateInviteRequest extends Message<GenerateInviteRequest> {
 }
 
 /**
- * @generated from message pressmark.admin.RevokeInviteRequest
+ * @generated from message pressmark.admin.DeleteInviteRequest
  */
-export class RevokeInviteRequest extends Message<RevokeInviteRequest> {
+export class DeleteInviteRequest extends Message<DeleteInviteRequest> {
   /**
    * @generated from field: string id = 1;
    */
   id = "";
 
-  constructor(data?: PartialMessage<RevokeInviteRequest>) {
+  constructor(data?: PartialMessage<DeleteInviteRequest>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "pressmark.admin.RevokeInviteRequest";
+  static readonly typeName = "pressmark.admin.DeleteInviteRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): RevokeInviteRequest {
-    return new RevokeInviteRequest().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): DeleteInviteRequest {
+    return new DeleteInviteRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): RevokeInviteRequest {
-    return new RevokeInviteRequest().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): DeleteInviteRequest {
+    return new DeleteInviteRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): RevokeInviteRequest {
-    return new RevokeInviteRequest().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): DeleteInviteRequest {
+    return new DeleteInviteRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: RevokeInviteRequest | PlainMessage<RevokeInviteRequest> | undefined, b: RevokeInviteRequest | PlainMessage<RevokeInviteRequest> | undefined): boolean {
-    return proto3.util.equals(RevokeInviteRequest, a, b);
+  static equals(a: DeleteInviteRequest | PlainMessage<DeleteInviteRequest> | undefined, b: DeleteInviteRequest | PlainMessage<DeleteInviteRequest> | undefined): boolean {
+    return proto3.util.equals(DeleteInviteRequest, a, b);
   }
 }
 
@@ -421,9 +429,11 @@ export class InviteToken extends Message<InviteToken> {
   usedAt = "";
 
   /**
-   * @generated from field: bool is_revoked = 7;
+   * empty = no expiry
+   *
+   * @generated from field: string expires_at = 7;
    */
-  isRevoked = false;
+  expiresAt = "";
 
   constructor(data?: PartialMessage<InviteToken>) {
     super();
@@ -439,7 +449,7 @@ export class InviteToken extends Message<InviteToken> {
     { no: 4, name: "created_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 5, name: "is_used", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
     { no: 6, name: "used_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 7, name: "is_revoked", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 7, name: "expires_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): InviteToken {

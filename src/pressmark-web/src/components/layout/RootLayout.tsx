@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { Outlet } from 'react-router-dom'
+import { Toaster } from '@/components/ui/sonner'
 import { useAuthStore } from '@/store/authStore'
 import { authClient } from '@/api/clients'
 
@@ -8,8 +9,14 @@ export function RootLayout() {
   const clearAuth = useAuthStore((s) => s.clearAuth)
   const setInitialized = useAuthStore((s) => s.setInitialized)
   const isInitialized = useAuthStore((s) => s.isInitialized)
+  const setRegistrationMode = useAuthStore((s) => s.setRegistrationMode)
 
   useEffect(() => {
+    authClient
+      .getRegistrationStatus({})
+      .then((res) => setRegistrationMode(res.registrationMode as 'open' | 'invite_only'))
+      .catch(() => {})
+
     authClient
       .refresh({})
       .then((res) => {
@@ -26,5 +33,10 @@ export function RootLayout() {
 
   if (!isInitialized) return null
 
-  return <Outlet />
+  return (
+    <>
+      <Outlet />
+      <Toaster richColors closeButton />
+    </>
+  )
 }

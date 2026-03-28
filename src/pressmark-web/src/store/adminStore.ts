@@ -25,9 +25,7 @@ export interface InviteItem {
   token: string // populated only on creation
   note: string
   createdAt: string
-  isUsed: boolean
-  usedAt: string
-  isRevoked: boolean
+  expiresAt: string // empty = no expiry
 }
 
 interface AdminState {
@@ -54,10 +52,7 @@ export const useAdminStore = create<AdminState>()(
       setUsers: (users) => set({ users }),
       setInvites: (invites) => set({ invites }),
       addInvite: (invite) => set((s) => ({ invites: [invite, ...s.invites] })),
-      removeInvite: (id) =>
-        set((s) => ({
-          invites: s.invites.map((i) => (i.id === id ? { ...i, isRevoked: true } : i)),
-        })),
+      removeInvite: (id) => set((s) => ({ invites: s.invites.filter((i) => i.id !== id) })),
       setLoading: (isLoading) => set({ isLoading }),
     }),
     { name: 'admin' },

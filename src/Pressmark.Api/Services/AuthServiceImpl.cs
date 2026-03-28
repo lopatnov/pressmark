@@ -40,7 +40,7 @@ public class AuthServiceImpl(
                 .FirstOrDefaultAsync(t =>
                     t.Token == request.InviteToken &&
                     !t.IsUsed &&
-                    !t.IsRevoked, ct);
+                    (t.ExpiresAt == null || t.ExpiresAt > DateTime.UtcNow), ct);
 
             if (invite is null)
                 throw new RpcException(new Status(StatusCode.PermissionDenied,
@@ -97,22 +97,31 @@ public class AuthServiceImpl(
     }
 
     public override async Task<AuthResponse> Refresh(
-        RefreshRequest request, ServerCallContext context)
+    RefreshRequest request, ServerCallContext context)
     {
         var ct = context.CancellationToken;
         var http = context.GetHttpContext();
         var rawToken = http.Request.Cookies[jwt.CookieName];
 
         if (string.IsNullOrEmpty(rawToken))
-            throw new RpcException(new Status(StatusCode.Unauthenticated,
-                "Missing refresh token"));
+        {
+            return Unauthenticated(context, "Missing refresh token");
+        }
 
         var principal = jwt.ValidateRefreshToken(rawToken);
         if (principal is null)
-            throw new RpcException(new Status(StatusCode.Unauthenticated,
-                "Invalid or expired refresh token"));
+        {
+            return Unauthenticated(context, "Invalid or expired refresh token");
+        }
+
+        var userIdClaim = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!Guid.TryParse(userIdClaim, out var userId))
+        {
+            return Unauthenticated(context, "Invalid user identifier in token");
+        }
 
         var tokenHash = JwtService.HashToken(rawToken);
+
         var stored = await db.RefreshTokens
             .FirstOrDefaultAsync(t =>
                 t.TokenHash == tokenHash &&
@@ -120,21 +129,28 @@ public class AuthServiceImpl(
                 t.ExpiresAt > DateTime.UtcNow, ct);
 
         if (stored is null)
-            throw new RpcException(new Status(StatusCode.Unauthenticated,
-                "Refresh token revoked or not found"));
+        {
+            return Unauthenticated(context, "Refresh token revoked or not found");
+        }
 
-        var userId = Guid.Parse(principal.FindFirstValue(ClaimTypes.NameIdentifier)!);
         var user = await db.Users.FindAsync([userId], ct);
-
         if (user is null)
-            throw new RpcException(new Status(StatusCode.Unauthenticated, "User not found"));
+        {
+            return Unauthenticated(context, "User not found");
+        }
 
-        // Revoke old token (rotation)
         stored.IsRevoked = true;
         stored.RevokedAt = DateTime.UtcNow;
+
         await db.SaveChangesAsync(ct);
 
         return await IssueTokens(user, http, ct);
+    }
+
+    private AuthResponse Unauthenticated(ServerCallContext context, string detail)
+    {
+        context.Status = new Status(StatusCode.Unauthenticated, detail);
+        return new AuthResponse();
     }
 
     public override async Task<Empty> Logout(Empty request, ServerCallContext context)
@@ -159,6 +175,19 @@ public class AuthServiceImpl(
 
         http.Response.Cookies.Delete(jwt.CookieName);
         return new Empty();
+    }
+
+    [AllowAnonymous]
+    public override async Task<RegistrationStatus> GetRegistrationStatus(
+        Empty request, ServerCallContext context)
+    {
+        var ct = context.CancellationToken;
+        var hasAdmin = await db.Users.AnyAsync(ct);
+        var mode = await db.SiteSettings
+            .Where(s => s.Key == "registration_mode")
+            .Select(s => s.Value)
+            .FirstOrDefaultAsync(ct) ?? "open";
+        return new RegistrationStatus { HasAdmin = hasAdmin, RegistrationMode = mode };
     }
 
     [AllowAnonymous]

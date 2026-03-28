@@ -1,4 +1,6 @@
 using System.ServiceModel.Syndication;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml;
 using Microsoft.EntityFrameworkCore;
 using Pressmark.Api.Data;
@@ -30,12 +32,13 @@ public class FeedFetcherService(
     {
         var httpClient = httpClientFactory.CreateClient("Pressmark");
         httpClient.Timeout = TimeSpan.FromSeconds(15);
-        var xml = await httpClient.GetStringAsync(sub.RssUrl, ct);
+        var bytes = await httpClient.GetByteArrayAsync(sub.RssUrl, ct);
+        var xml = LenientUtf8.GetString(bytes);
 
         SyndicationFeed feed;
         using (var reader = XmlReader.Create(
             new StringReader(xml),
-            new XmlReaderSettings { DtdProcessing = DtdProcessing.Ignore }))
+            new XmlReaderSettings { DtdProcessing = DtdProcessing.Ignore, CheckCharacters = false }))
         {
             feed = SyndicationFeed.Load(reader);
         }
@@ -52,7 +55,7 @@ public class FeedFetcherService(
             {
                 Url = i.Links.First().Uri.ToString(),
                 Title = i.Title?.Text ?? "(no title)",
-                Summary = StripHtml(i.Summary?.Text),
+                Summary = string.IsNullOrWhiteSpace(i.Summary?.Text) ? null : i.Summary.Text.Trim(),
                 PublishedAt = i.PublishDate == DateTimeOffset.MinValue
                                 ? DateTime.UtcNow
                                 : i.PublishDate.UtcDateTime,
@@ -84,6 +87,18 @@ public class FeedFetcherService(
             logger.LogInformation("Fetched {Count} new items for subscription {Id}",
                 newItems.Count, sub.Id);
 
+        // Enrich items without an RSS image by fetching og:image from the article page
+        var needOg = addedItems
+            .Where(i => i.ImageUrl == null && i.Url.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+            .ToList();
+        if (needOg.Count > 0)
+        {
+            var ogTasks = needOg.Select(i => TryFetchOgImageAsync(httpClient, i.Url, ct));
+            var ogImages = await Task.WhenAll(ogTasks);
+            for (var i = 0; i < needOg.Count; i++)
+                needOg[i].ImageUrl = ogImages[i];
+        }
+
         await db.SaveChangesAsync(ct);
 
         // Broadcast newly saved items (IDs are set after SaveChanges)
@@ -97,13 +112,43 @@ public class FeedFetcherService(
         return addedItems.Count;
     }
 
-    private static string? StripHtml(string? html)
+
+    private static async Task<string?> TryFetchOgImageAsync(
+        HttpClient client, string url, CancellationToken ct)
     {
-        if (string.IsNullOrEmpty(html)) return null;
-        var text = System.Text.RegularExpressions.Regex.Replace(html, "<[^>]+>", " ");
-        text = System.Net.WebUtility.HtmlDecode(text);
-        text = System.Text.RegularExpressions.Regex.Replace(text, @"\s{2,}", " ").Trim();
-        return text.Length == 0 ? null : text;
+        try
+        {
+            using var cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+            cts.CancelAfter(TimeSpan.FromSeconds(5));
+
+            var response = await client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cts.Token);
+            if (!response.IsSuccessStatusCode) return null;
+
+            var contentType = response.Content.Headers.ContentType?.MediaType;
+            if (contentType?.StartsWith("text/html", StringComparison.OrdinalIgnoreCase) != true)
+                return null;
+
+            // Read only first 64 KB — og:image is always in <head>
+            var stream = await response.Content.ReadAsStreamAsync(cts.Token);
+            var buffer = new byte[65_536];
+            var bytesRead = await stream.ReadAsync(buffer, cts.Token);
+            var html = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+
+            // Try both attribute orders: property first, then content first
+            var match = Regex.Match(html,
+                @"<meta[^>]+property=[""']og:image[""'][^>]+content=[""']([^""'<>]+)[""']",
+                RegexOptions.IgnoreCase);
+            if (!match.Success)
+                match = Regex.Match(html,
+                    @"<meta[^>]+content=[""']([^""'<>]+)[""'][^>]+property=[""']og:image[""']",
+                    RegexOptions.IgnoreCase);
+
+            return match.Success ? match.Groups[1].Value.Trim() : null;
+        }
+        catch
+        {
+            return null; // timeout, 404, non-HTML — silently skip
+        }
     }
 
     private static string? ExtractImageUrl(SyndicationItem item)

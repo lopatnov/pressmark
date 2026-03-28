@@ -30,21 +30,27 @@ public class SubscriptionServiceImpl(AppDbContext db, IHttpClientFactory httpCli
         {
             var http = httpClientFactory.CreateClient("Pressmark");
             http.Timeout = TimeSpan.FromSeconds(10);
-            var xml = await http.GetStringAsync(request.RssUrl, ct);
+            var bytes = await http.GetByteArrayAsync(request.RssUrl, ct);
+            var xml = LenientUtf8.GetString(bytes);
 
             using var reader = XmlReader.Create(
                 new StringReader(xml),
-                new XmlReaderSettings { DtdProcessing = DtdProcessing.Ignore });
+                new XmlReaderSettings { DtdProcessing = DtdProcessing.Ignore, CheckCharacters = false });
             feedTitle = SyndicationFeed.Load(reader).Title?.Text ?? "";
         }
         catch (OperationCanceledException) when (ct.IsCancellationRequested)
         {
             throw;
         }
-        catch
+        catch (HttpRequestException ex)
         {
             throw new RpcException(new Status(StatusCode.InvalidArgument,
-                "Could not fetch or parse RSS feed"));
+                $"Could not fetch RSS feed: {ex.Message}"));
+        }
+        catch (Exception ex)
+        {
+            throw new RpcException(new Status(StatusCode.InvalidArgument,
+                $"Could not parse RSS feed: {ex.GetType().Name}: {ex.Message}"));
         }
 
         var entity = new Entities.Subscription

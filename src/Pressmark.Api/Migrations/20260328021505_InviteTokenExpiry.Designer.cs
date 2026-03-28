@@ -12,8 +12,8 @@ using Pressmark.Api.Data;
 namespace Pressmark.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260326065340_AddSubscriptionUserIdIndex")]
-    partial class AddSubscriptionUserIdIndex
+    [Migration("20260328021505_InviteTokenExpiry")]
+    partial class InviteTokenExpiry
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -109,9 +109,9 @@ namespace Pressmark.Api.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("created_at");
 
-                    b.Property<bool>("IsRevoked")
-                        .HasColumnType("bit")
-                        .HasColumnName("is_revoked");
+                    b.Property<DateTime?>("ExpiresAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("expires_at");
 
                     b.Property<bool>("IsUsed")
                         .HasColumnType("bit")
@@ -120,10 +120,6 @@ namespace Pressmark.Api.Migrations
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("note");
-
-                    b.Property<DateTime?>("RevokedAt")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("revoked_at");
 
                     b.Property<string>("Token")
                         .IsRequired()

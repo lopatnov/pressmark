@@ -39,10 +39,13 @@
     "tokenGenerated": "邀请码已生成 — 请现在复制，之后将不再显示",
     "copy": "复制",
     "copied": "已复制！",
-    "revoke": "撤销",
-    "statusActive": "有效",
-    "statusUsed": "已使用",
-    "statusRevoked": "已撤销",
-    "empty": "暂无邀请码"
+    "empty": "暂无邀请码",
+    "delete": "删除",
+    "expiresAt": "到期",
+    "expiryNever": "永不过期",
+    "expiry1Day": "1天",
+    "expiry7Days": "7天",
+    "expiry30Days": "30天",
+    "expiryNone": "永不过期"
   }
 }

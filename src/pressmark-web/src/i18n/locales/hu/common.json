@@ -16,6 +16,7 @@
     "community": "Közösség",
     "login": "Bejelentkezés",
     "register": "Regisztráció",
-    "logout": "Kijelentkezés"
+    "logout": "Kijelentkezés",
+    "openMenu": "Menü megnyitása"
   }
 }

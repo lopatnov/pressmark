@@ -6,7 +6,7 @@ using Pressmark.Api.Data;
 
 namespace Pressmark.Api.Services;
 
-public class SmtpEmailService(AppDbContext db, ILogger<SmtpEmailService> logger) : IEmailService
+public class SmtpEmailService(AppDbContext db, ILogger<SmtpEmailService> logger, ISmtpPasswordProtector passwordProtector) : IEmailService
 {
     public async Task SendPasswordResetAsync(string toEmail, string resetUrl, CancellationToken ct)
     {
@@ -16,7 +16,8 @@ public class SmtpEmailService(AppDbContext db, ILogger<SmtpEmailService> logger)
         var host = settings.GetValueOrDefault("smtp_host", "");
         var portStr = settings.GetValueOrDefault("smtp_port", "587");
         var user = settings.GetValueOrDefault("smtp_user", "");
-        var pass = settings.GetValueOrDefault("smtp_password", "");
+        var rawPass = settings.GetValueOrDefault("smtp_password", "");
+        var pass = string.IsNullOrEmpty(rawPass) ? "" : passwordProtector.TryUnprotect(rawPass);
         var useTls = settings.GetValueOrDefault("smtp_use_tls", "true") == "true";
         var from = settings.GetValueOrDefault("smtp_from_address", "noreply@pressmark.local");
         var siteName = settings.GetValueOrDefault("site_name", "Pressmark");

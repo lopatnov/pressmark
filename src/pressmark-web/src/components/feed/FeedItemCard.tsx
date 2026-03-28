@@ -1,5 +1,5 @@
+import DOMPurify from 'dompurify'
 import { ExternalLink } from 'lucide-react'
-import { stripHtml } from '@/lib/utils'
 
 export interface FeedItemData {
   id: string
@@ -18,8 +18,41 @@ interface FeedItemCardProps {
   actions?: React.ReactNode
 }
 
+function sanitizeSummary(html: string): string {
+  return DOMPurify.sanitize(html, {
+    ALLOWED_TAGS: ['a', 'b', 'i', 'em', 'strong', 'p', 'ul', 'ol', 'li', 'br', 'code', 'pre'],
+    ALLOWED_ATTR: ['href'],
+  }) as string
+}
+
+function getYouTubeId(url: string): string | null {
+  try {
+    const u = new URL(url)
+    if (u.hostname === 'www.youtube.com' || u.hostname === 'youtube.com') {
+      if (u.pathname.startsWith('/shorts/')) return u.pathname.slice(8) || null
+      return u.searchParams.get('v')
+    }
+    if (u.hostname === 'youtu.be') {
+      return u.pathname.slice(1) || null
+    }
+  } catch {
+    // invalid URL
+  }
+  return null
+}
+
+function getFaviconUrl(url: string): string | null {
+  try {
+    return new URL(url).origin + '/favicon.ico'
+  } catch {
+    return null
+  }
+}
+
 export function FeedItemCard({ item, onTitleClick, actions }: FeedItemCardProps) {
   const isUnread = item.isRead === false
+  const youtubeId = getYouTubeId(item.url)
+  const faviconUrl = getFaviconUrl(item.url)
 
   return (
     <article
@@ -43,8 +76,23 @@ export function FeedItemCard({ item, onTitleClick, actions }: FeedItemCardProps)
       </div>
 
       <div className="flex items-center gap-2 text-xs text-muted-foreground">
-        {item.sourceTitle && <span className="font-medium">{item.sourceTitle}</span>}
-        {item.sourceTitle && <span>·</span>}
+        {item.sourceTitle && (
+          <>
+            {faviconUrl && (
+              <img
+                src={faviconUrl}
+                alt=""
+                aria-hidden="true"
+                className="h-3.5 w-3.5 rounded-sm object-contain"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none'
+                }}
+              />
+            )}
+            <span className="font-medium">{item.sourceTitle}</span>
+            <span>·</span>
+          </>
+        )}
         <span>
           {item.publishedAt
             ? new Date(item.publishedAt).toLocaleString(undefined, {
@@ -59,8 +107,35 @@ export function FeedItemCard({ item, onTitleClick, actions }: FeedItemCardProps)
       </div>
 
       {item.summary && (
-        <p className="line-clamp-2 text-xs text-muted-foreground">{stripHtml(item.summary)}</p>
+        <div
+          className="max-h-16 overflow-hidden text-xs text-muted-foreground [&_a]:underline [&_ul]:list-disc [&_ul]:pl-4 [&_ol]:list-decimal [&_ol]:pl-4"
+          dangerouslySetInnerHTML={{ __html: sanitizeSummary(item.summary) }}
+        />
       )}
+
+      {youtubeId ? (
+        <div className="aspect-video overflow-hidden rounded-md">
+          <iframe
+            src={`https://www.youtube-nocookie.com/embed/${youtubeId}`}
+            className="h-full w-full"
+            allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            title={item.title}
+            loading="lazy"
+          />
+        </div>
+      ) : item.imageUrl ? (
+        <img
+          src={item.imageUrl}
+          alt=""
+          aria-hidden="true"
+          className="max-h-48 w-full rounded-md object-cover"
+          loading="lazy"
+          onError={(e) => {
+            e.currentTarget.style.display = 'none'
+          }}
+        />
+      ) : null}
 
       {actions && <div className="flex items-center gap-1 pt-1">{actions}</div>}
     </article>

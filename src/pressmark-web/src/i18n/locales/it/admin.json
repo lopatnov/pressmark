@@ -39,10 +39,13 @@
     "tokenGenerated": "Token generato — copialo ora, non verrà mostrato di nuovo",
     "copy": "Copia",
     "copied": "Copiato!",
-    "revoke": "Revoca",
-    "statusActive": "Attivo",
-    "statusUsed": "Usato",
-    "statusRevoked": "Revocato",
-    "empty": "Nessun token di invito ancora"
+    "empty": "Nessun token di invito ancora",
+    "delete": "Elimina",
+    "expiresAt": "Scade il",
+    "expiryNever": "Senza scadenza",
+    "expiry1Day": "1 giorno",
+    "expiry7Days": "7 giorni",
+    "expiry30Days": "30 giorni",
+    "expiryNone": "Senza scadenza"
   }
 }

@@ -16,6 +16,7 @@
     "community": "コミュニティ",
     "login": "ログイン",
     "register": "新規登録",
-    "logout": "ログアウト"
+    "logout": "ログアウト",
+    "openMenu": "メニューを開く"
   }
 }

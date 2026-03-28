@@ -1,19 +1,31 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { authClient } from '@/api/clients'
 import { useAuthStore } from '@/store/authStore'
 import { Code, ConnectError } from '@connectrpc/connect'
 
 export function RegisterPage() {
-  const { t } = useTranslation('auth')
+  const { t } = useTranslation(['auth', 'common'])
   const navigate = useNavigate()
   const setAuth = useAuthStore((s) => s.setAuth)
-  const [showInvite, setShowInvite] = useState(false)
+  const registrationMode = useAuthStore((s) => s.registrationMode)
+  const [showInvite, setShowInvite] = useState(registrationMode === 'invite_only')
+  const [isFirstUser, setIsFirstUser] = useState(false)
+
+  useEffect(() => {
+    authClient
+      .getRegistrationStatus({})
+      .then((res) => setIsFirstUser(!res.hasAdmin))
+      .catch(() => {
+        // intentional — banner is informational, failure is non-critical
+      })
+  }, [])
 
   const schema = useMemo(
     () =>
@@ -71,6 +83,12 @@ export function RegisterPage() {
       <div className="w-full max-w-sm space-y-6 p-6">
         <h1 className="text-2xl font-semibold">{t('register.title')}</h1>
 
+        {isFirstUser && (
+          <p className="rounded-lg border border-border bg-muted/40 px-4 py-3 text-sm text-muted-foreground">
+            {t('firstUserAdmin')}
+          </p>
+        )}
+
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-1">
             <label className="text-sm font-medium">{t('register.email')}</label>
@@ -98,6 +116,9 @@ export function RegisterPage() {
 
           {showInvite && (
             <div className="space-y-1">
+              {registrationMode === 'invite_only' && (
+                <p className="text-sm text-muted-foreground">{t('inviteOnlyHint')}</p>
+              )}
               <label className="text-sm font-medium">{t('inviteToken')}</label>
               <input
                 {...register('inviteToken')}
@@ -124,6 +145,15 @@ export function RegisterPage() {
             {t('register.login')}
           </Link>
         </p>
+        <div className="text-center">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" />
+            {t('common:nav.community')}
+          </Link>
+        </div>
       </div>
     </div>
   )
