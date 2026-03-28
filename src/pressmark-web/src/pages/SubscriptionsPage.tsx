@@ -76,7 +76,7 @@ export function SubscriptionsPage() {
       setShowForm(false)
     } catch (err) {
       if (err instanceof ConnectError && err.code === Code.InvalidArgument) {
-        setError('rssUrl', { message: t('subscriptions:errors.fetchFailed') })
+        setError('rssUrl', { message: err.message || t('subscriptions:errors.fetchFailed') })
       } else {
         setError('root', { message: t('common:error') })
       }
