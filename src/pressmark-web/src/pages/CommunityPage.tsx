@@ -68,9 +68,8 @@ export function CommunityPage() {
           setItems(mapped)
         }
         setNextCursor(res.nextCursor)
-      } catch (err) {
-        if (err instanceof Error && err.name === 'AbortError') return
-        toast.error(t('common:error'))
+      } catch {
+        if (!signal?.aborted) toast.error(t('common:error'))
       } finally {
         setIsLoading(false)
       }
