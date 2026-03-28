@@ -25,31 +25,34 @@ export function BookmarksPage() {
   const [nextCursor, setNextCursor] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
-  const loadBookmarks = useCallback(async (cursor = '') => {
-    setIsLoading(true)
-    try {
-      const res = await feedClient.getBookmarks({ pageSize: 20, cursor })
-      const mapped = res.items.map((item) => ({
-        id: item.id,
-        title: item.title,
-        url: item.url,
-        summary: item.summary,
-        publishedAt: item.publishedAt,
-        likeCount: item.likeCount,
-        sourceTitle: item.sourceTitle,
-      }))
-      if (cursor) {
-        setItems((prev) => [...prev, ...mapped])
-      } else {
-        setItems(mapped)
+  const loadBookmarks = useCallback(
+    async (cursor = '') => {
+      setIsLoading(true)
+      try {
+        const res = await feedClient.getBookmarks({ pageSize: 20, cursor })
+        const mapped = res.items.map((item) => ({
+          id: item.id,
+          title: item.title,
+          url: item.url,
+          summary: item.summary,
+          publishedAt: item.publishedAt,
+          likeCount: item.likeCount,
+          sourceTitle: item.sourceTitle,
+        }))
+        if (cursor) {
+          setItems((prev) => [...prev, ...mapped])
+        } else {
+          setItems(mapped)
+        }
+        setNextCursor(res.nextCursor)
+      } catch {
+        toast.error(t('common:error'))
+      } finally {
+        setIsLoading(false)
       }
-      setNextCursor(res.nextCursor)
-    } catch {
-      toast.error(t('common:error'))
-    } finally {
-      setIsLoading(false)
-    }
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+    },
+    [t],
+  )
 
   const handleLoadMore = useCallback(() => {
     if (!isLoading) loadBookmarks(nextCursor)
@@ -64,8 +67,7 @@ export function BookmarksPage() {
 
   useEffect(() => {
     loadBookmarks()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [loadBookmarks])
 
   return (
     <div className="mx-auto max-w-2xl space-y-4 p-4">

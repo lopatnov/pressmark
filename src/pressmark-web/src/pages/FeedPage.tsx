@@ -43,39 +43,47 @@ export function FeedPage() {
     reset,
   } = useFeedStore()
 
-  const loadFeed = useCallback(async (cursor = '', signal?: AbortSignal) => {
-    setLoading(true)
-    try {
-      const res = await feedClient.getFeed(
-        { pageSize: 20, cursor, unreadOnly, subscriptionId: '' },
-        { signal },
-      )
-      if (signal?.aborted) return
-      const mapped = res.items.map((item) => ({
-        id: item.id,
-        subscriptionId: item.subscriptionId,
-        title: item.title,
-        url: item.url,
-        summary: item.summary,
-        publishedAt: item.publishedAt,
-        isRead: item.isRead,
-        likeCount: item.likeCount,
-        isLiked: item.isLiked,
-        isBookmarked: item.isBookmarked,
-        sourceTitle: item.sourceTitle,
-        imageUrl: item.imageUrl,
-      }))
-      if (cursor) {
-        appendItems(mapped, res.nextCursor)
-      } else {
-        setItems(mapped, res.nextCursor, res.totalUnread)
+  const loadFeed = useCallback(
+    async (cursor = '', signal?: AbortSignal) => {
+      setLoading(true)
+      try {
+        const res = await feedClient.getFeed(
+          {
+            pageSize: 20,
+            cursor,
+            unreadOnly: useFeedStore.getState().unreadOnly,
+            subscriptionId: '',
+          },
+          { signal },
+        )
+        if (signal?.aborted) return
+        const mapped = res.items.map((item) => ({
+          id: item.id,
+          subscriptionId: item.subscriptionId,
+          title: item.title,
+          url: item.url,
+          summary: item.summary,
+          publishedAt: item.publishedAt,
+          isRead: item.isRead,
+          likeCount: item.likeCount,
+          isLiked: item.isLiked,
+          isBookmarked: item.isBookmarked,
+          sourceTitle: item.sourceTitle,
+          imageUrl: item.imageUrl,
+        }))
+        if (cursor) {
+          appendItems(mapped, res.nextCursor)
+        } else {
+          setItems(mapped, res.nextCursor, res.totalUnread)
+        }
+      } catch {
+        if (!signal?.aborted) toast.error(t('common:error'))
+      } finally {
+        if (!signal?.aborted) setLoading(false)
       }
-    } catch {
-      if (!signal?.aborted) toast.error(t('common:error'))
-    } finally {
-      if (!signal?.aborted) setLoading(false)
-    }
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+    },
+    [setLoading, appendItems, setItems, t],
+  )
 
   const handleLoadMore = useCallback(() => {
     const cursor = useFeedStore.getState().nextCursor
@@ -90,8 +98,7 @@ export function FeedPage() {
     reset()
     loadFeed('', controller.signal)
     return () => controller.abort()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [unreadOnly])
+  }, [unreadOnly, loadFeed, reset])
 
   // Real-time streaming: prepend new items as they arrive from the server
   useEffect(() => {

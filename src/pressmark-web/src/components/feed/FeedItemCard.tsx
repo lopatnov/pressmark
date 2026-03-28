@@ -118,7 +118,7 @@ export function FeedItemCard({ item, onTitleClick, actions }: FeedItemCardProps)
           <iframe
             src={`https://www.youtube-nocookie.com/embed/${youtubeId}`}
             className="h-full w-full"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
             title={item.title}
             loading="lazy"
