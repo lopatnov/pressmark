@@ -39,10 +39,13 @@
     "tokenGenerated": "Token gegenereerd — kopieer het nu, het wordt niet opnieuw getoond",
     "copy": "Kopiëren",
     "copied": "Gekopieerd!",
-    "revoke": "Intrekken",
-    "statusActive": "Actief",
-    "statusUsed": "Gebruikt",
-    "statusRevoked": "Ingetrokken",
-    "empty": "Nog geen uitnodigingstokens"
+    "empty": "Nog geen uitnodigingstokens",
+    "delete": "Verwijderen",
+    "expiresAt": "Verloopt op",
+    "expiryNever": "Geen vervaldatum",
+    "expiry1Day": "1 dag",
+    "expiry7Days": "7 dagen",
+    "expiry30Days": "30 dagen",
+    "expiryNone": "Geen vervaldatum"
   }
 }

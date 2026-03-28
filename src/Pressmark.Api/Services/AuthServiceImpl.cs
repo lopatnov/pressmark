@@ -40,7 +40,7 @@ public class AuthServiceImpl(
                 .FirstOrDefaultAsync(t =>
                     t.Token == request.InviteToken &&
                     !t.IsUsed &&
-                    !t.IsRevoked, ct);
+                    (t.ExpiresAt == null || t.ExpiresAt > DateTime.UtcNow), ct);
 
             if (invite is null)
                 throw new RpcException(new Status(StatusCode.PermissionDenied,

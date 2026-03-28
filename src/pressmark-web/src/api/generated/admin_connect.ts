@@ -4,7 +4,7 @@
 // @ts-nocheck
 
 import { Empty, MethodKind } from "@bufbuild/protobuf";
-import { BanSubscriptionRequest, GenerateInviteRequest, HideFeedItemRequest, InviteList, InviteToken, RevokeInviteRequest, SiteSettings, UpdateSiteSettingsRequest, UserList } from "./admin_pb.js";
+import { BanSubscriptionRequest, DeleteInviteRequest, GenerateInviteRequest, HideFeedItemRequest, InviteList, InviteToken, SiteSettings, UpdateSiteSettingsRequest, UserList } from "./admin_pb.js";
 
 /**
  * @generated from service pressmark.admin.AdminService
@@ -67,11 +67,11 @@ export const AdminService = {
       kind: MethodKind.Unary,
     },
     /**
-     * @generated from rpc pressmark.admin.AdminService.RevokeInvite
+     * @generated from rpc pressmark.admin.AdminService.DeleteInvite
      */
-    revokeInvite: {
-      name: "RevokeInvite",
-      I: RevokeInviteRequest,
+    deleteInvite: {
+      name: "DeleteInvite",
+      I: DeleteInviteRequest,
       O: Empty,
       kind: MethodKind.Unary,
     },

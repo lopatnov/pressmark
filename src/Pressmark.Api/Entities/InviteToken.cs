@@ -25,9 +25,6 @@ public class InviteToken
     [Column("used_by_user_id")]
     public Guid? UsedByUserId { get; set; }
 
-    [Column("is_revoked")]
-    public bool IsRevoked { get; set; } = false;
-
-    [Column("revoked_at")]
-    public DateTime? RevokedAt { get; set; }
+    [Column("expires_at")]
+    public DateTime? ExpiresAt { get; set; }
 }

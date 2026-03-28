@@ -39,10 +39,13 @@
     "tokenGenerated": "Token generat — copiați-l acum, nu va mai fi afișat",
     "copy": "Copiază",
     "copied": "Copiat!",
-    "revoke": "Revocă",
-    "statusActive": "Activ",
-    "statusUsed": "Folosit",
-    "statusRevoked": "Revocat",
-    "empty": "Nu există tokeni de invitație"
+    "empty": "Nu există tokeni de invitație",
+    "delete": "Șterge",
+    "expiresAt": "Expiră",
+    "expiryNever": "Fără expirare",
+    "expiry1Day": "1 zi",
+    "expiry7Days": "7 zile",
+    "expiry30Days": "30 zile",
+    "expiryNone": "Fără expirare"
   }
 }

@@ -39,10 +39,13 @@
     "tokenGenerated": "토큰이 생성되었습니다 — 지금 복사하세요, 다시 표시되지 않습니다",
     "copy": "복사",
     "copied": "복사됨!",
-    "revoke": "취소",
-    "statusActive": "활성",
-    "statusUsed": "사용됨",
-    "statusRevoked": "취소됨",
-    "empty": "아직 초대 토큰이 없습니다"
+    "empty": "아직 초대 토큰이 없습니다",
+    "delete": "삭제",
+    "expiresAt": "만료일",
+    "expiryNever": "만료 없음",
+    "expiry1Day": "1일",
+    "expiry7Days": "7일",
+    "expiry30Days": "30일",
+    "expiryNone": "만료 없음"
   }
 }

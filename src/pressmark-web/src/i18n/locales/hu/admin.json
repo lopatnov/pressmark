@@ -39,10 +39,13 @@
     "tokenGenerated": "Token létrehozva — másolja most, nem jelenik meg újra",
     "copy": "Másolás",
     "copied": "Másolva!",
-    "revoke": "Visszavonás",
-    "statusActive": "Aktív",
-    "statusUsed": "Felhasznált",
-    "statusRevoked": "Visszavont",
-    "empty": "Még nincsenek meghívó tokenek"
+    "empty": "Még nincsenek meghívó tokenek",
+    "delete": "Törlés",
+    "expiresAt": "Lejár",
+    "expiryNever": "Nem jár le",
+    "expiry1Day": "1 nap",
+    "expiry7Days": "7 nap",
+    "expiry30Days": "30 nap",
+    "expiryNone": "Nem jár le"
   }
 }

@@ -320,31 +320,11 @@ function UsersSection() {
 
 // ── Invites section ─────────────────────────────────────────────────────────
 
-function InviteStatus({ invite }: { invite: InviteItem }) {
-  const { t } = useTranslation('admin')
-  if (invite.isRevoked)
-    return (
-      <span className="rounded px-1.5 py-0.5 text-xs bg-muted text-muted-foreground">
-        {t('invites.statusRevoked')}
-      </span>
-    )
-  if (invite.isUsed)
-    return (
-      <span className="rounded px-1.5 py-0.5 text-xs bg-muted text-muted-foreground">
-        {t('invites.statusUsed')}
-      </span>
-    )
-  return (
-    <span className="rounded px-1.5 py-0.5 text-xs bg-primary/10 text-primary">
-      {t('invites.statusActive')}
-    </span>
-  )
-}
-
 function InvitesSection() {
   const { t } = useTranslation(['admin', 'common'])
   const { invites, setInvites, addInvite, removeInvite } = useAdminStore()
   const [note, setNote] = useState('')
+  const [expiresDays, setExpiresDays] = useState(7)
   const [newToken, setNewToken] = useState<InviteItem | null>(null)
   const [copiedId, setCopiedId] = useState<string | null>(null)
 
@@ -356,9 +336,7 @@ function InvitesSection() {
           token: '',
           note: i.note,
           createdAt: i.createdAt,
-          isUsed: i.isUsed,
-          usedAt: i.usedAt,
-          isRevoked: i.isRevoked,
+          expiresAt: i.expiresAt,
         })),
       ),
     )
@@ -366,15 +344,13 @@ function InvitesSection() {
   }, [])
 
   const handleGenerate = async () => {
-    const res = await adminClient.generateInvite({ note })
+    const res = await adminClient.generateInvite({ note, expiresDays })
     const item: InviteItem = {
       id: res.id,
       token: res.token,
       note: res.note,
       createdAt: res.createdAt,
-      isUsed: false,
-      usedAt: '',
-      isRevoked: false,
+      expiresAt: res.expiresAt,
     }
     addInvite(item)
     setNewToken(item)
@@ -387,8 +363,8 @@ function InvitesSection() {
     setTimeout(() => setCopiedId(null), 2000)
   }
 
-  const handleRevoke = async (id: string) => {
-    await adminClient.revokeInvite({ id })
+  const handleDelete = async (id: string) => {
+    await adminClient.deleteInvite({ id })
     removeInvite(id)
     if (newToken?.id === id) setNewToken(null)
   }
@@ -405,6 +381,16 @@ function InvitesSection() {
             placeholder={t('admin:invites.notePlaceholder')}
             className="flex-1 rounded-md border border-border bg-background px-3 py-2 text-sm"
           />
+          <select
+            value={expiresDays}
+            onChange={(e) => setExpiresDays(Number(e.target.value))}
+            className="rounded-md border border-border bg-background px-2 py-2 text-sm"
+          >
+            <option value={1}>{t('admin:invites.expiry1Day')}</option>
+            <option value={7}>{t('admin:invites.expiry7Days')}</option>
+            <option value={30}>{t('admin:invites.expiry30Days')}</option>
+            <option value={0}>{t('admin:invites.expiryNone')}</option>
+          </select>
           <Button size="sm" onClick={handleGenerate}>
             {t('admin:invites.generate')}
           </Button>
@@ -441,17 +427,15 @@ function InvitesSection() {
                 <tr key={inv.id} className="border-b border-border last:border-0">
                   <td className="px-4 py-2 text-xs text-muted-foreground">{inv.note || '—'}</td>
                   <td className="px-4 py-2 text-xs text-muted-foreground">
-                    {inv.createdAt ? new Date(inv.createdAt).toLocaleDateString() : '—'}
-                  </td>
-                  <td className="px-4 py-2">
-                    <InviteStatus invite={inv} />
+                    {t('admin:invites.expiresAt')}:{' '}
+                    {inv.expiresAt
+                      ? new Date(inv.expiresAt).toLocaleDateString()
+                      : t('admin:invites.expiryNever')}
                   </td>
                   <td className="px-4 py-2 text-right">
-                    {!inv.isUsed && !inv.isRevoked && (
-                      <Button size="sm" variant="ghost" onClick={() => handleRevoke(inv.id)}>
-                        {t('admin:invites.revoke')}
-                      </Button>
-                    )}
+                    <Button size="sm" variant="ghost" onClick={() => handleDelete(inv.id)}>
+                      {t('admin:invites.delete')}
+                    </Button>
                   </td>
                 </tr>
               ))}

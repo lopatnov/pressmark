@@ -14,7 +14,8 @@ export function RegisterPage() {
   const { t } = useTranslation(['auth', 'common'])
   const navigate = useNavigate()
   const setAuth = useAuthStore((s) => s.setAuth)
-  const [showInvite, setShowInvite] = useState(false)
+  const registrationMode = useAuthStore((s) => s.registrationMode)
+  const [showInvite, setShowInvite] = useState(registrationMode === 'invite_only')
   const [isFirstUser, setIsFirstUser] = useState(false)
 
   useEffect(() => {
@@ -115,6 +116,9 @@ export function RegisterPage() {
 
           {showInvite && (
             <div className="space-y-1">
+              {registrationMode === 'invite_only' && (
+                <p className="text-sm text-muted-foreground">{t('inviteOnlyHint')}</p>
+              )}
               <label className="text-sm font-medium">{t('inviteToken')}</label>
               <input
                 {...register('inviteToken')}

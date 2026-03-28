@@ -39,10 +39,13 @@
     "tokenGenerated": "Token oluşturuldu — şimdi kopyalayın, bir daha gösterilmeyecek",
     "copy": "Kopyala",
     "copied": "Kopyalandı!",
-    "revoke": "İptal et",
-    "statusActive": "Aktif",
-    "statusUsed": "Kullanılmış",
-    "statusRevoked": "İptal edilmiş",
-    "empty": "Henüz davet tokeni yok"
+    "empty": "Henüz davet tokeni yok",
+    "delete": "Sil",
+    "expiresAt": "Son kullanma",
+    "expiryNever": "Süresiz",
+    "expiry1Day": "1 gün",
+    "expiry7Days": "7 gün",
+    "expiry30Days": "30 gün",
+    "expiryNone": "Süresiz"
   }
 }
