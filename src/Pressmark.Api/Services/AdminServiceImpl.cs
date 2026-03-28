@@ -228,6 +228,55 @@ public class AdminServiceImpl(AppDbContext db, ISmtpPasswordProtector passwordPr
         return result;
     }
 
+    public override async Task<PendingReportCount> GetPendingReportCount(
+        Empty request, ServerCallContext context)
+    {
+        var ct = context.CancellationToken;
+        var count = await db.Reports.CountAsync(r => !r.IsResolved, ct);
+        return new PendingReportCount { Count = count };
+    }
+
+    public override async Task<ReportList> ListReports(
+        Empty request, ServerCallContext context)
+    {
+        var ct = context.CancellationToken;
+        var reports = await db.Reports
+            .Where(r => !r.IsResolved)
+            .OrderByDescending(r => r.CreatedAt)
+            .Take(200)
+            .AsNoTracking()
+            .ToListAsync(ct);
+
+        var result = new ReportList();
+        result.Items.AddRange(reports.Select(r => new Protos.Report
+        {
+            Id = r.Id.ToString(),
+            Type = r.Type,
+            TargetId = r.TargetId.ToString(),
+            Reason = r.Reason ?? "",
+            CreatedAt = r.CreatedAt.ToString("O"),
+            IsResolved = r.IsResolved,
+        }));
+        return result;
+    }
+
+    public override async Task<Empty> ResolveReport(
+        ResolveReportRequest request, ServerCallContext context)
+    {
+        var ct = context.CancellationToken;
+
+        if (!Guid.TryParse(request.Id, out var id))
+            throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid id"));
+
+        var report = await db.Reports.FindAsync([id], ct)
+            ?? throw new RpcException(new Status(StatusCode.NotFound, "Report not found"));
+
+        report.IsResolved = true;
+        await db.SaveChangesAsync(ct);
+
+        return new Empty();
+    }
+
     private async Task UpsertSetting(string key, string value, CancellationToken ct)
     {
         var setting = await db.SiteSettings.FindAsync([key], ct);

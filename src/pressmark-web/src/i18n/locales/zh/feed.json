@@ -32,5 +32,18 @@
     "loadError": "加载评论失败",
     "submitError": "发布评论失败",
     "removeError": "删除评论失败"
+  },
+  "report": "举报",
+  "reportComment": "举报评论",
+  "reportSource": "举报来源",
+  "reportReason": "原因（可选）",
+  "reportSend": "发送举报",
+  "reportCancel": "取消",
+  "reportSent": "举报已发送",
+  "reportAlreadySent": "已举报",
+  "reportSubmitError": "发送举报失败",
+  "article": {
+    "notFound": "文章未找到",
+    "backToCommunity": "返回社区"
   }
 }

@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { MessageSquare, Trash2 } from 'lucide-react'
+import { MessageSquare, Trash2, Flag, Check } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { adminClient, feedClient } from '@/api/clients'
@@ -28,6 +28,9 @@ export function CommentSection({ feedItemId }: CommentSectionProps) {
   const [comments, setComments] = useState<CommentItem[]>([])
   const [body, setBody] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [reportedComments, setReportedComments] = useState<Set<string>>(new Set())
+  const [reportingComment, setReportingComment] = useState<string | null>(null)
+  const [reportReason, setReportReason] = useState('')
 
   const load = useCallback(async () => {
     try {
@@ -88,6 +91,18 @@ export function CommentSection({ feedItemId }: CommentSectionProps) {
     }
   }
 
+  const handleReport = async (commentId: string) => {
+    try {
+      await feedClient.reportContent({ type: 'comment', targetId: commentId, reason: reportReason })
+      setReportedComments((prev) => new Set(prev).add(commentId))
+      setReportingComment(null)
+      setReportReason('')
+      toast.success(t('reportSent'))
+    } catch {
+      toast.error(t('reportSubmitError'))
+    }
+  }
+
   const count = comments.length
 
   return (
@@ -143,7 +158,50 @@ export function CommentSection({ feedItemId }: CommentSectionProps) {
                           <Trash2 className="h-3.5 w-3.5" />
                         </button>
                       )}
+                      {isAuthenticated &&
+                        !isAdmin &&
+                        (reportedComments.has(c.id) ? (
+                          <Check className="h-3.5 w-3.5 shrink-0 text-muted-foreground/60" />
+                        ) : (
+                          <button
+                            onClick={() =>
+                              setReportingComment(reportingComment === c.id ? null : c.id)
+                            }
+                            title={t('reportComment')}
+                            aria-label={t('reportComment')}
+                            className="cursor-pointer shrink-0 text-muted-foreground/60 hover:text-muted-foreground transition-colors"
+                          >
+                            <Flag className="h-3.5 w-3.5" />
+                          </button>
+                        ))}
                     </div>
+                    {reportingComment === c.id && (
+                      <div className="flex flex-col gap-1 pt-1">
+                        <textarea
+                          value={reportReason}
+                          onChange={(e) => setReportReason(e.target.value)}
+                          placeholder={t('reportReason')}
+                          maxLength={500}
+                          rows={2}
+                          className="w-full rounded-md border border-border bg-background px-2 py-1.5 text-xs resize-none"
+                        />
+                        <div className="flex gap-2">
+                          <Button size="sm" onClick={() => handleReport(c.id)}>
+                            {t('reportSend')}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => {
+                              setReportingComment(null)
+                              setReportReason('')
+                            }}
+                          >
+                            {t('reportCancel')}
+                          </Button>
+                        </div>
+                      </div>
+                    )}
                   </>
                 )}
               </div>

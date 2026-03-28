@@ -32,5 +32,18 @@
     "loadError": "Reacties konden niet worden geladen",
     "submitError": "Reactie kon niet worden geplaatst",
     "removeError": "Reactie kon niet worden verwijderd"
+  },
+  "report": "Melden",
+  "reportComment": "Reactie melden",
+  "reportSource": "Bron melden",
+  "reportReason": "Reden (optioneel)",
+  "reportSend": "Melding versturen",
+  "reportCancel": "Annuleren",
+  "reportSent": "Melding verstuurd",
+  "reportAlreadySent": "Al gemeld",
+  "reportSubmitError": "Melding versturen mislukt",
+  "article": {
+    "notFound": "Artikel niet gevonden",
+    "backToCommunity": "Terug naar gemeenschap"
   }
 }

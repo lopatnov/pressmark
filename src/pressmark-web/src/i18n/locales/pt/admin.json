@@ -42,6 +42,17 @@
     "banComments": "Banir",
     "unbanComments": "Desbanir"
   },
+  "reports": {
+    "title": "Denúncias",
+    "empty": "Nenhuma denúncia pendente",
+    "type": "Tipo",
+    "reason": "Motivo",
+    "resolve": "Resolver",
+    "comment": "Comentário",
+    "subscription": "Fonte",
+    "loadError": "Falha ao carregar denúncias",
+    "resolveError": "Falha ao resolver denúncia"
+  },
   "invites": {
     "title": "Tokens de convite",
     "generate": "Gerar convite",

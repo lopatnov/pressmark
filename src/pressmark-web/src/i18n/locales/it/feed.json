@@ -32,5 +32,18 @@
     "loadError": "Impossibile caricare i commenti",
     "submitError": "Impossibile inviare il commento",
     "removeError": "Impossibile rimuovere il commento"
+  },
+  "report": "Segnala",
+  "reportComment": "Segnala commento",
+  "reportSource": "Segnala fonte",
+  "reportReason": "Motivo (facoltativo)",
+  "reportSend": "Invia segnalazione",
+  "reportCancel": "Annulla",
+  "reportSent": "Segnalazione inviata",
+  "reportAlreadySent": "Già segnalato",
+  "reportSubmitError": "Impossibile inviare la segnalazione",
+  "article": {
+    "notFound": "Articolo non trovato",
+    "backToCommunity": "Torna alla community"
   }
 }

@@ -33,5 +33,18 @@
     "loadError": "No se pudieron cargar los comentarios",
     "submitError": "No se pudo publicar el comentario",
     "removeError": "No se pudo eliminar el comentario"
+  },
+  "report": "Reportar",
+  "reportComment": "Reportar comentario",
+  "reportSource": "Reportar fuente",
+  "reportReason": "Razón (opcional)",
+  "reportSend": "Enviar reporte",
+  "reportCancel": "Cancelar",
+  "reportSent": "Reporte enviado",
+  "reportAlreadySent": "Ya reportado",
+  "reportSubmitError": "Error al enviar el reporte",
+  "article": {
+    "notFound": "Artículo no encontrado",
+    "backToCommunity": "Volver a la comunidad"
   }
 }

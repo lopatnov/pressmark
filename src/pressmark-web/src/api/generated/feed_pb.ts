@@ -805,3 +805,93 @@ export class CommentList extends Message<CommentList> {
   }
 }
 
+/**
+ * @generated from message pressmark.feed.GetFeedItemRequest
+ */
+export class GetFeedItemRequest extends Message<GetFeedItemRequest> {
+  /**
+   * @generated from field: string feed_item_id = 1;
+   */
+  feedItemId = "";
+
+  constructor(data?: PartialMessage<GetFeedItemRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "pressmark.feed.GetFeedItemRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "feed_item_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetFeedItemRequest {
+    return new GetFeedItemRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetFeedItemRequest {
+    return new GetFeedItemRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetFeedItemRequest {
+    return new GetFeedItemRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetFeedItemRequest | PlainMessage<GetFeedItemRequest> | undefined, b: GetFeedItemRequest | PlainMessage<GetFeedItemRequest> | undefined): boolean {
+    return proto3.util.equals(GetFeedItemRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message pressmark.feed.ReportContentRequest
+ */
+export class ReportContentRequest extends Message<ReportContentRequest> {
+  /**
+   * "comment" | "subscription"
+   *
+   * @generated from field: string type = 1;
+   */
+  type = "";
+
+  /**
+   * @generated from field: string target_id = 2;
+   */
+  targetId = "";
+
+  /**
+   * optional
+   *
+   * @generated from field: string reason = 3;
+   */
+  reason = "";
+
+  constructor(data?: PartialMessage<ReportContentRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "pressmark.feed.ReportContentRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "type", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "target_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "reason", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ReportContentRequest {
+    return new ReportContentRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ReportContentRequest {
+    return new ReportContentRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ReportContentRequest {
+    return new ReportContentRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ReportContentRequest | PlainMessage<ReportContentRequest> | undefined, b: ReportContentRequest | PlainMessage<ReportContentRequest> | undefined): boolean {
+    return proto3.util.equals(ReportContentRequest, a, b);
+  }
+}
+

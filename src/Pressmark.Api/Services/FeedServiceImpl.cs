@@ -508,6 +508,92 @@ public class FeedServiceImpl(AppDbContext db, FeedUpdateBroadcaster broadcaster)
         };
     }
 
+    [AllowAnonymous]
+    public override async Task<Protos.FeedItem> GetFeedItem(
+        GetFeedItemRequest request, ServerCallContext context)
+    {
+        var ct = context.CancellationToken;
+
+        if (!Guid.TryParse(request.FeedItemId, out var feedItemId))
+            throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid feed_item_id"));
+
+        var item = await db.FeedItems
+            .AsNoTracking()
+            .Include(f => f.Subscription)
+            .Where(f => f.Id == feedItemId
+                     && !f.IsCommunityHidden
+                     && !f.Subscription.IsCommunityBanned)
+            .FirstOrDefaultAsync(ct)
+            ?? throw new RpcException(new Status(StatusCode.NotFound, "Feed item not found"));
+
+        var ids = new List<Guid> { feedItemId };
+
+        var likeCount = await db.Likes.CountAsync(l => l.FeedItemId == feedItemId, ct);
+
+        Guid? userId = null;
+        var claim = context.GetHttpContext().User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (claim != null && Guid.TryParse(claim, out var parsedId)) userId = parsedId;
+
+        var isLiked = userId.HasValue &&
+            await db.Likes.AnyAsync(l => l.UserId == userId && l.FeedItemId == feedItemId, ct);
+        var isBookmarked = userId.HasValue &&
+            await db.Bookmarks.AnyAsync(b => b.UserId == userId && b.FeedItemId == feedItemId, ct);
+        var isRead = userId.HasValue &&
+            await db.ReadItems.AnyAsync(r => r.UserId == userId && r.FeedItemId == feedItemId, ct);
+
+        var likeCounts = new Dictionary<Guid, int> { [feedItemId] = likeCount };
+        var likedIds = isLiked ? new HashSet<Guid> { feedItemId } : new HashSet<Guid>();
+        var bookmarkIds = isBookmarked ? new HashSet<Guid> { feedItemId } : new HashSet<Guid>();
+        var readIds = isRead ? new HashSet<Guid> { feedItemId } : new HashSet<Guid>();
+
+        return ToProto(item, readIds, likedIds, bookmarkIds, likeCounts);
+    }
+
+    public override async Task<Empty> ReportContent(
+        ReportContentRequest request, ServerCallContext context)
+    {
+        var ct = context.CancellationToken;
+        var userId = GetUserId(context);
+
+        if (request.Type != "comment" && request.Type != "subscription")
+            throw new RpcException(new Status(StatusCode.InvalidArgument,
+                "type must be 'comment' or 'subscription'"));
+
+        if (!Guid.TryParse(request.TargetId, out var targetId))
+            throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid target_id"));
+
+        // Verify target exists
+        if (request.Type == "comment")
+        {
+            var exists = await db.Comments.AnyAsync(c => c.Id == targetId && !c.RemovedByAdmin, ct);
+            if (!exists)
+                throw new RpcException(new Status(StatusCode.NotFound, "Comment not found"));
+        }
+        else
+        {
+            var exists = await db.Subscriptions.AnyAsync(s => s.Id == targetId, ct);
+            if (!exists)
+                throw new RpcException(new Status(StatusCode.NotFound, "Subscription not found"));
+        }
+
+        // Idempotent: no-op if already reported
+        var alreadyReported = await db.Reports.AnyAsync(
+            r => r.ReporterUserId == userId && r.TargetId == targetId, ct);
+        if (alreadyReported)
+            return new Empty();
+
+        db.Reports.Add(new Entities.Report
+        {
+            ReporterUserId = userId,
+            Type = request.Type,
+            TargetId = targetId,
+            Reason = string.IsNullOrWhiteSpace(request.Reason) ? null : request.Reason.Trim(),
+        });
+        await db.SaveChangesAsync(ct);
+
+        return new Empty();
+    }
+
     /// <summary>
     /// Enriches a page of feed items with per-user read/like/bookmark state and assembles a FeedPage.
     /// </summary>

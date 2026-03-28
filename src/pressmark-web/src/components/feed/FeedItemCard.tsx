@@ -1,5 +1,6 @@
 import DOMPurify from 'dompurify'
 import { ExternalLink } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 export interface FeedItemData {
   id: string
@@ -19,6 +20,7 @@ interface FeedItemCardProps {
   onTitleClick?: () => void
   actions?: React.ReactNode
   footer?: React.ReactNode
+  articleId?: string
 }
 
 function sanitizeSummary(html: string): string {
@@ -52,7 +54,13 @@ function getFaviconUrl(url: string): string | null {
   }
 }
 
-export function FeedItemCard({ item, onTitleClick, actions, footer }: FeedItemCardProps) {
+export function FeedItemCard({
+  item,
+  onTitleClick,
+  actions,
+  footer,
+  articleId,
+}: FeedItemCardProps) {
   const isUnread = item.isRead === false
   const youtubeId = getYouTubeId(item.url)
   const faviconUrl = getFaviconUrl(item.url)
@@ -75,7 +83,18 @@ export function FeedItemCard({ item, onTitleClick, actions, footer }: FeedItemCa
         >
           {item.title}
         </a>
-        <ExternalLink className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+        {articleId ? (
+          <Link
+            to={`/article/${articleId}`}
+            title="Open article page"
+            aria-label="Open article page"
+            className="shrink-0 text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <ExternalLink className="mt-0.5 h-3.5 w-3.5" />
+          </Link>
+        ) : (
+          <ExternalLink className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+        )}
       </div>
 
       <div className="flex items-center gap-2 text-xs text-muted-foreground">

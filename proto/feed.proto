@@ -29,6 +29,12 @@ service FeedService {
   // Comments
   rpc AddComment   (AddCommentRequest)   returns (Comment);
   rpc ListComments (ListCommentsRequest) returns (CommentList); // AllowAnonymous
+
+  // Article page (anonymous)
+  rpc GetFeedItem (GetFeedItemRequest) returns (FeedItem); // AllowAnonymous
+
+  // Reporting
+  rpc ReportContent (ReportContentRequest) returns (google.protobuf.Empty); // Authenticated
 }
 
 message GetFeedRequest {
@@ -122,4 +128,14 @@ message Comment {
 
 message CommentList {
   repeated Comment items = 1;
+}
+
+message GetFeedItemRequest {
+  string feed_item_id = 1;
+}
+
+message ReportContentRequest {
+  string type      = 1; // "comment" | "subscription"
+  string target_id = 2;
+  string reason    = 3; // optional
 }

@@ -33,5 +33,18 @@
     "loadError": "Impossible de charger les commentaires",
     "submitError": "Impossible d'envoyer le commentaire",
     "removeError": "Impossible de supprimer le commentaire"
+  },
+  "report": "Signaler",
+  "reportComment": "Signaler un commentaire",
+  "reportSource": "Signaler une source",
+  "reportReason": "Raison (facultatif)",
+  "reportSend": "Envoyer le signalement",
+  "reportCancel": "Annuler",
+  "reportSent": "Signalement envoyé",
+  "reportAlreadySent": "Déjà signalé",
+  "reportSubmitError": "Impossible d’envoyer le signalement",
+  "article": {
+    "notFound": "Article introuvable",
+    "backToCommunity": "Retour à la communauté"
   }
 }

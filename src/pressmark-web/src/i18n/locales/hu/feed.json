@@ -32,5 +32,18 @@
     "loadError": "Nem sikerült betölteni a hozzászólásokat",
     "submitError": "Nem sikerült elküldeni a hozzászólást",
     "removeError": "Nem sikerült eltávolítani a hozzászólást"
+  },
+  "report": "Bejelentés",
+  "reportComment": "Megjegyzés bejelentése",
+  "reportSource": "Forrás bejelentése",
+  "reportReason": "Ok (nem kötelező)",
+  "reportSend": "Bejelentés küldése",
+  "reportCancel": "Mégse",
+  "reportSent": "Bejelentés elküldve",
+  "reportAlreadySent": "Már bejelentve",
+  "reportSubmitError": "A bejelentés küldése sikertelen",
+  "article": {
+    "notFound": "A cikk nem található",
+    "backToCommunity": "Vissza a közösségbe"
   }
 }

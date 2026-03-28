@@ -686,3 +686,181 @@ export class BanUserFromCommentingRequest extends Message<BanUserFromCommentingR
   }
 }
 
+/**
+ * @generated from message pressmark.admin.PendingReportCount
+ */
+export class PendingReportCount extends Message<PendingReportCount> {
+  /**
+   * @generated from field: int32 count = 1;
+   */
+  count = 0;
+
+  constructor(data?: PartialMessage<PendingReportCount>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "pressmark.admin.PendingReportCount";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "count", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): PendingReportCount {
+    return new PendingReportCount().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): PendingReportCount {
+    return new PendingReportCount().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): PendingReportCount {
+    return new PendingReportCount().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: PendingReportCount | PlainMessage<PendingReportCount> | undefined, b: PendingReportCount | PlainMessage<PendingReportCount> | undefined): boolean {
+    return proto3.util.equals(PendingReportCount, a, b);
+  }
+}
+
+/**
+ * @generated from message pressmark.admin.Report
+ */
+export class AdminReport extends Message<AdminReport> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  /**
+   * @generated from field: string type = 2;
+   */
+  type = "";
+
+  /**
+   * @generated from field: string target_id = 3;
+   */
+  targetId = "";
+
+  /**
+   * @generated from field: string reason = 4;
+   */
+  reason = "";
+
+  /**
+   * @generated from field: string created_at = 5;
+   */
+  createdAt = "";
+
+  /**
+   * @generated from field: bool is_resolved = 6;
+   */
+  isResolved = false;
+
+  constructor(data?: PartialMessage<AdminReport>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "pressmark.admin.Report";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "type", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "target_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "reason", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "created_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 6, name: "is_resolved", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AdminReport {
+    return new AdminReport().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AdminReport {
+    return new AdminReport().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AdminReport {
+    return new AdminReport().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AdminReport | PlainMessage<AdminReport> | undefined, b: AdminReport | PlainMessage<AdminReport> | undefined): boolean {
+    return proto3.util.equals(AdminReport, a, b);
+  }
+}
+
+/**
+ * @generated from message pressmark.admin.ReportList
+ */
+export class ReportList extends Message<ReportList> {
+  /**
+   * @generated from field: repeated pressmark.admin.Report items = 1;
+   */
+  items: AdminReport[] = [];
+
+  constructor(data?: PartialMessage<ReportList>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "pressmark.admin.ReportList";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "items", kind: "message", T: AdminReport, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ReportList {
+    return new ReportList().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ReportList {
+    return new ReportList().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ReportList {
+    return new ReportList().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ReportList | PlainMessage<ReportList> | undefined, b: ReportList | PlainMessage<ReportList> | undefined): boolean {
+    return proto3.util.equals(ReportList, a, b);
+  }
+}
+
+/**
+ * @generated from message pressmark.admin.ResolveReportRequest
+ */
+export class ResolveReportRequest extends Message<ResolveReportRequest> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  constructor(data?: PartialMessage<ResolveReportRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "pressmark.admin.ResolveReportRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ResolveReportRequest {
+    return new ResolveReportRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ResolveReportRequest {
+    return new ResolveReportRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ResolveReportRequest {
+    return new ResolveReportRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ResolveReportRequest | PlainMessage<ResolveReportRequest> | undefined, b: ResolveReportRequest | PlainMessage<ResolveReportRequest> | undefined): boolean {
+    return proto3.util.equals(ResolveReportRequest, a, b);
+  }
+}
+

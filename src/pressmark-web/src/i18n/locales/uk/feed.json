@@ -32,5 +32,18 @@
     "loadError": "Не вдалося завантажити коментарі",
     "submitError": "Не вдалося надіслати коментар",
     "removeError": "Не вдалося видалити коментар"
+  },
+  "report": "Поскарга",
+  "reportComment": "Поскарга на коментар",
+  "reportSource": "Поскарга на джерело",
+  "reportReason": "Причина (необов'язково)",
+  "reportSend": "Надіслати скаргу",
+  "reportCancel": "Скасувати",
+  "reportSent": "Скаргу надіслано",
+  "reportAlreadySent": "Вже поскаржено",
+  "reportSubmitError": "Не вдалося надіслати скаргу",
+  "article": {
+    "notFound": "Статтю не знайдено",
+    "backToCommunity": "Назад до спільноти"
   }
 }

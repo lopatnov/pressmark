@@ -42,6 +42,17 @@
     "banComments": "Sperren",
     "unbanComments": "Entsperren"
   },
+  "reports": {
+    "title": "Meldungen",
+    "empty": "Keine ausstehenden Meldungen",
+    "type": "Typ",
+    "reason": "Grund",
+    "resolve": "Erledigen",
+    "comment": "Kommentar",
+    "subscription": "Quelle",
+    "loadError": "Meldungen konnten nicht geladen werden",
+    "resolveError": "Meldung konnte nicht erledigt werden"
+  },
   "invites": {
     "title": "Einladungs-Token",
     "generate": "Einladung generieren",

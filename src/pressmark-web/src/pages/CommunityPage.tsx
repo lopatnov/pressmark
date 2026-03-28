@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { Heart, EyeOff, Ban, Rss, Check } from 'lucide-react'
+import { Heart, EyeOff, Ban, Rss, Check, Flag } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -40,6 +40,7 @@ export function CommunityPage() {
   const [subscribedUrls, setSubscribedUrls] = useState<Set<string>>(
     () => new Set(subscriptions.map((s) => s.rssUrl)),
   )
+  const [reportedSubs, setReportedSubs] = useState<Set<string>>(new Set())
 
   const loadFeed = useCallback(
     async (cursor = '', signal?: AbortSignal) => {
@@ -123,6 +124,16 @@ export function CommunityPage() {
     }
   }
 
+  const handleReportSource = async (subscriptionId: string) => {
+    try {
+      await feedClient.reportContent({ type: 'subscription', targetId: subscriptionId, reason: '' })
+      setReportedSubs((prev) => new Set(prev).add(subscriptionId))
+      toast.success(t('feed:reportSent'))
+    } catch {
+      toast.error(t('feed:reportSubmitError'))
+    }
+  }
+
   const handleBanSubscription = async (subscriptionId: string) => {
     try {
       await adminClient.banSubscription({ subscriptionId, banned: true })
@@ -188,6 +199,7 @@ export function CommunityPage() {
               <FeedItemCard
                 key={item.id}
                 item={item}
+                articleId={item.id}
                 actions={
                   <div className="flex items-center gap-1 flex-wrap">
                     {isAuthenticated ? (
@@ -223,6 +235,22 @@ export function CommunityPage() {
                         <span>{t('feed:subscribed')}</span>
                       </span>
                     )}
+                    {isAuthenticated &&
+                      !isAdmin &&
+                      (reportedSubs.has(item.subscriptionId) ? (
+                        <span className="flex items-center gap-1 px-2 py-1 text-xs text-muted-foreground">
+                          <Flag className="h-3.5 w-3.5" />
+                        </span>
+                      ) : (
+                        <button
+                          onClick={() => handleReportSource(item.subscriptionId)}
+                          title={t('feed:reportSource')}
+                          aria-label={t('feed:reportSource')}
+                          className="flex cursor-pointer items-center gap-1 rounded px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                        >
+                          <Flag className="h-3.5 w-3.5" />
+                        </button>
+                      ))}
                     {isAdmin && (
                       <>
                         <button

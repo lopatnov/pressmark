@@ -42,6 +42,17 @@
     "banComments": "Bannir",
     "unbanComments": "Débannir"
   },
+  "reports": {
+    "title": "Signalements",
+    "empty": "Aucun signalement en attente",
+    "type": "Type",
+    "reason": "Raison",
+    "resolve": "Résoudre",
+    "comment": "Commentaire",
+    "subscription": "Source",
+    "loadError": "Impossible de charger les signalements",
+    "resolveError": "Impossible de résoudre le signalement"
+  },
   "invites": {
     "title": "Tokens d'invitation",
     "generate": "Générer une invitation",

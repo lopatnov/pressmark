@@ -42,6 +42,17 @@
     "banComments": "Yasakla",
     "unbanComments": "İzin ver"
   },
+  "reports": {
+    "title": "Raporlar",
+    "empty": "Bekleyen rapor yok",
+    "type": "Tür",
+    "reason": "Sebep",
+    "resolve": "Çöz",
+    "comment": "Yorum",
+    "subscription": "Kaynak",
+    "loadError": "Raporlar yüklenemedi",
+    "resolveError": "Rapor çözümlenemedi"
+  },
   "invites": {
     "title": "Davet tokenleri",
     "generate": "Davet oluştur",

@@ -32,5 +32,18 @@
     "loadError": "댓글을 불러오지 못했습니다",
     "submitError": "댓글을 게시하지 못했습니다",
     "removeError": "댓글을 삭제하지 못했습니다"
+  },
+  "report": "신고",
+  "reportComment": "댓글 신고",
+  "reportSource": "출체 신고",
+  "reportReason": "이유 (선택 사항)",
+  "reportSend": "신고 보내기",
+  "reportCancel": "취소",
+  "reportSent": "신고가 전송되었습니다",
+  "reportAlreadySent": "이미 신고됨",
+  "reportSubmitError": "신고를 보내는 데 실패했습니다",
+  "article": {
+    "notFound": "기사를 찾을 수 없습니다",
+    "backToCommunity": "커뮤니티로 돌아가기"
   }
 }

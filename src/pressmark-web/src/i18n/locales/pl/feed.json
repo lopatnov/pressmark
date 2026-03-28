@@ -32,5 +32,18 @@
     "loadError": "Nie udało się załadować komentarzy",
     "submitError": "Nie udało się wysłać komentarza",
     "removeError": "Nie udało się usunąć komentarza"
+  },
+  "report": "Zgłoś",
+  "reportComment": "Zgłoś komentarz",
+  "reportSource": "Zgłoś źródło",
+  "reportReason": "Powód (opcjonalnie)",
+  "reportSend": "Wyślij zgłoszenie",
+  "reportCancel": "Anuluj",
+  "reportSent": "Zgłoszenie wysłane",
+  "reportAlreadySent": "Już zgłoszono",
+  "reportSubmitError": "Nie udało się wysłać zgłoszenia",
+  "article": {
+    "notFound": "Artykuł nie znaleziony",
+    "backToCommunity": "Powrót do społeczności"
   }
 }

@@ -32,5 +32,18 @@
     "loadError": "コメントの読み込みに失敗しました",
     "submitError": "コメントの送信に失敗しました",
     "removeError": "コメントの削除に失敗しました"
+  },
+  "report": "報告",
+  "reportComment": "コメントを報告",
+  "reportSource": "ソースを報告",
+  "reportReason": "理由（任意）",
+  "reportSend": "報告を送信",
+  "reportCancel": "キャンセル",
+  "reportSent": "報告を送信しました",
+  "reportAlreadySent": "既に報告済み",
+  "reportSubmitError": "報告の送信に失敗しました",
+  "article": {
+    "notFound": "記事が見つかりません",
+    "backToCommunity": "コミュニティに戻る"
   }
 }

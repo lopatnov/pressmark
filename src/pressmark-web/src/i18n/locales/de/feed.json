@@ -32,5 +32,18 @@
     "loadError": "Kommentare konnten nicht geladen werden",
     "submitError": "Kommentar konnte nicht gesendet werden",
     "removeError": "Kommentar konnte nicht entfernt werden"
+  },
+  "report": "Melden",
+  "reportComment": "Kommentar melden",
+  "reportSource": "Quelle melden",
+  "reportReason": "Grund (optional)",
+  "reportSend": "Meldung senden",
+  "reportCancel": "Abbrechen",
+  "reportSent": "Meldung gesendet",
+  "reportAlreadySent": "Bereits gemeldet",
+  "reportSubmitError": "Meldung konnte nicht gesendet werden",
+  "article": {
+    "notFound": "Artikel nicht gefunden",
+    "backToCommunity": "Zurück zur Community"
   }
 }

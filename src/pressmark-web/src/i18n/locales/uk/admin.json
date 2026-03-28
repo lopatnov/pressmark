@@ -42,6 +42,17 @@
     "banComments": "Заборонити",
     "unbanComments": "Дозволити"
   },
+  "reports": {
+    "title": "Скарги",
+    "empty": "Немає очікуючих скарг",
+    "type": "Тип",
+    "reason": "Причина",
+    "resolve": "Вирішити",
+    "comment": "Коментар",
+    "subscription": "Джерело",
+    "loadError": "Не вдалося завантажити скарги",
+    "resolveError": "Не вдалося вирішити скаргу"
+  },
   "invites": {
     "title": "Токени запрошень",
     "generate": "Створити запрошення",

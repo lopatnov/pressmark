@@ -42,6 +42,17 @@
     "banComments": "Förbjud",
     "unbanComments": "Tillåt"
   },
+  "reports": {
+    "title": "Rapporter",
+    "empty": "Inga väntande rapporter",
+    "type": "Typ",
+    "reason": "Anledning",
+    "resolve": "Lös",
+    "comment": "Kommentar",
+    "subscription": "Källa",
+    "loadError": "Det gick inte att ladda rapporter",
+    "resolveError": "Det gick inte att lösa rapport"
+  },
   "invites": {
     "title": "Inbjudningstokens",
     "generate": "Generera inbjudan",

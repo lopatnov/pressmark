@@ -42,6 +42,17 @@
     "banComments": "Ban",
     "unbanComments": "Unban"
   },
+  "reports": {
+    "title": "Reports",
+    "empty": "No pending reports",
+    "type": "Type",
+    "reason": "Reason",
+    "resolve": "Resolve",
+    "comment": "Comment",
+    "subscription": "Source",
+    "loadError": "Failed to load reports",
+    "resolveError": "Failed to resolve report"
+  },
   "invites": {
     "title": "Invite tokens",
     "generate": "Generate invite",

@@ -42,6 +42,17 @@
     "banComments": "Blokkeren",
     "unbanComments": "Deblokkeren"
   },
+  "reports": {
+    "title": "Meldingen",
+    "empty": "Geen openstaande meldingen",
+    "type": "Type",
+    "reason": "Reden",
+    "resolve": "Oplossen",
+    "comment": "Reactie",
+    "subscription": "Bron",
+    "loadError": "Meldingen laden mislukt",
+    "resolveError": "Melding oplossen mislukt"
+  },
   "invites": {
     "title": "Uitnodigingstokens",
     "generate": "Uitnodiging genereren",

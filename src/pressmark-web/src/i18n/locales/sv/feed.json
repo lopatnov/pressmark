@@ -32,5 +32,18 @@
     "loadError": "Det gick inte att ladda kommentarer",
     "submitError": "Det gick inte att skicka kommentaren",
     "removeError": "Det gick inte att ta bort kommentaren"
+  },
+  "report": "Rapportera",
+  "reportComment": "Rapportera kommentar",
+  "reportSource": "Rapportera källa",
+  "reportReason": "Anledning (valfritt)",
+  "reportSend": "Skicka rapport",
+  "reportCancel": "Avbryt",
+  "reportSent": "Rapport skickad",
+  "reportAlreadySent": "Redan rapporterat",
+  "reportSubmitError": "Det gick inte att skicka rapporten",
+  "article": {
+    "notFound": "Artikel hittades inte",
+    "backToCommunity": "Tillbaka till gemenskapen"
   }
 }

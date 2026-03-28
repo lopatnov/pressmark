@@ -32,5 +32,18 @@
     "loadError": "Yorumlar yüklenemedi",
     "submitError": "Yorum gönderilemedi",
     "removeError": "Yorum kaldırılamadı"
+  },
+  "report": "Raporla",
+  "reportComment": "Yorumu raporla",
+  "reportSource": "Kaynağı raporla",
+  "reportReason": "Sebep (isteğe bağlı)",
+  "reportSend": "Rapor gönder",
+  "reportCancel": "İptal",
+  "reportSent": "Rapor gönderildi",
+  "reportAlreadySent": "Zaten raporlandı",
+  "reportSubmitError": "Rapor gönderilemedi",
+  "article": {
+    "notFound": "Makale bulunamadı",
+    "backToCommunity": "Topluluğa dön"
   }
 }

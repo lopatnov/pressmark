@@ -32,5 +32,18 @@
     "loadError": "Nu s-au putut încărca comentariile",
     "submitError": "Nu s-a putut trimite comentariul",
     "removeError": "Nu s-a putut elimina comentariul"
+  },
+  "report": "Raportează",
+  "reportComment": "Raportează comentariu",
+  "reportSource": "Raportează sursă",
+  "reportReason": "Motiv (opțional)",
+  "reportSend": "Trimite raport",
+  "reportCancel": "Anulează",
+  "reportSent": "Raport trimis",
+  "reportAlreadySent": "Deja raportat",
+  "reportSubmitError": "Nu s-a putut trimite raportul",
+  "article": {
+    "notFound": "Articol negăsit",
+    "backToCommunity": "Înapoila comunitate"
   }
 }

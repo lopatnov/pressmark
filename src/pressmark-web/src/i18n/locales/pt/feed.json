@@ -32,5 +32,18 @@
     "loadError": "Falha ao carregar comentários",
     "submitError": "Falha ao publicar comentário",
     "removeError": "Falha ao remover comentário"
+  },
+  "report": "Denunciar",
+  "reportComment": "Denunciar comentário",
+  "reportSource": "Denunciar fonte",
+  "reportReason": "Motivo (opcional)",
+  "reportSend": "Enviar denúncia",
+  "reportCancel": "Cancelar",
+  "reportSent": "Denúncia enviada",
+  "reportAlreadySent": "Já denunciado",
+  "reportSubmitError": "Falha ao enviar denúncia",
+  "article": {
+    "notFound": "Artigo não encontrado",
+    "backToCommunity": "Voltar à comunidade"
   }
 }

@@ -42,6 +42,17 @@
     "banComments": "禁止",
     "unbanComments": "許可"
   },
+  "reports": {
+    "title": "報告",
+    "empty": "保留中の報告はありません",
+    "type": "タイプ",
+    "reason": "理由",
+    "resolve": "解決",
+    "comment": "コメント",
+    "subscription": "ソース",
+    "loadError": "報告の読み込みに失敗しました",
+    "resolveError": "報告の解決に失敗しました"
+  },
   "invites": {
     "title": "招待トークン",
     "generate": "招待を生成",

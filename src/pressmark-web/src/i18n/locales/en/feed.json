@@ -32,5 +32,18 @@
     "loadError": "Failed to load comments",
     "submitError": "Failed to post comment",
     "removeError": "Failed to remove comment"
+  },
+  "report": "Report",
+  "reportComment": "Report comment",
+  "reportSource": "Report source",
+  "reportReason": "Reason (optional)",
+  "reportSend": "Send report",
+  "reportCancel": "Cancel",
+  "reportSent": "Report sent",
+  "reportAlreadySent": "Already reported",
+  "reportSubmitError": "Failed to send report",
+  "article": {
+    "notFound": "Article not found",
+    "backToCommunity": "Back to community"
   }
 }

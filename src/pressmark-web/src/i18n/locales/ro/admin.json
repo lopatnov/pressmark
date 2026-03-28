@@ -42,6 +42,17 @@
     "banComments": "Interzice",
     "unbanComments": "Permite"
   },
+  "reports": {
+    "title": "Rapoarte",
+    "empty": "Niciun raport în aşteptare",
+    "type": "Tip",
+    "reason": "Motiv",
+    "resolve": "Rezolvă",
+    "comment": "Comentariu",
+    "subscription": "Sursă",
+    "loadError": "Nu s-au putut încărca rapoartele",
+    "resolveError": "Nu s-a putut rezolva raportul"
+  },
   "invites": {
     "title": "Tokeni de invitație",
     "generate": "Generează invitație",

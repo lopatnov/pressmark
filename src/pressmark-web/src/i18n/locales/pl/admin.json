@@ -42,6 +42,17 @@
     "banComments": "Zablokuj",
     "unbanComments": "Odblokuj"
   },
+  "reports": {
+    "title": "Zgłoszenia",
+    "empty": "Brak oczekujących zgłoszeń",
+    "type": "Typ",
+    "reason": "Powód",
+    "resolve": "Rozwiąż",
+    "comment": "Komentarz",
+    "subscription": "Źródło",
+    "loadError": "Nie udało się załadować zgłoszeń",
+    "resolveError": "Nie udało się rozwiązać zgłoszenia"
+  },
   "invites": {
     "title": "Tokeny zaproszeń",
     "generate": "Generuj zaproszenie",

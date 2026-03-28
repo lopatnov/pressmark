@@ -42,6 +42,17 @@
     "banComments": "Запрет",
     "unbanComments": "Разрешить"
   },
+  "reports": {
+    "title": "Жалобы",
+    "empty": "Нет ожидающих жалоб",
+    "type": "Тип",
+    "reason": "Причина",
+    "resolve": "Решить",
+    "comment": "Комментарий",
+    "subscription": "Источник",
+    "loadError": "Не удалось загрузить жалобы",
+    "resolveError": "Не удалось решить жалобу"
+  },
   "invites": {
     "title": "Токены приглашений",
     "generate": "Создать приглашение",

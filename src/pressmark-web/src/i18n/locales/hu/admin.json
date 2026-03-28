@@ -42,6 +42,17 @@
     "banComments": "Tiltás",
     "unbanComments": "Engedélyezés"
   },
+  "reports": {
+    "title": "Bejelentések",
+    "empty": "Nincs függőben lévő bejelentés",
+    "type": "Típus",
+    "reason": "Ok",
+    "resolve": "Megoldás",
+    "comment": "Megjegyzés",
+    "subscription": "Forrás",
+    "loadError": "A bejelentések betöltése sikertelen",
+    "resolveError": "A bejelentés megoldása sikertelen"
+  },
   "invites": {
     "title": "Meghívó tokenek",
     "generate": "Meghívó létrehozása",

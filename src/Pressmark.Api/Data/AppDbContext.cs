@@ -16,6 +16,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<InviteToken> InviteTokens => Set<InviteToken>();
     public DbSet<PasswordResetToken> PasswordResetTokens => Set<PasswordResetToken>();
     public DbSet<Comment> Comments => Set<Comment>();
+    public DbSet<Report> Reports => Set<Report>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -152,6 +153,18 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 .WithMany()
                 .HasForeignKey(x => x.FeedItemId)
                 .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // Reports
+        modelBuilder.Entity<Report>(e =>
+        {
+            e.ToTable("reports");
+            e.HasKey(x => x.Id);
+            e.HasIndex(x => new { x.IsResolved, x.CreatedAt });
+            e.HasOne(x => x.Reporter)
+                .WithMany()
+                .HasForeignKey(x => x.ReporterUserId)
+                .OnDelete(DeleteBehavior.NoAction);
         });
 
         // SiteSettings

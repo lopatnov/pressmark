@@ -18,6 +18,9 @@ service AdminService {
   rpc ListBannedSubscriptions  (google.protobuf.Empty)           returns (BannedSubscriptionList);
   rpc RemoveComment            (RemoveCommentRequest)            returns (google.protobuf.Empty);
   rpc BanUserFromCommenting    (BanUserFromCommentingRequest)    returns (google.protobuf.Empty);
+  rpc GetPendingReportCount    (google.protobuf.Empty)           returns (PendingReportCount);
+  rpc ListReports              (google.protobuf.Empty)           returns (ReportList);
+  rpc ResolveReport            (ResolveReportRequest)            returns (google.protobuf.Empty);
 }
 
 message SiteSettings {
@@ -99,4 +102,25 @@ message RemoveCommentRequest {
 message BanUserFromCommentingRequest {
   string user_id = 1;
   bool   banned  = 2;
+}
+
+message PendingReportCount {
+  int32 count = 1;
+}
+
+message Report {
+  string id          = 1;
+  string type        = 2;
+  string target_id   = 3;
+  string reason      = 4;
+  string created_at  = 5;
+  bool   is_resolved = 6;
+}
+
+message ReportList {
+  repeated Report items = 1;
+}
+
+message ResolveReportRequest {
+  string id = 1;
 }

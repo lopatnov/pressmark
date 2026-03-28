@@ -437,6 +437,92 @@ function UsersSection() {
   )
 }
 
+// ── Reports section ─────────────────────────────────────────────────────────
+
+interface ReportItem {
+  id: string
+  type: string
+  targetId: string
+  reason: string
+  createdAt: string
+}
+
+function ReportsSection() {
+  const { t } = useTranslation(['admin', 'common'])
+  const [reports, setReports] = useState<ReportItem[]>([])
+
+  useEffect(() => {
+    adminClient
+      .listReports({})
+      .then((res) =>
+        setReports(
+          res.items.map((r) => ({
+            id: r.id,
+            type: r.type,
+            targetId: r.targetId,
+            reason: r.reason,
+            createdAt: r.createdAt,
+          })),
+        ),
+      )
+      .catch(() => toast.error(t('reports.loadError')))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const handleResolve = async (id: string) => {
+    try {
+      await adminClient.resolveReport({ id })
+      setReports((prev) => prev.filter((r) => r.id !== id))
+    } catch {
+      toast.error(t('reports.resolveError'))
+    }
+  }
+
+  return (
+    <section className="space-y-3">
+      <h2 className="text-base font-medium">{t('reports.title')}</h2>
+      {reports.length === 0 ? (
+        <p className="text-sm text-muted-foreground">{t('reports.empty')}</p>
+      ) : (
+        <div className="overflow-x-auto rounded-lg border border-border">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-border bg-muted/40">
+                <th className="px-4 py-2 text-left font-medium">{t('reports.type')}</th>
+                <th className="px-4 py-2 text-left font-medium">ID</th>
+                <th className="px-4 py-2 text-left font-medium">{t('reports.reason')}</th>
+                <th className="px-4 py-2 text-left font-medium">{t('admin:users.joined')}</th>
+                <th className="px-4 py-2" />
+              </tr>
+            </thead>
+            <tbody>
+              {reports.map((r) => (
+                <tr key={r.id} className="border-b border-border last:border-0">
+                  <td className="px-4 py-2 text-xs text-muted-foreground">
+                    {r.type === 'comment' ? t('reports.comment') : t('reports.subscription')}
+                  </td>
+                  <td className="px-4 py-2 text-xs font-mono text-muted-foreground truncate max-w-[8rem]">
+                    {r.targetId.slice(0, 8)}…
+                  </td>
+                  <td className="px-4 py-2 text-xs text-muted-foreground">{r.reason || '—'}</td>
+                  <td className="px-4 py-2 text-xs text-muted-foreground">
+                    {r.createdAt ? new Date(r.createdAt).toLocaleDateString() : '—'}
+                  </td>
+                  <td className="px-4 py-2">
+                    <Button size="sm" variant="outline" onClick={() => handleResolve(r.id)}>
+                      {t('reports.resolve')}
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </section>
+  )
+}
+
 // ── Invites section ─────────────────────────────────────────────────────────
 
 function InvitesSection() {
@@ -609,6 +695,7 @@ export function AdminPage() {
     <div className="mx-auto max-w-2xl space-y-8 p-4">
       <h1 className="text-xl font-semibold">{t('title')}</h1>
       <SiteSettingsSection />
+      <ReportsSection />
       <InvitesSection />
       <ModerationSection />
       <BannedSubscriptionsSection />

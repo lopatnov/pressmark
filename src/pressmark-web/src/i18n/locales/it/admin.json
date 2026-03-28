@@ -42,6 +42,17 @@
     "banComments": "Vieta",
     "unbanComments": "Consenti"
   },
+  "reports": {
+    "title": "Segnalazioni",
+    "empty": "Nessuna segnalazione in attesa",
+    "type": "Tipo",
+    "reason": "Motivo",
+    "resolve": "Risolvi",
+    "comment": "Commento",
+    "subscription": "Fonte",
+    "loadError": "Impossibile caricare le segnalazioni",
+    "resolveError": "Impossibile risolvere la segnalazione"
+  },
   "invites": {
     "title": "Token di invito",
     "generate": "Genera invito",

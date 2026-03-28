@@ -42,6 +42,17 @@
     "banComments": "Prohibir",
     "unbanComments": "Permitir"
   },
+  "reports": {
+    "title": "Reportes",
+    "empty": "No hay reportes pendientes",
+    "type": "Tipo",
+    "reason": "Razón",
+    "resolve": "Resolver",
+    "comment": "Comentario",
+    "subscription": "Fuente",
+    "loadError": "Error al cargar los reportes",
+    "resolveError": "Error al resolver el reporte"
+  },
   "invites": {
     "title": "Tokens de invitación",
     "generate": "Generar invitación",

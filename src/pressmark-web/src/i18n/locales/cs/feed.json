@@ -32,5 +32,18 @@
     "loadError": "Nepodařilo se načíst komentáře",
     "submitError": "Nepodařilo se odeslat komentář",
     "removeError": "Nepodařilo se odstranit komentář"
+  },
+  "report": "Nahlásit",
+  "reportComment": "Nahlásit komentář",
+  "reportSource": "Nahlásit zdroj",
+  "reportReason": "Důvod (volitelné)",
+  "reportSend": "Odeslat hlášení",
+  "reportCancel": "Zrušit",
+  "reportSent": "Hlášení odeslané",
+  "reportAlreadySent": "Již nahlášeno",
+  "reportSubmitError": "Nepodařilo se odeslat hlášení",
+  "article": {
+    "notFound": "Článek nenalezen",
+    "backToCommunity": "Zpět do komunity"
   }
 }

@@ -99,6 +99,7 @@ export function BookmarksPage() {
               <FeedItemCard
                 key={item.id}
                 item={item}
+                articleId={item.id}
                 actions={
                   <button
                     onClick={() => handleRemoveBookmark(item.id)}

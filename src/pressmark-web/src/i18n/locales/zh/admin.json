@@ -42,6 +42,17 @@
     "banComments": "禁止",
     "unbanComments": "允许"
   },
+  "reports": {
+    "title": "举报",
+    "empty": "没有待处理的举报",
+    "type": "类型",
+    "reason": "原因",
+    "resolve": "解决",
+    "comment": "评论",
+    "subscription": "来源",
+    "loadError": "加载举报失败",
+    "resolveError": "解决举报失败"
+  },
   "invites": {
     "title": "邀请码",
     "generate": "生成邀请",

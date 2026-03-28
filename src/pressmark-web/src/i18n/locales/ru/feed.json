@@ -32,5 +32,18 @@
     "loadError": "Не удалось загрузить комментарии",
     "submitError": "Не удалось отправить комментарий",
     "removeError": "Не удалось удалить комментарий"
+  },
+  "report": "Пожаловаться",
+  "reportComment": "Пожаловаться на комментарий",
+  "reportSource": "Пожаловаться на источник",
+  "reportReason": "Причина (необязательно)",
+  "reportSend": "Отправить жалобу",
+  "reportCancel": "Отмена",
+  "reportSent": "Жалоба отправлена",
+  "reportAlreadySent": "Уже пожаловано",
+  "reportSubmitError": "Не удалось отправить жалобу",
+  "article": {
+    "notFound": "Статья не найдена",
+    "backToCommunity": "Назад к сообществу"
   }
 }

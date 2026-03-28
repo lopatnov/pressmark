@@ -198,6 +198,7 @@ export function FeedPage() {
               <FeedItemCard
                 key={item.id}
                 item={item}
+                articleId={item.id}
                 onTitleClick={!item.isRead ? () => handleRead(item.id) : undefined}
                 actions={
                   <>
