@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using System.Text;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
@@ -38,7 +37,7 @@ public class FeedServiceImpl(AppDbContext db, IDbContextFactory<AppDbContext> db
                 !db.ReadItems.Any(r => r.UserId == userId && r.FeedItemId == f.Id));
 
         // Decode cursor: "publishedAt_ticks|id"
-        if (!string.IsNullOrEmpty(request.Cursor) && TryParseCursor(request.Cursor,
+        if (!string.IsNullOrEmpty(request.Cursor) && CursorHelper.TryParse(request.Cursor,
                 out var cursorDate, out var cursorId))
         {
             query = query.Where(f =>
@@ -175,7 +174,7 @@ public class FeedServiceImpl(AppDbContext db, IDbContextFactory<AppDbContext> db
             .Include(f => f.Subscription)
             .Where(f => db.Bookmarks.Any(b => b.UserId == userId && b.FeedItemId == f.Id));
 
-        if (!string.IsNullOrEmpty(request.Cursor) && TryParseCursor(request.Cursor,
+        if (!string.IsNullOrEmpty(request.Cursor) && CursorHelper.TryParse(request.Cursor,
                 out var cursorDate, out var cursorId))
         {
             query = query.Where(f =>
@@ -222,7 +221,7 @@ public class FeedServiceImpl(AppDbContext db, IDbContextFactory<AppDbContext> db
         if (!string.IsNullOrEmpty(request.SourceRssUrl))
             query = query.Where(f => f.Subscription.RssUrl == request.SourceRssUrl);
 
-        if (!string.IsNullOrEmpty(request.Cursor) && TryParseCursor(request.Cursor,
+        if (!string.IsNullOrEmpty(request.Cursor) && CursorHelper.TryParse(request.Cursor,
                 out var cursorDate, out var cursorId))
         {
             query = query.Where(f =>
@@ -271,7 +270,7 @@ public class FeedServiceImpl(AppDbContext db, IDbContextFactory<AppDbContext> db
         if (hasMore)
         {
             var last = pageItems.Last();
-            page.NextCursor = EncodeCursor(last.PublishedAt, last.Id);
+            page.NextCursor = CursorHelper.Encode(last.PublishedAt, last.Id);
         }
 
         return page;
@@ -350,27 +349,6 @@ public class FeedServiceImpl(AppDbContext db, IDbContextFactory<AppDbContext> db
             throw new RpcException(new Status(StatusCode.Unauthenticated, "Not authenticated"));
 
         return Guid.Parse(claim);
-    }
-
-    private static string EncodeCursor(DateTime publishedAt, Guid id)
-        => Convert.ToBase64String(
-            Encoding.UTF8.GetBytes($"{publishedAt.Ticks}|{id}"));
-
-    private static bool TryParseCursor(string cursor, out DateTime date, out Guid id)
-    {
-        date = default; id = default;
-        try
-        {
-            var raw = Encoding.UTF8.GetString(Convert.FromBase64String(cursor));
-            var parts = raw.Split('|');
-            if (parts.Length != 2) return false;
-            if (!long.TryParse(parts[0], out var ticks)) return false;
-            if (ticks < DateTime.MinValue.Ticks || ticks > DateTime.MaxValue.Ticks) return false;
-            date = new DateTime(ticks, DateTimeKind.Utc);
-            id = Guid.Parse(parts[1]);
-            return true;
-        }
-        catch { return false; }
     }
 
     private static Protos.FeedItem ToProto(
@@ -661,7 +639,7 @@ public class FeedServiceImpl(AppDbContext db, IDbContextFactory<AppDbContext> db
         if (hasMore)
         {
             var last = pageItems.Last();
-            page.NextCursor = EncodeCursor(last.PublishedAt, last.Id);
+            page.NextCursor = CursorHelper.Encode(last.PublishedAt, last.Id);
         }
 
         return page;
