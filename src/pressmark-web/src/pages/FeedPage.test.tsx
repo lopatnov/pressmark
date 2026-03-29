@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { render, screen, act, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
@@ -26,7 +27,6 @@ vi.mock('@/hooks/useIntersectionLoader', () => ({
 }))
 
 vi.mock('@/components/feed/FeedItemCard', () => ({
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   FeedItemCard: ({ item }: any) => <div data-testid="feed-item">{item.title}</div>,
 }))
 
@@ -81,11 +81,15 @@ beforeEach(() => {
   })
 
   // Default: getFeed resolves with empty page
-  vi.mocked(feedClient.getFeed).mockResolvedValue({ items: [], nextCursor: '', totalUnread: 0 })
+  vi.mocked(feedClient.getFeed).mockResolvedValue({
+    items: [],
+    nextCursor: '',
+    totalUnread: 0,
+  } as any)
 
   // Default: stream blocks indefinitely until signal is aborted (no items)
   vi.mocked(feedClient.streamFeedUpdates).mockImplementation(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, require-yield
+    // eslint-disable-next-line require-yield
     async function* (_req: unknown, opts?: any) {
       await new Promise<void>((_, reject) => {
         opts?.signal?.addEventListener('abort', () => reject(new Error('aborted')))
@@ -114,22 +118,19 @@ describe('FeedPage — unreadOnly race condition', () => {
     let firstCallSignal!: AbortSignal
     let callCount = 0
 
-    vi.mocked(feedClient.getFeed).mockImplementation(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      async (_req: unknown, opts?: any) => {
-        callCount++
-        if (callCount === 1) {
-          firstCallSignal = opts?.signal as AbortSignal
-          // Suspend the first call until explicitly resolved
-          await new Promise<void>((resolve) => {
-            resolveFirstCall = resolve
-          })
-          return { items: [makeItem('1', 'First Result')], nextCursor: '', totalUnread: 0 }
-        }
-        // Second call resolves immediately with a distinct title
-        return { items: [makeItem('2', 'Unread Result')], nextCursor: '', totalUnread: 0 }
-      },
-    )
+    vi.mocked(feedClient.getFeed).mockImplementation(async (_req: unknown, opts?: any) => {
+      callCount++
+      if (callCount === 1) {
+        firstCallSignal = opts?.signal as AbortSignal
+        // Suspend the first call until explicitly resolved
+        await new Promise<void>((resolve) => {
+          resolveFirstCall = resolve
+        })
+        return { items: [makeItem('1', 'First Result')], nextCursor: '', totalUnread: 0 } as any
+      }
+      // Second call resolves immediately with a distinct title
+      return { items: [makeItem('2', 'Unread Result')], nextCursor: '', totalUnread: 0 } as any
+    })
 
     renderFeedPage()
 
@@ -174,21 +175,21 @@ describe('FeedPage — unmount during streaming', () => {
     let streamSignal!: AbortSignal
     let streamStarted = false
 
-    vi.mocked(feedClient.streamFeedUpdates).mockImplementation(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      async function* (_req: unknown, opts?: any) {
-        streamStarted = true
-        streamSignal = opts?.signal as AbortSignal
+    vi.mocked(feedClient.streamFeedUpdates).mockImplementation(async function* (
+      _req: unknown,
+      opts?: any,
+    ) {
+      streamStarted = true
+      streamSignal = opts?.signal as AbortSignal
 
-        // Yield one item so the component confirms the stream is active
-        yield makeItem('streamed-1', 'Streamed Item')
+      // Yield one item so the component confirms the stream is active
+      yield makeItem('streamed-1', 'Streamed Item') as any
 
-        // Then block until the signal is aborted (simulates a long-lived stream)
-        await new Promise<void>((_, reject) => {
-          opts?.signal?.addEventListener('abort', () => reject(new Error('aborted')))
-        })
-      },
-    )
+      // Then block until the signal is aborted (simulates a long-lived stream)
+      await new Promise<void>((_, reject) => {
+        opts?.signal?.addEventListener('abort', () => reject(new Error('aborted')))
+      })
+    })
 
     const { unmount } = renderFeedPage()
 
