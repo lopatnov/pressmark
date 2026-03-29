@@ -44,7 +44,7 @@ jobs:
         env:
           TEST_MSSQL_CONNECTION_STRING: "Server=localhost,1433;Database=pressmark_coverage_test;User Id=sa;Password=TestP4ssword!;TrustServerCertificate=True;"
 
-      - name: Enforce 70% line coverage
+      - name: Enforce 37% line coverage
         run: |
           FILE=$(find ./coverage -name "*.xml" | head -1)
           python3 - "$FILE" <<'EOF'
