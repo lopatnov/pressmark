@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { ExternalLink, ArrowLeft } from 'lucide-react'
+import { ExternalLink, ArrowLeft, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   AlertDialog,
@@ -103,6 +103,42 @@ export function AdminUserPage() {
     try {
       await adminClient.sitebanUser({ userId: details.id, banned: !details.isSiteBanned })
       setDetails((d) => (d ? { ...d, isSiteBanned: !d.isSiteBanned } : d))
+    } catch {
+      toast.error(t('common:error'))
+    }
+  }
+
+  const handleBanSubscription = async (subId: string, currentlyBanned: boolean) => {
+    try {
+      await adminClient.banSubscription({ subscriptionId: subId, banned: !currentlyBanned })
+      setDetails((d) =>
+        d
+          ? {
+              ...d,
+              subscriptions: d.subscriptions.map((s) =>
+                s.id === subId ? { ...s, isCommunityBanned: !currentlyBanned } : s,
+              ),
+            }
+          : d,
+      )
+    } catch {
+      toast.error(t('common:error'))
+    }
+  }
+
+  const handleRemoveComment = async (commentId: string) => {
+    try {
+      await adminClient.removeComment({ commentId })
+      setDetails((d) =>
+        d
+          ? {
+              ...d,
+              comments: d.comments.map((c) =>
+                c.id === commentId ? { ...c, removedByAdmin: true } : c,
+              ),
+            }
+          : d,
+      )
     } catch {
       toast.error(t('common:error'))
     }
@@ -242,6 +278,17 @@ export function AdminUserPage() {
                         </p>
                       )}
                     </td>
+                    <td className="px-4 py-2 text-right">
+                      <Button
+                        size="sm"
+                        variant={sub.isCommunityBanned ? 'outline' : 'destructive'}
+                        onClick={() => handleBanSubscription(sub.id, sub.isCommunityBanned)}
+                      >
+                        {sub.isCommunityBanned
+                          ? t('admin:moderation.unban')
+                          : t('admin:moderation.ban')}
+                      </Button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -268,15 +315,26 @@ export function AdminUserPage() {
                   <p className={`flex-1 ${c.removedByAdmin ? 'italic text-muted-foreground' : ''}`}>
                     {c.removedByAdmin ? t('admin:users.commentRemoved') : c.body}
                   </p>
-                  {c.feedItemId && !c.removedByAdmin && (
-                    <Link
-                      to={`/article/${c.feedItemId}`}
-                      className="shrink-0 text-muted-foreground hover:text-foreground transition-colors"
-                      title={c.feedItemTitle}
-                    >
-                      <ExternalLink className="h-3.5 w-3.5" />
-                    </Link>
-                  )}
+                  <div className="flex items-center gap-2 shrink-0">
+                    {c.feedItemId && !c.removedByAdmin && (
+                      <Link
+                        to={`/article/${c.feedItemId}`}
+                        className="text-muted-foreground hover:text-foreground transition-colors"
+                        title={c.feedItemTitle}
+                      >
+                        <ExternalLink className="h-3.5 w-3.5" />
+                      </Link>
+                    )}
+                    {!c.removedByAdmin && (
+                      <button
+                        onClick={() => handleRemoveComment(c.id)}
+                        title={t('admin:users.commentRemoved')}
+                        className="cursor-pointer text-muted-foreground hover:text-destructive transition-colors"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    )}
+                  </div>
                 </div>
                 {c.feedItemTitle && !c.removedByAdmin && (
                   <p className="mt-1 text-xs text-muted-foreground truncate">{c.feedItemTitle}</p>
