@@ -174,6 +174,9 @@ public class FeedServiceImpl(AppDbContext db, IDbContextFactory<AppDbContext> db
             .Include(f => f.Subscription)
             .Where(f => db.Bookmarks.Any(b => b.UserId == userId && b.FeedItemId == f.Id));
 
+        if (!string.IsNullOrEmpty(request.SubscriptionId))
+            query = query.Where(f => f.SubscriptionId == Guid.Parse(request.SubscriptionId));
+
         if (!string.IsNullOrEmpty(request.Cursor) && CursorHelper.TryParse(request.Cursor,
                 out var cursorDate, out var cursorId))
         {

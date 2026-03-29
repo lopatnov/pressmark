@@ -51,8 +51,9 @@ message GetCommunityFeedRequest {
 }
 
 message GetBookmarksRequest {
-  int32  page_size = 1;
-  string cursor    = 2;
+  int32  page_size       = 1;
+  string cursor          = 2;
+  string subscription_id = 3; // empty = all bookmarks
 }
 
 message StreamFeedRequest {

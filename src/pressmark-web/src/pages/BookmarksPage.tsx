@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { BookMarked } from 'lucide-react'
+import { BookMarked, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { feedClient } from '@/api/clients'
@@ -16,10 +17,13 @@ interface BookmarkItem {
   publishedAt: string
   likeCount: number
   sourceTitle: string
+  subscriptionId: string
 }
 
 export function BookmarksPage() {
   const { t } = useTranslation(['feed', 'common'])
+  const [searchParams, setSearchParams] = useSearchParams()
+  const activeSubId = searchParams.get('sub') ?? ''
 
   const [items, setItems] = useState<BookmarkItem[]>([])
   const [nextCursor, setNextCursor] = useState('')
@@ -29,7 +33,11 @@ export function BookmarksPage() {
     async (cursor = '') => {
       setIsLoading(true)
       try {
-        const res = await feedClient.getBookmarks({ pageSize: 20, cursor })
+        const res = await feedClient.getBookmarks({
+          pageSize: 20,
+          cursor,
+          subscriptionId: activeSubId,
+        })
         const mapped = res.items.map((item) => ({
           id: item.id,
           title: item.title,
@@ -38,6 +46,7 @@ export function BookmarksPage() {
           publishedAt: item.publishedAt,
           likeCount: item.likeCount,
           sourceTitle: item.sourceTitle,
+          subscriptionId: item.subscriptionId,
         }))
         if (cursor) {
           setItems((prev) => [...prev, ...mapped])
@@ -51,7 +60,7 @@ export function BookmarksPage() {
         setIsLoading(false)
       }
     },
-    [t],
+    [t, activeSubId],
   )
 
   const handleLoadMore = useCallback(() => {
@@ -70,12 +79,31 @@ export function BookmarksPage() {
   }
 
   useEffect(() => {
+    setItems([])
+    setNextCursor('')
     loadBookmarks()
-  }, [loadBookmarks])
+  }, [activeSubId, loadBookmarks])
 
   return (
     <div className="mx-auto max-w-2xl space-y-4 p-4">
       <h1 className="text-xl font-semibold">{t('common:nav.bookmarks')}</h1>
+
+      {activeSubId && items.length > 0 && (
+        <div className="flex items-center gap-2 rounded-md border border-border bg-muted/40 px-3 py-1.5 text-xs text-muted-foreground">
+          <span className="flex-1">
+            {t('feed:filterBySource')}:{' '}
+            <span className="font-medium text-foreground">{items[0].sourceTitle}</span>
+          </span>
+          <button
+            onClick={() => setSearchParams({})}
+            className="cursor-pointer hover:text-foreground transition-colors"
+            title={t('feed:clearFilter')}
+            aria-label={t('feed:clearFilter')}
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      )}
 
       {items.length === 0 && !isLoading && (
         <p className="py-12 text-center text-sm text-muted-foreground">{t('feed:empty')}</p>
@@ -100,6 +128,9 @@ export function BookmarksPage() {
                 key={item.id}
                 item={item}
                 articleId={item.id}
+                sourceHref={
+                  item.subscriptionId ? `/bookmarks?sub=${item.subscriptionId}` : undefined
+                }
                 actions={
                   <button
                     onClick={() => handleRemoveBookmark(item.id)}
