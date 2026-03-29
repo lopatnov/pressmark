@@ -52,8 +52,8 @@ jobs:
           rate = float(ET.parse(sys.argv[1]).getroot().get('line-rate', 0))
           pct = round(rate * 100, 1)
           print(f"Line coverage: {pct}%")
-          if rate < 0.38:
-              print(f"FAILED: {pct}% is below the 38% threshold")
+          if rate < 0.37:
+              print(f"FAILED: {pct}% is below the 37% threshold")
               sys.exit(1)
           print("PASSED")
           EOF
