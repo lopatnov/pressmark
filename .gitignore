@@ -56,3 +56,4 @@ nunit-*.xml
 /Claude.log.md
 /.claude
 /.vs
+/docs/claude
