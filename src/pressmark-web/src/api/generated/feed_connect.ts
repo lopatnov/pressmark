@@ -104,6 +104,8 @@ export const FeedService = {
       kind: MethodKind.ServerStreaming,
     },
     /**
+     * Comments
+     *
      * @generated from rpc pressmark.feed.FeedService.AddComment
      */
     addComment: {
@@ -124,6 +126,8 @@ export const FeedService = {
       kind: MethodKind.Unary,
     },
     /**
+     * Article page (anonymous)
+     *
      * AllowAnonymous
      *
      * @generated from rpc pressmark.feed.FeedService.GetFeedItem
@@ -135,6 +139,8 @@ export const FeedService = {
       kind: MethodKind.Unary,
     },
     /**
+     * Reporting
+     *
      * Authenticated
      *
      * @generated from rpc pressmark.feed.FeedService.ReportContent

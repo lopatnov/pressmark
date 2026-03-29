@@ -726,7 +726,7 @@ export class PendingReportCount extends Message<PendingReportCount> {
 /**
  * @generated from message pressmark.admin.Report
  */
-export class AdminReport extends Message<AdminReport> {
+export class Report extends Message<Report> {
   /**
    * @generated from field: string id = 1;
    */
@@ -757,7 +757,7 @@ export class AdminReport extends Message<AdminReport> {
    */
   isResolved = false;
 
-  constructor(data?: PartialMessage<AdminReport>) {
+  constructor(data?: PartialMessage<Report>) {
     super();
     proto3.util.initPartial(data, this);
   }
@@ -773,20 +773,20 @@ export class AdminReport extends Message<AdminReport> {
     { no: 6, name: "is_resolved", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AdminReport {
-    return new AdminReport().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Report {
+    return new Report().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AdminReport {
-    return new AdminReport().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Report {
+    return new Report().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AdminReport {
-    return new AdminReport().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Report {
+    return new Report().fromJsonString(jsonString, options);
   }
 
-  static equals(a: AdminReport | PlainMessage<AdminReport> | undefined, b: AdminReport | PlainMessage<AdminReport> | undefined): boolean {
-    return proto3.util.equals(AdminReport, a, b);
+  static equals(a: Report | PlainMessage<Report> | undefined, b: Report | PlainMessage<Report> | undefined): boolean {
+    return proto3.util.equals(Report, a, b);
   }
 }
 
@@ -797,7 +797,7 @@ export class ReportList extends Message<ReportList> {
   /**
    * @generated from field: repeated pressmark.admin.Report items = 1;
    */
-  items: AdminReport[] = [];
+  items: Report[] = [];
 
   constructor(data?: PartialMessage<ReportList>) {
     super();
@@ -807,7 +807,7 @@ export class ReportList extends Message<ReportList> {
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "pressmark.admin.ReportList";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "items", kind: "message", T: AdminReport, repeated: true },
+    { no: 1, name: "items", kind: "message", T: Report, repeated: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ReportList {

@@ -120,6 +120,11 @@ export class Subscription extends Message<Subscription> {
    */
   createdAt = "";
 
+  /**
+   * @generated from field: bool is_community_banned = 7;
+   */
+  isCommunityBanned = false;
+
   constructor(data?: PartialMessage<Subscription>) {
     super();
     proto3.util.initPartial(data, this);
@@ -134,6 +139,7 @@ export class Subscription extends Message<Subscription> {
     { no: 4, name: "title", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 5, name: "last_fetched_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 6, name: "created_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 7, name: "is_community_banned", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Subscription {

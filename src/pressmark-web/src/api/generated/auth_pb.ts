@@ -271,7 +271,7 @@ export class ResetPasswordRequest extends Message<ResetPasswordRequest> {
  */
 export class RegistrationStatus extends Message<RegistrationStatus> {
   /**
-   * false = первый пользователь станет Admin
+   * false = first registered user becomes Admin
    *
    * @generated from field: bool has_admin = 1;
    */

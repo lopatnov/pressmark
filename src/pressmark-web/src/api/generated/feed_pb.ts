@@ -136,6 +136,13 @@ export class GetBookmarksRequest extends Message<GetBookmarksRequest> {
    */
   cursor = "";
 
+  /**
+   * empty = all bookmarks
+   *
+   * @generated from field: string subscription_id = 3;
+   */
+  subscriptionId = "";
+
   constructor(data?: PartialMessage<GetBookmarksRequest>) {
     super();
     proto3.util.initPartial(data, this);
@@ -146,6 +153,7 @@ export class GetBookmarksRequest extends Message<GetBookmarksRequest> {
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "page_size", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
     { no: 2, name: "cursor", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "subscription_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetBookmarksRequest {

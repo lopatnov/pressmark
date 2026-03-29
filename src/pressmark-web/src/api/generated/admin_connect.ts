@@ -4,7 +4,7 @@
 // @ts-nocheck
 
 import { Empty, MethodKind } from "@bufbuild/protobuf";
-import { BanSubscriptionRequest, BanUserFromCommentingRequest, BannedSubscriptionList, DeleteInviteRequest, GenerateInviteRequest, HiddenFeedItemList, HideFeedItemRequest, InviteList, InviteToken, PendingReportCount, RemoveCommentRequest, ReportList, ResolveReportRequest, SiteSettings, UpdateSiteSettingsRequest, UserList } from "./admin_pb.js";
+import { BannedSubscriptionList, BanSubscriptionRequest, BanUserFromCommentingRequest, DeleteInviteRequest, GenerateInviteRequest, HiddenFeedItemList, HideFeedItemRequest, InviteList, InviteToken, PendingReportCount, RemoveCommentRequest, ReportList, ResolveReportRequest, SiteSettings, UpdateSiteSettingsRequest, UserList } from "./admin_pb.js";
 
 /**
  * @generated from service pressmark.admin.AdminService
