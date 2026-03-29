@@ -101,6 +101,9 @@ public class AuthServiceImpl(
             throw new RpcException(new Status(StatusCode.Unauthenticated,
                 "Invalid credentials"));
 
+        if (user.IsSiteBanned)
+            throw new RpcException(new Status(StatusCode.PermissionDenied, "account_banned"));
+
         return await IssueTokens(user, context.GetHttpContext(), ct);
     }
 
@@ -145,6 +148,15 @@ public class AuthServiceImpl(
         if (user is null)
         {
             return Unauthenticated(context, "User not found");
+        }
+
+        if (user.IsSiteBanned)
+        {
+            stored.IsRevoked = true;
+            stored.RevokedAt = DateTime.UtcNow;
+            await db.SaveChangesAsync(ct);
+            http.Response.Cookies.Delete(jwt.CookieName);
+            return Unauthenticated(context, "account_banned");
         }
 
         stored.IsRevoked = true;

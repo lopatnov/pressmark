@@ -28,12 +28,14 @@
     "unhidden": "Статтю показано",
     "banned": "Джерело заблоковано",
     "hiddenArticles": "Приховані статті",
-    "noHiddenArticles": "Немає прихованих статей"
+    "noHiddenArticles": "Немає прихованих статей",
+    "openArticle": "Відкрити сторінку статті"
   },
   "bannedSubs": {
     "title": "Заблоковані джерела",
     "empty": "Немає заблокованих джерел",
-    "unban": "Розблокувати"
+    "unban": "Розблокувати",
+    "banned": "заблоковано"
   },
   "users": {
     "title": "Користувачі",
@@ -43,7 +45,28 @@
     "empty": "Користувачів не знайдено",
     "comments": "Коментарі",
     "banComments": "Заборонити",
-    "unbanComments": "Дозволити"
+    "unbanComments": "Дозволити",
+    "siteBanCol": "Бан на сайті",
+    "siteBan": "Бан на сайті",
+    "unsiteBan": "Зняти бан із сайту",
+    "siteBanned": "сайт заблоковано",
+    "commentBanned": "коментар заблоковано",
+    "viewProfile": "Переглянути профіль",
+    "profileTitle": "Профіль користувача",
+    "promoteToAdmin": "Підвищити до адміністратора",
+    "demoteToUser": "Понизити до користувача",
+    "deleteUser": "Видалити користувача",
+    "confirmDeleteTitle": "Видалити користувача?",
+    "confirmDeleteDesc": "Це назавжди видалить {{email}} і всі його дані. Цю дію не можна скасувати.",
+    "deleted": "Користувача видалено",
+    "cannotDemoteLastAdmin": "Неможливо понизити останнього адміністратора",
+    "cannotDeleteLastAdmin": "Неможливо видалити останнього адміністратора",
+    "cannotDeleteSelf": "Неможливо видалити власний обліковий запис",
+    "notFound": "Користувача не знайдено",
+    "subscriptions": "Підписки",
+    "noSubscriptions": "Немає підписок",
+    "noComments": "Немає коментарів",
+    "commentRemoved": "[видалено адміністратором]"
   },
   "reports": {
     "title": "Скарги",
@@ -54,7 +77,12 @@
     "comment": "Коментар",
     "subscription": "Джерело",
     "loadError": "Не вдалося завантажити скарги",
-    "resolveError": "Не вдалося вирішити скаргу"
+    "resolveError": "Не вдалося вирішити скаргу",
+    "typeId": "Тип / ID",
+    "reporter": "Репортер",
+    "content": "Зміст",
+    "copyId": "Копіювати ID",
+    "openArticle": "Відкрити статтю"
   },
   "pagination": {
     "prev": "Назад",

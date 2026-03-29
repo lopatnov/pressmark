@@ -18,5 +18,6 @@
     "register": "Registrera",
     "logout": "Logga ut",
     "openMenu": "Öppna meny"
-  }
+  },
+  "banned": "förbjuden"
 }

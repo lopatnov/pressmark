@@ -227,6 +227,53 @@ export class BanSubscriptionRequest extends Message<BanSubscriptionRequest> {
 }
 
 /**
+ * @generated from message pressmark.admin.ListUsersRequest
+ */
+export class ListUsersRequest extends Message<ListUsersRequest> {
+  /**
+   * default 20
+   *
+   * @generated from field: int32 page_size = 1;
+   */
+  pageSize = 0;
+
+  /**
+   * 0-based
+   *
+   * @generated from field: int32 page = 2;
+   */
+  page = 0;
+
+  constructor(data?: PartialMessage<ListUsersRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "pressmark.admin.ListUsersRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "page_size", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 2, name: "page", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListUsersRequest {
+    return new ListUsersRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListUsersRequest {
+    return new ListUsersRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListUsersRequest {
+    return new ListUsersRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ListUsersRequest | PlainMessage<ListUsersRequest> | undefined, b: ListUsersRequest | PlainMessage<ListUsersRequest> | undefined): boolean {
+    return proto3.util.equals(ListUsersRequest, a, b);
+  }
+}
+
+/**
  * @generated from message pressmark.admin.UserList
  */
 export class UserList extends Message<UserList> {
@@ -234,6 +281,11 @@ export class UserList extends Message<UserList> {
    * @generated from field: repeated pressmark.admin.UserInfo users = 1;
    */
   users: UserInfo[] = [];
+
+  /**
+   * @generated from field: int32 total_count = 2;
+   */
+  totalCount = 0;
 
   constructor(data?: PartialMessage<UserList>) {
     super();
@@ -244,6 +296,7 @@ export class UserList extends Message<UserList> {
   static readonly typeName = "pressmark.admin.UserList";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "users", kind: "message", T: UserInfo, repeated: true },
+    { no: 2, name: "total_count", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UserList {
@@ -292,6 +345,11 @@ export class UserInfo extends Message<UserInfo> {
    */
   isCommentingBanned = false;
 
+  /**
+   * @generated from field: bool is_site_banned = 6;
+   */
+  isSiteBanned = false;
+
   constructor(data?: PartialMessage<UserInfo>) {
     super();
     proto3.util.initPartial(data, this);
@@ -305,6 +363,7 @@ export class UserInfo extends Message<UserInfo> {
     { no: 3, name: "role", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 4, name: "created_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 5, name: "is_commenting_banned", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 6, name: "is_site_banned", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UserInfo {
@@ -484,6 +543,53 @@ export class InviteToken extends Message<InviteToken> {
 }
 
 /**
+ * @generated from message pressmark.admin.ListInvitesRequest
+ */
+export class ListInvitesRequest extends Message<ListInvitesRequest> {
+  /**
+   * default 20
+   *
+   * @generated from field: int32 page_size = 1;
+   */
+  pageSize = 0;
+
+  /**
+   * 0-based
+   *
+   * @generated from field: int32 page = 2;
+   */
+  page = 0;
+
+  constructor(data?: PartialMessage<ListInvitesRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "pressmark.admin.ListInvitesRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "page_size", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 2, name: "page", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListInvitesRequest {
+    return new ListInvitesRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListInvitesRequest {
+    return new ListInvitesRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListInvitesRequest {
+    return new ListInvitesRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ListInvitesRequest | PlainMessage<ListInvitesRequest> | undefined, b: ListInvitesRequest | PlainMessage<ListInvitesRequest> | undefined): boolean {
+    return proto3.util.equals(ListInvitesRequest, a, b);
+  }
+}
+
+/**
  * @generated from message pressmark.admin.InviteList
  */
 export class InviteList extends Message<InviteList> {
@@ -491,6 +597,11 @@ export class InviteList extends Message<InviteList> {
    * @generated from field: repeated pressmark.admin.InviteToken items = 1;
    */
   items: InviteToken[] = [];
+
+  /**
+   * @generated from field: int32 total_count = 2;
+   */
+  totalCount = 0;
 
   constructor(data?: PartialMessage<InviteList>) {
     super();
@@ -501,6 +612,7 @@ export class InviteList extends Message<InviteList> {
   static readonly typeName = "pressmark.admin.InviteList";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "items", kind: "message", T: InviteToken, repeated: true },
+    { no: 2, name: "total_count", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): InviteList {
@@ -777,6 +889,53 @@ export class PendingReportCount extends Message<PendingReportCount> {
 }
 
 /**
+ * @generated from message pressmark.admin.ListReportsRequest
+ */
+export class ListReportsRequest extends Message<ListReportsRequest> {
+  /**
+   * default 20
+   *
+   * @generated from field: int32 page_size = 1;
+   */
+  pageSize = 0;
+
+  /**
+   * 0-based
+   *
+   * @generated from field: int32 page = 2;
+   */
+  page = 0;
+
+  constructor(data?: PartialMessage<ListReportsRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "pressmark.admin.ListReportsRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "page_size", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 2, name: "page", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListReportsRequest {
+    return new ListReportsRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListReportsRequest {
+    return new ListReportsRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListReportsRequest {
+    return new ListReportsRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ListReportsRequest | PlainMessage<ListReportsRequest> | undefined, b: ListReportsRequest | PlainMessage<ListReportsRequest> | undefined): boolean {
+    return proto3.util.equals(ListReportsRequest, a, b);
+  }
+}
+
+/**
  * @generated from message pressmark.admin.Report
  */
 export class Report extends Message<Report> {
@@ -786,6 +945,8 @@ export class Report extends Message<Report> {
   id = "";
 
   /**
+   * "comment" | "subscription"
+   *
    * @generated from field: string type = 2;
    */
   type = "";
@@ -810,6 +971,39 @@ export class Report extends Message<Report> {
    */
   isResolved = false;
 
+  /**
+   * @generated from field: string reporter_email = 7;
+   */
+  reporterEmail = "";
+
+  /**
+   * reporter's account created_at
+   *
+   * @generated from field: string reporter_joined = 8;
+   */
+  reporterJoined = "";
+
+  /**
+   * comment body or subscription title
+   *
+   * @generated from field: string content = 9;
+   */
+  content = "";
+
+  /**
+   * rss_url for subscription reports; empty for comment reports
+   *
+   * @generated from field: string content_url = 10;
+   */
+  contentUrl = "";
+
+  /**
+   * feed_item_id for comment reports; empty for subscription reports
+   *
+   * @generated from field: string article_id = 11;
+   */
+  articleId = "";
+
   constructor(data?: PartialMessage<Report>) {
     super();
     proto3.util.initPartial(data, this);
@@ -824,6 +1018,11 @@ export class Report extends Message<Report> {
     { no: 4, name: "reason", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 5, name: "created_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 6, name: "is_resolved", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 7, name: "reporter_email", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 8, name: "reporter_joined", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 9, name: "content", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 10, name: "content_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 11, name: "article_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Report {
@@ -852,6 +1051,11 @@ export class ReportList extends Message<ReportList> {
    */
   items: Report[] = [];
 
+  /**
+   * @generated from field: int32 total_count = 2;
+   */
+  totalCount = 0;
+
   constructor(data?: PartialMessage<ReportList>) {
     super();
     proto3.util.initPartial(data, this);
@@ -861,6 +1065,7 @@ export class ReportList extends Message<ReportList> {
   static readonly typeName = "pressmark.admin.ReportList";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "items", kind: "message", T: Report, repeated: true },
+    { no: 2, name: "total_count", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ReportList {
@@ -1059,6 +1264,339 @@ export class HiddenFeedItemList extends Message<HiddenFeedItemList> {
 
   static equals(a: HiddenFeedItemList | PlainMessage<HiddenFeedItemList> | undefined, b: HiddenFeedItemList | PlainMessage<HiddenFeedItemList> | undefined): boolean {
     return proto3.util.equals(HiddenFeedItemList, a, b);
+  }
+}
+
+/**
+ * @generated from message pressmark.admin.SitebanUserRequest
+ */
+export class SitebanUserRequest extends Message<SitebanUserRequest> {
+  /**
+   * @generated from field: string user_id = 1;
+   */
+  userId = "";
+
+  /**
+   * @generated from field: bool banned = 2;
+   */
+  banned = false;
+
+  constructor(data?: PartialMessage<SitebanUserRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "pressmark.admin.SitebanUserRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "user_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "banned", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): SitebanUserRequest {
+    return new SitebanUserRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): SitebanUserRequest {
+    return new SitebanUserRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): SitebanUserRequest {
+    return new SitebanUserRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: SitebanUserRequest | PlainMessage<SitebanUserRequest> | undefined, b: SitebanUserRequest | PlainMessage<SitebanUserRequest> | undefined): boolean {
+    return proto3.util.equals(SitebanUserRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message pressmark.admin.DeleteUserRequest
+ */
+export class DeleteUserRequest extends Message<DeleteUserRequest> {
+  /**
+   * @generated from field: string user_id = 1;
+   */
+  userId = "";
+
+  constructor(data?: PartialMessage<DeleteUserRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "pressmark.admin.DeleteUserRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "user_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): DeleteUserRequest {
+    return new DeleteUserRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): DeleteUserRequest {
+    return new DeleteUserRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): DeleteUserRequest {
+    return new DeleteUserRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: DeleteUserRequest | PlainMessage<DeleteUserRequest> | undefined, b: DeleteUserRequest | PlainMessage<DeleteUserRequest> | undefined): boolean {
+    return proto3.util.equals(DeleteUserRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message pressmark.admin.ChangeUserRoleRequest
+ */
+export class ChangeUserRoleRequest extends Message<ChangeUserRoleRequest> {
+  /**
+   * @generated from field: string user_id = 1;
+   */
+  userId = "";
+
+  /**
+   * "User" | "Admin"
+   *
+   * @generated from field: string role = 2;
+   */
+  role = "";
+
+  constructor(data?: PartialMessage<ChangeUserRoleRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "pressmark.admin.ChangeUserRoleRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "user_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "role", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ChangeUserRoleRequest {
+    return new ChangeUserRoleRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ChangeUserRoleRequest {
+    return new ChangeUserRoleRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ChangeUserRoleRequest {
+    return new ChangeUserRoleRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ChangeUserRoleRequest | PlainMessage<ChangeUserRoleRequest> | undefined, b: ChangeUserRoleRequest | PlainMessage<ChangeUserRoleRequest> | undefined): boolean {
+    return proto3.util.equals(ChangeUserRoleRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message pressmark.admin.GetUserDetailsRequest
+ */
+export class GetUserDetailsRequest extends Message<GetUserDetailsRequest> {
+  /**
+   * @generated from field: string user_id = 1;
+   */
+  userId = "";
+
+  constructor(data?: PartialMessage<GetUserDetailsRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "pressmark.admin.GetUserDetailsRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "user_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetUserDetailsRequest {
+    return new GetUserDetailsRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetUserDetailsRequest {
+    return new GetUserDetailsRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetUserDetailsRequest {
+    return new GetUserDetailsRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetUserDetailsRequest | PlainMessage<GetUserDetailsRequest> | undefined, b: GetUserDetailsRequest | PlainMessage<GetUserDetailsRequest> | undefined): boolean {
+    return proto3.util.equals(GetUserDetailsRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message pressmark.admin.UserSubscriptionInfo
+ */
+export class UserSubscriptionInfo extends Message<UserSubscriptionInfo> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  /**
+   * @generated from field: string rss_url = 2;
+   */
+  rssUrl = "";
+
+  /**
+   * @generated from field: string title = 3;
+   */
+  title = "";
+
+  /**
+   * @generated from field: bool is_community_banned = 4;
+   */
+  isCommunityBanned = false;
+
+  constructor(data?: PartialMessage<UserSubscriptionInfo>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "pressmark.admin.UserSubscriptionInfo";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "rss_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "title", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "is_community_banned", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UserSubscriptionInfo {
+    return new UserSubscriptionInfo().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UserSubscriptionInfo {
+    return new UserSubscriptionInfo().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UserSubscriptionInfo {
+    return new UserSubscriptionInfo().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: UserSubscriptionInfo | PlainMessage<UserSubscriptionInfo> | undefined, b: UserSubscriptionInfo | PlainMessage<UserSubscriptionInfo> | undefined): boolean {
+    return proto3.util.equals(UserSubscriptionInfo, a, b);
+  }
+}
+
+/**
+ * @generated from message pressmark.admin.UserCommentInfo
+ */
+export class UserCommentInfo extends Message<UserCommentInfo> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  /**
+   * @generated from field: string body = 2;
+   */
+  body = "";
+
+  /**
+   * @generated from field: string created_at = 3;
+   */
+  createdAt = "";
+
+  /**
+   * @generated from field: string feed_item_id = 4;
+   */
+  feedItemId = "";
+
+  /**
+   * @generated from field: string feed_item_title = 5;
+   */
+  feedItemTitle = "";
+
+  /**
+   * @generated from field: bool removed_by_admin = 6;
+   */
+  removedByAdmin = false;
+
+  constructor(data?: PartialMessage<UserCommentInfo>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "pressmark.admin.UserCommentInfo";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "body", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "created_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "feed_item_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "feed_item_title", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 6, name: "removed_by_admin", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UserCommentInfo {
+    return new UserCommentInfo().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UserCommentInfo {
+    return new UserCommentInfo().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UserCommentInfo {
+    return new UserCommentInfo().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: UserCommentInfo | PlainMessage<UserCommentInfo> | undefined, b: UserCommentInfo | PlainMessage<UserCommentInfo> | undefined): boolean {
+    return proto3.util.equals(UserCommentInfo, a, b);
+  }
+}
+
+/**
+ * @generated from message pressmark.admin.UserDetails
+ */
+export class UserDetails extends Message<UserDetails> {
+  /**
+   * @generated from field: pressmark.admin.UserInfo user = 1;
+   */
+  user?: UserInfo;
+
+  /**
+   * @generated from field: repeated pressmark.admin.UserSubscriptionInfo subscriptions = 2;
+   */
+  subscriptions: UserSubscriptionInfo[] = [];
+
+  /**
+   * @generated from field: repeated pressmark.admin.UserCommentInfo comments = 3;
+   */
+  comments: UserCommentInfo[] = [];
+
+  constructor(data?: PartialMessage<UserDetails>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "pressmark.admin.UserDetails";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "user", kind: "message", T: UserInfo },
+    { no: 2, name: "subscriptions", kind: "message", T: UserSubscriptionInfo, repeated: true },
+    { no: 3, name: "comments", kind: "message", T: UserCommentInfo, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UserDetails {
+    return new UserDetails().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UserDetails {
+    return new UserDetails().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UserDetails {
+    return new UserDetails().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: UserDetails | PlainMessage<UserDetails> | undefined, b: UserDetails | PlainMessage<UserDetails> | undefined): boolean {
+    return proto3.util.equals(UserDetails, a, b);
   }
 }
 

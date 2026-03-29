@@ -18,5 +18,6 @@
     "register": "Cadastrar",
     "logout": "Sair",
     "openMenu": "Abrir menu"
-  }
+  },
+  "banned": "banido"
 }

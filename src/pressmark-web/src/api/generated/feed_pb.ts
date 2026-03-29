@@ -768,6 +768,11 @@ export class Comment extends Message<Comment> {
    */
   removedByAdmin = false;
 
+  /**
+   * @generated from field: bool is_commenting_banned = 6;
+   */
+  isCommentingBanned = false;
+
   constructor(data?: PartialMessage<Comment>) {
     super();
     proto3.util.initPartial(data, this);
@@ -781,6 +786,7 @@ export class Comment extends Message<Comment> {
     { no: 3, name: "body", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 4, name: "created_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 5, name: "removed_by_admin", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 6, name: "is_commenting_banned", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Comment {

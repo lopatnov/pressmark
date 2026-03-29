@@ -4,7 +4,7 @@
 // @ts-nocheck
 
 import { Empty, MethodKind } from "@bufbuild/protobuf";
-import { BannedSubscriptionList, BanSubscriptionRequest, BanUserFromCommentingRequest, DeleteInviteRequest, GenerateInviteRequest, HiddenFeedItemList, HideFeedItemRequest, InviteList, InviteToken, ListBannedSubscriptionsRequest, ListHiddenFeedItemsRequest, PendingReportCount, RemoveCommentRequest, ReportList, ResolveReportRequest, SiteSettings, UpdateSiteSettingsRequest, UserList } from "./admin_pb.js";
+import { BannedSubscriptionList, BanSubscriptionRequest, BanUserFromCommentingRequest, ChangeUserRoleRequest, DeleteInviteRequest, DeleteUserRequest, GenerateInviteRequest, GetUserDetailsRequest, HiddenFeedItemList, HideFeedItemRequest, InviteList, InviteToken, ListBannedSubscriptionsRequest, ListHiddenFeedItemsRequest, ListInvitesRequest, ListReportsRequest, ListUsersRequest, PendingReportCount, RemoveCommentRequest, ReportList, ResolveReportRequest, SitebanUserRequest, SiteSettings, UpdateSiteSettingsRequest, UserDetails, UserList } from "./admin_pb.js";
 
 /**
  * @generated from service pressmark.admin.AdminService
@@ -53,7 +53,7 @@ export const AdminService = {
      */
     listUsers: {
       name: "ListUsers",
-      I: Empty,
+      I: ListUsersRequest,
       O: UserList,
       kind: MethodKind.Unary,
     },
@@ -80,7 +80,7 @@ export const AdminService = {
      */
     listInvites: {
       name: "ListInvites",
-      I: Empty,
+      I: ListInvitesRequest,
       O: InviteList,
       kind: MethodKind.Unary,
     },
@@ -125,7 +125,7 @@ export const AdminService = {
      */
     listReports: {
       name: "ListReports",
-      I: Empty,
+      I: ListReportsRequest,
       O: ReportList,
       kind: MethodKind.Unary,
     },
@@ -145,6 +145,42 @@ export const AdminService = {
       name: "ListHiddenFeedItems",
       I: ListHiddenFeedItemsRequest,
       O: HiddenFeedItemList,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc pressmark.admin.AdminService.SitebanUser
+     */
+    sitebanUser: {
+      name: "SitebanUser",
+      I: SitebanUserRequest,
+      O: Empty,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc pressmark.admin.AdminService.DeleteUser
+     */
+    deleteUser: {
+      name: "DeleteUser",
+      I: DeleteUserRequest,
+      O: Empty,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc pressmark.admin.AdminService.ChangeUserRole
+     */
+    changeUserRole: {
+      name: "ChangeUserRole",
+      I: ChangeUserRoleRequest,
+      O: Empty,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc pressmark.admin.AdminService.GetUserDetails
+     */
+    getUserDetails: {
+      name: "GetUserDetails",
+      I: GetUserDetailsRequest,
+      O: UserDetails,
       kind: MethodKind.Unary,
     },
   }

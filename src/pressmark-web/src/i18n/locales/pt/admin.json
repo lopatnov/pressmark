@@ -28,12 +28,14 @@
     "unhidden": "Artigo exibido",
     "banned": "Fonte banida",
     "hiddenArticles": "Artigos ocultos",
-    "noHiddenArticles": "Nenhum artigo oculto"
+    "noHiddenArticles": "Nenhum artigo oculto",
+    "openArticle": "Abrir a página do artigo"
   },
   "bannedSubs": {
     "title": "Fontes banidas",
     "empty": "Nenhuma fonte banida",
-    "unban": "Desbanir"
+    "unban": "Desbanir",
+    "banned": "banido"
   },
   "users": {
     "title": "Usuários",
@@ -43,7 +45,28 @@
     "empty": "Nenhum usuário encontrado",
     "comments": "Comentários",
     "banComments": "Banir",
-    "unbanComments": "Desbanir"
+    "unbanComments": "Desbanir",
+    "siteBanCol": "Proibição do sítio",
+    "siteBan": "Proibição do sítio",
+    "unsiteBan": "Levantar a proibição do sítio",
+    "siteBanned": "site banido",
+    "commentBanned": "comentário banido",
+    "viewProfile": "Ver perfil",
+    "profileTitle": "Perfil do utilizador",
+    "promoteToAdmin": "Promover a administrador",
+    "demoteToUser": "Rebaixar para utilizador",
+    "deleteUser": "Eliminar utilizador",
+    "confirmDeleteTitle": "Apagar utilizador?",
+    "confirmDeleteDesc": "Esta ação elimina permanentemente {{email}} e todos os seus dados. Esta ação não pode ser anulada.",
+    "deleted": "Utilizador eliminado",
+    "cannotDemoteLastAdmin": "Não é possível despromover o último administrador",
+    "cannotDeleteLastAdmin": "Não é possível eliminar o último administrador",
+    "cannotDeleteSelf": "Não é possível apagar a sua própria conta",
+    "notFound": "Utilizador não encontrado",
+    "subscriptions": "Subscrições",
+    "noSubscriptions": "Sem subscrições",
+    "noComments": "Sem comentários",
+    "commentRemoved": "[removido por admin]"
   },
   "reports": {
     "title": "Denúncias",
@@ -54,7 +77,12 @@
     "comment": "Comentário",
     "subscription": "Fonte",
     "loadError": "Falha ao carregar denúncias",
-    "resolveError": "Falha ao resolver denúncia"
+    "resolveError": "Falha ao resolver denúncia",
+    "typeId": "Tipo / ID",
+    "reporter": "Repórter",
+    "content": "Conteúdo",
+    "copyId": "Copiar ID",
+    "openArticle": "Abrir artigo"
   },
   "pagination": {
     "prev": "Anterior",

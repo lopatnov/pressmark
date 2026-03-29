@@ -18,5 +18,6 @@
     "register": "Registreren",
     "logout": "Uitloggen",
     "openMenu": "Menu openen"
-  }
+  },
+  "banned": "verboden"
 }

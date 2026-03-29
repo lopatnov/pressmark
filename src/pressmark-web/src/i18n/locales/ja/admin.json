@@ -28,12 +28,14 @@
     "unhidden": "記事を表示しました",
     "banned": "ソースをBANしました",
     "hiddenArticles": "非表示の記事",
-    "noHiddenArticles": "非表示の記事はありません"
+    "noHiddenArticles": "非表示の記事はありません",
+    "openArticle": "記事ページを開く"
   },
   "bannedSubs": {
     "title": "BANされたソース",
     "empty": "BANされたソースはありません",
-    "unban": "BAN解除"
+    "unban": "BAN解除",
+    "banned": "禁止"
   },
   "users": {
     "title": "ユーザー",
@@ -43,7 +45,28 @@
     "empty": "ユーザーが見つかりません",
     "comments": "コメント",
     "banComments": "禁止",
-    "unbanComments": "許可"
+    "unbanComments": "許可",
+    "siteBanCol": "サイトBAN",
+    "siteBan": "サイトBAN",
+    "unsiteBan": "サイトBANを解除",
+    "siteBanned": "サイトBAN済み",
+    "commentBanned": "コメントBAN済み",
+    "viewProfile": "プロフィールを見る",
+    "profileTitle": "ユーザープロフィール",
+    "promoteToAdmin": "管理者に昇格",
+    "demoteToUser": "ユーザーに降格",
+    "deleteUser": "ユーザーを削除",
+    "confirmDeleteTitle": "ユーザーを削除しますか？",
+    "confirmDeleteDesc": "これで{{email}}とそのすべてのデータが永久に削除されます。この操作は元に戻せません。",
+    "deleted": "ユーザーを削除しました",
+    "cannotDemoteLastAdmin": "最後の管理者を降格させることはできません",
+    "cannotDeleteLastAdmin": "最後の管理者を削除できません",
+    "cannotDeleteSelf": "自分のアカウントを削除できません",
+    "notFound": "ユーザーが見つかりません",
+    "subscriptions": "購読",
+    "noSubscriptions": "購読がありません",
+    "noComments": "コメントなし",
+    "commentRemoved": "[管理者によって削除されました]"
   },
   "reports": {
     "title": "報告",
@@ -54,7 +77,12 @@
     "comment": "コメント",
     "subscription": "ソース",
     "loadError": "報告の読み込みに失敗しました",
-    "resolveError": "報告の解決に失敗しました"
+    "resolveError": "報告の解決に失敗しました",
+    "typeId": "タイプ / ID",
+    "reporter": "レポーター",
+    "content": "内容",
+    "copyId": "IDをコピー",
+    "openArticle": "記事を開く"
   },
   "pagination": {
     "prev": "前へ",

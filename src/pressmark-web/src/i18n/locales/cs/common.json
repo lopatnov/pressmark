@@ -18,5 +18,6 @@
     "register": "Registrovat se",
     "logout": "Odhlásit se",
     "openMenu": "Otevřít nabídku"
-  }
+  },
+  "banned": "zakázáno"
 }

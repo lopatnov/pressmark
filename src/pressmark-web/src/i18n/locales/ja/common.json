@@ -18,5 +18,6 @@
     "register": "新規登録",
     "logout": "ログアウト",
     "openMenu": "メニューを開く"
-  }
+  },
+  "banned": "禁止"
 }

@@ -11,7 +11,7 @@
     "generate": "buf generate",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "test": "vitest run",
+    "test": "vitest run --coverage.enabled",
     "typecheck": "tsc --noEmit",
     "prepare": "cd ../.. && npx husky src/pressmark-web/.husky"
   },

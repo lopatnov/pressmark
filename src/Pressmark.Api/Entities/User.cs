@@ -22,6 +22,9 @@ public class User
     [Column("is_commenting_banned")]
     public bool IsCommentingBanned { get; set; }
 
+    [Column("is_site_banned")]
+    public bool IsSiteBanned { get; set; }
+
     public ICollection<Subscription> Subscriptions { get; set; } = [];
     public ICollection<ReadItem> ReadItems { get; set; } = [];
     public ICollection<Like> Likes { get; set; } = [];

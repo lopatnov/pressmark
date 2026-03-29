@@ -28,12 +28,14 @@
     "unhidden": "Cikk megjelenítve",
     "banned": "Forrás tiltva",
     "hiddenArticles": "Rejtett cikkek",
-    "noHiddenArticles": "Nincsenek rejtett cikkek"
+    "noHiddenArticles": "Nincsenek rejtett cikkek",
+    "openArticle": "Cikkoldal megnyitása"
   },
   "bannedSubs": {
     "title": "Tiltott források",
     "empty": "Nincsenek tiltott források",
-    "unban": "Tiltás feloldása"
+    "unban": "Tiltás feloldása",
+    "banned": "tiltott"
   },
   "users": {
     "title": "Felhasználók",
@@ -43,7 +45,28 @@
     "empty": "Nem találhatók felhasználók",
     "comments": "Hozzászólások",
     "banComments": "Tiltás",
-    "unbanComments": "Engedélyezés"
+    "unbanComments": "Engedélyezés",
+    "siteBanCol": "Oldaltiltás",
+    "siteBan": "Oldaltiltás",
+    "unsiteBan": "Oldaltilalom feloldása",
+    "siteBanned": "oldal tiltott",
+    "commentBanned": "megjegyzés tiltott",
+    "viewProfile": "Profil megtekintése",
+    "profileTitle": "Felhasználói profil",
+    "promoteToAdmin": "Előléptetés adminisztrátorrá",
+    "demoteToUser": "Visszaminősítés felhasználóvá",
+    "deleteUser": "Felhasználó törlése",
+    "confirmDeleteTitle": "Felhasználó törlése?",
+    "confirmDeleteDesc": "Ez véglegesen törli a {{email}} és minden adatát. Ez a művelet nem vonható vissza.",
+    "deleted": "Felhasználó törölve",
+    "cannotDemoteLastAdmin": "Nem lehet az utolsó adminisztrátort lefokozni",
+    "cannotDeleteLastAdmin": "Nem lehet törölni az utolsó adminisztrátort",
+    "cannotDeleteSelf": "Nem törölheti a saját fiókját",
+    "notFound": "Felhasználó nem található",
+    "subscriptions": "Előfizetések",
+    "noSubscriptions": "Nincs előfizetés",
+    "noComments": "Nincsenek megjegyzések",
+    "commentRemoved": "[admin által eltávolítva]"
   },
   "reports": {
     "title": "Bejelentések",
@@ -54,7 +77,12 @@
     "comment": "Megjegyzés",
     "subscription": "Forrás",
     "loadError": "A bejelentések betöltése sikertelen",
-    "resolveError": "A bejelentés megoldása sikertelen"
+    "resolveError": "A bejelentés megoldása sikertelen",
+    "typeId": "Típus / azonosító",
+    "reporter": "Riporter",
+    "content": "Tartalom",
+    "copyId": "ID másolása",
+    "openArticle": "Cikk megnyitása"
   },
   "pagination": {
     "prev": "Előző",

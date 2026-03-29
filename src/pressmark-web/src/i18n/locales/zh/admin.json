@@ -28,12 +28,14 @@
     "unhidden": "文章已显示",
     "banned": "来源已封禁",
     "hiddenArticles": "隐藏的文章",
-    "noHiddenArticles": "没有隐藏的文章"
+    "noHiddenArticles": "没有隐藏的文章",
+    "openArticle": "打开文章页面"
   },
   "bannedSubs": {
     "title": "已封禁来源",
     "empty": "无封禁来源",
-    "unban": "解除封禁"
+    "unban": "解除封禁",
+    "banned": "禁止"
   },
   "users": {
     "title": "用户",
@@ -43,7 +45,28 @@
     "empty": "未找到用户",
     "comments": "评论",
     "banComments": "禁止",
-    "unbanComments": "允许"
+    "unbanComments": "允许",
+    "siteBanCol": "封禁站点",
+    "siteBan": "封禁站点",
+    "unsiteBan": "解除站点封禁",
+    "siteBanned": "站点已封禁",
+    "commentBanned": "评论已封禁",
+    "viewProfile": "查看个人资料",
+    "profileTitle": "用户资料",
+    "promoteToAdmin": "晋升为管理员",
+    "demoteToUser": "降级为用户",
+    "deleteUser": "删除用户",
+    "confirmDeleteTitle": "删除用户？",
+    "confirmDeleteDesc": "这将永久删除 {{email}} 及其所有数据。此操作无法撤销。",
+    "deleted": "用户已删除",
+    "cannotDemoteLastAdmin": "无法降级最后一位管理员",
+    "cannotDeleteLastAdmin": "无法删除最后一位管理员",
+    "cannotDeleteSelf": "无法删除自己的账户",
+    "notFound": "未找到用户",
+    "subscriptions": "订阅",
+    "noSubscriptions": "无订阅",
+    "noComments": "无评论",
+    "commentRemoved": "[管理员已删除]"
   },
   "reports": {
     "title": "举报",
@@ -54,7 +77,12 @@
     "comment": "评论",
     "subscription": "来源",
     "loadError": "加载举报失败",
-    "resolveError": "解决举报失败"
+    "resolveError": "解决举报失败",
+    "typeId": "类型 / ID",
+    "reporter": "记者",
+    "content": "内容",
+    "copyId": "复制 ID",
+    "openArticle": "打开文章"
   },
   "pagination": {
     "prev": "上一页",

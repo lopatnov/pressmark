@@ -3,6 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { Code, ConnectError } from '@connectrpc/connect'
 import { Button } from '@/components/ui/button'
 import { authClient } from '@/api/clients'
 import { useAuthStore } from '@/store/authStore'
@@ -39,8 +40,14 @@ export function LoginPage() {
         role: res.role as 'User' | 'Admin',
       })
       navigate('/feed')
-    } catch {
-      setError('root', { message: t('errors.invalidCredentials') })
+    } catch (err) {
+      const isSiteBanned =
+        err instanceof ConnectError &&
+        err.code === Code.PermissionDenied &&
+        err.rawMessage === 'account_banned'
+      setError('root', {
+        message: t(isSiteBanned ? 'errors.accountBanned' : 'errors.invalidCredentials'),
+      })
     }
   }
 

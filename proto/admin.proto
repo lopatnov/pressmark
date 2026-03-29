@@ -11,17 +11,21 @@ service AdminService {
   rpc UpdateSiteSettings       (UpdateSiteSettingsRequest)       returns (google.protobuf.Empty);
   rpc HideFeedItem             (HideFeedItemRequest)             returns (google.protobuf.Empty);
   rpc BanSubscription          (BanSubscriptionRequest)          returns (google.protobuf.Empty);
-  rpc ListUsers                (google.protobuf.Empty)           returns (UserList);
+  rpc ListUsers                (ListUsersRequest)                returns (UserList);
   rpc GenerateInvite           (GenerateInviteRequest)           returns (InviteToken);
   rpc DeleteInvite             (DeleteInviteRequest)             returns (google.protobuf.Empty);
-  rpc ListInvites              (google.protobuf.Empty)           returns (InviteList);
+  rpc ListInvites              (ListInvitesRequest)              returns (InviteList);
   rpc ListBannedSubscriptions  (ListBannedSubscriptionsRequest)  returns (BannedSubscriptionList);
   rpc RemoveComment            (RemoveCommentRequest)            returns (google.protobuf.Empty);
   rpc BanUserFromCommenting    (BanUserFromCommentingRequest)    returns (google.protobuf.Empty);
   rpc GetPendingReportCount    (google.protobuf.Empty)           returns (PendingReportCount);
-  rpc ListReports              (google.protobuf.Empty)           returns (ReportList);
+  rpc ListReports              (ListReportsRequest)              returns (ReportList);
   rpc ResolveReport            (ResolveReportRequest)            returns (google.protobuf.Empty);
   rpc ListHiddenFeedItems      (ListHiddenFeedItemsRequest)      returns (HiddenFeedItemList);
+  rpc SitebanUser              (SitebanUserRequest)              returns (google.protobuf.Empty);
+  rpc DeleteUser               (DeleteUserRequest)               returns (google.protobuf.Empty);
+  rpc ChangeUserRole           (ChangeUserRoleRequest)           returns (google.protobuf.Empty);
+  rpc GetUserDetails           (GetUserDetailsRequest)           returns (UserDetails);
 }
 
 message SiteSettings {
@@ -51,8 +55,14 @@ message BanSubscriptionRequest {
   bool   banned          = 2;
 }
 
+message ListUsersRequest {
+  int32 page_size = 1; // default 20
+  int32 page      = 2; // 0-based
+}
+
 message UserList {
-  repeated UserInfo users = 1;
+  repeated UserInfo users      = 1;
+  int32             total_count = 2;
 }
 
 message UserInfo {
@@ -61,6 +71,7 @@ message UserInfo {
   string role                 = 3;
   string created_at           = 4;
   bool   is_commenting_banned = 5;
+  bool   is_site_banned       = 6;
 }
 
 message GenerateInviteRequest {
@@ -82,8 +93,14 @@ message InviteToken {
   string expires_at = 7;  // empty = no expiry
 }
 
+message ListInvitesRequest {
+  int32 page_size = 1; // default 20
+  int32 page      = 2; // 0-based
+}
+
 message InviteList {
-  repeated InviteToken items = 1;
+  repeated InviteToken items       = 1;
+  int32                total_count = 2;
 }
 
 message ListBannedSubscriptionsRequest {
@@ -115,17 +132,28 @@ message PendingReportCount {
   int32 count = 1;
 }
 
+message ListReportsRequest {
+  int32 page_size = 1; // default 20
+  int32 page      = 2; // 0-based
+}
+
 message Report {
-  string id          = 1;
-  string type        = 2;
-  string target_id   = 3;
-  string reason      = 4;
-  string created_at  = 5;
-  bool   is_resolved = 6;
+  string id               = 1;
+  string type             = 2;  // "comment" | "subscription"
+  string target_id        = 3;
+  string reason           = 4;
+  string created_at       = 5;
+  bool   is_resolved      = 6;
+  string reporter_email   = 7;
+  string reporter_joined  = 8;  // reporter's account created_at
+  string content          = 9;  // comment body or subscription title
+  string content_url      = 10; // rss_url for subscription reports; empty for comment reports
+  string article_id       = 11; // feed_item_id for comment reports; empty for subscription reports
 }
 
 message ReportList {
-  repeated Report items = 1;
+  repeated Report items       = 1;
+  int32           total_count = 2;
 }
 
 message ResolveReportRequest {
@@ -147,4 +175,44 @@ message HiddenFeedItem {
 message HiddenFeedItemList {
   repeated HiddenFeedItem items       = 1;
   int32                   total_count = 2;
+}
+
+message SitebanUserRequest {
+  string user_id = 1;
+  bool   banned  = 2;
+}
+
+message DeleteUserRequest {
+  string user_id = 1;
+}
+
+message ChangeUserRoleRequest {
+  string user_id = 1;
+  string role    = 2; // "User" | "Admin"
+}
+
+message GetUserDetailsRequest {
+  string user_id = 1;
+}
+
+message UserSubscriptionInfo {
+  string id                  = 1;
+  string rss_url             = 2;
+  string title               = 3;
+  bool   is_community_banned = 4;
+}
+
+message UserCommentInfo {
+  string id               = 1;
+  string body             = 2;
+  string created_at       = 3;
+  string feed_item_id     = 4;
+  string feed_item_title  = 5;
+  bool   removed_by_admin = 6;
+}
+
+message UserDetails {
+  UserInfo                      user          = 1;
+  repeated UserSubscriptionInfo subscriptions = 2;
+  repeated UserCommentInfo      comments      = 3;
 }

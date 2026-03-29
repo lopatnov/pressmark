@@ -28,12 +28,14 @@
     "unhidden": "Artikel visad",
     "banned": "Källa förbjuden",
     "hiddenArticles": "Dolda artiklar",
-    "noHiddenArticles": "Inga dolda artiklar"
+    "noHiddenArticles": "Inga dolda artiklar",
+    "openArticle": "Öppna artikelsidan"
   },
   "bannedSubs": {
     "title": "Förbjudna källor",
     "empty": "Inga förbjudna källor",
-    "unban": "Avblockera"
+    "unban": "Avblockera",
+    "banned": "förbjuden"
   },
   "users": {
     "title": "Användare",
@@ -43,7 +45,28 @@
     "empty": "Inga användare hittades",
     "comments": "Kommentarer",
     "banComments": "Förbjud",
-    "unbanComments": "Tillåt"
+    "unbanComments": "Tillåt",
+    "siteBanCol": "Webbplatsförbud",
+    "siteBan": "Webbplatsförbud",
+    "unsiteBan": "Upphäv webbplatsförbud",
+    "siteBanned": "webbplats förbjuden",
+    "commentBanned": "kommentar förbjuden",
+    "viewProfile": "Visa profil",
+    "profileTitle": "Användarprofil",
+    "promoteToAdmin": "Befordra till Admin",
+    "demoteToUser": "Degradera till användare",
+    "deleteUser": "Ta bort användare",
+    "confirmDeleteTitle": "Ta bort användare?",
+    "confirmDeleteDesc": "Detta kommer att permanent radera {{email}} och all deras data. Denna åtgärd kan inte ångras.",
+    "deleted": "Användaren raderad",
+    "cannotDemoteLastAdmin": "Kan inte degradera den senaste administratören",
+    "cannotDeleteLastAdmin": "Kan inte radera den senaste administratören",
+    "cannotDeleteSelf": "Kan inte radera ditt eget konto",
+    "notFound": "Användaren hittades inte",
+    "subscriptions": "Prenumerationer",
+    "noSubscriptions": "Inga prenumerationer",
+    "noComments": "Inga kommentarer",
+    "commentRemoved": "[borttagen av admin]"
   },
   "reports": {
     "title": "Rapporter",
@@ -54,7 +77,12 @@
     "comment": "Kommentar",
     "subscription": "Källa",
     "loadError": "Det gick inte att ladda rapporter",
-    "resolveError": "Det gick inte att lösa rapport"
+    "resolveError": "Det gick inte att lösa rapport",
+    "typeId": "Typ / ID",
+    "reporter": "Reporter",
+    "content": "Innehåll",
+    "copyId": "Kopiera ID",
+    "openArticle": "Öppna artikel"
   },
   "pagination": {
     "prev": "Föregående",

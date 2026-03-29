@@ -18,5 +18,6 @@
     "register": "Regisztráció",
     "logout": "Kijelentkezés",
     "openMenu": "Menü megnyitása"
-  }
+  },
+  "banned": "tiltott"
 }

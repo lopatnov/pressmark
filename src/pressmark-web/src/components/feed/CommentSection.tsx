@@ -12,6 +12,7 @@ interface CommentItem {
   body: string
   createdAt: string
   removedByAdmin: boolean
+  isCommentingBanned: boolean
 }
 
 interface CommentSectionProps {
@@ -43,6 +44,7 @@ export function CommentSection({ feedItemId, initiallyOpen = false }: CommentSec
           body: c.body,
           createdAt: c.createdAt,
           removedByAdmin: c.removedByAdmin,
+          isCommentingBanned: c.isCommentingBanned,
         })),
       )
       setLoaded(true)
@@ -75,6 +77,7 @@ export function CommentSection({ feedItemId, initiallyOpen = false }: CommentSec
           body: res.body,
           createdAt: res.createdAt,
           removedByAdmin: res.removedByAdmin,
+          isCommentingBanned: res.isCommentingBanned,
         },
       ])
       setBody('')
@@ -138,8 +141,13 @@ export function CommentSection({ feedItemId, initiallyOpen = false }: CommentSec
                   <>
                     <div className="flex items-start justify-between gap-2">
                       <div className="space-y-0.5 flex-1">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <span className="text-xs font-medium">{c.userEmail}</span>
+                          {c.isCommentingBanned && (
+                            <span className="rounded bg-destructive/10 px-1 py-0.5 text-[10px] font-medium text-destructive">
+                              {t('common:banned')}
+                            </span>
+                          )}
                           <span className="text-xs text-muted-foreground">
                             {c.createdAt
                               ? new Date(c.createdAt).toLocaleString(undefined, {

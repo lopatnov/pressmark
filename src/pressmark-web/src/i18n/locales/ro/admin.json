@@ -28,12 +28,14 @@
     "unhidden": "Articol afișat",
     "banned": "Sursă interzisă",
     "hiddenArticles": "Articole ascunse",
-    "noHiddenArticles": "Niciun articol ascuns"
+    "noHiddenArticles": "Niciun articol ascuns",
+    "openArticle": "Deschideți pagina articolului"
   },
   "bannedSubs": {
     "title": "Surse interzise",
     "empty": "Nicio sursă interzisă",
-    "unban": "Deblochează"
+    "unban": "Deblochează",
+    "banned": "interzis"
   },
   "users": {
     "title": "Utilizatori",
@@ -43,7 +45,28 @@
     "empty": "Niciun utilizator găsit",
     "comments": "Comentarii",
     "banComments": "Interzice",
-    "unbanComments": "Permite"
+    "unbanComments": "Permite",
+    "siteBanCol": "Interzicerea site-ului",
+    "siteBan": "Interzicerea site-ului",
+    "unsiteBan": "Ridicare interdicție site",
+    "siteBanned": "site interzis",
+    "commentBanned": "comentariu interzis",
+    "viewProfile": "Vizualizați profilul",
+    "profileTitle": "Profil utilizator",
+    "promoteToAdmin": "Promovare la administrator",
+    "demoteToUser": "Retrogradare la utilizator",
+    "deleteUser": "Ștergeți utilizatorul",
+    "confirmDeleteTitle": "Ștergeți utilizatorul?",
+    "confirmDeleteDesc": "Aceasta va șterge definitiv {{email}} și toate datele sale. Această acțiune nu poate fi anulată.",
+    "deleted": "Utilizator șters",
+    "cannotDemoteLastAdmin": "Nu se poate retrograda ultimul administrator",
+    "cannotDeleteLastAdmin": "Nu se poate șterge ultimul administrator",
+    "cannotDeleteSelf": "Nu vă puteți șterge propriul cont",
+    "notFound": "Utilizatorul nu a fost găsit",
+    "subscriptions": "Abonamente",
+    "noSubscriptions": "Nu există abonamente",
+    "noComments": "Fără comentarii",
+    "commentRemoved": "[eliminat de admin]"
   },
   "reports": {
     "title": "Rapoarte",
@@ -54,7 +77,12 @@
     "comment": "Comentariu",
     "subscription": "Sursă",
     "loadError": "Nu s-au putut încărca rapoartele",
-    "resolveError": "Nu s-a putut rezolva raportul"
+    "resolveError": "Nu s-a putut rezolva raportul",
+    "typeId": "Tip / ID",
+    "reporter": "Reporter",
+    "content": "Conținut",
+    "copyId": "Copiere ID",
+    "openArticle": "Deschide articol"
   },
   "pagination": {
     "prev": "Anterior",

@@ -28,12 +28,14 @@
     "unhidden": "Artikel eingeblendet",
     "banned": "Quelle gesperrt",
     "hiddenArticles": "Ausgeblendete Artikel",
-    "noHiddenArticles": "Keine ausgeblendeten Artikel"
+    "noHiddenArticles": "Keine ausgeblendeten Artikel",
+    "openArticle": "Artikelseite öffnen"
   },
   "bannedSubs": {
     "title": "Gesperrte Quellen",
     "empty": "Keine gesperrten Quellen",
-    "unban": "Entsperren"
+    "unban": "Entsperren",
+    "banned": "Verbannt"
   },
   "users": {
     "title": "Benutzer",
@@ -43,7 +45,28 @@
     "empty": "Keine Benutzer gefunden",
     "comments": "Kommentare",
     "banComments": "Sperren",
-    "unbanComments": "Entsperren"
+    "unbanComments": "Entsperren",
+    "siteBanCol": "Verbot der Seite",
+    "siteBan": "Verbot der Seite",
+    "unsiteBan": "Verbot der Seite aufheben",
+    "siteBanned": "Seite gesperrt",
+    "commentBanned": "Kommentar verbieten",
+    "viewProfile": "Profil ansehen",
+    "profileTitle": "Benutzerprofil",
+    "promoteToAdmin": "Zum Administrator befördern",
+    "demoteToUser": "Zum Benutzer zurückstufen",
+    "deleteUser": "Benutzer löschen",
+    "confirmDeleteTitle": "Benutzer löschen?",
+    "confirmDeleteDesc": "Damit werden {{email}} und alle seine Daten dauerhaft gelöscht. Diese Aktion kann nicht rückgängig gemacht werden.",
+    "deleted": "Benutzer gelöscht",
+    "cannotDemoteLastAdmin": "Kann den letzten Admin nicht degradieren",
+    "cannotDeleteLastAdmin": "Kann den letzten Admin nicht löschen",
+    "cannotDeleteSelf": "Kann das eigene Konto nicht löschen",
+    "notFound": "Benutzer nicht gefunden",
+    "subscriptions": "Abonnements",
+    "noSubscriptions": "Keine Abonnements",
+    "noComments": "Keine Kommentare",
+    "commentRemoved": "[von admin entfernt]"
   },
   "reports": {
     "title": "Meldungen",
@@ -54,7 +77,12 @@
     "comment": "Kommentar",
     "subscription": "Quelle",
     "loadError": "Meldungen konnten nicht geladen werden",
-    "resolveError": "Meldung konnte nicht erledigt werden"
+    "resolveError": "Meldung konnte nicht erledigt werden",
+    "typeId": "Typ / ID",
+    "reporter": "Reporter",
+    "content": "Inhalt",
+    "copyId": "ID kopieren",
+    "openArticle": "Artikel öffnen"
   },
   "pagination": {
     "prev": "Zurück",

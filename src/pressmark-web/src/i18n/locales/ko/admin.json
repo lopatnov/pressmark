@@ -28,12 +28,14 @@
     "unhidden": "게시글 표시됨",
     "banned": "소스 차단됨",
     "hiddenArticles": "숨겨진 게시글",
-    "noHiddenArticles": "숨겨진 게시글 없음"
+    "noHiddenArticles": "숨겨진 게시글 없음",
+    "openArticle": "글 페이지 열기"
   },
   "bannedSubs": {
     "title": "차단된 소스",
     "empty": "차단된 소스 없음",
-    "unban": "차단 해제"
+    "unban": "차단 해제",
+    "banned": "금지됨"
   },
   "users": {
     "title": "사용자",
@@ -43,7 +45,28 @@
     "empty": "사용자를 찾을 수 없습니다",
     "comments": "댓글",
     "banComments": "차단",
-    "unbanComments": "허용"
+    "unbanComments": "허용",
+    "siteBanCol": "사이트 금지",
+    "siteBan": "사이트 금지",
+    "unsiteBan": "사이트 금지 해제",
+    "siteBanned": "사이트 금지됨",
+    "commentBanned": "댓글 금지됨",
+    "viewProfile": "프로필 보기",
+    "profileTitle": "사용자 프로필",
+    "promoteToAdmin": "관리자로 승격",
+    "demoteToUser": "사용자로 강등",
+    "deleteUser": "사용자 삭제",
+    "confirmDeleteTitle": "사용자를 삭제하시겠습니까?",
+    "confirmDeleteDesc": "그러면 {{email}}과 해당 사용자의 모든 데이터가 영구 삭제됩니다. 이 작업은 취소할 수 없습니다.",
+    "deleted": "사용자 삭제됨",
+    "cannotDemoteLastAdmin": "마지막 관리자를 강등할 수 없음",
+    "cannotDeleteLastAdmin": "마지막 관리자를 삭제할 수 없습니다",
+    "cannotDeleteSelf": "자신의 계정을 삭제할 수 없습니다",
+    "notFound": "사용자를 찾을 수 없음",
+    "subscriptions": "구독",
+    "noSubscriptions": "구독 없음",
+    "noComments": "댓글 없음",
+    "commentRemoved": "[관리자에 의해 삭제됨]"
   },
   "reports": {
     "title": "신고",
@@ -54,7 +77,12 @@
     "comment": "댓글",
     "subscription": "출체",
     "loadError": "신고를 불러오는 데 실패했습니다",
-    "resolveError": "신고를 해결하는 데 실패했습니다"
+    "resolveError": "신고를 해결하는 데 실패했습니다",
+    "typeId": "유형 / ID",
+    "reporter": "기자",
+    "content": "콘텐츠",
+    "copyId": "ID 복사",
+    "openArticle": "기사 열기"
   },
   "pagination": {
     "prev": "이전",

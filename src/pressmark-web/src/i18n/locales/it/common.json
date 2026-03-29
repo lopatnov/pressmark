@@ -18,5 +18,6 @@
     "register": "Registrati",
     "logout": "Esci",
     "openMenu": "Apri menu"
-  }
+  },
+  "banned": "vietato"
 }

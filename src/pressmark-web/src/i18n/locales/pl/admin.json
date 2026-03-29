@@ -28,12 +28,14 @@
     "unhidden": "Artykuł pokazany",
     "banned": "Źródło zablokowane",
     "hiddenArticles": "Ukryte artykuły",
-    "noHiddenArticles": "Brak ukrytych artykułów"
+    "noHiddenArticles": "Brak ukrytych artykułów",
+    "openArticle": "Otwórz stronę artykułu"
   },
   "bannedSubs": {
     "title": "Zablokowane źródła",
     "empty": "Brak zablokowanych źródeł",
-    "unban": "Odblokuj"
+    "unban": "Odblokuj",
+    "banned": "zbanowany"
   },
   "users": {
     "title": "Użytkownicy",
@@ -43,7 +45,28 @@
     "empty": "Nie znaleziono użytkowników",
     "comments": "Komentarze",
     "banComments": "Zablokuj",
-    "unbanComments": "Odblokuj"
+    "unbanComments": "Odblokuj",
+    "siteBanCol": "Ban na stronie",
+    "siteBan": "Ban na stronie",
+    "unsiteBan": "Zniesienie zakazu witryny",
+    "siteBanned": "strona zbanowana",
+    "commentBanned": "komentarz zbanowany",
+    "viewProfile": "Wyświetl profil",
+    "profileTitle": "Profil użytkownika",
+    "promoteToAdmin": "Awans do administratora",
+    "demoteToUser": "Zdegradowanie do użytkownika",
+    "deleteUser": "Usuń użytkownika",
+    "confirmDeleteTitle": "Usunąć użytkownika?",
+    "confirmDeleteDesc": "Spowoduje to trwałe usunięcie {{email}} i wszystkich jego danych. Tej akcji nie można cofnąć.",
+    "deleted": "Użytkownik usunięty",
+    "cannotDemoteLastAdmin": "Nie można zdegradować ostatniego administratora",
+    "cannotDeleteLastAdmin": "Nie można usunąć ostatniego administratora",
+    "cannotDeleteSelf": "Nie można usunąć własnego konta",
+    "notFound": "Nie znaleziono użytkownika",
+    "subscriptions": "Subskrypcje",
+    "noSubscriptions": "Brak subskrypcji",
+    "noComments": "Brak komentarzy",
+    "commentRemoved": "[usunięte przez administratora]"
   },
   "reports": {
     "title": "Zgłoszenia",
@@ -54,7 +77,12 @@
     "comment": "Komentarz",
     "subscription": "Źródło",
     "loadError": "Nie udało się załadować zgłoszeń",
-    "resolveError": "Nie udało się rozwiązać zgłoszenia"
+    "resolveError": "Nie udało się rozwiązać zgłoszenia",
+    "typeId": "Typ / ID",
+    "reporter": "Reporter",
+    "content": "Treść",
+    "copyId": "Kopiuj ID",
+    "openArticle": "Otwórz artykuł"
   },
   "pagination": {
     "prev": "Poprzednia",

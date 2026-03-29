@@ -123,11 +123,12 @@ message ListCommentsRequest {
 }
 
 message Comment {
-  string id               = 1;
-  string user_email       = 2;
-  string body             = 3;
-  string created_at       = 4;
-  bool   removed_by_admin = 5;
+  string id                   = 1;
+  string user_email           = 2;
+  string body                 = 3;
+  string created_at           = 4;
+  bool   removed_by_admin     = 5;
+  bool   is_commenting_banned = 6;
 }
 
 message CommentList {

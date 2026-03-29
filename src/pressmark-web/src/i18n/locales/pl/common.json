@@ -18,5 +18,6 @@
     "register": "Zarejestruj się",
     "logout": "Wyloguj się",
     "openMenu": "Otwórz menu"
-  }
+  },
+  "banned": "zbanowany"
 }

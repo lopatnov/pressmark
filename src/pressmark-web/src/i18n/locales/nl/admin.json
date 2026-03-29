@@ -28,12 +28,14 @@
     "unhidden": "Artikel getoond",
     "banned": "Bron geblokkeerd",
     "hiddenArticles": "Verborgen artikelen",
-    "noHiddenArticles": "Geen verborgen artikelen"
+    "noHiddenArticles": "Geen verborgen artikelen",
+    "openArticle": "Artikelpagina openen"
   },
   "bannedSubs": {
     "title": "Geblokkeerde bronnen",
     "empty": "Geen geblokkeerde bronnen",
-    "unban": "Deblokkeren"
+    "unban": "Deblokkeren",
+    "banned": "verboden"
   },
   "users": {
     "title": "Gebruikers",
@@ -43,7 +45,28 @@
     "empty": "Geen gebruikers gevonden",
     "comments": "Reacties",
     "banComments": "Blokkeren",
-    "unbanComments": "Deblokkeren"
+    "unbanComments": "Deblokkeren",
+    "siteBanCol": "Site verbannen",
+    "siteBan": "Site verbannen",
+    "unsiteBan": "Siteverbod opheffen",
+    "siteBanned": "site verboden",
+    "commentBanned": "commentaar verboden",
+    "viewProfile": "Profiel bekijken",
+    "profileTitle": "Gebruikersprofiel",
+    "promoteToAdmin": "Promoveren tot beheerder",
+    "demoteToUser": "Degraderen naar gebruiker",
+    "deleteUser": "Gebruiker verwijderen",
+    "confirmDeleteTitle": "Gebruiker verwijderen?",
+    "confirmDeleteDesc": "Hiermee worden {{email}} en al hun gegevens permanent verwijderd. Deze actie kan niet ongedaan worden gemaakt.",
+    "deleted": "Gebruiker verwijderd",
+    "cannotDemoteLastAdmin": "Kan de laatste admin niet degraderen",
+    "cannotDeleteLastAdmin": "Kan de laatste admin niet verwijderen",
+    "cannotDeleteSelf": "Je kunt je eigen account niet verwijderen",
+    "notFound": "Gebruiker niet gevonden",
+    "subscriptions": "Abonnementen",
+    "noSubscriptions": "Geen abonnementen",
+    "noComments": "Geen opmerkingen",
+    "commentRemoved": "[verwijderd door admin]"
   },
   "reports": {
     "title": "Meldingen",
@@ -54,7 +77,12 @@
     "comment": "Reactie",
     "subscription": "Bron",
     "loadError": "Meldingen laden mislukt",
-    "resolveError": "Melding oplossen mislukt"
+    "resolveError": "Melding oplossen mislukt",
+    "typeId": "Type / ID",
+    "reporter": "Verslaggever",
+    "content": "Inhoud",
+    "copyId": "ID kopiëren",
+    "openArticle": "Artikel openen"
   },
   "pagination": {
     "prev": "Vorige",

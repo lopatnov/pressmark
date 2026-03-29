@@ -219,7 +219,9 @@ public class FeedServiceImpl(AppDbContext db, IDbContextFactory<AppDbContext> db
             .Include(f => f.Subscription)
             .Where(f => !f.IsCommunityHidden
                      && !f.Subscription.IsCommunityBanned
-                     && db.Likes.Any(l => l.FeedItemId == f.Id && l.CreatedAt >= since));
+                     && db.Likes.Any(l => l.FeedItemId == f.Id
+                         && l.CreatedAt >= since
+                         && !db.Users.Any(u => u.Id == l.UserId && u.IsSiteBanned)));
 
         if (!string.IsNullOrEmpty(request.SourceRssUrl))
             query = query.Where(f => f.Subscription.RssUrl == request.SourceRssUrl);
@@ -438,6 +440,7 @@ public class FeedServiceImpl(AppDbContext db, IDbContextFactory<AppDbContext> db
             Body = c.RemovedByAdmin ? "" : c.Body,
             CreatedAt = c.CreatedAt.ToString("o"),
             RemovedByAdmin = c.RemovedByAdmin,
+            IsCommentingBanned = c.RemovedByAdmin ? false : c.User.IsCommentingBanned,
         }));
         return result;
     }
@@ -490,6 +493,7 @@ public class FeedServiceImpl(AppDbContext db, IDbContextFactory<AppDbContext> db
             Body = comment.Body,
             CreatedAt = comment.CreatedAt.ToString("o"),
             RemovedByAdmin = false,
+            IsCommentingBanned = user.IsCommentingBanned,
         };
     }
 

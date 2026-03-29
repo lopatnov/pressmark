@@ -28,12 +28,14 @@
     "unhidden": "Articolo mostrato",
     "banned": "Fonte vietata",
     "hiddenArticles": "Articoli nascosti",
-    "noHiddenArticles": "Nessun articolo nascosto"
+    "noHiddenArticles": "Nessun articolo nascosto",
+    "openArticle": "Aprire la pagina dell'articolo"
   },
   "bannedSubs": {
     "title": "Fonti vietate",
     "empty": "Nessuna fonte vietata",
-    "unban": "Revoca divieto"
+    "unban": "Revoca divieto",
+    "banned": "vietato"
   },
   "users": {
     "title": "Utenti",
@@ -43,7 +45,28 @@
     "empty": "Nessun utente trovato",
     "comments": "Commenti",
     "banComments": "Vieta",
-    "unbanComments": "Consenti"
+    "unbanComments": "Consenti",
+    "siteBanCol": "Divieto di accesso al sito",
+    "siteBan": "Divieto di accesso al sito",
+    "unsiteBan": "Sollevare il divieto di accesso al sito",
+    "siteBanned": "sito vietato",
+    "commentBanned": "commento vietato",
+    "viewProfile": "Visualizza profilo",
+    "profileTitle": "Profilo utente",
+    "promoteToAdmin": "Promuovi ad amministratore",
+    "demoteToUser": "Retrocessione a utente",
+    "deleteUser": "Eliminare un utente",
+    "confirmDeleteTitle": "Cancellare l'utente?",
+    "confirmDeleteDesc": "Questo cancellerà definitivamente {{email}} e tutti i suoi dati. Questa azione non può essere annullata.",
+    "deleted": "Utente eliminato",
+    "cannotDemoteLastAdmin": "Non è possibile retrocessione dell'ultimo amministratore",
+    "cannotDeleteLastAdmin": "Non è possibile eliminare l'ultimo amministratore",
+    "cannotDeleteSelf": "Non è possibile eliminare il proprio account",
+    "notFound": "Utente non trovato",
+    "subscriptions": "Abbonamenti",
+    "noSubscriptions": "Nessuna sottoscrizione",
+    "noComments": "Nessun commento",
+    "commentRemoved": "[rimosso da admin]"
   },
   "reports": {
     "title": "Segnalazioni",
@@ -54,7 +77,12 @@
     "comment": "Commento",
     "subscription": "Fonte",
     "loadError": "Impossibile caricare le segnalazioni",
-    "resolveError": "Impossibile risolvere la segnalazione"
+    "resolveError": "Impossibile risolvere la segnalazione",
+    "typeId": "Tipo / ID",
+    "reporter": "Giornalista",
+    "content": "Contenuto",
+    "copyId": "Copia ID",
+    "openArticle": "Aprire l'articolo"
   },
   "pagination": {
     "prev": "Precedente",

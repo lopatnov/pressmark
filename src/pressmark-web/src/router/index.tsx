@@ -12,6 +12,7 @@ import { FeedPage } from '@/pages/FeedPage'
 import { SubscriptionsPage } from '@/pages/SubscriptionsPage'
 import { BookmarksPage } from '@/pages/BookmarksPage'
 import { AdminPage } from '@/pages/AdminPage'
+import { AdminUserPage } from '@/pages/AdminUserPage'
 import { ArticlePage } from '@/pages/ArticlePage'
 
 export const router = createBrowserRouter([
@@ -37,7 +38,10 @@ export const router = createBrowserRouter([
           },
           {
             element: <AdminRoute />,
-            children: [{ path: '/admin', element: <AdminPage /> }],
+            children: [
+              { path: '/admin', element: <AdminPage /> },
+              { path: '/admin/users/:id', element: <AdminUserPage /> },
+            ],
           },
         ],
       },

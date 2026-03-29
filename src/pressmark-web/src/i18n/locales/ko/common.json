@@ -18,5 +18,6 @@
     "register": "회원가입",
     "logout": "로그아웃",
     "openMenu": "메뉴 열기"
-  }
+  },
+  "banned": "금지됨"
 }

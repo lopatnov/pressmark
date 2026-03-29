@@ -3,6 +3,8 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
+import { ExternalLink, Copy, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { adminClient } from '@/api/clients'
 import { useAdminStore, type InviteItem } from '@/store/adminStore'
@@ -188,89 +190,6 @@ function SiteSettingsSection() {
   )
 }
 
-// ── Moderation section ──────────────────────────────────────────────────────
-
-function ModerationSection() {
-  const { t } = useTranslation(['admin', 'common'])
-  const [itemId, setItemId] = useState('')
-  const [subId, setSubId] = useState('')
-  const [itemMsg, setItemMsg] = useState('')
-  const [subMsg, setSubMsg] = useState('')
-
-  const handleHide = async (hidden: boolean) => {
-    if (!itemId.trim()) return
-    try {
-      await adminClient.hideFeedItem({ feedItemId: itemId.trim(), hidden })
-      setItemMsg(hidden ? t('admin:moderation.hide') : t('admin:moderation.unhide'))
-      setTimeout(() => setItemMsg(''), 2000)
-    } catch {
-      toast.error(t('common:error'))
-    }
-  }
-
-  const handleBan = async (banned: boolean) => {
-    if (!subId.trim()) return
-    try {
-      await adminClient.banSubscription({ subscriptionId: subId.trim(), banned })
-      setSubMsg(banned ? t('admin:moderation.ban') : t('admin:moderation.unban'))
-      setTimeout(() => setSubMsg(''), 2000)
-    } catch {
-      toast.error(t('common:error'))
-    }
-  }
-
-  return (
-    <section className="space-y-3">
-      <h2 className="text-base font-semibold">{t('admin:moderation.title')}</h2>
-      <div className="space-y-3 rounded-lg border border-border p-4">
-        <div className="space-y-1.5">
-          <label htmlFor="mod-item-id" className="text-sm font-medium">
-            Feed Item ID
-          </label>
-          <div className="flex gap-2">
-            <input
-              id="mod-item-id"
-              value={itemId}
-              onChange={(e) => setItemId(e.target.value)}
-              placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-              className="flex-1 rounded-md border border-border bg-background px-3 py-2 text-sm font-mono"
-            />
-            <Button size="sm" variant="outline" onClick={() => handleHide(true)}>
-              {t('admin:moderation.hide')}
-            </Button>
-            <Button size="sm" variant="outline" onClick={() => handleHide(false)}>
-              {t('admin:moderation.unhide')}
-            </Button>
-          </div>
-          {itemMsg && <p className="text-xs text-green-600">{itemMsg} ✓</p>}
-        </div>
-
-        <div className="space-y-1.5">
-          <label htmlFor="mod-sub-id" className="text-sm font-medium">
-            Subscription ID
-          </label>
-          <div className="flex gap-2">
-            <input
-              id="mod-sub-id"
-              value={subId}
-              onChange={(e) => setSubId(e.target.value)}
-              placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-              className="flex-1 rounded-md border border-border bg-background px-3 py-2 text-sm font-mono"
-            />
-            <Button size="sm" variant="outline" onClick={() => handleBan(true)}>
-              {t('admin:moderation.ban')}
-            </Button>
-            <Button size="sm" variant="outline" onClick={() => handleBan(false)}>
-              {t('admin:moderation.unban')}
-            </Button>
-          </div>
-          {subMsg && <p className="text-xs text-green-600">{subMsg} ✓</p>}
-        </div>
-      </div>
-    </section>
-  )
-}
-
 // ── Banned subscriptions section ────────────────────────────────────────────
 
 const PAGE_SIZE = 20
@@ -446,14 +365,23 @@ function HiddenArticlesSection() {
               {hiddenItems.map((item) => (
                 <tr key={item.id} className="border-b border-border last:border-0">
                   <td className="px-4 py-2">
-                    <a
-                      href={item.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-medium hover:underline line-clamp-2"
-                    >
-                      {item.title}
-                    </a>
+                    <div className="flex items-start gap-1.5">
+                      <a
+                        href={item.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-medium hover:underline line-clamp-2"
+                      >
+                        {item.title}
+                      </a>
+                      <Link
+                        to={`/article/${item.id}`}
+                        title={t('admin:moderation.openArticle')}
+                        className="mt-0.5 shrink-0 text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        <ExternalLink className="h-3.5 w-3.5" />
+                      </Link>
+                    </div>
                     <p className="text-xs text-muted-foreground">{item.sourceTitle}</p>
                   </td>
                   <td className="px-4 py-2 text-right">
@@ -494,15 +422,29 @@ function HiddenArticlesSection() {
 
 // ── Users section ───────────────────────────────────────────────────────────
 
+interface UserRow {
+  id: string
+  email: string
+  role: string
+  createdAt: string
+  isCommentingBanned: boolean
+  isSiteBanned: boolean
+}
+
 function UsersSection() {
   const { t } = useTranslation(['admin', 'common'])
-  const { users, setUsers, updateUserCommentBan } = useAdminStore()
+  const [users, setUsers] = useState<UserRow[]>([])
+  const [totalCount, setTotalCount] = useState(0)
+  const [page, setPage] = useState(0)
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE))
+
+  const load = (p: number) => {
+    setLoading(true)
     adminClient
-      .listUsers({})
-      .then((res) =>
+      .listUsers({ pageSize: PAGE_SIZE, page: p })
+      .then((res) => {
         setUsers(
           res.users.map((u) => ({
             id: u.id,
@@ -510,18 +452,42 @@ function UsersSection() {
             role: u.role,
             createdAt: u.createdAt,
             isCommentingBanned: u.isCommentingBanned,
+            isSiteBanned: u.isSiteBanned,
           })),
-        ),
-      )
+        )
+        setTotalCount(res.totalCount)
+      })
       .catch(() => toast.error(t('common:error')))
       .finally(() => setLoading(false))
+  }
+
+  useEffect(() => {
+    load(0)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  const handlePage = (p: number) => {
+    setPage(p)
+    load(p)
+  }
 
   const handleToggleCommentBan = async (userId: string, currentlyBanned: boolean) => {
     try {
       await adminClient.banUserFromCommenting({ userId, banned: !currentlyBanned })
-      updateUserCommentBan(userId, !currentlyBanned)
+      setUsers((prev) =>
+        prev.map((u) => (u.id === userId ? { ...u, isCommentingBanned: !currentlyBanned } : u)),
+      )
+    } catch {
+      toast.error(t('common:error'))
+    }
+  }
+
+  const handleToggleSiteBan = async (userId: string, currentlyBanned: boolean) => {
+    try {
+      await adminClient.sitebanUser({ userId, banned: !currentlyBanned })
+      setUsers((prev) =>
+        prev.map((u) => (u.id === userId ? { ...u, isSiteBanned: !currentlyBanned } : u)),
+      )
     } catch {
       toast.error(t('common:error'))
     }
@@ -547,12 +513,23 @@ function UsersSection() {
                 <th className="px-4 py-2 text-left font-medium">{t('admin:users.role')}</th>
                 <th className="px-4 py-2 text-left font-medium">{t('admin:users.joined')}</th>
                 <th className="px-4 py-2 text-left font-medium">{t('admin:users.comments')}</th>
+                <th className="px-4 py-2 text-left font-medium">{t('admin:users.siteBanCol')}</th>
+                <th className="px-4 py-2" />
               </tr>
             </thead>
             <tbody>
               {users.map((user) => (
                 <tr key={user.id} className="border-b border-border last:border-0">
-                  <td className="px-4 py-2 text-muted-foreground">{user.email}</td>
+                  <td className="px-4 py-2">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="text-muted-foreground">{user.email}</span>
+                      {user.isSiteBanned && (
+                        <span className="rounded bg-destructive/10 px-1.5 py-0.5 text-[10px] font-medium text-destructive">
+                          {t('admin:users.siteBanned')}
+                        </span>
+                      )}
+                    </div>
+                  </td>
                   <td className="px-4 py-2">
                     <span
                       className={`rounded px-1.5 py-0.5 text-xs font-medium ${user.role === 'Admin' ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'}`}
@@ -568,16 +545,28 @@ function UsersSection() {
                       size="sm"
                       variant={user.isCommentingBanned ? 'destructive' : 'outline'}
                       onClick={() => handleToggleCommentBan(user.id, user.isCommentingBanned)}
-                      title={
-                        user.isCommentingBanned
-                          ? t('admin:users.unbanComments')
-                          : t('admin:users.banComments')
-                      }
                     >
                       {user.isCommentingBanned
                         ? t('admin:users.unbanComments')
                         : t('admin:users.banComments')}
                     </Button>
+                  </td>
+                  <td className="px-4 py-2">
+                    <Button
+                      size="sm"
+                      variant={user.isSiteBanned ? 'destructive' : 'outline'}
+                      onClick={() => handleToggleSiteBan(user.id, user.isSiteBanned)}
+                    >
+                      {user.isSiteBanned ? t('admin:users.unsiteBan') : t('admin:users.siteBan')}
+                    </Button>
+                  </td>
+                  <td className="px-4 py-2 text-right">
+                    <Link
+                      to={`/admin/users/${user.id}`}
+                      className="text-xs text-primary hover:underline"
+                    >
+                      {t('admin:users.viewProfile')}
+                    </Link>
                   </td>
                 </tr>
               ))}
@@ -585,6 +574,27 @@ function UsersSection() {
           </table>
         )}
       </div>
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between text-sm text-muted-foreground">
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={page === 0 || loading}
+            onClick={() => handlePage(page - 1)}
+          >
+            {t('admin:pagination.prev')}
+          </Button>
+          <span>{t('admin:pagination.pageOf', { page: page + 1, total: totalPages })}</span>
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={page >= totalPages - 1 || loading}
+            onClick={() => handlePage(page + 1)}
+          >
+            {t('admin:pagination.next')}
+          </Button>
+        </div>
+      )}
     </section>
   )
 }
@@ -597,16 +607,28 @@ interface ReportItem {
   targetId: string
   reason: string
   createdAt: string
+  reporterEmail: string
+  reporterJoined: string
+  content: string
+  contentUrl: string
+  articleId: string
 }
 
 function ReportsSection() {
   const { t } = useTranslation(['admin', 'common'])
   const [reports, setReports] = useState<ReportItem[]>([])
+  const [totalCount, setTotalCount] = useState(0)
+  const [page, setPage] = useState(0)
+  const [loading, setLoading] = useState(true)
+  const [copiedId, setCopiedId] = useState<string | null>(null)
 
-  useEffect(() => {
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE))
+
+  const load = (p: number) => {
+    setLoading(true)
     adminClient
-      .listReports({})
-      .then((res) =>
+      .listReports({ pageSize: PAGE_SIZE, page: p })
+      .then((res) => {
         setReports(
           res.items.map((r) => ({
             id: r.id,
@@ -614,10 +636,21 @@ function ReportsSection() {
             targetId: r.targetId,
             reason: r.reason,
             createdAt: r.createdAt,
+            reporterEmail: r.reporterEmail,
+            reporterJoined: r.reporterJoined,
+            content: r.content,
+            contentUrl: r.contentUrl,
+            articleId: r.articleId,
           })),
-        ),
-      )
-      .catch(() => toast.error(t('reports.loadError')))
+        )
+        setTotalCount(res.totalCount)
+      })
+      .catch(() => toast.error(t('admin:reports.loadError')))
+      .finally(() => setLoading(false))
+  }
+
+  useEffect(() => {
+    load(0)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -625,24 +658,39 @@ function ReportsSection() {
     try {
       await adminClient.resolveReport({ id })
       setReports((prev) => prev.filter((r) => r.id !== id))
+      setTotalCount((c) => c - 1)
     } catch {
-      toast.error(t('reports.resolveError'))
+      toast.error(t('admin:reports.resolveError'))
     }
+  }
+
+  const handleCopyId = (id: string) => {
+    navigator.clipboard.writeText(id)
+    setCopiedId(id)
+    setTimeout(() => setCopiedId(null), 2000)
+  }
+
+  const handlePage = (p: number) => {
+    setPage(p)
+    load(p)
   }
 
   return (
     <section className="space-y-3">
-      <h2 className="text-base font-medium">{t('reports.title')}</h2>
-      {reports.length === 0 ? (
-        <p className="text-sm text-muted-foreground">{t('reports.empty')}</p>
+      <h2 className="text-base font-medium">{t('admin:reports.title')}</h2>
+      {loading ? (
+        <p className="text-sm text-muted-foreground">{t('common:loading')}</p>
+      ) : reports.length === 0 ? (
+        <p className="text-sm text-muted-foreground">{t('admin:reports.empty')}</p>
       ) : (
         <div className="overflow-x-auto rounded-lg border border-border">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border bg-muted/40">
-                <th className="px-4 py-2 text-left font-medium">{t('reports.type')}</th>
-                <th className="px-4 py-2 text-left font-medium">ID</th>
-                <th className="px-4 py-2 text-left font-medium">{t('reports.reason')}</th>
+                <th className="px-4 py-2 text-left font-medium">{t('admin:reports.typeId')}</th>
+                <th className="px-4 py-2 text-left font-medium">{t('admin:reports.reporter')}</th>
+                <th className="px-4 py-2 text-left font-medium">{t('admin:reports.content')}</th>
+                <th className="px-4 py-2 text-left font-medium">{t('admin:reports.reason')}</th>
                 <th className="px-4 py-2 text-left font-medium">{t('admin:users.joined')}</th>
                 <th className="px-4 py-2" />
               </tr>
@@ -650,25 +698,88 @@ function ReportsSection() {
             <tbody>
               {reports.map((r) => (
                 <tr key={r.id} className="border-b border-border last:border-0">
-                  <td className="px-4 py-2 text-xs text-muted-foreground">
-                    {r.type === 'comment' ? t('reports.comment') : t('reports.subscription')}
+                  <td className="px-4 py-2 min-w-[7rem]">
+                    <p className="text-xs font-medium">
+                      {r.type === 'comment'
+                        ? t('admin:reports.comment')
+                        : t('admin:reports.subscription')}
+                    </p>
+                    <div className="flex items-center gap-1 mt-0.5">
+                      <span className="text-[10px] font-mono text-muted-foreground">
+                        {r.targetId.slice(0, 8)}…
+                      </span>
+                      <button
+                        onClick={() => handleCopyId(r.targetId)}
+                        className="text-muted-foreground hover:text-foreground transition-colors"
+                        title={t('admin:reports.copyId')}
+                      >
+                        {copiedId === r.targetId ? (
+                          <Check className="h-3 w-3 text-green-600" />
+                        ) : (
+                          <Copy className="h-3 w-3" />
+                        )}
+                      </button>
+                    </div>
                   </td>
-                  <td className="px-4 py-2 text-xs font-mono text-muted-foreground truncate max-w-[8rem]">
-                    {r.targetId.slice(0, 8)}…
+                  <td className="px-4 py-2 text-xs text-muted-foreground min-w-[8rem]">
+                    <p>{r.reporterEmail || '—'}</p>
+                    {r.reporterJoined && (
+                      <p className="text-[10px]">
+                        {new Date(r.reporterJoined).toLocaleDateString()}
+                      </p>
+                    )}
                   </td>
-                  <td className="px-4 py-2 text-xs text-muted-foreground">{r.reason || '—'}</td>
+                  <td className="px-4 py-2 max-w-[12rem]">
+                    <p className="text-xs text-muted-foreground line-clamp-2">{r.content || '—'}</p>
+                    {r.contentUrl && (
+                      <p className="text-[10px] text-muted-foreground truncate">{r.contentUrl}</p>
+                    )}
+                    {r.articleId && (
+                      <Link
+                        to={`/article/${r.articleId}`}
+                        className="text-[10px] text-primary hover:underline flex items-center gap-0.5 mt-0.5"
+                      >
+                        <ExternalLink className="h-2.5 w-2.5" />
+                        {t('admin:reports.openArticle')}
+                      </Link>
+                    )}
+                  </td>
+                  <td className="px-4 py-2 text-xs text-muted-foreground max-w-[8rem]">
+                    {r.reason || '—'}
+                  </td>
                   <td className="px-4 py-2 text-xs text-muted-foreground">
                     {r.createdAt ? new Date(r.createdAt).toLocaleDateString() : '—'}
                   </td>
                   <td className="px-4 py-2">
                     <Button size="sm" variant="outline" onClick={() => handleResolve(r.id)}>
-                      {t('reports.resolve')}
+                      {t('admin:reports.resolve')}
                     </Button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between text-sm text-muted-foreground">
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={page === 0 || loading}
+            onClick={() => handlePage(page - 1)}
+          >
+            {t('admin:pagination.prev')}
+          </Button>
+          <span>{t('admin:pagination.pageOf', { page: page + 1, total: totalPages })}</span>
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={page >= totalPages - 1 || loading}
+            onClick={() => handlePage(page + 1)}
+          >
+            {t('admin:pagination.next')}
+          </Button>
         </div>
       )}
     </section>
@@ -679,16 +790,23 @@ function ReportsSection() {
 
 function InvitesSection() {
   const { t } = useTranslation(['admin', 'common'])
-  const { invites, setInvites, addInvite, removeInvite } = useAdminStore()
+  const { addInvite } = useAdminStore()
+  const [invites, setInvites] = useState<InviteItem[]>([])
+  const [totalCount, setTotalCount] = useState(0)
+  const [page, setPage] = useState(0)
+  const [loadingList, setLoadingList] = useState(true)
   const [note, setNote] = useState('')
   const [expiresDays, setExpiresDays] = useState(7)
   const [newToken, setNewToken] = useState<InviteItem | null>(null)
   const [copiedId, setCopiedId] = useState<string | null>(null)
 
-  useEffect(() => {
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE))
+
+  const loadList = (p: number) => {
+    setLoadingList(true)
     adminClient
-      .listInvites({})
-      .then((res) =>
+      .listInvites({ pageSize: PAGE_SIZE, page: p })
+      .then((res) => {
         setInvites(
           res.items.map((i) => ({
             id: i.id,
@@ -697,9 +815,15 @@ function InvitesSection() {
             createdAt: i.createdAt,
             expiresAt: i.expiresAt,
           })),
-        ),
-      )
+        )
+        setTotalCount(res.totalCount)
+      })
       .catch(() => toast.error(t('common:error')))
+      .finally(() => setLoadingList(false))
+  }
+
+  useEffect(() => {
+    loadList(0)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -716,6 +840,8 @@ function InvitesSection() {
       addInvite(item)
       setNewToken(item)
       setNote('')
+      loadList(0)
+      setPage(0)
     } catch {
       toast.error(t('common:error'))
     }
@@ -730,11 +856,16 @@ function InvitesSection() {
   const handleDelete = async (id: string) => {
     try {
       await adminClient.deleteInvite({ id })
-      removeInvite(id)
       if (newToken?.id === id) setNewToken(null)
+      loadList(page)
     } catch {
       toast.error(t('common:error'))
     }
+  }
+
+  const handlePage = (p: number) => {
+    setPage(p)
+    loadList(p)
   }
 
   return (
@@ -784,7 +915,11 @@ function InvitesSection() {
       </div>
 
       <div className="rounded-lg border border-border">
-        {invites.length === 0 ? (
+        {loadingList ? (
+          <p className="px-4 py-6 text-center text-sm text-muted-foreground">
+            {t('common:loading')}
+          </p>
+        ) : invites.length === 0 ? (
           <p className="px-4 py-6 text-center text-sm text-muted-foreground">
             {t('admin:invites.empty')}
           </p>
@@ -811,6 +946,27 @@ function InvitesSection() {
           </table>
         )}
       </div>
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between text-sm text-muted-foreground">
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={page === 0 || loadingList}
+            onClick={() => handlePage(page - 1)}
+          >
+            {t('admin:pagination.prev')}
+          </Button>
+          <span>{t('admin:pagination.pageOf', { page: page + 1, total: totalPages })}</span>
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={page >= totalPages - 1 || loadingList}
+            onClick={() => handlePage(page + 1)}
+          >
+            {t('admin:pagination.next')}
+          </Button>
+        </div>
+      )}
     </section>
   )
 }
@@ -849,7 +1005,6 @@ export function AdminPage() {
       <SiteSettingsSection />
       <ReportsSection />
       <InvitesSection />
-      <ModerationSection />
       <BannedSubscriptionsSection />
       <HiddenArticlesSection />
       <UsersSection />
