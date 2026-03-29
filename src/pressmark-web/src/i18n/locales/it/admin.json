@@ -56,6 +56,11 @@
     "loadError": "Impossibile caricare le segnalazioni",
     "resolveError": "Impossibile risolvere la segnalazione"
   },
+  "pagination": {
+    "prev": "Precedente",
+    "next": "Successivo",
+    "pageOf": "Pagina {{page}} di {{total}}"
+  },
   "invites": {
     "title": "Token di invito",
     "generate": "Genera invito",

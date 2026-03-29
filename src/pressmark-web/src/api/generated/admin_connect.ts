@@ -4,7 +4,7 @@
 // @ts-nocheck
 
 import { Empty, MethodKind } from "@bufbuild/protobuf";
-import { BannedSubscriptionList, BanSubscriptionRequest, BanUserFromCommentingRequest, DeleteInviteRequest, GenerateInviteRequest, HiddenFeedItemList, HideFeedItemRequest, InviteList, InviteToken, PendingReportCount, RemoveCommentRequest, ReportList, ResolveReportRequest, SiteSettings, UpdateSiteSettingsRequest, UserList } from "./admin_pb.js";
+import { BannedSubscriptionList, BanSubscriptionRequest, BanUserFromCommentingRequest, DeleteInviteRequest, GenerateInviteRequest, HiddenFeedItemList, HideFeedItemRequest, InviteList, InviteToken, ListBannedSubscriptionsRequest, ListHiddenFeedItemsRequest, PendingReportCount, RemoveCommentRequest, ReportList, ResolveReportRequest, SiteSettings, UpdateSiteSettingsRequest, UserList } from "./admin_pb.js";
 
 /**
  * @generated from service pressmark.admin.AdminService
@@ -89,7 +89,7 @@ export const AdminService = {
      */
     listBannedSubscriptions: {
       name: "ListBannedSubscriptions",
-      I: Empty,
+      I: ListBannedSubscriptionsRequest,
       O: BannedSubscriptionList,
       kind: MethodKind.Unary,
     },
@@ -143,7 +143,7 @@ export const AdminService = {
      */
     listHiddenFeedItems: {
       name: "ListHiddenFeedItems",
-      I: Empty,
+      I: ListHiddenFeedItemsRequest,
       O: HiddenFeedItemList,
       kind: MethodKind.Unary,
     },

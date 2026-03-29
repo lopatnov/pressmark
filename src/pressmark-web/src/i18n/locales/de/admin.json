@@ -56,6 +56,11 @@
     "loadError": "Meldungen konnten nicht geladen werden",
     "resolveError": "Meldung konnte nicht erledigt werden"
   },
+  "pagination": {
+    "prev": "Zurück",
+    "next": "Weiter",
+    "pageOf": "Seite {{page}} von {{total}}"
+  },
   "invites": {
     "title": "Einladungs-Token",
     "generate": "Einladung generieren",

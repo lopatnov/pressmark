@@ -56,6 +56,11 @@
     "loadError": "신고를 불러오는 데 실패했습니다",
     "resolveError": "신고를 해결하는 데 실패했습니다"
   },
+  "pagination": {
+    "prev": "이전",
+    "next": "다음",
+    "pageOf": "{{total}}페이지 중 {{page}}페이지"
+  },
   "invites": {
     "title": "초대 토큰",
     "generate": "초대 생성",

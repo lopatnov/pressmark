@@ -56,6 +56,11 @@
     "loadError": "加载举报失败",
     "resolveError": "解决举报失败"
   },
+  "pagination": {
+    "prev": "上一页",
+    "next": "下一页",
+    "pageOf": "第 {{page}} 页，共 {{total}} 页"
+  },
   "invites": {
     "title": "邀请码",
     "generate": "生成邀请",

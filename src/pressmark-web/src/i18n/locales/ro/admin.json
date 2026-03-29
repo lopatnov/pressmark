@@ -56,6 +56,11 @@
     "loadError": "Nu s-au putut încărca rapoartele",
     "resolveError": "Nu s-a putut rezolva raportul"
   },
+  "pagination": {
+    "prev": "Anterior",
+    "next": "Următor",
+    "pageOf": "Pagina {{page}} din {{total}}"
+  },
   "invites": {
     "title": "Tokeni de invitație",
     "generate": "Generează invitație",

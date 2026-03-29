@@ -56,6 +56,11 @@
     "loadError": "Nie udało się załadować zgłoszeń",
     "resolveError": "Nie udało się rozwiązać zgłoszenia"
   },
+  "pagination": {
+    "prev": "Poprzednia",
+    "next": "Następna",
+    "pageOf": "Strona {{page}} z {{total}}"
+  },
   "invites": {
     "title": "Tokeny zaproszeń",
     "generate": "Generuj zaproszenie",

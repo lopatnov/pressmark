@@ -56,6 +56,11 @@
     "loadError": "A bejelentések betöltése sikertelen",
     "resolveError": "A bejelentés megoldása sikertelen"
   },
+  "pagination": {
+    "prev": "Előző",
+    "next": "Következő",
+    "pageOf": "{{page}}. oldal / {{total}}"
+  },
   "invites": {
     "title": "Meghívó tokenek",
     "generate": "Meghívó létrehozása",

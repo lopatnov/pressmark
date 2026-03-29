@@ -273,31 +273,46 @@ function ModerationSection() {
 
 // ── Banned subscriptions section ────────────────────────────────────────────
 
+const PAGE_SIZE = 20
+
 function BannedSubscriptionsSection() {
   const { t } = useTranslation(['admin', 'common'])
-  const { bannedSubscriptions, setBannedSubscriptions, unbanSubscription } = useAdminStore()
+  const [items, setItems] = useState<{ id: string; rssUrl: string; title: string }[]>([])
+  const [totalCount, setTotalCount] = useState(0)
+  const [page, setPage] = useState(0)
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE))
+
+  const load = (p: number) => {
+    setLoading(true)
     adminClient
-      .listBannedSubscriptions({})
-      .then((res) =>
-        setBannedSubscriptions(
-          res.items.map((b) => ({ id: b.id, rssUrl: b.rssUrl, title: b.title })),
-        ),
-      )
+      .listBannedSubscriptions({ pageSize: PAGE_SIZE, page: p })
+      .then((res) => {
+        setItems(res.items.map((b) => ({ id: b.id, rssUrl: b.rssUrl, title: b.title })))
+        setTotalCount(res.totalCount)
+      })
       .catch(() => toast.error(t('common:error')))
       .finally(() => setLoading(false))
+  }
+
+  useEffect(() => {
+    load(0)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleUnban = async (id: string) => {
     try {
       await adminClient.banSubscription({ subscriptionId: id, banned: false })
-      unbanSubscription(id)
+      load(page)
     } catch {
       toast.error(t('common:error'))
     }
+  }
+
+  const handlePage = (p: number) => {
+    setPage(p)
+    load(p)
   }
 
   return (
@@ -308,14 +323,14 @@ function BannedSubscriptionsSection() {
           <p className="px-4 py-6 text-center text-sm text-muted-foreground">
             {t('common:loading')}
           </p>
-        ) : bannedSubscriptions.length === 0 ? (
+        ) : items.length === 0 ? (
           <p className="px-4 py-6 text-center text-sm text-muted-foreground">
             {t('admin:bannedSubs.empty')}
           </p>
         ) : (
           <table className="w-full text-sm">
             <tbody>
-              {bannedSubscriptions.map((sub) => (
+              {items.map((sub) => (
                 <tr key={sub.id} className="border-b border-border last:border-0">
                   <td className="px-4 py-2">
                     <p className="font-medium">{sub.title || sub.rssUrl}</p>
@@ -336,6 +351,27 @@ function BannedSubscriptionsSection() {
           </table>
         )}
       </div>
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between text-sm text-muted-foreground">
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={page === 0 || loading}
+            onClick={() => handlePage(page - 1)}
+          >
+            {t('admin:pagination.prev')}
+          </Button>
+          <span>{t('admin:pagination.pageOf', { page: page + 1, total: totalPages })}</span>
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={page >= totalPages - 1 || loading}
+            onClick={() => handlePage(page + 1)}
+          >
+            {t('admin:pagination.next')}
+          </Button>
+        </div>
+      )}
     </section>
   )
 }
@@ -347,12 +383,17 @@ function HiddenArticlesSection() {
   const [hiddenItems, setHiddenItems] = useState<
     { id: string; title: string; url: string; sourceTitle: string }[]
   >([])
+  const [totalCount, setTotalCount] = useState(0)
+  const [page, setPage] = useState(0)
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE))
+
+  const load = (p: number) => {
+    setLoading(true)
     adminClient
-      .listHiddenFeedItems({})
-      .then((res) =>
+      .listHiddenFeedItems({ pageSize: PAGE_SIZE, page: p })
+      .then((res) => {
         setHiddenItems(
           res.items.map((item) => ({
             id: item.id,
@@ -360,21 +401,31 @@ function HiddenArticlesSection() {
             url: item.url,
             sourceTitle: item.sourceTitle,
           })),
-        ),
-      )
+        )
+        setTotalCount(res.totalCount)
+      })
       .catch(() => toast.error(t('common:error')))
       .finally(() => setLoading(false))
+  }
+
+  useEffect(() => {
+    load(0)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleUnhide = async (id: string) => {
     try {
       await adminClient.hideFeedItem({ feedItemId: id, hidden: false })
-      setHiddenItems((prev) => prev.filter((item) => item.id !== id))
       toast.success(t('admin:moderation.unhidden'))
+      load(page)
     } catch {
       toast.error(t('common:error'))
     }
+  }
+
+  const handlePage = (p: number) => {
+    setPage(p)
+    load(p)
   }
 
   return (
@@ -416,6 +467,27 @@ function HiddenArticlesSection() {
           </table>
         )}
       </div>
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between text-sm text-muted-foreground">
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={page === 0 || loading}
+            onClick={() => handlePage(page - 1)}
+          >
+            {t('admin:pagination.prev')}
+          </Button>
+          <span>{t('admin:pagination.pageOf', { page: page + 1, total: totalPages })}</span>
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={page >= totalPages - 1 || loading}
+            onClick={() => handlePage(page + 1)}
+          >
+            {t('admin:pagination.next')}
+          </Button>
+        </div>
+      )}
     </section>
   )
 }

@@ -56,6 +56,11 @@
     "loadError": "Det gick inte att ladda rapporter",
     "resolveError": "Det gick inte att lösa rapport"
   },
+  "pagination": {
+    "prev": "Föregående",
+    "next": "Nästa",
+    "pageOf": "Sida {{page}} av {{total}}"
+  },
   "invites": {
     "title": "Inbjudningstokens",
     "generate": "Generera inbjudan",

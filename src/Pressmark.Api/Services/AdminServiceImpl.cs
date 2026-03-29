@@ -108,15 +108,24 @@ public class AdminServiceImpl(AppDbContext db, ISmtpPasswordProtector passwordPr
     }
 
     public override async Task<BannedSubscriptionList> ListBannedSubscriptions(
-        Empty request, ServerCallContext context)
+        ListBannedSubscriptionsRequest request, ServerCallContext context)
     {
         var ct = context.CancellationToken;
-        var subs = await db.Subscriptions
+        var pageSize = request.PageSize > 0 ? Math.Min(request.PageSize, 100) : 20;
+        var page = Math.Max(0, request.Page);
+
+        var query = db.Subscriptions
             .Where(s => s.IsCommunityBanned)
-            .OrderBy(s => s.Title)
+            .OrderBy(s => s.Title);
+
+        var total = await query.CountAsync(ct);
+        var subs = await query
+            .Skip(page * pageSize)
+            .Take(pageSize)
+            .AsNoTracking()
             .ToListAsync(ct);
 
-        var result = new BannedSubscriptionList();
+        var result = new BannedSubscriptionList { TotalCount = total };
         result.Items.AddRange(subs.Select(s => new BannedSubscription
         {
             Id = s.Id.ToString(),
@@ -278,14 +287,20 @@ public class AdminServiceImpl(AppDbContext db, ISmtpPasswordProtector passwordPr
     }
 
     public override async Task<HiddenFeedItemList> ListHiddenFeedItems(
-        Empty request, ServerCallContext context)
+        ListHiddenFeedItemsRequest request, ServerCallContext context)
     {
         var ct = context.CancellationToken;
-        var items = await db.FeedItems
+        var pageSize = request.PageSize > 0 ? Math.Min(request.PageSize, 100) : 20;
+        var page = Math.Max(0, request.Page);
+
+        var query = db.FeedItems
             .Where(f => f.IsCommunityHidden)
-            .Include(f => f.Subscription)
-            .OrderByDescending(f => f.PublishedAt)
-            .Take(200)
+            .OrderByDescending(f => f.PublishedAt);
+
+        var total = await query.CountAsync(ct);
+        var items = await query
+            .Skip(page * pageSize)
+            .Take(pageSize)
             .AsNoTracking()
             .Select(f => new HiddenFeedItem
             {
@@ -296,7 +311,7 @@ public class AdminServiceImpl(AppDbContext db, ISmtpPasswordProtector passwordPr
             })
             .ToListAsync(ct);
 
-        var result = new HiddenFeedItemList();
+        var result = new HiddenFeedItemList { TotalCount = total };
         result.Items.AddRange(items);
         return result;
     }

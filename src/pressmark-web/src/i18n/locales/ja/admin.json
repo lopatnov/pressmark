@@ -56,6 +56,11 @@
     "loadError": "報告の読み込みに失敗しました",
     "resolveError": "報告の解決に失敗しました"
   },
+  "pagination": {
+    "prev": "前へ",
+    "next": "次へ",
+    "pageOf": "{{page}} / {{total}} ページ"
+  },
   "invites": {
     "title": "招待トークン",
     "generate": "招待を生成",

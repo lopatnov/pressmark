@@ -521,6 +521,53 @@ export class InviteList extends Message<InviteList> {
 }
 
 /**
+ * @generated from message pressmark.admin.ListBannedSubscriptionsRequest
+ */
+export class ListBannedSubscriptionsRequest extends Message<ListBannedSubscriptionsRequest> {
+  /**
+   * default 20
+   *
+   * @generated from field: int32 page_size = 1;
+   */
+  pageSize = 0;
+
+  /**
+   * 0-based
+   *
+   * @generated from field: int32 page = 2;
+   */
+  page = 0;
+
+  constructor(data?: PartialMessage<ListBannedSubscriptionsRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "pressmark.admin.ListBannedSubscriptionsRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "page_size", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 2, name: "page", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListBannedSubscriptionsRequest {
+    return new ListBannedSubscriptionsRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListBannedSubscriptionsRequest {
+    return new ListBannedSubscriptionsRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListBannedSubscriptionsRequest {
+    return new ListBannedSubscriptionsRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ListBannedSubscriptionsRequest | PlainMessage<ListBannedSubscriptionsRequest> | undefined, b: ListBannedSubscriptionsRequest | PlainMessage<ListBannedSubscriptionsRequest> | undefined): boolean {
+    return proto3.util.equals(ListBannedSubscriptionsRequest, a, b);
+  }
+}
+
+/**
  * @generated from message pressmark.admin.BannedSubscription
  */
 export class BannedSubscription extends Message<BannedSubscription> {
@@ -578,6 +625,11 @@ export class BannedSubscriptionList extends Message<BannedSubscriptionList> {
    */
   items: BannedSubscription[] = [];
 
+  /**
+   * @generated from field: int32 total_count = 2;
+   */
+  totalCount = 0;
+
   constructor(data?: PartialMessage<BannedSubscriptionList>) {
     super();
     proto3.util.initPartial(data, this);
@@ -587,6 +639,7 @@ export class BannedSubscriptionList extends Message<BannedSubscriptionList> {
   static readonly typeName = "pressmark.admin.BannedSubscriptionList";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "items", kind: "message", T: BannedSubscription, repeated: true },
+    { no: 2, name: "total_count", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): BannedSubscriptionList {
@@ -865,6 +918,53 @@ export class ResolveReportRequest extends Message<ResolveReportRequest> {
 }
 
 /**
+ * @generated from message pressmark.admin.ListHiddenFeedItemsRequest
+ */
+export class ListHiddenFeedItemsRequest extends Message<ListHiddenFeedItemsRequest> {
+  /**
+   * default 20
+   *
+   * @generated from field: int32 page_size = 1;
+   */
+  pageSize = 0;
+
+  /**
+   * 0-based
+   *
+   * @generated from field: int32 page = 2;
+   */
+  page = 0;
+
+  constructor(data?: PartialMessage<ListHiddenFeedItemsRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "pressmark.admin.ListHiddenFeedItemsRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "page_size", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 2, name: "page", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListHiddenFeedItemsRequest {
+    return new ListHiddenFeedItemsRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListHiddenFeedItemsRequest {
+    return new ListHiddenFeedItemsRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListHiddenFeedItemsRequest {
+    return new ListHiddenFeedItemsRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ListHiddenFeedItemsRequest | PlainMessage<ListHiddenFeedItemsRequest> | undefined, b: ListHiddenFeedItemsRequest | PlainMessage<ListHiddenFeedItemsRequest> | undefined): boolean {
+    return proto3.util.equals(ListHiddenFeedItemsRequest, a, b);
+  }
+}
+
+/**
  * @generated from message pressmark.admin.HiddenFeedItem
  */
 export class HiddenFeedItem extends Message<HiddenFeedItem> {
@@ -928,6 +1028,11 @@ export class HiddenFeedItemList extends Message<HiddenFeedItemList> {
    */
   items: HiddenFeedItem[] = [];
 
+  /**
+   * @generated from field: int32 total_count = 2;
+   */
+  totalCount = 0;
+
   constructor(data?: PartialMessage<HiddenFeedItemList>) {
     super();
     proto3.util.initPartial(data, this);
@@ -937,6 +1042,7 @@ export class HiddenFeedItemList extends Message<HiddenFeedItemList> {
   static readonly typeName = "pressmark.admin.HiddenFeedItemList";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "items", kind: "message", T: HiddenFeedItem, repeated: true },
+    { no: 2, name: "total_count", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): HiddenFeedItemList {

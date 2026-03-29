@@ -56,6 +56,11 @@
     "loadError": "Failed to load reports",
     "resolveError": "Failed to resolve report"
   },
+  "pagination": {
+    "prev": "Previous",
+    "next": "Next",
+    "pageOf": "Page {{page}} of {{total}}"
+  },
   "invites": {
     "title": "Invite tokens",
     "generate": "Generate invite",

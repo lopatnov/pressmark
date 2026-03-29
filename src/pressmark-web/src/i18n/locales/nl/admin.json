@@ -56,6 +56,11 @@
     "loadError": "Meldingen laden mislukt",
     "resolveError": "Melding oplossen mislukt"
   },
+  "pagination": {
+    "prev": "Vorige",
+    "next": "Volgende",
+    "pageOf": "Pagina {{page}} van {{total}}"
+  },
   "invites": {
     "title": "Uitnodigingstokens",
     "generate": "Uitnodiging genereren",

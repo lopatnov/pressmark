@@ -56,6 +56,11 @@
     "loadError": "Error al cargar los reportes",
     "resolveError": "Error al resolver el reporte"
   },
+  "pagination": {
+    "prev": "Anterior",
+    "next": "Siguiente",
+    "pageOf": "Página {{page}} de {{total}}"
+  },
   "invites": {
     "title": "Tokens de invitación",
     "generate": "Generar invitación",

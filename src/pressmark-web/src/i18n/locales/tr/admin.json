@@ -56,6 +56,11 @@
     "loadError": "Raporlar yüklenemedi",
     "resolveError": "Rapor çözümlenemedi"
   },
+  "pagination": {
+    "prev": "Önceki",
+    "next": "Sonraki",
+    "pageOf": "Sayfa {{page}} / {{total}}"
+  },
   "invites": {
     "title": "Davet tokenleri",
     "generate": "Davet oluştur",

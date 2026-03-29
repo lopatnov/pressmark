@@ -56,6 +56,11 @@
     "loadError": "Nepodařilo se načíst hlášení",
     "resolveError": "Nepodařilo se vyřešit hlášení"
   },
+  "pagination": {
+    "prev": "Předchozí",
+    "next": "Další",
+    "pageOf": "Strana {{page}} z {{total}}"
+  },
   "invites": {
     "title": "Pozvánkové tokeny",
     "generate": "Generovat pozvánku",
