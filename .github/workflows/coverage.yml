@@ -1,0 +1,59 @@
+name: Coverage gate
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  coverage:
+    name: Coverage gate (≥ 37% line)
+    runs-on: ubuntu-latest
+    services:
+      mssql:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        env:
+          SA_PASSWORD: TestP4ssword!
+          ACCEPT_EULA: Y
+        ports:
+          - 1433:1433
+        options: >-
+          --health-cmd "/opt/mssql-tools18/bin/sqlcmd -S localhost -U SA -P TestP4ssword! -Q 'SELECT 1' -No"
+          --health-interval 15s
+          --health-timeout 10s
+          --health-retries 10
+          --health-start-period 30s
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Build
+        run: dotnet build --configuration Release
+
+      - name: Test with coverage
+        run: >
+          dotnet test --no-build --configuration Release
+          --settings src/Pressmark.Api.Tests/coverlet.runsettings
+          --results-directory ./coverage
+        env:
+          TEST_MSSQL_CONNECTION_STRING: "Server=localhost,1433;Database=pressmark_coverage_test;User Id=sa;Password=TestP4ssword!;TrustServerCertificate=True;"
+
+      - name: Enforce 70% line coverage
+        run: |
+          FILE=$(find ./coverage -name "*.xml" | head -1)
+          python3 - "$FILE" <<'EOF'
+          import sys, xml.etree.ElementTree as ET
+          rate = float(ET.parse(sys.argv[1]).getroot().get('line-rate', 0))
+          pct = round(rate * 100, 1)
+          print(f"Line coverage: {pct}%")
+          if rate < 0.37:
+              print(f"FAILED: {pct}% is below the 37% threshold")
+              sys.exit(1)
+          print("PASSED")
+          EOF

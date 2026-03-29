@@ -4,12 +4,29 @@ on:
   push:
     branches: [main, dev]
   pull_request:
-    branches: [main]
+    branches: [main, dev]
+
+permissions:
+  contents: read
 
 jobs:
   backend:
     name: Backend (.NET 10)
     runs-on: ubuntu-latest
+    services:
+      mssql:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        env:
+          SA_PASSWORD: TestP4ssword!
+          ACCEPT_EULA: Y
+        ports:
+          - 1433:1433
+        options: >-
+          --health-cmd "/opt/mssql-tools18/bin/sqlcmd -S localhost -U SA -P TestP4ssword! -Q 'SELECT 1' -No"
+          --health-interval 15s
+          --health-timeout 10s
+          --health-retries 10
+          --health-start-period 30s
     steps:
       - uses: actions/checkout@v4
 
@@ -31,6 +48,8 @@ jobs:
 
       - name: Test
         run: dotnet test --no-build --configuration Release --verbosity normal
+        env:
+          TEST_MSSQL_CONNECTION_STRING: "Server=localhost,1433;Database=pressmark_migration_test;User Id=sa;Password=TestP4ssword!;TrustServerCertificate=True;"
 
   frontend:
     name: Frontend (Node 22 + Vite)
