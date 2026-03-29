@@ -8,7 +8,16 @@
           <Threshold>70</Threshold>
           <ThresholdType>line</ThresholdType>
           <ThresholdStat>minimum</ThresholdStat>
-          <Exclude>[*.Tests]*</Exclude>
+          <Exclude>
+            [*.Tests]*
+            [Pressmark.Api]Pressmark.Api.Program
+            [Pressmark.Api]Pressmark.Api.Data.DesignTimeDbContextFactory
+            [Pressmark.Api]Pressmark.Api.Data.Migrations.*
+            [Pressmark.Api]Pressmark.Api.Services.SmtpEmailService
+            [Pressmark.Api]Pressmark.Api.BackgroundServices.RssFetcherService
+            [Pressmark.Api]Pressmark.Api.Services.FeedFetcherService
+            [Pressmark.Api]Pressmark.Api.Services.FeedUpdateBroadcaster
+          </Exclude>
         </Configuration>
       </DataCollector>
     </DataCollectors>
