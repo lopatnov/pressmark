@@ -80,7 +80,8 @@ message FeedItem {
   string source_title    = 11;
   string image_url       = 12; // empty if RSS has no image
   string source_rss_url  = 13; // RSS URL of the source subscription
-  bool   is_hidden       = 14; // true if community-hidden (only set for Admin callers)
+  bool   is_hidden        = 14; // true if community-hidden (only set for Admin callers)
+  bool   is_source_banned = 15; // true if this item's subscription is community-banned
 }
 
 message MarkAsReadRequest {

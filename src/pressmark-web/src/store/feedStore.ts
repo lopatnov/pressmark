@@ -14,6 +14,7 @@ interface FeedItem {
   isBookmarked: boolean
   sourceTitle: string
   imageUrl: string
+  isSourceBanned: boolean
 }
 
 interface FeedState {

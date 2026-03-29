@@ -374,6 +374,7 @@ public class FeedServiceImpl(AppDbContext db, IDbContextFactory<AppDbContext> db
             SourceTitle = item.Subscription?.Title ?? "",
             ImageUrl = item.ImageUrl ?? "",
             SourceRssUrl = item.Subscription?.RssUrl ?? "",
+            IsSourceBanned = item.Subscription?.IsCommunityBanned ?? false,
         };
 
     // New items are never read/liked/bookmarked by definition
@@ -392,6 +393,7 @@ public class FeedServiceImpl(AppDbContext db, IDbContextFactory<AppDbContext> db
         SourceTitle = item.Subscription?.Title ?? "",
         ImageUrl = item.ImageUrl ?? "",
         SourceRssUrl = item.Subscription?.RssUrl ?? "",
+        IsSourceBanned = item.Subscription?.IsCommunityBanned ?? false,
     };
 
     private static Protos.FeedItem MapBroadcastEvent(FeedUpdateEvent evt) => new()
@@ -408,6 +410,7 @@ public class FeedServiceImpl(AppDbContext db, IDbContextFactory<AppDbContext> db
         IsBookmarked = false,
         SourceTitle = evt.SourceTitle,
         ImageUrl = evt.ImageUrl,
+        IsSourceBanned = false, // streaming is pre-filtered to exclude banned sources
     };
 
     [AllowAnonymous]

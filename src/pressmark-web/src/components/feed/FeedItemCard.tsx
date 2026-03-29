@@ -1,5 +1,6 @@
-import { ExternalLink } from 'lucide-react'
+import { Ban, ExternalLink } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { sanitizeSummary, getYouTubeId, getFaviconUrl } from './feedUtils'
 
 export interface FeedItemData {
@@ -12,6 +13,7 @@ export interface FeedItemData {
   imageUrl?: string
   isRead?: boolean
   isHidden?: boolean
+  isSourceBanned?: boolean
   subscriptionId?: string
   sourceRssUrl?: string
 }
@@ -33,6 +35,7 @@ export function FeedItemCard({
   articleId,
   sourceHref,
 }: FeedItemCardProps) {
+  const { t } = useTranslation('subscriptions')
   const isUnread = item.isRead === false
   const youtubeId = getYouTubeId(item.url)
   const faviconUrl = getFaviconUrl(item.url)
@@ -93,6 +96,12 @@ export function FeedItemCard({
               </Link>
             ) : (
               <span className="font-medium">{item.sourceTitle}</span>
+            )}
+            {item.isSourceBanned && (
+              <span className="flex items-center gap-0.5 rounded-full bg-destructive/10 px-1.5 py-0.5 text-destructive">
+                <Ban className="h-2.5 w-2.5" />
+                <span>{t('banned')}</span>
+              </span>
             )}
             <span>·</span>
           </>

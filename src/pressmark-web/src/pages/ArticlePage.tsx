@@ -39,6 +39,7 @@ export function ArticlePage() {
           subscriptionId: res.subscriptionId,
           sourceRssUrl: res.sourceRssUrl,
           isHidden: res.isHidden,
+          isSourceBanned: res.isSourceBanned,
         })
       })
       .catch(() => setNotFound(true))

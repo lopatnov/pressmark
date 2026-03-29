@@ -77,6 +77,7 @@ export function FeedPage() {
           isBookmarked: item.isBookmarked,
           sourceTitle: item.sourceTitle,
           imageUrl: item.imageUrl,
+          isSourceBanned: item.isSourceBanned,
         }))
         if (cursor) {
           appendItems(mapped, res.nextCursor)
@@ -132,6 +133,7 @@ export function FeedPage() {
             isBookmarked: item.isBookmarked,
             sourceTitle: item.sourceTitle,
             imageUrl: item.imageUrl,
+            isSourceBanned: item.isSourceBanned,
           })
         }
       } catch {
@@ -196,14 +198,14 @@ export function FeedPage() {
 
       {activeSubId && (items.length > 0 || activeSub) && (
         <div
-          className={`flex items-center gap-2 rounded-md border px-3 py-1.5 text-xs text-muted-foreground ${activeSub?.isCommunityBanned ? 'border-destructive/50 bg-destructive/5' : 'border-border bg-muted/40'}`}
+          className={`flex items-center gap-2 rounded-md border px-3 py-1.5 text-xs text-muted-foreground ${(items[0]?.isSourceBanned ?? activeSub?.isCommunityBanned) ? 'border-destructive/50 bg-destructive/5' : 'border-border bg-muted/40'}`}
         >
           <span className="flex flex-1 items-center gap-2">
             {t('feed:filterBySource')}:{' '}
             <span className="font-medium text-foreground">
               {items[0]?.sourceTitle ?? activeSub?.title}
             </span>
-            {activeSub?.isCommunityBanned && (
+            {(items[0]?.isSourceBanned ?? activeSub?.isCommunityBanned) && (
               <span className="flex shrink-0 items-center gap-1 rounded-full bg-destructive/10 px-2 py-0.5 text-destructive">
                 <Ban className="h-3 w-3" />
                 {t('subscriptions:banned')}

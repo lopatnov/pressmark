@@ -343,6 +343,13 @@ export class FeedItem extends Message<FeedItem> {
    */
   isHidden = false;
 
+  /**
+   * true if this item's subscription is community-banned
+   *
+   * @generated from field: bool is_source_banned = 15;
+   */
+  isSourceBanned = false;
+
   constructor(data?: PartialMessage<FeedItem>) {
     super();
     proto3.util.initPartial(data, this);
@@ -365,6 +372,7 @@ export class FeedItem extends Message<FeedItem> {
     { no: 12, name: "image_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 13, name: "source_rss_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 14, name: "is_hidden", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 15, name: "is_source_banned", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): FeedItem {

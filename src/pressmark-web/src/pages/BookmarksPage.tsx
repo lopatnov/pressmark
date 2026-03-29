@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { BookMarked, X } from 'lucide-react'
+import { Ban, BookMarked, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { feedClient } from '@/api/clients'
@@ -18,10 +18,11 @@ interface BookmarkItem {
   likeCount: number
   sourceTitle: string
   subscriptionId: string
+  isSourceBanned: boolean
 }
 
 export function BookmarksPage() {
-  const { t } = useTranslation(['feed', 'common'])
+  const { t } = useTranslation(['feed', 'common', 'subscriptions'])
   const [searchParams, setSearchParams] = useSearchParams()
   const activeSubId = searchParams.get('sub') ?? ''
 
@@ -47,6 +48,7 @@ export function BookmarksPage() {
           likeCount: item.likeCount,
           sourceTitle: item.sourceTitle,
           subscriptionId: item.subscriptionId,
+          isSourceBanned: item.isSourceBanned,
         }))
         if (cursor) {
           setItems((prev) => [...prev, ...mapped])
@@ -89,10 +91,18 @@ export function BookmarksPage() {
       <h1 className="text-xl font-semibold">{t('common:nav.bookmarks')}</h1>
 
       {activeSubId && items.length > 0 && (
-        <div className="flex items-center gap-2 rounded-md border border-border bg-muted/40 px-3 py-1.5 text-xs text-muted-foreground">
-          <span className="flex-1">
+        <div
+          className={`flex items-center gap-2 rounded-md border px-3 py-1.5 text-xs text-muted-foreground ${items[0].isSourceBanned ? 'border-destructive/50 bg-destructive/5' : 'border-border bg-muted/40'}`}
+        >
+          <span className="flex flex-1 items-center gap-2">
             {t('feed:filterBySource')}:{' '}
             <span className="font-medium text-foreground">{items[0].sourceTitle}</span>
+            {items[0].isSourceBanned && (
+              <span className="flex shrink-0 items-center gap-1 rounded-full bg-destructive/10 px-2 py-0.5 text-destructive">
+                <Ban className="h-3 w-3" />
+                {t('subscriptions:banned')}
+              </span>
+            )}
           </span>
           <button
             onClick={() => setSearchParams({})}
