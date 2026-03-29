@@ -16,5 +16,6 @@
   "errors": {
     "invalidUrl": "URL RSS inválida",
     "fetchFailed": "No se pudo cargar el feed RSS"
-  }
+  },
+  "banned": "Bloqueado"
 }

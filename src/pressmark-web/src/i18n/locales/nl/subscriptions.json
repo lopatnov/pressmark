@@ -16,5 +16,6 @@
   "errors": {
     "invalidUrl": "Ongeldige RSS-URL",
     "fetchFailed": "Kan RSS-feed niet ophalen"
-  }
+  },
+  "banned": "Geblokkeerd"
 }

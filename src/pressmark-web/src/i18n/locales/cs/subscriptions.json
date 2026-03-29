@@ -16,5 +16,6 @@
   "errors": {
     "invalidUrl": "Neplatná URL RSS",
     "fetchFailed": "Nepodařilo se načíst RSS kanál"
-  }
+  },
+  "banned": "Zakázáno"
 }

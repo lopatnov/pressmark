@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { Download, Plus, RefreshCw, Trash2, Upload } from 'lucide-react'
+import { Ban, Download, Plus, RefreshCw, Trash2, Upload } from 'lucide-react'
 import { Code, ConnectError } from '@connectrpc/connect'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -53,6 +53,7 @@ export function SubscriptionsPage() {
             title: s.title,
             lastFetchedAt: s.lastFetchedAt,
             createdAt: s.createdAt,
+            isCommunityBanned: s.isCommunityBanned,
           })),
         )
       })
@@ -72,6 +73,7 @@ export function SubscriptionsPage() {
         title: sub.title,
         lastFetchedAt: sub.lastFetchedAt,
         createdAt: sub.createdAt,
+        isCommunityBanned: sub.isCommunityBanned,
       })
       reset()
       setShowForm(false)
@@ -122,6 +124,7 @@ export function SubscriptionsPage() {
             title: s.title,
             lastFetchedAt: s.lastFetchedAt,
             createdAt: s.createdAt,
+            isCommunityBanned: s.isCommunityBanned,
           })),
         )
       } catch {
@@ -150,6 +153,7 @@ export function SubscriptionsPage() {
           title: s.title,
           lastFetchedAt: s.lastFetchedAt,
           createdAt: s.createdAt,
+          isCommunityBanned: s.isCommunityBanned,
         })),
       )
     } catch {
@@ -258,15 +262,23 @@ export function SubscriptionsPage() {
         {subscriptions.map((sub) => (
           <div
             key={sub.id}
-            className="flex items-center justify-between rounded-lg border border-border bg-card px-4 py-3"
+            className={`flex items-center justify-between rounded-lg border bg-card px-4 py-3 ${sub.isCommunityBanned ? 'border-destructive/50' : 'border-border'}`}
           >
             <div className="min-w-0 space-y-0.5">
-              <Link
-                to={`/feed?sub=${sub.id}`}
-                className="block truncate text-sm font-medium hover:underline"
-              >
-                {sub.title}
-              </Link>
+              <div className="flex items-center gap-2">
+                <Link
+                  to={`/feed?sub=${sub.id}`}
+                  className="truncate text-sm font-medium hover:underline"
+                >
+                  {sub.title}
+                </Link>
+                {sub.isCommunityBanned && (
+                  <span className="flex shrink-0 items-center gap-1 rounded-full bg-destructive/10 px-2 py-0.5 text-xs text-destructive">
+                    <Ban className="h-3 w-3" />
+                    {t('subscriptions:banned')}
+                  </span>
+                )}
+              </div>
               <p className="truncate text-xs text-muted-foreground">{sub.rssUrl}</p>
               {sub.lastFetchedAt && (
                 <p className="text-xs text-muted-foreground">

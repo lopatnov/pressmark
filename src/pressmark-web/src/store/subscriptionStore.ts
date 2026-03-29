@@ -7,6 +7,7 @@ interface Subscription {
   title: string
   lastFetchedAt: string
   createdAt: string
+  isCommunityBanned: boolean
 }
 
 interface SubscriptionState {

@@ -25,12 +25,13 @@ message RemoveSubscriptionRequest {
 }
 
 message Subscription {
-  string id              = 1;
-  string user_id         = 2;
-  string rss_url         = 3;
-  string title           = 4;
-  string last_fetched_at = 5;
-  string created_at      = 6;
+  string id                  = 1;
+  string user_id             = 2;
+  string rss_url             = 3;
+  string title               = 4;
+  string last_fetched_at     = 5;
+  string created_at          = 6;
+  bool   is_community_banned = 7;
 }
 
 message SubscriptionList {

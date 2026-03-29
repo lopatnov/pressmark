@@ -16,5 +16,6 @@
   "errors": {
     "invalidUrl": "Недействительный RSS URL",
     "fetchFailed": "Не удалось загрузить RSS-ленту"
-  }
+  },
+  "banned": "Заблокирован"
 }

@@ -209,5 +209,6 @@ public class SubscriptionServiceImpl(AppDbContext db, IHttpClientFactory httpCli
         Title = s.Title,
         LastFetchedAt = s.LastFetchedAt?.ToString("o") ?? "",
         CreatedAt = s.CreatedAt.ToString("o"),
+        IsCommunityBanned = s.IsCommunityBanned,
     };
 }

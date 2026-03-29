@@ -16,5 +16,6 @@
   "errors": {
     "invalidUrl": "Недійсний RSS URL",
     "fetchFailed": "Не вдалося завантажити RSS-стрічку"
-  }
+  },
+  "banned": "Заблоковано"
 }

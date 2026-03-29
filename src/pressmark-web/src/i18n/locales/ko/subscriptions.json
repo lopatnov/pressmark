@@ -16,5 +16,6 @@
   "errors": {
     "invalidUrl": "유효하지 않은 RSS URL",
     "fetchFailed": "RSS 피드를 가져오지 못했습니다"
-  }
+  },
+  "banned": "차단됨"
 }

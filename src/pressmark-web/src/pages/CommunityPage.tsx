@@ -122,6 +122,7 @@ export function CommunityPage() {
         title: res.title,
         lastFetchedAt: res.lastFetchedAt,
         createdAt: '',
+        isCommunityBanned: false,
       })
       toast.success(t('feed:subscribeSuccess'))
     } catch {

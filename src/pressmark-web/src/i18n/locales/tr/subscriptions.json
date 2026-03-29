@@ -16,5 +16,6 @@
   "errors": {
     "invalidUrl": "Geçersiz RSS URL",
     "fetchFailed": "RSS akışı alınamadı"
-  }
+  },
+  "banned": "Yasaklandı"
 }
