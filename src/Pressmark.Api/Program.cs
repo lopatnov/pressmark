@@ -14,10 +14,9 @@ using Pressmark.Api.Services;
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
 
-// EF Core
+// EF Core — AddDbContextFactory registers both IDbContextFactory<T> (singleton)
+// and AppDbContext (scoped), so AddDbContext is not needed separately.
 var connectionString = config.GetConnectionString("Default");
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(connectionString));
 builder.Services.AddDbContextFactory<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
 
