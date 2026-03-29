@@ -140,8 +140,11 @@ public class FeedIntegrationTests(IntegrationFixture fixture) : IClassFixture<In
         var sub = MakeSub(user.Id);
         db.Subscriptions.Add(sub);
 
-        var oldItem = MakeItem(sub.Id, publishedAt: DateTime.UtcNow.AddDays(-10));
-        var newItem = MakeItem(sub.Id, publishedAt: DateTime.UtcNow);
+        // Capture once so all relative offsets are consistent throughout the test.
+        var now = DateTime.UtcNow;
+
+        var oldItem = MakeItem(sub.Id, publishedAt: now.AddDays(-10));
+        var newItem = MakeItem(sub.Id, publishedAt: now);
         db.FeedItems.AddRange(oldItem, newItem);
         await db.SaveChangesAsync();
 
@@ -150,19 +153,19 @@ public class FeedIntegrationTests(IntegrationFixture fixture) : IClassFixture<In
         {
             UserId = user.Id,
             FeedItemId = oldItem.Id,
-            CreatedAt = DateTime.UtcNow.AddDays(-8),
+            CreatedAt = now.AddDays(-8),
         });
         // Like new item just now
         db.Likes.Add(new Like
         {
             UserId = user.Id,
             FeedItemId = newItem.Id,
-            CreatedAt = DateTime.UtcNow,
+            CreatedAt = now,
         });
         await db.SaveChangesAsync();
 
         // community_window_days = 7
-        var since = DateTime.UtcNow.AddDays(-7);
+        var since = now.AddDays(-7);
         var communityIds = await db.FeedItems
             .Where(f => !f.IsCommunityHidden
                      && !f.Subscription.IsCommunityBanned
