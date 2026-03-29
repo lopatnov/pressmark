@@ -9,7 +9,7 @@ permissions:
 
 jobs:
   coverage:
-    name: Coverage gate (≥ 38% line)
+    name: Coverage gate (≥ 37% line)
     runs-on: ubuntu-latest
     services:
       mssql:

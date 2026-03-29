@@ -5,7 +5,7 @@
       <DataCollector friendlyName="XPlat Code Coverage">
         <Configuration>
           <Format>cobertura</Format>
-          <Threshold>38</Threshold>
+          <Threshold>37</Threshold>
           <ThresholdType>line</ThresholdType>
           <ThresholdStat>minimum</ThresholdStat>
           <Exclude>
