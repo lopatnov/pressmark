@@ -2,11 +2,12 @@ import { useCallback, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { Heart, Bookmark, BookMarked, X } from 'lucide-react'
+import { Ban, Heart, Bookmark, BookMarked, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { feedClient } from '@/api/clients'
 import { useFeedStore } from '@/store/feedStore'
+import { useSubscriptionStore } from '@/store/subscriptionStore'
 import { FeedItemCard } from '@/components/feed/FeedItemCard'
 import { useIntersectionLoader } from '@/hooks/useIntersectionLoader'
 
@@ -26,9 +27,12 @@ function FeedCardSkeleton() {
 }
 
 export function FeedPage() {
-  const { t } = useTranslation(['feed', 'common'])
+  const { t } = useTranslation(['feed', 'common', 'subscriptions'])
   const [searchParams, setSearchParams] = useSearchParams()
   const activeSubId = searchParams.get('sub') ?? ''
+  const activeSub = useSubscriptionStore((s) =>
+    s.subscriptions.find((sub) => sub.id === activeSubId),
+  )
   const {
     items,
     nextCursor,
@@ -190,11 +194,21 @@ export function FeedPage() {
         </div>
       </div>
 
-      {activeSubId && items.length > 0 && (
-        <div className="flex items-center gap-2 rounded-md border border-border bg-muted/40 px-3 py-1.5 text-xs text-muted-foreground">
-          <span className="flex-1">
+      {activeSubId && (items.length > 0 || activeSub) && (
+        <div
+          className={`flex items-center gap-2 rounded-md border px-3 py-1.5 text-xs text-muted-foreground ${activeSub?.isCommunityBanned ? 'border-destructive/50 bg-destructive/5' : 'border-border bg-muted/40'}`}
+        >
+          <span className="flex flex-1 items-center gap-2">
             {t('feed:filterBySource')}:{' '}
-            <span className="font-medium text-foreground">{items[0].sourceTitle}</span>
+            <span className="font-medium text-foreground">
+              {items[0]?.sourceTitle ?? activeSub?.title}
+            </span>
+            {activeSub?.isCommunityBanned && (
+              <span className="flex shrink-0 items-center gap-1 rounded-full bg-destructive/10 px-2 py-0.5 text-destructive">
+                <Ban className="h-3 w-3" />
+                {t('subscriptions:banned')}
+              </span>
+            )}
           </span>
           <button
             onClick={() => setSearchParams({})}
