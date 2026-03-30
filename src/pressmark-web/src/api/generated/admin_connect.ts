@@ -157,6 +157,15 @@ export const AdminService = {
       kind: MethodKind.Unary,
     },
     /**
+     * @generated from rpc pressmark.admin.AdminService.ClearOldFeeds
+     */
+    clearOldFeeds: {
+      name: "ClearOldFeeds",
+      I: Empty,
+      O: Empty,
+      kind: MethodKind.Unary,
+    },
+    /**
      * @generated from rpc pressmark.admin.AdminService.DeleteUser
      */
     deleteUser: {

@@ -71,7 +71,7 @@ export class SiteSettings extends Message<SiteSettings> {
    *
    * @generated from field: int32 feed_retention_days = 11;
    */
-  feedRetentionDays = 90;
+  feedRetentionDays = 0;
 
   constructor(data?: PartialMessage<SiteSettings>) {
     super();

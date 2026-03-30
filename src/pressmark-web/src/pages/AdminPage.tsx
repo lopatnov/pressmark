@@ -73,6 +73,15 @@ function SiteSettingsSection() {
     }
   }
 
+  const handleClearOldFeeds = async () => {
+    try {
+      await adminClient.clearOldFeeds({})
+      toast.success('Old feeds cleared successfully')
+    } catch {
+      toast.error(t('common:error'))
+    }
+  }
+
   return (
     <section className="space-y-3">
       <h2 className="text-base font-semibold">{t('admin:settings.title')}</h2>
@@ -182,7 +191,9 @@ function SiteSettingsSection() {
         </div>
 
         <div className="space-y-1">
-          <label className="text-sm font-medium">{t('admin:settings.feedRetentionDays')}</label>
+          <label className="text-sm font-medium  pr-2">
+            {t('admin:settings.feedRetentionDays')}
+          </label>
           <input
             {...register('feedRetentionDays', { valueAsNumber: true })}
             type="number"
@@ -193,6 +204,11 @@ function SiteSettingsSection() {
           {errors.feedRetentionDays && (
             <p className="text-xs text-destructive">{errors.feedRetentionDays.message}</p>
           )}
+        </div>
+        <div className="space-y-1">
+          <Button type="button" size="sm" variant="outline" onClick={() => handleClearOldFeeds()}>
+            Clear old feeds now
+          </Button>
         </div>
 
         <div className="flex items-center gap-3">
