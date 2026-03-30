@@ -14,7 +14,7 @@ async function refreshAccessToken(): Promise<string | null> {
 
   pendingRefresh = (async () => {
     try {
-      const { AuthService } = await import('./generated/auth_connect')
+      const { AuthService } = await import('./generated/auth_pb')
       const { useAuthStore } = await import('../store/authStore')
       const client = createClient(AuthService, refreshTransport)
       const res = await client.refresh({})

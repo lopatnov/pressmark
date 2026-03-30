@@ -1,9 +1,9 @@
 import { createClient } from '@connectrpc/connect'
 import { transport } from './transport'
-import { AuthService } from './generated/auth_connect'
-import { FeedService } from './generated/feed_connect'
-import { SubscriptionService } from './generated/subscription_connect'
-import { AdminService } from './generated/admin_connect'
+import { AuthService } from './generated/auth_pb'
+import { FeedService } from './generated/feed_pb'
+import { SubscriptionService } from './generated/subscription_pb'
+import { AdminService } from './generated/admin_pb'
 
 export const authClient = createClient(AuthService, transport)
 export const feedClient = createClient(FeedService, transport)
