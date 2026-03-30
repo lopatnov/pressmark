@@ -215,11 +215,12 @@ public class AuthServiceImpl(
         var ct = context.CancellationToken;
         var hasAdmin = await db.Users.AnyAsync(ct);
         var settings = await db.SiteSettings
-            .Where(s => s.Key == "registration_mode" || s.Key == "community_window_days")
+            .Where(s => s.Key == "registration_mode" || s.Key == "community_window_days" || s.Key == "comments_enabled")
             .ToDictionaryAsync(s => s.Key, s => s.Value, ct);
         var mode = settings.GetValueOrDefault("registration_mode", "open");
         var windowDays = int.TryParse(settings.GetValueOrDefault("community_window_days", "1"), out var d) ? d : 1;
-        return new RegistrationStatus { HasAdmin = hasAdmin, RegistrationMode = mode, CommunityWindowDays = windowDays };
+        var commentsEnabled = settings.GetValueOrDefault("comments_enabled", "true") == "true";
+        return new RegistrationStatus { HasAdmin = hasAdmin, RegistrationMode = mode, CommunityWindowDays = windowDays, CommentsEnabled = commentsEnabled };
     }
 
     [AllowAnonymous]

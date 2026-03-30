@@ -289,6 +289,11 @@ export class RegistrationStatus extends Message<RegistrationStatus> {
    */
   communityWindowDays = 0;
 
+  /**
+   * @generated from field: bool comments_enabled = 4;
+   */
+  commentsEnabled = false;
+
   constructor(data?: PartialMessage<RegistrationStatus>) {
     super();
     proto3.util.initPartial(data, this);
@@ -300,6 +305,7 @@ export class RegistrationStatus extends Message<RegistrationStatus> {
     { no: 1, name: "has_admin", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
     { no: 2, name: "registration_mode", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "community_window_days", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 4, name: "comments_enabled", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): RegistrationStatus {

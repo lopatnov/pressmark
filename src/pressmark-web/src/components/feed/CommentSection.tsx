@@ -24,6 +24,7 @@ export function CommentSection({ feedItemId, initiallyOpen = false }: CommentSec
   const { t } = useTranslation(['feed', 'common'])
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated())
   const isAdmin = useAuthStore((s) => s.isAdmin())
+  const commentsEnabled = useAuthStore((s) => s.commentsEnabled)
 
   const [open, setOpen] = useState(initiallyOpen)
   const [loaded, setLoaded] = useState(false)
@@ -220,7 +221,7 @@ export function CommentSection({ feedItemId, initiallyOpen = false }: CommentSec
               </div>
             ))}
 
-          {isAuthenticated && (
+          {isAuthenticated && commentsEnabled && (
             <form onSubmit={handleSubmit} className="flex gap-2 pt-1">
               <input
                 value={body}
