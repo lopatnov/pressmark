@@ -168,7 +168,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                 rel="noopener noreferrer"
                 className="transition-colors text-sidebar-foreground hover:bg-sidebar-accent/60"
               >
-                Linkedin
+                LinkedIn
               </a>
             </div>
           </div>
