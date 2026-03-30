@@ -179,7 +179,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             new SiteSetting { Key = "site_name", Value = "Pressmark" },
             new SiteSetting { Key = "community_window_days", Value = "1" },
             new SiteSetting { Key = "registration_mode", Value = "open" },
-            new SiteSetting { Key = "comments_enabled", Value = "true" }
+            new SiteSetting { Key = "comments_enabled", Value = "true" },
+            new SiteSetting { Key = "feed_retention_days", Value = "90" }
         );
     }
 }

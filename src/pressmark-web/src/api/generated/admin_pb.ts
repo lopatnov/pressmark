@@ -66,6 +66,13 @@ export class SiteSettings extends Message<SiteSettings> {
    */
   commentsEnabled = false;
 
+  /**
+   * days to keep items without bookmarks; default 90
+   *
+   * @generated from field: int32 feed_retention_days = 11;
+   */
+  feedRetentionDays = 90;
+
   constructor(data?: PartialMessage<SiteSettings>) {
     super();
     proto3.util.initPartial(data, this);
@@ -84,6 +91,7 @@ export class SiteSettings extends Message<SiteSettings> {
     { no: 8, name: "smtp_use_tls", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
     { no: 9, name: "smtp_from_address", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 10, name: "comments_enabled", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 11, name: "feed_retention_days", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): SiteSettings {

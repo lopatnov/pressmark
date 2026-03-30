@@ -3,7 +3,7 @@
   "settings": {
     "title": "Ustawienia strony",
     "siteName": "Nazwa strony",
-    "communityWindowDays": "Okno kanału społeczności (dni)",
+    "communityWindowDays": "Historia kanału informacyjnego społeczności (dni)",
     "registrationMode": "Tryb rejestracji",
     "open": "Otwarty",
     "inviteOnly": "Tylko na zaproszenie",
@@ -16,7 +16,8 @@
     "smtpPasswordPlaceholder": "Pozostaw puste, aby zachować bieżące",
     "smtpUseTls": "Użyj TLS (STARTTLS)",
     "smtpFromAddress": "Adres nadawcy",
-    "commentsEnabled": "Włącz komentarze"
+    "commentsEnabled": "Włącz komentarze",
+    "feedRetentionDays": "Utrzymanie kanału informacyjnego (dni)"
   },
   "moderation": {
     "title": "Moderacja",

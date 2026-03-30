@@ -3,7 +3,7 @@
   "settings": {
     "title": "Site-instellingen",
     "siteName": "Sitenaam",
-    "communityWindowDays": "Community-feedvenster (dagen)",
+    "communityWindowDays": "Geschiedenis community-nieuwsfeed (dagen)",
     "registrationMode": "Registratiemodus",
     "open": "Open",
     "inviteOnly": "Alleen op uitnodiging",
@@ -16,7 +16,8 @@
     "smtpPasswordPlaceholder": "Leeg laten om huidig te behouden",
     "smtpUseTls": "TLS gebruiken (STARTTLS)",
     "smtpFromAddress": "Afzenderadres",
-    "commentsEnabled": "Reacties inschakelen"
+    "commentsEnabled": "Reacties inschakelen",
+    "feedRetentionDays": "Nieuwsfeed bewaring (dagen)"
   },
   "moderation": {
     "title": "Moderatie",

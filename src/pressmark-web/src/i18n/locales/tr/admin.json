@@ -3,7 +3,7 @@
   "settings": {
     "title": "Site ayarları",
     "siteName": "Site adı",
-    "communityWindowDays": "Topluluk akış penceresi (gün)",
+    "communityWindowDays": "Topluluk besleme geçmişi (gün)",
     "registrationMode": "Kayıt modu",
     "open": "Açık",
     "inviteOnly": "Yalnızca davetli",
@@ -16,7 +16,8 @@
     "smtpPasswordPlaceholder": "Mevcut şifreyi korumak için boş bırakın",
     "smtpUseTls": "TLS kullan (STARTTLS)",
     "smtpFromAddress": "Gönderen adresi",
-    "commentsEnabled": "Yorumları etkinleştir"
+    "commentsEnabled": "Yorumları etkinleştir",
+    "feedRetentionDays": "Besleme saklama süresi (gün)"
   },
   "moderation": {
     "title": "Moderasyon",

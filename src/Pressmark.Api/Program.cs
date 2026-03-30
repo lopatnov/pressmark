@@ -109,6 +109,7 @@ builder.Services.AddSingleton<FeedFetcherService>();
 
 // Background services
 builder.Services.AddHostedService<RssFetcherService>();
+builder.Services.AddHostedService<CleanupService>();
 
 var app = builder.Build();
 

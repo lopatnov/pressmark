@@ -3,7 +3,7 @@
   "settings": {
     "title": "Setări site",
     "siteName": "Nume site",
-    "communityWindowDays": "Fereastra flux comunitate (zile)",
+    "communityWindowDays": "Istoricul fluxului de știri al comunității (zile)",
     "registrationMode": "Mod înregistrare",
     "open": "Deschis",
     "inviteOnly": "Numai pe invitație",
@@ -16,7 +16,8 @@
     "smtpPasswordPlaceholder": "Lăsați gol pentru a păstra parola curentă",
     "smtpUseTls": "Folosiți TLS (STARTTLS)",
     "smtpFromAddress": "Adresă expeditor",
-    "commentsEnabled": "Activează comentariile"
+    "commentsEnabled": "Activează comentariile",
+    "feedRetentionDays": "Reținerea fluxului de știri (zile)"
   },
   "moderation": {
     "title": "Moderare",

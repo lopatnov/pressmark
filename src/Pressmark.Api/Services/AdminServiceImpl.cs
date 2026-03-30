@@ -29,6 +29,7 @@ public class AdminServiceImpl(AppDbContext db, ISmtpPasswordProtector passwordPr
             SmtpUseTls = settings.GetValueOrDefault("smtp_use_tls", "true") == "true",
             SmtpFromAddress = settings.GetValueOrDefault("smtp_from_address", ""),
             CommentsEnabled = settings.GetValueOrDefault("comments_enabled", "true") == "true",
+            FeedRetentionDays = int.TryParse(settings.GetValueOrDefault("feed_retention_days"), out var r) ? r : 90,
         };
     }
 
@@ -51,6 +52,7 @@ public class AdminServiceImpl(AppDbContext db, ISmtpPasswordProtector passwordPr
             await UpsertSetting("smtp_password", passwordProtector.Protect(s.SmtpPassword), ct);
 
         await UpsertSetting("comments_enabled", s.CommentsEnabled ? "true" : "false", ct);
+        await UpsertSetting("feed_retention_days", s.FeedRetentionDays.ToString(), ct);
 
         return new Empty();
     }

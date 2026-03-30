@@ -3,7 +3,7 @@
   "settings": {
     "title": "サイト設定",
     "siteName": "サイト名",
-    "communityWindowDays": "コミュニティフィード期間（日）",
+    "communityWindowDays": "コミュニティフィード履歴（日）",
     "registrationMode": "登録モード",
     "open": "公開",
     "inviteOnly": "招待のみ",
@@ -16,7 +16,8 @@
     "smtpPasswordPlaceholder": "現在のパスワードを保持するには空のままにしてください",
     "smtpUseTls": "TLS を使用（STARTTLS）",
     "smtpFromAddress": "送信者アドレス",
-    "commentsEnabled": "コメントを有効にする"
+    "commentsEnabled": "コメントを有効にする",
+    "feedRetentionDays": "フィード保持日数（日）"
   },
   "moderation": {
     "title": "モデレーション",

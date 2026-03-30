@@ -3,7 +3,7 @@
   "settings": {
     "title": "Nastavení webu",
     "siteName": "Název webu",
-    "communityWindowDays": "Okno komunitního kanálu (dny)",
+    "communityWindowDays": "Historie zpravodajského kanálu komunity (dny)",
     "registrationMode": "Režim registrace",
     "open": "Otevřená",
     "inviteOnly": "Pouze na pozvánku",
@@ -16,7 +16,8 @@
     "smtpPasswordPlaceholder": "Ponechte prázdné pro zachování stávajícího",
     "smtpUseTls": "Použít TLS (STARTTLS)",
     "smtpFromAddress": "Adresa odesílatele",
-    "commentsEnabled": "Povolit komentáře"
+    "commentsEnabled": "Povolit komentáře",
+    "feedRetentionDays": "Udržení zpravodajského kanálu (dny)"
   },
   "moderation": {
     "title": "Moderace",

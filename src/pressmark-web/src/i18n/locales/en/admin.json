@@ -3,7 +3,7 @@
   "settings": {
     "title": "Site settings",
     "siteName": "Site name",
-    "communityWindowDays": "Community feed window (days)",
+    "communityWindowDays": "Community feed history (days)",
     "registrationMode": "Registration mode",
     "open": "Open",
     "inviteOnly": "Invite only",
@@ -16,7 +16,8 @@
     "smtpPasswordPlaceholder": "Leave blank to keep current",
     "smtpUseTls": "Use TLS (STARTTLS)",
     "smtpFromAddress": "From address",
-    "commentsEnabled": "Enable comments"
+    "commentsEnabled": "Enable comments",
+    "feedRetentionDays": "Feed retention (days)"
   },
   "moderation": {
     "title": "Moderation",

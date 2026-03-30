@@ -3,7 +3,7 @@
   "settings": {
     "title": "Configurações do site",
     "siteName": "Nome do site",
-    "communityWindowDays": "Janela do feed da comunidade (dias)",
+    "communityWindowDays": "Histórico de feeds da comunidade (dias)",
     "registrationMode": "Modo de cadastro",
     "open": "Aberto",
     "inviteOnly": "Apenas por convite",
@@ -16,7 +16,8 @@
     "smtpPasswordPlaceholder": "Deixe em branco para manter o atual",
     "smtpUseTls": "Usar TLS (STARTTLS)",
     "smtpFromAddress": "Endereço de remetente",
-    "commentsEnabled": "Habilitar comentários"
+    "commentsEnabled": "Habilitar comentários",
+    "feedRetentionDays": "Retenção de feeds (dias)"
   },
   "moderation": {
     "title": "Moderação",

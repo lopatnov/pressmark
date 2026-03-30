@@ -3,7 +3,7 @@
   "settings": {
     "title": "Налаштування сайту",
     "siteName": "Назва сайту",
-    "communityWindowDays": "Вікно стрічки спільноти (дні)",
+    "communityWindowDays": "Історія стрічки новин спільноти (дні)",
     "registrationMode": "Режим реєстрації",
     "open": "Відкрита",
     "inviteOnly": "Тільки за запрошенням",
@@ -16,7 +16,8 @@
     "smtpPasswordPlaceholder": "Залиште порожнім для збереження поточного",
     "smtpUseTls": "Використовувати TLS (STARTTLS)",
     "smtpFromAddress": "Адреса відправника",
-    "commentsEnabled": "Увімкнути коментарі"
+    "commentsEnabled": "Увімкнути коментарі",
+    "feedRetentionDays": "Збереження стрічки новин (дні)"
   },
   "moderation": {
     "title": "Модерація",

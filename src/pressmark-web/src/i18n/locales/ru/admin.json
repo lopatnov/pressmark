@@ -3,7 +3,7 @@
   "settings": {
     "title": "Настройки сайта",
     "siteName": "Название сайта",
-    "communityWindowDays": "Окно ленты сообщества (дни)",
+    "communityWindowDays": "История ленты сообщества (дней)",
     "registrationMode": "Режим регистрации",
     "open": "Открытая",
     "inviteOnly": "Только по приглашениям",
@@ -16,7 +16,8 @@
     "smtpPasswordPlaceholder": "Оставьте пустым для сохранения текущего",
     "smtpUseTls": "Использовать TLS (STARTTLS)",
     "smtpFromAddress": "Адрес отправителя",
-    "commentsEnabled": "Включить комментарии"
+    "commentsEnabled": "Включить комментарии",
+    "feedRetentionDays": "Хранение ленты (дней)"
   },
   "moderation": {
     "title": "Модерация",

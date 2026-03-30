@@ -119,7 +119,7 @@ Compatible tools: [Azure Data Studio](https://aka.ms/azuredatastudio), SSMS, DBe
 
 ---
 
-## Production Deployment
+## Deployment
 
 **Prerequisites:** a Linux server (or any host) with Docker and Docker Compose installed.
 
@@ -292,8 +292,7 @@ dotnet ef database update --project src/Pressmark.Api
 Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request.
 
 - Bug reports → [open an issue](https://github.com/lopatnov/pressmark/issues)
-- Questions → [Discussions](https://github.com/lopatnov/pressmark/discussions)
-- Found it useful? A [star on GitHub](https://github.com/lopatnov/pressmark) helps others discover the project
+- Found it useful? A [star on GitHub](https://github.com/lopatnov/pressmark/stargazers) helps others discover the project
 
 ---
 

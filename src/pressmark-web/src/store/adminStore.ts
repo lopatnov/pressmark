@@ -12,6 +12,7 @@ interface SiteSettings {
   smtpUseTls: boolean
   smtpFromAddress: string
   commentsEnabled: boolean
+  feedRetentionDays: number
 }
 
 interface UserInfo {

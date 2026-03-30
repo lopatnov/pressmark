@@ -3,7 +3,7 @@
   "settings": {
     "title": "Webbplatsinställningar",
     "siteName": "Webbplatsnamn",
-    "communityWindowDays": "Community-flödesfönster (dagar)",
+    "communityWindowDays": "Historik för gemenskapsflöden (dagar)",
     "registrationMode": "Registreringsläge",
     "open": "Öppen",
     "inviteOnly": "Endast inbjudan",
@@ -16,7 +16,8 @@
     "smtpPasswordPlaceholder": "Lämna tomt för att behålla nuvarande",
     "smtpUseTls": "Använd TLS (STARTTLS)",
     "smtpFromAddress": "Avsändaradress",
-    "commentsEnabled": "Aktivera kommentarer"
+    "commentsEnabled": "Aktivera kommentarer",
+    "feedRetentionDays": "Flödeslagring (dagar)"
   },
   "moderation": {
     "title": "Moderering",

@@ -39,6 +39,7 @@ message SiteSettings {
   bool   smtp_use_tls           = 8;
   string smtp_from_address      = 9;
   bool   comments_enabled       = 10; // default true
+  int32  feed_retention_days    = 11; // days to keep items without bookmarks; default 90
 }
 
 message UpdateSiteSettingsRequest {

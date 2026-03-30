@@ -23,6 +23,7 @@ const settingsSchema = z.object({
   smtpUseTls: z.boolean(),
   smtpFromAddress: z.string(),
   commentsEnabled: z.boolean(),
+  feedRetentionDays: z.number().int().min(1).max(3650),
 })
 type SettingsForm = z.infer<typeof settingsSchema>
 
@@ -61,6 +62,7 @@ function SiteSettingsSection() {
           smtpUseTls: data.smtpUseTls,
           smtpFromAddress: data.smtpFromAddress,
           commentsEnabled: data.commentsEnabled,
+          feedRetentionDays: data.feedRetentionDays,
         },
       })
       setSettings(data)
@@ -177,6 +179,20 @@ function SiteSettingsSection() {
             <input {...register('commentsEnabled')} type="checkbox" className="h-4 w-4" />
             {t('admin:settings.commentsEnabled')}
           </label>
+        </div>
+
+        <div className="space-y-1">
+          <label className="text-sm font-medium">{t('admin:settings.feedRetentionDays')}</label>
+          <input
+            {...register('feedRetentionDays', { valueAsNumber: true })}
+            type="number"
+            min={1}
+            max={3650}
+            className="w-32 rounded-md border border-border bg-background px-3 py-2 text-sm"
+          />
+          {errors.feedRetentionDays && (
+            <p className="text-xs text-destructive">{errors.feedRetentionDays.message}</p>
+          )}
         </div>
 
         <div className="flex items-center gap-3">
@@ -1009,6 +1025,7 @@ export function AdminPage() {
           smtpUseTls: res.smtpUseTls,
           smtpFromAddress: res.smtpFromAddress,
           commentsEnabled: res.commentsEnabled,
+          feedRetentionDays: res.feedRetentionDays || 90,
         }),
       )
       .finally(() => setLoading(false))

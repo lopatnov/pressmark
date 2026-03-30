@@ -3,7 +3,7 @@
   "settings": {
     "title": "网站设置",
     "siteName": "网站名称",
-    "communityWindowDays": "社区动态时间窗口（天）",
+    "communityWindowDays": "社区新闻源历史（天数）",
     "registrationMode": "注册模式",
     "open": "开放",
     "inviteOnly": "仅邀请",
@@ -16,7 +16,8 @@
     "smtpPasswordPlaceholder": "留空保持当前密码",
     "smtpUseTls": "使用 TLS（STARTTLS）",
     "smtpFromAddress": "发件人地址",
-    "commentsEnabled": "启用评论"
+    "commentsEnabled": "启用评论",
+    "feedRetentionDays": "新闻源保留时间（天数）"
   },
   "moderation": {
     "title": "内容审核",
