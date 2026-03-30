@@ -1016,7 +1016,7 @@ export function AdminPage() {
   }, [])
 
   return (
-    <div className="mx-auto max-w-2xl space-y-8 p-4">
+    <div className="mx-auto max-w-4xl space-y-8 p-4">
       <h1 className="text-xl font-semibold">{t('title')}</h1>
       <SiteSettingsSection />
       <ReportsSection />
