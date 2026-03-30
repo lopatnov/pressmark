@@ -16,9 +16,9 @@
     "prepare": "cd ../.. && npx husky src/pressmark-web/.husky"
   },
   "dependencies": {
-    "@bufbuild/protobuf": "^2.2.2",
-    "@connectrpc/connect": "^2.0.0",
-    "@connectrpc/connect-web": "^2.0.0",
+    "@bufbuild/protobuf": "^2.11.0",
+    "@connectrpc/connect": "^2.1.1",
+    "@connectrpc/connect-web": "^2.1.1",
     "@fontsource-variable/geist": "^5.2.8",
     "@hookform/resolvers": "^5.2.2",
     "@tailwindcss/vite": "^4.2.2",
@@ -45,7 +45,7 @@
   },
   "devDependencies": {
     "@bufbuild/buf": "^1.66.1",
-    "@bufbuild/protoc-gen-es": "^2.2.2",
+    "@bufbuild/protoc-gen-es": "^2.11.0",
     "@eslint/js": "^9.39.4",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
