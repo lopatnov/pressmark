@@ -19,5 +19,6 @@
     "logout": "Kijelentkezés",
     "openMenu": "Menü megnyitása"
   },
+  "builtBy": "Készítette",
   "banned": "tiltott"
 }

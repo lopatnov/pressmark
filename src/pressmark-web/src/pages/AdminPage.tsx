@@ -76,7 +76,7 @@ function SiteSettingsSection() {
   const handleClearOldFeeds = async () => {
     try {
       await adminClient.clearOldFeeds({})
-      toast.success('Old feeds cleared successfully')
+      toast.success(t('admin:settings.oldFeedsCleared'))
     } catch {
       toast.error(t('common:error'))
     }
@@ -207,7 +207,7 @@ function SiteSettingsSection() {
         </div>
         <div className="space-y-1">
           <Button type="button" size="sm" variant="outline" onClick={() => handleClearOldFeeds()}>
-            Clear old feeds now
+            {t('admin:settings.clearOldFeedsNow')}
           </Button>
         </div>
 

@@ -17,7 +17,9 @@
     "smtpUseTls": "TLS gebruiken (STARTTLS)",
     "smtpFromAddress": "Afzenderadres",
     "commentsEnabled": "Reacties inschakelen",
-    "feedRetentionDays": "Nieuwsfeed bewaring (dagen)"
+    "feedRetentionDays": "Nieuwsfeed bewaring (dagen)",
+    "oldFeedsCleared": "Oude feeds succesvol gewist",
+    "clearOldFeedsNow": "Oude feeds nu wissen"
   },
   "moderation": {
     "title": "Moderatie",

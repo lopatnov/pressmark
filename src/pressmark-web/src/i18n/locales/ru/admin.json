@@ -17,7 +17,9 @@
     "smtpUseTls": "Использовать TLS (STARTTLS)",
     "smtpFromAddress": "Адрес отправителя",
     "commentsEnabled": "Включить комментарии",
-    "feedRetentionDays": "Хранение ленты (дней)"
+    "feedRetentionDays": "Хранение ленты (дней)",
+    "oldFeedsCleared": "Старые фиды очищены успешно",
+    "clearOldFeedsNow": "Очистить старые фиды сейчас"
   },
   "moderation": {
     "title": "Модерация",

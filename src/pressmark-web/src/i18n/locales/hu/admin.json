@@ -17,7 +17,9 @@
     "smtpUseTls": "TLS használata (STARTTLS)",
     "smtpFromAddress": "Feladó címe",
     "commentsEnabled": "Hozzászólások engedélyezése",
-    "feedRetentionDays": "Hírfolyam megtartása (napok)"
+    "feedRetentionDays": "Hírfolyam megtartása (napok)",
+    "oldFeedsCleared": "Régi hírfolyamok sikeresen törölve",
+    "clearOldFeedsNow": "Régi hírfolyamok törlése most"
   },
   "moderation": {
     "title": "Moderáció",

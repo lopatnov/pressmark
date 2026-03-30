@@ -17,7 +17,9 @@
     "smtpUseTls": "TLS を使用（STARTTLS）",
     "smtpFromAddress": "送信者アドレス",
     "commentsEnabled": "コメントを有効にする",
-    "feedRetentionDays": "フィード保持日数（日）"
+    "feedRetentionDays": "フィード保持日数（日）",
+    "oldFeedsCleared": "古いフィードが正常にクリアされました",
+    "clearOldFeedsNow": "古いフィードを今すぐクリア"
   },
   "moderation": {
     "title": "モデレーション",

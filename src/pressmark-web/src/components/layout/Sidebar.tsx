@@ -152,7 +152,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           <div className="flex items-center gap-2.5 rounded-md px-3 py-2 text-left text-xs text-muted-foreground transition-colors">
             <UserStar className="h-4 w-4 shrink-0"></UserStar>
             <div className="transition-colors rounded-md ">
-              Built by&nbsp;
+              {t('common:builtBy')}&nbsp;
               <a
                 href="https://github.com/lopatnov"
                 target="_blank"

@@ -17,7 +17,9 @@
     "smtpUseTls": "使用 TLS（STARTTLS）",
     "smtpFromAddress": "发件人地址",
     "commentsEnabled": "启用评论",
-    "feedRetentionDays": "新闻源保留时间（天数）"
+    "feedRetentionDays": "新闻源保留时间（天数）",
+    "oldFeedsCleared": "旧源已成功清除",
+    "clearOldFeedsNow": "立即清除旧源"
   },
   "moderation": {
     "title": "内容审核",

@@ -17,7 +17,9 @@
     "smtpUseTls": "Folosiți TLS (STARTTLS)",
     "smtpFromAddress": "Adresă expeditor",
     "commentsEnabled": "Activează comentariile",
-    "feedRetentionDays": "Reținerea fluxului de știri (zile)"
+    "feedRetentionDays": "Reținerea fluxului de știri (zile)",
+    "oldFeedsCleared": "Fluxurile vechi au fost șterse cu succes",
+    "clearOldFeedsNow": "Șterge fluxurile vechi acum"
   },
   "moderation": {
     "title": "Moderare",

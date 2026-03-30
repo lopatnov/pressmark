@@ -17,7 +17,9 @@
     "smtpUseTls": "Використовувати TLS (STARTTLS)",
     "smtpFromAddress": "Адреса відправника",
     "commentsEnabled": "Увімкнути коментарі",
-    "feedRetentionDays": "Збереження стрічки новин (дні)"
+    "feedRetentionDays": "Збереження стрічки новин (дні)",
+    "oldFeedsCleared": "Старі стрічки успішно очищено",
+    "clearOldFeedsNow": "Очистити старі стрічки зараз"
   },
   "moderation": {
     "title": "Модерація",

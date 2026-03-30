@@ -17,7 +17,9 @@
     "smtpUseTls": "Użyj TLS (STARTTLS)",
     "smtpFromAddress": "Adres nadawcy",
     "commentsEnabled": "Włącz komentarze",
-    "feedRetentionDays": "Utrzymanie kanału informacyjnego (dni)"
+    "feedRetentionDays": "Utrzymanie kanału informacyjnego (dni)",
+    "oldFeedsCleared": "Stare kanały zostały pomyślnie wyczyszczone",
+    "clearOldFeedsNow": "Wyczyść stare kanały teraz"
   },
   "moderation": {
     "title": "Moderacja",

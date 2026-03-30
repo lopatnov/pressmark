@@ -17,7 +17,9 @@
     "smtpUseTls": "Använd TLS (STARTTLS)",
     "smtpFromAddress": "Avsändaradress",
     "commentsEnabled": "Aktivera kommentarer",
-    "feedRetentionDays": "Flödeslagring (dagar)"
+    "feedRetentionDays": "Flödeslagring (dagar)",
+    "oldFeedsCleared": "Gamla flöden rensades framgångsrikt",
+    "clearOldFeedsNow": "Rensa gamla flöden nu"
   },
   "moderation": {
     "title": "Moderering",

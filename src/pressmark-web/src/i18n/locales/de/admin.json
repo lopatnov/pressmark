@@ -17,7 +17,9 @@
     "smtpUseTls": "TLS verwenden (STARTTLS)",
     "smtpFromAddress": "Absenderadresse",
     "commentsEnabled": "Kommentare aktivieren",
-    "feedRetentionDays": "Aufbewahrung des Newsfeeds (Tage)"
+    "feedRetentionDays": "Aufbewahrung des Newsfeeds (Tage)",
+    "oldFeedsCleared": "Alte Feeds erfolgreich gelöscht",
+    "clearOldFeedsNow": "Alte Feeds jetzt löschen"
   },
   "moderation": {
     "title": "Moderation",

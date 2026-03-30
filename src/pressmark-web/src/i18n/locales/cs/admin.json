@@ -17,7 +17,9 @@
     "smtpUseTls": "Použít TLS (STARTTLS)",
     "smtpFromAddress": "Adresa odesílatele",
     "commentsEnabled": "Povolit komentáře",
-    "feedRetentionDays": "Udržení zpravodajského kanálu (dny)"
+    "feedRetentionDays": "Udržení zpravodajského kanálu (dny)",
+    "oldFeedsCleared": "Staré kanály byly úspěšně vymazány",
+    "clearOldFeedsNow": "Vymazat staré kanály nyní"
   },
   "moderation": {
     "title": "Moderace",

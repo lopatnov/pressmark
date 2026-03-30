@@ -17,7 +17,9 @@
     "smtpUseTls": "TLS kullan (STARTTLS)",
     "smtpFromAddress": "Gönderen adresi",
     "commentsEnabled": "Yorumları etkinleştir",
-    "feedRetentionDays": "Besleme saklama süresi (gün)"
+    "feedRetentionDays": "Besleme saklama süresi (gün)",
+    "oldFeedsCleared": "Eski beslemeler başarıyla temizlendi",
+    "clearOldFeedsNow": "Eski beslemeleri şimdi temizle"
   },
   "moderation": {
     "title": "Moderasyon",

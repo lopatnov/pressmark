@@ -17,7 +17,9 @@
     "smtpUseTls": "Use TLS (STARTTLS)",
     "smtpFromAddress": "From address",
     "commentsEnabled": "Enable comments",
-    "feedRetentionDays": "Feed retention (days)"
+    "feedRetentionDays": "Feed retention (days)",
+    "oldFeedsCleared": "Old feeds cleared successfully",
+    "clearOldFeedsNow": "Clear old feeds now"
   },
   "moderation": {
     "title": "Moderation",
