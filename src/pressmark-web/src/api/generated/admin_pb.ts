@@ -399,6 +399,13 @@ export class GenerateInviteRequest extends Message<GenerateInviteRequest> {
    */
   expiresDays = 0;
 
+  /**
+   * if non-empty and SMTP configured, send the invite token to this address
+   *
+   * @generated from field: string notify_email = 3;
+   */
+  notifyEmail = "";
+
   constructor(data?: PartialMessage<GenerateInviteRequest>) {
     super();
     proto3.util.initPartial(data, this);
@@ -409,6 +416,7 @@ export class GenerateInviteRequest extends Message<GenerateInviteRequest> {
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "note", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "expires_days", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 3, name: "notify_email", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GenerateInviteRequest {
@@ -1004,6 +1012,13 @@ export class Report extends Message<Report> {
    */
   articleId = "";
 
+  /**
+   * comment author email for comment reports; empty for subscription reports
+   *
+   * @generated from field: string target_user_email = 12;
+   */
+  targetUserEmail = "";
+
   constructor(data?: PartialMessage<Report>) {
     super();
     proto3.util.initPartial(data, this);
@@ -1023,6 +1038,7 @@ export class Report extends Message<Report> {
     { no: 9, name: "content", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 10, name: "content_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 11, name: "article_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 12, name: "target_user_email", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Report {

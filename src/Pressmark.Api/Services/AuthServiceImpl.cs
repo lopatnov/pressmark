@@ -81,6 +81,17 @@ public class AuthServiceImpl(
             invite.IsUsed = true;
             invite.UsedAt = DateTime.UtcNow;
             invite.UsedByUserId = user.Id;
+
+            // Remove other unused tokens whose note matches the registered email
+            if (!string.IsNullOrWhiteSpace(invite.Note) &&
+                string.Equals(invite.Note, user.Email, StringComparison.OrdinalIgnoreCase))
+            {
+                var stale = await db.InviteTokens
+                    .Where(t => t.Note == invite.Note && !t.IsUsed && t.Id != invite.Id)
+                    .ToListAsync(ct);
+                db.InviteTokens.RemoveRange(stale);
+            }
+
             await db.SaveChangesAsync(ct);
         }
 

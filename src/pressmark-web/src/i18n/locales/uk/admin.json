@@ -82,7 +82,8 @@
     "reporter": "Репортер",
     "content": "Зміст",
     "copyId": "Копіювати ID",
-    "openArticle": "Відкрити статтю"
+    "openArticle": "Відкрити статтю",
+    "issue": "Випуск"
   },
   "pagination": {
     "prev": "Назад",
@@ -104,6 +105,8 @@
     "expiry1Day": "1 день",
     "expiry7Days": "7 днів",
     "expiry30Days": "30 днів",
-    "expiryNone": "Без терміну"
+    "expiryNone": "Без терміну",
+    "sendNotification": "Надіслати сповіщення",
+    "notifyEmailPlaceholder": "Адреса електронної пошти"
   }
 }

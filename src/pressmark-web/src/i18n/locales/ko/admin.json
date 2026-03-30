@@ -82,7 +82,8 @@
     "reporter": "기자",
     "content": "콘텐츠",
     "copyId": "ID 복사",
-    "openArticle": "기사 열기"
+    "openArticle": "기사 열기",
+    "issue": "이슈"
   },
   "pagination": {
     "prev": "이전",
@@ -104,6 +105,8 @@
     "expiry1Day": "1일",
     "expiry7Days": "7일",
     "expiry30Days": "30일",
-    "expiryNone": "만료 없음"
+    "expiryNone": "만료 없음",
+    "sendNotification": "알림 보내기",
+    "notifyEmailPlaceholder": "이메일 주소"
   }
 }

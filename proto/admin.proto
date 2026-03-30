@@ -77,6 +77,7 @@ message UserInfo {
 message GenerateInviteRequest {
   string note         = 1;
   int32  expires_days = 2;  // 0 = no expiry; default 7 days recommended by frontend
+  string notify_email = 3;  // if non-empty and SMTP configured, send the invite token to this address
 }
 
 message DeleteInviteRequest {
@@ -149,6 +150,7 @@ message Report {
   string content          = 9;  // comment body or subscription title
   string content_url      = 10; // rss_url for subscription reports; empty for comment reports
   string article_id       = 11; // feed_item_id for comment reports; empty for subscription reports
+  string target_user_email = 12; // comment author email for comment reports; empty for subscription reports
 }
 
 message ReportList {

@@ -82,7 +82,8 @@
     "reporter": "Reporter",
     "content": "Treść",
     "copyId": "Kopiuj ID",
-    "openArticle": "Otwórz artykuł"
+    "openArticle": "Otwórz artykuł",
+    "issue": "Problem"
   },
   "pagination": {
     "prev": "Poprzednia",
@@ -104,6 +105,8 @@
     "expiry1Day": "1 dzień",
     "expiry7Days": "7 dni",
     "expiry30Days": "30 dni",
-    "expiryNone": "Bez limitu"
+    "expiryNone": "Bez limitu",
+    "sendNotification": "Wyślij powiadomienie",
+    "notifyEmailPlaceholder": "Adres e-mail"
   }
 }

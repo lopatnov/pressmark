@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
-import { ExternalLink, Copy, Check } from 'lucide-react'
+import { ExternalLink } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { adminClient } from '@/api/clients'
 import { useAdminStore, type InviteItem } from '@/store/adminStore'
@@ -612,6 +612,7 @@ interface ReportItem {
   content: string
   contentUrl: string
   articleId: string
+  targetUserEmail: string
 }
 
 function ReportsSection() {
@@ -620,7 +621,6 @@ function ReportsSection() {
   const [totalCount, setTotalCount] = useState(0)
   const [page, setPage] = useState(0)
   const [loading, setLoading] = useState(true)
-  const [copiedId, setCopiedId] = useState<string | null>(null)
 
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE))
 
@@ -641,6 +641,7 @@ function ReportsSection() {
             content: r.content,
             contentUrl: r.contentUrl,
             articleId: r.articleId,
+            targetUserEmail: r.targetUserEmail,
           })),
         )
         setTotalCount(res.totalCount)
@@ -664,12 +665,6 @@ function ReportsSection() {
     }
   }
 
-  const handleCopyId = (id: string) => {
-    navigator.clipboard.writeText(id)
-    setCopiedId(id)
-    setTimeout(() => setCopiedId(null), 2000)
-  }
-
   const handlePage = (p: number) => {
     setPage(p)
     load(p)
@@ -687,11 +682,8 @@ function ReportsSection() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border bg-muted/40">
-                <th className="px-4 py-2 text-left font-medium">{t('admin:reports.typeId')}</th>
+                <th className="px-4 py-2 text-left font-medium">{t('admin:reports.issue')}</th>
                 <th className="px-4 py-2 text-left font-medium">{t('admin:reports.reporter')}</th>
-                <th className="px-4 py-2 text-left font-medium">{t('admin:reports.content')}</th>
-                <th className="px-4 py-2 text-left font-medium">{t('admin:reports.reason')}</th>
-                <th className="px-4 py-2 text-left font-medium">{t('admin:users.joined')}</th>
                 <th className="px-4 py-2" />
               </tr>
             </thead>
@@ -699,56 +691,53 @@ function ReportsSection() {
               {reports.map((r) => (
                 <tr key={r.id} className="border-b border-border last:border-0">
                   <td className="px-4 py-2 min-w-[7rem]">
+                    <p className="text-xs text-muted-foreground font-mono">
+                      {r.createdAt
+                        ? new Intl.DateTimeFormat(undefined, {
+                            day: 'numeric',
+                            month: 'long',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          }).format(new Date(r.createdAt))
+                        : '—'}
+                    </p>
                     <p className="text-xs font-medium">
                       {r.type === 'comment'
                         ? t('admin:reports.comment')
                         : t('admin:reports.subscription')}
+                      {r.type === 'comment' && r.targetUserEmail && (
+                        <span className="ml-1 font-normal text-muted-foreground">
+                          {r.targetUserEmail}
+                        </span>
+                      )}
                     </p>
-                    <div className="flex items-center gap-1 mt-0.5">
-                      <span className="text-[10px] font-mono text-muted-foreground">
-                        {r.targetId.slice(0, 8)}…
-                      </span>
-                      <button
-                        onClick={() => handleCopyId(r.targetId)}
-                        className="text-muted-foreground hover:text-foreground transition-colors"
-                        title={t('admin:reports.copyId')}
-                      >
-                        {copiedId === r.targetId ? (
-                          <Check className="h-3 w-3 text-green-600" />
-                        ) : (
-                          <Copy className="h-3 w-3" />
-                        )}
-                      </button>
+                    <div className=" text-xs text-muted-foreground min-w-[8rem]">
+                      <p className="text-xs text-muted-foreground line-clamp-2">
+                        {r.content || '—'}
+                      </p>
+                      {r.contentUrl && (
+                        <p className="text-[10px] text-muted-foreground truncate">{r.contentUrl}</p>
+                      )}
+                      {r.articleId && (
+                        <Link
+                          to={`/article/${r.articleId}`}
+                          className="text-[10px] text-primary hover:underline flex items-center gap-0.5 mt-0.5"
+                        >
+                          <ExternalLink className="h-2.5 w-2.5" />
+                          {t('admin:reports.openArticle')}
+                        </Link>
+                      )}
                     </div>
                   </td>
                   <td className="px-4 py-2 text-xs text-muted-foreground min-w-[8rem]">
                     <p>{r.reporterEmail || '—'}</p>
                     {r.reporterJoined && (
                       <p className="text-[10px]">
-                        {new Date(r.reporterJoined).toLocaleDateString()}
+                        ({new Date(r.reporterJoined).toLocaleDateString()})
                       </p>
                     )}
-                  </td>
-                  <td className="px-4 py-2 max-w-[12rem]">
-                    <p className="text-xs text-muted-foreground line-clamp-2">{r.content || '—'}</p>
-                    {r.contentUrl && (
-                      <p className="text-[10px] text-muted-foreground truncate">{r.contentUrl}</p>
-                    )}
-                    {r.articleId && (
-                      <Link
-                        to={`/article/${r.articleId}`}
-                        className="text-[10px] text-primary hover:underline flex items-center gap-0.5 mt-0.5"
-                      >
-                        <ExternalLink className="h-2.5 w-2.5" />
-                        {t('admin:reports.openArticle')}
-                      </Link>
-                    )}
-                  </td>
-                  <td className="px-4 py-2 text-xs text-muted-foreground max-w-[8rem]">
-                    {r.reason || '—'}
-                  </td>
-                  <td className="px-4 py-2 text-xs text-muted-foreground">
-                    {r.createdAt ? new Date(r.createdAt).toLocaleDateString() : '—'}
+                    <p className="text-xs text-muted-foreground">{r.reason || '—'}</p>
                   </td>
                   <td className="px-4 py-2">
                     <Button size="sm" variant="outline" onClick={() => handleResolve(r.id)}>
@@ -790,15 +779,19 @@ function ReportsSection() {
 
 function InvitesSection() {
   const { t } = useTranslation(['admin', 'common'])
-  const { addInvite } = useAdminStore()
+  const { addInvite, settings } = useAdminStore()
   const [invites, setInvites] = useState<InviteItem[]>([])
   const [totalCount, setTotalCount] = useState(0)
   const [page, setPage] = useState(0)
   const [loadingList, setLoadingList] = useState(true)
   const [note, setNote] = useState('')
   const [expiresDays, setExpiresDays] = useState(7)
+  const [sendNotification, setSendNotification] = useState(false)
   const [newToken, setNewToken] = useState<InviteItem | null>(null)
   const [copiedId, setCopiedId] = useState<string | null>(null)
+
+  const smtpConfigured = Boolean(settings?.smtpHost)
+  const noteIsValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(note)
 
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE))
 
@@ -829,7 +822,12 @@ function InvitesSection() {
 
   const handleGenerate = async () => {
     try {
-      const res = await adminClient.generateInvite({ note, expiresDays })
+      const notifyEmailArg = sendNotification && smtpConfigured && noteIsValidEmail ? note : ''
+      const res = await adminClient.generateInvite({
+        note,
+        expiresDays,
+        notifyEmail: notifyEmailArg,
+      })
       const item: InviteItem = {
         id: res.id,
         token: res.token,
@@ -877,7 +875,11 @@ function InvitesSection() {
           <input
             value={note}
             onChange={(e) => setNote(e.target.value)}
-            placeholder={t('admin:invites.notePlaceholder')}
+            placeholder={
+              smtpConfigured
+                ? t('admin:invites.notifyEmailPlaceholder')
+                : t('admin:invites.notePlaceholder')
+            }
             className="flex-1 rounded-md border border-border bg-background px-3 py-2 text-sm"
           />
           <select
@@ -894,6 +896,20 @@ function InvitesSection() {
             {t('admin:invites.generate')}
           </Button>
         </div>
+        {smtpConfigured && (
+          <label className="flex items-center gap-2 text-sm cursor-pointer">
+            <input
+              type="checkbox"
+              checked={sendNotification}
+              onChange={(e) => setSendNotification(e.target.checked)}
+              disabled={!noteIsValidEmail}
+              className="h-4 w-4"
+            />
+            <span className={!noteIsValidEmail ? 'text-muted-foreground' : ''}>
+              {t('admin:invites.sendNotification')}
+            </span>
+          </label>
+        )}
 
         {newToken && (
           <div className="rounded-md bg-muted p-3 space-y-1">

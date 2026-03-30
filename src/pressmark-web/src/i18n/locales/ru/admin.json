@@ -82,7 +82,8 @@
     "reporter": "Репортёр",
     "content": "Содержание",
     "copyId": "Копировать ID",
-    "openArticle": "Открыть статью"
+    "openArticle": "Открыть статью",
+    "issue": "Проблема"
   },
   "pagination": {
     "prev": "Назад",
@@ -104,6 +105,8 @@
     "expiry1Day": "1 день",
     "expiry7Days": "7 дней",
     "expiry30Days": "30 дней",
-    "expiryNone": "Без срока"
+    "expiryNone": "Без срока",
+    "sendNotification": "Отправить уведомление",
+    "notifyEmailPlaceholder": "Адрес электронной почты"
   }
 }

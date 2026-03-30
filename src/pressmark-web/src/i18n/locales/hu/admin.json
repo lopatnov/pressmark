@@ -82,7 +82,8 @@
     "reporter": "Riporter",
     "content": "Tartalom",
     "copyId": "ID másolása",
-    "openArticle": "Cikk megnyitása"
+    "openArticle": "Cikk megnyitása",
+    "issue": "Kiadvány"
   },
   "pagination": {
     "prev": "Előző",
@@ -104,6 +105,8 @@
     "expiry1Day": "1 nap",
     "expiry7Days": "7 nap",
     "expiry30Days": "30 nap",
-    "expiryNone": "Nem jár le"
+    "expiryNone": "Nem jár le",
+    "sendNotification": "Értesítés küldése",
+    "notifyEmailPlaceholder": "E-mail cím"
   }
 }

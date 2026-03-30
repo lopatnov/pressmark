@@ -82,7 +82,8 @@
     "reporter": "Reporter",
     "content": "Conținut",
     "copyId": "Copiere ID",
-    "openArticle": "Deschide articol"
+    "openArticle": "Deschide articol",
+    "issue": "Problemă"
   },
   "pagination": {
     "prev": "Anterior",
@@ -104,6 +105,8 @@
     "expiry1Day": "1 zi",
     "expiry7Days": "7 zile",
     "expiry30Days": "30 zile",
-    "expiryNone": "Fără expirare"
+    "expiryNone": "Fără expirare",
+    "sendNotification": "Trimiteți o notificare",
+    "notifyEmailPlaceholder": "Adresa de e-mail"
   }
 }

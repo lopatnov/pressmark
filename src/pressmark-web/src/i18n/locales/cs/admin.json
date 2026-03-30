@@ -82,7 +82,8 @@
     "reporter": "Reportér",
     "content": "Obsah",
     "copyId": "Kopírovat ID",
-    "openArticle": "Otevřít článek"
+    "openArticle": "Otevřít článek",
+    "issue": "Vydání"
   },
   "pagination": {
     "prev": "Předchozí",
@@ -104,6 +105,8 @@
     "expiry1Day": "1 den",
     "expiry7Days": "7 dní",
     "expiry30Days": "30 dní",
-    "expiryNone": "Bez platnosti"
+    "expiryNone": "Bez platnosti",
+    "sendNotification": "Odeslat oznámení",
+    "notifyEmailPlaceholder": "E-mailová adresa"
   }
 }

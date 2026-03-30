@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -13,15 +13,20 @@ import { Code, ConnectError } from '@connectrpc/connect'
 export function RegisterPage() {
   const { t } = useTranslation(['auth', 'common'])
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const tokenFromUrl = searchParams.get('invite_token') ?? ''
   const setAuth = useAuthStore((s) => s.setAuth)
   const registrationMode = useAuthStore((s) => s.registrationMode)
-  const [showInvite, setShowInvite] = useState(registrationMode === 'invite_only')
+  const [showInvite, setShowInvite] = useState(registrationMode === 'invite_only' || !!tokenFromUrl)
   const [isFirstUser, setIsFirstUser] = useState(false)
 
   useEffect(() => {
     authClient
       .getRegistrationStatus({})
-      .then((res) => setIsFirstUser(!res.hasAdmin))
+      .then((res) => {
+        setIsFirstUser(!res.hasAdmin)
+        if (res.registrationMode === 'invite_only') setShowInvite(true)
+      })
       .catch(() => {
         // intentional — banner is informational, failure is non-critical
       })
@@ -43,7 +48,10 @@ export function RegisterPage() {
     handleSubmit,
     formState: { errors, isSubmitting },
     setError,
-  } = useForm<FormData>({ resolver: zodResolver(schema) })
+  } = useForm<FormData>({
+    resolver: zodResolver(schema),
+    defaultValues: { inviteToken: tokenFromUrl },
+  })
 
   const onSubmit = async (data: FormData) => {
     try {

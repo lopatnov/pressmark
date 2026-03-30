@@ -82,7 +82,8 @@
     "reporter": "Verslaggever",
     "content": "Inhoud",
     "copyId": "ID kopiëren",
-    "openArticle": "Artikel openen"
+    "openArticle": "Artikel openen",
+    "issue": "Uitgave"
   },
   "pagination": {
     "prev": "Vorige",
@@ -104,6 +105,8 @@
     "expiry1Day": "1 dag",
     "expiry7Days": "7 dagen",
     "expiry30Days": "30 dagen",
-    "expiryNone": "Geen vervaldatum"
+    "expiryNone": "Geen vervaldatum",
+    "sendNotification": "Kennisgeving verzenden",
+    "notifyEmailPlaceholder": "E-mailadres"
   }
 }

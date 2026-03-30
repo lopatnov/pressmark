@@ -82,7 +82,8 @@
     "reporter": "记者",
     "content": "内容",
     "copyId": "复制 ID",
-    "openArticle": "打开文章"
+    "openArticle": "打开文章",
+    "issue": "问题"
   },
   "pagination": {
     "prev": "上一页",
@@ -104,6 +105,8 @@
     "expiry1Day": "1天",
     "expiry7Days": "7天",
     "expiry30Days": "30天",
-    "expiryNone": "永不过期"
+    "expiryNone": "永不过期",
+    "sendNotification": "发送通知",
+    "notifyEmailPlaceholder": "电子邮件地址"
   }
 }

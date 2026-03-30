@@ -82,7 +82,8 @@
     "comment": "Comment",
     "subscription": "Source",
     "loadError": "Failed to load reports",
-    "resolveError": "Failed to resolve report"
+    "resolveError": "Failed to resolve report",
+    "issue": "Issue"
   },
   "pagination": {
     "prev": "Previous",
@@ -104,6 +105,8 @@
     "expiry1Day": "1 day",
     "expiry7Days": "7 days",
     "expiry30Days": "30 days",
-    "expiryNone": "No expiry"
+    "expiryNone": "No expiry",
+    "sendNotification": "Send notification",
+    "notifyEmailPlaceholder": "Email address"
   }
 }

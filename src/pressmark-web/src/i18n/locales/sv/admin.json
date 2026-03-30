@@ -82,7 +82,8 @@
     "reporter": "Reporter",
     "content": "Innehåll",
     "copyId": "Kopiera ID",
-    "openArticle": "Öppna artikel"
+    "openArticle": "Öppna artikel",
+    "issue": "Utgåva"
   },
   "pagination": {
     "prev": "Föregående",
@@ -104,6 +105,8 @@
     "expiry1Day": "1 dag",
     "expiry7Days": "7 dagar",
     "expiry30Days": "30 dagar",
-    "expiryNone": "Ingen giltighetstid"
+    "expiryNone": "Ingen giltighetstid",
+    "sendNotification": "Skicka meddelande",
+    "notifyEmailPlaceholder": "E-postadress"
   }
 }

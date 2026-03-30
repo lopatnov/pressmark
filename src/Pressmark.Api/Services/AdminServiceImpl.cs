@@ -10,7 +10,7 @@ using Pressmark.Api.Protos;
 namespace Pressmark.Api.Services;
 
 [Authorize(Roles = "Admin")]
-public class AdminServiceImpl(AppDbContext db, ISmtpPasswordProtector passwordProtector) : AdminService.AdminServiceBase
+public class AdminServiceImpl(AppDbContext db, ISmtpPasswordProtector passwordProtector, IEmailService emailService, ILogger<AdminServiceImpl> logger) : AdminService.AdminServiceBase
 {
     public override async Task<SiteSettings> GetSiteSettings(Empty request, ServerCallContext context)
     {
@@ -195,6 +195,19 @@ public class AdminServiceImpl(AppDbContext db, ISmtpPasswordProtector passwordPr
         db.InviteTokens.Add(entity);
         await db.SaveChangesAsync(ct);
 
+        if (!string.IsNullOrWhiteSpace(request.NotifyEmail))
+        {
+            try
+            {
+                await emailService.SendInviteAsync(request.NotifyEmail, token, ct);
+            }
+            catch (Exception ex)
+            {
+                // Non-fatal: log and continue; the token is still returned to the admin
+                logger.LogWarning(ex, "Failed to send invite email to {Email}", request.NotifyEmail);
+            }
+        }
+
         return new Protos.InviteToken
         {
             Id = entity.Id.ToString(),
@@ -287,6 +300,7 @@ public class AdminServiceImpl(AppDbContext db, ISmtpPasswordProtector passwordPr
         var comments = commentIds.Count > 0
             ? await db.Comments
                 .Include(c => c.FeedItem)
+                .Include(c => c.User)
                 .Where(c => commentIds.Contains(c.Id))
                 .AsNoTracking()
                 .ToDictionaryAsync(c => c.Id, ct)
@@ -318,6 +332,7 @@ public class AdminServiceImpl(AppDbContext db, ISmtpPasswordProtector passwordPr
             {
                 proto.Content = comment.RemovedByAdmin ? "" : comment.Body;
                 proto.ArticleId = comment.FeedItemId.ToString();
+                proto.TargetUserEmail = comment.User?.Email ?? "";
             }
             else if (r.Type == "subscription" && subs.TryGetValue(r.TargetId, out var sub))
             {

@@ -82,7 +82,8 @@
     "reporter": "Muhabir",
     "content": "İçerik",
     "copyId": "ID kopyala",
-    "openArticle": "Makaleyi aç"
+    "openArticle": "Makaleyi aç",
+    "issue": "Sorun"
   },
   "pagination": {
     "prev": "Önceki",
@@ -104,6 +105,8 @@
     "expiry1Day": "1 gün",
     "expiry7Days": "7 gün",
     "expiry30Days": "30 gün",
-    "expiryNone": "Süresiz"
+    "expiryNone": "Süresiz",
+    "sendNotification": "Bildirim gönder",
+    "notifyEmailPlaceholder": "E-posta adresi"
   }
 }

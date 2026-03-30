@@ -82,7 +82,8 @@
     "reporter": "レポーター",
     "content": "内容",
     "copyId": "IDをコピー",
-    "openArticle": "記事を開く"
+    "openArticle": "記事を開く",
+    "issue": "問題"
   },
   "pagination": {
     "prev": "前へ",
@@ -104,6 +105,8 @@
     "expiry1Day": "1日",
     "expiry7Days": "7日",
     "expiry30Days": "30日",
-    "expiryNone": "無期限"
+    "expiryNone": "無期限",
+    "sendNotification": "通知を送る",
+    "notifyEmailPlaceholder": "メールアドレス"
   }
 }

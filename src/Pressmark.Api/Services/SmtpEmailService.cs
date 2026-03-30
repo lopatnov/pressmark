@@ -6,7 +6,7 @@ using Pressmark.Api.Data;
 
 namespace Pressmark.Api.Services;
 
-public class SmtpEmailService(AppDbContext db, ILogger<SmtpEmailService> logger, ISmtpPasswordProtector passwordProtector) : IEmailService
+public class SmtpEmailService(AppDbContext db, ILogger<SmtpEmailService> logger, ISmtpPasswordProtector passwordProtector, IConfiguration config) : IEmailService
 {
     public async Task SendPasswordResetAsync(string toEmail, string resetUrl, CancellationToken ct)
     {
@@ -40,6 +40,54 @@ public class SmtpEmailService(AppDbContext db, ILogger<SmtpEmailService> logger,
                  + $"Click the link below to set a new password (valid for 1 hour):\n\n"
                  + $"{resetUrl}\n\n"
                  + "If you did not request this, you can safely ignore this email.",
+        };
+
+        using var client = new SmtpClient();
+        var socketOptions = useTls ? SecureSocketOptions.StartTls : SecureSocketOptions.None;
+        await client.ConnectAsync(host, port, socketOptions, ct);
+
+        if (!string.IsNullOrWhiteSpace(user))
+            await client.AuthenticateAsync(user, pass, ct);
+
+        await client.SendAsync(message, ct);
+        await client.DisconnectAsync(true, ct);
+    }
+
+    public async Task SendInviteAsync(string toEmail, string token, CancellationToken ct)
+    {
+        var settings = await db.SiteSettings
+            .ToDictionaryAsync(s => s.Key, s => s.Value, ct);
+
+        var host = settings.GetValueOrDefault("smtp_host", "");
+        var portStr = settings.GetValueOrDefault("smtp_port", "587");
+        var user = settings.GetValueOrDefault("smtp_user", "");
+        var rawPass = settings.GetValueOrDefault("smtp_password", "");
+        var pass = string.IsNullOrEmpty(rawPass) ? "" : passwordProtector.TryUnprotect(rawPass);
+        var useTls = settings.GetValueOrDefault("smtp_use_tls", "true") == "true";
+        var from = settings.GetValueOrDefault("smtp_from_address", "noreply@pressmark.local");
+        var siteName = settings.GetValueOrDefault("site_name", "Pressmark");
+
+        if (string.IsNullOrWhiteSpace(host))
+        {
+            logger.LogWarning("SMTP not configured — skipping invite email to {Email}", toEmail);
+            return;
+        }
+
+        var port = int.TryParse(portStr, out var p) ? p : 587;
+
+        var message = new MimeMessage();
+        message.From.Add(MailboxAddress.Parse(from));
+        message.To.Add(MailboxAddress.Parse(toEmail));
+        var baseUrl = config["App:BaseUrl"] ?? "http://localhost:5173";
+        var registerUrl = $"{baseUrl.TrimEnd('/')}/register?invite_token={Uri.EscapeDataString(token)}";
+
+        message.Subject = $"[{siteName}] You've been invited";
+        message.Body = new TextPart("plain")
+        {
+            Text = $"You have been invited to join {siteName}.\n\n"
+                 + $"Click the link below to register (the invite token will be filled in automatically):\n\n"
+                 + $"{registerUrl}\n\n"
+                 + $"Or enter the token manually: {token}",
         };
 
         using var client = new SmtpClient();
