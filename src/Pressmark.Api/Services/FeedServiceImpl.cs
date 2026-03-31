@@ -175,7 +175,11 @@ public class FeedServiceImpl(AppDbContext db, IDbContextFactory<AppDbContext> db
             .Where(f => db.Bookmarks.Any(b => b.UserId == userId && b.FeedItemId == f.Id));
 
         if (!string.IsNullOrEmpty(request.SubscriptionId))
-            query = query.Where(f => f.SubscriptionId == Guid.Parse(request.SubscriptionId));
+        {
+            if (!Guid.TryParse(request.SubscriptionId, out var subscriptionId))
+                throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid subscription_id format"));
+            query = query.Where(f => f.SubscriptionId == subscriptionId);
+        }
 
         if (!string.IsNullOrEmpty(request.Cursor) && CursorHelper.TryParse(request.Cursor,
                 out var cursorDate, out var cursorId))
