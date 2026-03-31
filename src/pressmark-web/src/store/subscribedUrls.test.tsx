@@ -25,6 +25,7 @@ const TEST_SUB = {
   title: 'Example',
   lastFetchedAt: '',
   createdAt: new Date().toISOString(),
+  isCommunityBanned: false,
 }
 
 function SubscribeButton({ rssUrl }: { rssUrl: string }) {
