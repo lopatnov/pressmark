@@ -31,7 +31,6 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 
   useEffect(() => {
     onClose()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname])
   const user = useAuthStore((s) => s.user)
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated())
@@ -60,7 +59,6 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         })
       })
       .catch(() => {})
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAdmin])
 
   const handleLogout = async () => {

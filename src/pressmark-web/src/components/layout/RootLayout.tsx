@@ -34,7 +34,6 @@ export function RootLayout() {
       })
       .catch(() => clearAuth())
       .finally(() => setInitialized())
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   if (!isInitialized) return null

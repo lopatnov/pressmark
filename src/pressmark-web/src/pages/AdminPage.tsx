@@ -45,7 +45,6 @@ function SiteSettingsSection() {
         ...settings,
         smtpPassword: '', // never pre-fill the password field
       })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [settings])
 
   const onSubmit = async (data: SettingsForm) => {
@@ -249,7 +248,6 @@ function BannedSubscriptionsSection() {
 
   useEffect(() => {
     load(0)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleUnban = async (id: string) => {
@@ -361,7 +359,6 @@ function HiddenArticlesSection() {
 
   useEffect(() => {
     load(0)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleUnhide = async (id: string) => {
@@ -495,7 +492,6 @@ function UsersSection() {
 
   useEffect(() => {
     load(0)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handlePage = (p: number) => {
@@ -684,7 +680,6 @@ function ReportsSection() {
 
   useEffect(() => {
     load(0)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleResolve = async (id: string) => {
@@ -849,7 +844,6 @@ function InvitesSection() {
 
   useEffect(() => {
     loadList(0)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleGenerate = async () => {
@@ -924,7 +918,7 @@ function InvitesSection() {
             <option value={30}>{t('admin:invites.expiry30Days')}</option>
             <option value={0}>{t('admin:invites.expiryNone')}</option>
           </select>
-          <Button size="sm" onClick={handleGenerate}>
+          <Button size="lg" onClick={handleGenerate}>
             {t('admin:invites.generate')}
           </Button>
         </div>
@@ -1045,7 +1039,6 @@ export function AdminPage() {
         }),
       )
       .finally(() => setLoading(false))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (

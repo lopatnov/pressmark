@@ -88,14 +88,14 @@ beforeEach(() => {
   } as any)
 
   // Default: stream blocks indefinitely until signal is aborted (no items)
-  vi.mocked(feedClient.streamFeedUpdates).mockImplementation(
-    // eslint-disable-next-line require-yield
-    async function* (_req: unknown, opts?: any) {
-      await new Promise<void>((_, reject) => {
-        opts?.signal?.addEventListener('abort', () => reject(new Error('aborted')))
-      })
-    },
-  )
+  vi.mocked(feedClient.streamFeedUpdates).mockImplementation(async function* (
+    _req: unknown,
+    opts?: any,
+  ) {
+    await new Promise<void>((_, reject) => {
+      opts?.signal?.addEventListener('abort', () => reject(new Error('aborted')))
+    })
+  })
 })
 
 // ── unreadOnly race condition ─────────────────────────────────────────────────

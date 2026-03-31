@@ -58,7 +58,6 @@ export function SubscriptionsPage() {
         )
       })
       .finally(() => setLoading(false))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const onSubmit = async (data: FormData) => {

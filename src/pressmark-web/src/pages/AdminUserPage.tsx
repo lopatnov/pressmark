@@ -79,7 +79,6 @@ export function AdminUserPage() {
       })
       .catch(() => toast.error(t('common:error')))
       .finally(() => setLoading(false))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id])
 
   const handleChangeRole = async () => {
