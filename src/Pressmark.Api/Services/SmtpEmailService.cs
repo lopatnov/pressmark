@@ -24,7 +24,7 @@ public class SmtpEmailService(AppDbContext db, ILogger<SmtpEmailService> logger,
 
         if (string.IsNullOrWhiteSpace(host))
         {
-            logger.LogWarning("SMTP not configured — skipping password reset email to {Email}", toEmail);
+            logger.LogWarning("SMTP not configured — skipping password reset email");
             return;
         }
 
@@ -69,7 +69,7 @@ public class SmtpEmailService(AppDbContext db, ILogger<SmtpEmailService> logger,
 
         if (string.IsNullOrWhiteSpace(host))
         {
-            logger.LogWarning("SMTP not configured — skipping invite email to {Email}", toEmail);
+            logger.LogWarning("SMTP not configured — skipping invite email");
             return;
         }
 
