@@ -144,4 +144,55 @@ public class JwtServiceTests
     {
         Assert.Equal("refresh_token", BuildService().CookieName);
     }
+
+    // ── Secret Validation ─────────────────────────────────────────────────────
+
+    [Fact]
+    public void Constructor_SecretTooShort_ThrowsInvalidOperationException()
+    {
+        var config = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["Jwt:Secret"] = "short",
+                ["Jwt:ExpiryMinutes"] = "15",
+                ["Jwt:RefreshExpiryDays"] = "7",
+                ["Jwt:RefreshCookieName"] = "refresh_token",
+            })
+            .Build();
+
+        var ex = Assert.Throws<InvalidOperationException>(() => new JwtService(config));
+        Assert.Contains("32", ex.Message);
+        Assert.Contains("current length: 5", ex.Message);
+    }
+
+    [Fact]
+    public void Constructor_SecretExactly32Chars_DoesNotThrow()
+    {
+        var config = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["Jwt:Secret"] = "12345678901234567890123456789012", // exactly 32 chars
+                ["Jwt:ExpiryMinutes"] = "15",
+                ["Jwt:RefreshExpiryDays"] = "7",
+                ["Jwt:RefreshCookieName"] = "refresh_token",
+            })
+            .Build();
+
+        var svc = new JwtService(config);
+        Assert.NotNull(svc);
+    }
+
+    [Fact]
+    public void Constructor_MissingSecret_ThrowsInvalidOperationException()
+    {
+        var config = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["Jwt:ExpiryMinutes"] = "15",
+                ["Jwt:RefreshExpiryDays"] = "7",
+            })
+            .Build();
+
+        Assert.Throws<InvalidOperationException>(() => new JwtService(config));
+    }
 }

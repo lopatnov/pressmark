@@ -12,13 +12,24 @@ public class JwtService
     private readonly SymmetricSecurityKey _key;
     private readonly int _expiryMinutes;
     private readonly int _refreshExpiryDays;
+    private const int MinSecretLength = 32; // Minimum 256 bits for HMAC-SHA256
 
     public string CookieName { get; }
     public int RefreshExpiryDays => _refreshExpiryDays;
 
     public JwtService(IConfiguration config)
     {
-        _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Secret"]!));
+        var secret = config["Jwt:Secret"] 
+            ?? throw new InvalidOperationException("Jwt:Secret is required");
+        
+        if (secret.Length < MinSecretLength)
+        {
+            throw new InvalidOperationException(
+                $"Jwt:Secret must be at least {MinSecretLength} characters long (current length: {secret.Length}). " +
+                "Use a strong random string of at least 32 characters for HMAC-SHA256.");
+        }
+
+        _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
         _expiryMinutes = int.Parse(config["Jwt:ExpiryMinutes"] ?? "15");
         _refreshExpiryDays = int.Parse(config["Jwt:RefreshExpiryDays"] ?? "7");
         CookieName = config["Jwt:RefreshCookieName"] ?? "refresh_token";
