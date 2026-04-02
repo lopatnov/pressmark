@@ -24,7 +24,10 @@ async function refreshAccessToken(): Promise<string | null> {
         role: res.role as 'User' | 'Admin',
       })
       return res.accessToken
-    } catch {
+    } catch (error) {
+      // Log refresh failure for debugging
+      console.error('[transport] Token refresh failed:', error instanceof Error ? error.message : error)
+      
       const { useAuthStore } = await import('../store/authStore')
       useAuthStore.getState().clearAuth()
       return null
@@ -49,13 +52,19 @@ const authInterceptor: Interceptor = (next) => async (req) => {
     // Skip refresh if this call IS the Refresh endpoint — prevents infinite loop
     const isRefreshCall = req.url.includes('/Refresh')
     if (err instanceof ConnectError && err.code === Code.Unauthenticated && !isRefreshCall) {
-      // Try to silently refresh the access token using the httpOnly refresh cookie.
-      // Only call clearAuth() (→ redirect to /login) if the refresh itself fails.
-      const newToken = await refreshAccessToken()
-      if (newToken) {
-        // Retry the original call with the fresh token
-        req.header.set('Authorization', `Bearer ${newToken}`)
-        return await next(req)
+      try {
+        // Try to silently refresh the access token using the httpOnly refresh cookie.
+        // Only call clearAuth() (→ redirect to /login) if the refresh itself fails.
+        const newToken = await refreshAccessToken()
+        if (newToken) {
+          // Retry the original call with the fresh token
+          req.header.set('Authorization', `Bearer ${newToken}`)
+          return await next(req)
+        }
+      } catch (refreshError) {
+        // Log the refresh error and re-throw the original error
+        console.error('[transport] Failed to refresh token:', refreshError instanceof Error ? refreshError.message : refreshError)
+        throw err
       }
     }
     throw err
