@@ -6,5 +6,6 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function stripHtml(html: string): string {
-  return html.replace(/<[^>]+>/g, '').trim()
+  const doc = new DOMParser().parseFromString(html, 'text/html')
+  return doc.body.textContent ?? ''
 }
