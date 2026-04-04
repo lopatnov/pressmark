@@ -580,7 +580,7 @@ public class FeedServiceImpl(
                 }
                 catch (Exception ex)
                 {
-                    logger.LogWarning(ex, "Failed to send comment notification to {Email}", email);
+                    logger.LogWarning(ex, "Failed to send comment notification to a subscriber");
                 }
             }
         }
