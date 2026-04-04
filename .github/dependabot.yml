@@ -14,3 +14,13 @@ updates:
     directory: "/src/pressmark-web"
     schedule:
       interval: "weekly"
+
+  - package-ecosystem: "docker"
+    directory: "/src/pressmark-web"
+    schedule:
+      interval: "weekly"
+
+  - package-ecosystem: "docker"
+    directory: "/src/Pressmark.Api"
+    schedule:
+      interval: "weekly"
