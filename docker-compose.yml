@@ -40,7 +40,7 @@ services:
       RssFetcher__IntervalMinutes: "15"
       RssFetcher__MaxItemsPerFeed: "50"
     ports:
-      - "5000:8080"
+      - "5000:8080"   # host:container — change the host port (5000) if it conflicts with another service
     healthcheck:
       test: ["CMD", "curl", "-sf", "http://localhost:8080/health"]
       interval: 15s
@@ -56,7 +56,8 @@ services:
       context: .
       dockerfile: src/pressmark-web/Dockerfile
     ports:
-      - "80:80"     # HTTP — change to "443:443" when enabling TLS in nginx/nginx.conf
+      - "80:80"       # host:container — change the host port (80) to use a different local port, e.g. "8080:80"
+                      # To enable TLS: change to "443:443" and uncomment the HTTPS block in nginx/nginx.conf
       # - "443:443" # Uncomment when the HTTPS server block in nginx/nginx.conf is enabled
     depends_on:
       api:
