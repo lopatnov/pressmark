@@ -6,13 +6,48 @@ import type { Interceptor } from '@connectrpc/connect'
 // to avoid an infinite loop (interceptor → refresh → interceptor → …)
 const refreshTransport = createGrpcWebTransport({ baseUrl: '/grpc' })
 
-// Deduplicates concurrent refresh attempts so only one request is in-flight at a time
+// Runs fn while holding a cross-tab exclusive lock so that only one browser tab
+// can execute a refresh at a time. Falls back to a localStorage spin-lock for
+// environments without Web Locks API support (all modern browsers have it, but
+// the fallback keeps the logic sound in edge cases such as SSR or older WebViews).
+function withRefreshLock(fn: () => Promise<string | null>): Promise<string | null> {
+  if (typeof navigator !== 'undefined' && 'locks' in navigator) {
+    return navigator.locks.request('pressmark-refresh', fn)
+  }
+  // localStorage fallback (best-effort spin-lock)
+  return new Promise((resolve, reject) => {
+    const LOCK_KEY = 'pressmark-refresh-lock'
+    const LOCK_TTL = 10_000 // ms — releases stale lock left by a crashed tab
+
+    const tryAcquire = () => {
+      const held = localStorage.getItem(LOCK_KEY)
+      if (held && Date.now() - Number(held) < LOCK_TTL) {
+        setTimeout(tryAcquire, 50)
+        return
+      }
+      localStorage.setItem(LOCK_KEY, String(Date.now()))
+      fn()
+        .then(resolve, reject)
+        .finally(() => localStorage.removeItem(LOCK_KEY))
+    }
+    tryAcquire()
+  })
+}
+
+// Deduplicates concurrent refresh attempts within the same tab (pendingRefresh)
+// AND serialises refresh calls across tabs (withRefreshLock).
+//
+// Race scenario without the lock: two tabs simultaneously call Refresh with the
+// same httpOnly cookie. The server rotates the token on first use; the second tab
+// receives Unauthenticated → clearAuth() → unexpected logout.
+// With the lock, Tab B waits until Tab A finishes; by then the browser has already
+// applied the new Set-Cookie from Tab A's response, so Tab B's request succeeds.
 let pendingRefresh: Promise<string | null> | null = null
 
-async function refreshAccessToken(): Promise<string | null> {
+function refreshAccessToken(): Promise<string | null> {
   if (pendingRefresh) return pendingRefresh
 
-  pendingRefresh = (async () => {
+  pendingRefresh = withRefreshLock(async () => {
     try {
       const { AuthService } = await import('./generated/auth_pb')
       const { useAuthStore } = await import('../store/authStore')
@@ -28,10 +63,10 @@ async function refreshAccessToken(): Promise<string | null> {
       const { useAuthStore } = await import('../store/authStore')
       useAuthStore.getState().clearAuth()
       return null
-    } finally {
-      pendingRefresh = null
     }
-  })()
+  }).finally(() => {
+    pendingRefresh = null
+  })
 
   return pendingRefresh
 }
