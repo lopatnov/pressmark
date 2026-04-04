@@ -8,7 +8,7 @@ services:
   #      on ConnectionStrings__Default below.
   #   4. Remove the "mssql_data" volume at the bottom of this file if it is no longer needed.
   db:
-    image: mcr.microsoft.com/mssql/server:2022-latest
+    image: mcr.microsoft.com/mssql/server:latest
     environment:
       ACCEPT_EULA: "Y"
       SA_PASSWORD: "${MSSQL_SA_PASSWORD}"
@@ -62,5 +62,37 @@ services:
       api:
         condition: service_healthy
 
+  # ── Database backups ──────────────────────────────────────────────────────
+  # Runs a full BACKUP DATABASE every 24 hours; keeps the last 7 days of .bak
+  # files in the mssql_backups volume and prunes older ones automatically.
+  # To disable: comment out this service and the mssql_backups volume below.
+  # To restore a backup manually:
+  #   docker compose exec db /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa \
+  #     -P "$MSSQL_SA_PASSWORD" -C \
+  #     -Q "RESTORE DATABASE [pressmark] FROM DISK='/backups/<file>.bak' WITH REPLACE"
+  db-backup:
+    image: mcr.microsoft.com/mssql/server:latest
+    user: root
+    environment:
+      SA_PASSWORD: "${MSSQL_SA_PASSWORD}"
+    volumes:
+      - mssql_backups:/backups
+    entrypoint: ["/bin/bash", "-c"]
+    command: |
+      while true; do
+        STAMP=$$(date +%Y%m%d_%H%M%S)
+        /opt/mssql-tools18/bin/sqlcmd -S db,1433 -U sa -P "$$SA_PASSWORD" -C -b \
+          -Q "BACKUP DATABASE [pressmark] TO DISK=N'/backups/pressmark_$${STAMP}.bak' WITH FORMAT, COMPRESSION, STATS=10" \
+          && echo "[backup] pressmark_$${STAMP}.bak written" \
+          || echo "[backup] Failed at $${STAMP}, will retry in 24h"
+        find /backups -name '*.bak' -mtime +7 -delete
+        sleep 86400
+      done
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
 volumes:
   mssql_data:
+  mssql_backups:

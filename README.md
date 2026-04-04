@@ -20,6 +20,8 @@ The public community page — articles liked by users — is open to anyone with
 - **Admin panel** — configure site name, community window, moderate content, view user list
 - **One-command setup** — `docker compose up` starts the full stack
 - **Invite-only mode** — optionally restrict registration (configurable in admin)
+- **Comments** — discuss articles with other users; subscribe to per-article comment threads for email notifications
+- **Daily digest** — opt-in daily email with the top community articles (configured per-user in Subscriptions)
 
 ---
 
@@ -32,7 +34,7 @@ The public community page — articles liked by users — is open to anyone with
 | UI             | TailwindCSS v4 · shadcn/ui · lucide-react              |
 | State          | Zustand                                                |
 | Forms          | react-hook-form + zod                                  |
-| i18n           | react-i18next (English by default)                     |
+| i18n           | react-i18next (18 locales)                             |
 | API transport  | gRPC-web (`@connectrpc/connect-web`, no Envoy needed)  |
 | Database       | MSSQL · EF Core 10 (Code First)                        |
 | Authentication | JWT — access token in memory + httpOnly refresh cookie |
@@ -119,7 +121,7 @@ Compatible tools: [Azure Data Studio](https://aka.ms/azuredatastudio), SSMS, DBe
 
 ---
 
-## Production Deployment
+## Deployment
 
 **Prerequisites:** a Linux server (or any host) with Docker and Docker Compose installed.
 
@@ -175,6 +177,7 @@ This starts:
 - **db** — Microsoft SQL Server
 - **api** — .NET gRPC server (applies migrations on startup)
 - **web** — nginx serving the React SPA and proxying `/grpc/*` to the API
+- **db-backup** — daily SQL Server backup (writes `.bak` files to a Docker volume)
 
 Open **http://your-server-ip**. The first registered account automatically becomes **Admin**.
 
@@ -209,8 +212,9 @@ Browser
 │  ├── SubscriptionService                   │
 │  ├── FeedService        (feed, likes, …)   │
 │  ├── AdminService       (role=Admin only)  │
-│  └── RssFetcherService  (BackgroundService │
-│                          polls every N min)│
+│  ├── RssFetcherService  (polls RSS feeds)  │
+│  ├── CleanupService     (prunes old items) │
+│  └── DailyDigestService (email digests)   │
 └──────────────┬─────────────────────────────┘
                │  EF Core (Code First)
                ▼
@@ -263,6 +267,7 @@ pressmark/
 | `Cors__AllowedOrigins`        | `http://localhost:5173` | Allowed CORS origins                                |
 | `RssFetcher__IntervalMinutes` | `15`                    | How often to poll RSS feeds                         |
 | `RssFetcher__MaxItemsPerFeed` | `50`                    | Maximum items fetched per feed per poll             |
+| `App__BaseUrl`                | `http://localhost:5173` | Public base URL — used in email links (password reset, comment notifications, digest) |
 
 ---
 
@@ -292,8 +297,7 @@ dotnet ef database update --project src/Pressmark.Api
 Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request.
 
 - Bug reports → [open an issue](https://github.com/lopatnov/pressmark/issues)
-- Questions → [Discussions](https://github.com/lopatnov/pressmark/discussions)
-- Found it useful? A [star on GitHub](https://github.com/lopatnov/pressmark) helps others discover the project
+- Found it useful? A [star on GitHub](https://github.com/lopatnov/pressmark/stargazers) helps others discover the project
 
 ---
 

@@ -32,7 +32,9 @@
     "toggle": "Mostrar/ocultar comentarios",
     "loadError": "No se pudieron cargar los comentarios",
     "submitError": "No se pudo publicar el comentario",
-    "removeError": "No se pudo eliminar el comentario"
+    "removeError": "No se pudo eliminar el comentario",
+    "subscribeNotifications": "Suscribirse a las notificaciones de comentarios",
+    "unsubscribeNotifications": "Desuscribirse de las notificaciones de comentarios"
   },
   "report": "Reportar",
   "reportComment": "Reportar comentario",

@@ -16,5 +16,10 @@
   "errors": {
     "invalidUrl": "유효하지 않은 RSS URL",
     "fetchFailed": "RSS 피드를 가져오지 못했습니다"
-  }
+  },
+  "banned": "차단됨",
+  "editTitle": "제목 수정",
+  "digest": "다이제스트",
+  "digestEnable": "일일 다이제스트 활성화",
+  "digestDisable": "일일 다이제스트 비활성화"
 }

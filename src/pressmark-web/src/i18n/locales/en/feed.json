@@ -32,7 +32,9 @@
     "toggle": "Toggle comments",
     "loadError": "Failed to load comments",
     "submitError": "Failed to post comment",
-    "removeError": "Failed to remove comment"
+    "removeError": "Failed to remove comment",
+    "subscribeNotifications": "Subscribe to comment notifications",
+    "unsubscribeNotifications": "Unsubscribe from comment notifications"
   },
   "report": "Report",
   "reportComment": "Report comment",

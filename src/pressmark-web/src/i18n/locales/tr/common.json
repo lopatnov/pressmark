@@ -18,5 +18,7 @@
     "register": "Kayıt ol",
     "logout": "Çıkış yap",
     "openMenu": "Menüyü aç"
-  }
+  },
+  "builtBy": "Geliştiren",
+  "banned": "yasaklı"
 }

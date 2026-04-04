@@ -10,7 +10,9 @@ service SubscriptionService {
   rpc AddSubscription    (AddSubscriptionRequest)    returns (Subscription);
   rpc RemoveSubscription (RemoveSubscriptionRequest) returns (google.protobuf.Empty);
   rpc ListSubscriptions  (google.protobuf.Empty)     returns (SubscriptionList);
-  rpc ImportSubscriptions (ImportSubscriptionsRequest) returns (ImportSubscriptionsResponse);
+  rpc UpdateSubscription       (UpdateSubscriptionRequest)       returns (Subscription);
+  rpc ToggleDigestSubscription (google.protobuf.Empty)           returns (ToggleDigestSubscriptionResponse);
+  rpc ImportSubscriptions      (ImportSubscriptionsRequest)      returns (ImportSubscriptionsResponse);
   rpc ExportSubscriptions (google.protobuf.Empty)      returns (ExportSubscriptionsResponse);
   rpc TriggerFetch       (TriggerFetchRequest)       returns (TriggerFetchResponse);
 }
@@ -24,17 +26,28 @@ message RemoveSubscriptionRequest {
   string subscription_id = 1;
 }
 
+message UpdateSubscriptionRequest {
+  string subscription_id = 1;
+  string display_name    = 2;
+}
+
 message Subscription {
-  string id              = 1;
-  string user_id         = 2;
-  string rss_url         = 3;
-  string title           = 4;
-  string last_fetched_at = 5;
-  string created_at      = 6;
+  string id                  = 1;
+  string user_id             = 2;
+  string rss_url             = 3;
+  string title               = 4;
+  string last_fetched_at     = 5;
+  string created_at          = 6;
+  bool   is_community_banned = 7;
 }
 
 message SubscriptionList {
   repeated Subscription subscriptions = 1;
+  bool                  digest_enabled = 2; // true if the authenticated user has daily digest enabled
+}
+
+message ToggleDigestSubscriptionResponse {
+  bool enabled = 1;
 }
 
 message ImportSubscriptionsRequest {

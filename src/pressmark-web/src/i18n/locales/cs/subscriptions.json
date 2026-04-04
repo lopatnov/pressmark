@@ -16,5 +16,10 @@
   "errors": {
     "invalidUrl": "Neplatná URL RSS",
     "fetchFailed": "Nepodařilo se načíst RSS kanál"
-  }
+  },
+  "banned": "Zakázáno",
+  "editTitle": "Upravit název",
+  "digest": "Digest",
+  "digestEnable": "Povolit denní digest",
+  "digestDisable": "Zakázat denní digest"
 }

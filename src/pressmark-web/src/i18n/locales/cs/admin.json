@@ -3,7 +3,7 @@
   "settings": {
     "title": "Nastavení webu",
     "siteName": "Název webu",
-    "communityWindowDays": "Okno komunitního kanálu (dny)",
+    "communityWindowDays": "Historie zpravodajského kanálu komunity (dny)",
     "registrationMode": "Režim registrace",
     "open": "Otevřená",
     "inviteOnly": "Pouze na pozvánku",
@@ -16,7 +16,10 @@
     "smtpPasswordPlaceholder": "Ponechte prázdné pro zachování stávajícího",
     "smtpUseTls": "Použít TLS (STARTTLS)",
     "smtpFromAddress": "Adresa odesílatele",
-    "commentsEnabled": "Povolit komentáře"
+    "commentsEnabled": "Povolit komentáře",
+    "feedRetentionDays": "Udržení zpravodajského kanálu (dny)",
+    "oldFeedsCleared": "Staré kanály byly úspěšně vymazány",
+    "clearOldFeedsNow": "Vymazat staré kanály nyní"
   },
   "moderation": {
     "title": "Moderace",
@@ -28,12 +31,14 @@
     "unhidden": "Článek zobrazen",
     "banned": "Zdroj zakázán",
     "hiddenArticles": "Skryté články",
-    "noHiddenArticles": "Žádné skryté články"
+    "noHiddenArticles": "Žádné skryté články",
+    "openArticle": "Otevřít stránku článku"
   },
   "bannedSubs": {
     "title": "Zakázané zdroje",
     "empty": "Žádné zakázané zdroje",
-    "unban": "Odblokovat"
+    "unban": "Odblokovat",
+    "banned": "zakázáno"
   },
   "users": {
     "title": "Uživatelé",
@@ -43,7 +48,28 @@
     "empty": "Žádní uživatelé nenalezeni",
     "comments": "Komentáře",
     "banComments": "Zakázat",
-    "unbanComments": "Povolit"
+    "unbanComments": "Povolit",
+    "siteBanCol": "Zákaz webu",
+    "siteBan": "Zákaz webu",
+    "unsiteBan": "Zrušit zákaz webu",
+    "siteBanned": "web zakázán",
+    "commentBanned": "komentář zakázán",
+    "viewProfile": "Zobrazit profil",
+    "profileTitle": "Profil uživatele",
+    "promoteToAdmin": "Povýšit na správce",
+    "demoteToUser": "Snížit na uživatele",
+    "deleteUser": "Smazat uživatele",
+    "confirmDeleteTitle": "Smazat uživatele?",
+    "confirmDeleteDesc": "Tím se trvale odstraní {{email}} a všechna jeho data. Tuto akci nelze vrátit zpět.",
+    "deleted": "Uživatel smazán",
+    "cannotDemoteLastAdmin": "Nelze degradovat posledního správce",
+    "cannotDeleteLastAdmin": "Nelze odstranit posledního správce",
+    "cannotDeleteSelf": "Nelze smazat vlastní účet",
+    "notFound": "Uživatel nebyl nalezen",
+    "subscriptions": "Odběry",
+    "noSubscriptions": "Žádné odběry",
+    "noComments": "Žádné komentáře",
+    "commentRemoved": "[odstraněno správcem]"
   },
   "reports": {
     "title": "Hlášení",
@@ -54,7 +80,18 @@
     "comment": "Komentář",
     "subscription": "Zdroj",
     "loadError": "Nepodařilo se načíst hlášení",
-    "resolveError": "Nepodařilo se vyřešit hlášení"
+    "resolveError": "Nepodařilo se vyřešit hlášení",
+    "typeId": "Typ / ID",
+    "reporter": "Reportér",
+    "content": "Obsah",
+    "copyId": "Kopírovat ID",
+    "openArticle": "Otevřít článek",
+    "issue": "Vydání"
+  },
+  "pagination": {
+    "prev": "Předchozí",
+    "next": "Další",
+    "pageOf": "Strana {{page}} z {{total}}"
   },
   "invites": {
     "title": "Pozvánkové tokeny",
@@ -71,6 +108,8 @@
     "expiry1Day": "1 den",
     "expiry7Days": "7 dní",
     "expiry30Days": "30 dní",
-    "expiryNone": "Bez platnosti"
+    "expiryNone": "Bez platnosti",
+    "sendNotification": "Odeslat oznámení",
+    "notifyEmailPlaceholder": "E-mailová adresa"
   }
 }

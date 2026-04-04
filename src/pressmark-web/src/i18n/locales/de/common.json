@@ -18,5 +18,7 @@
     "register": "Registrieren",
     "logout": "Abmelden",
     "openMenu": "Menü öffnen"
-  }
+  },
+  "builtBy": "Erstellt von",
+  "banned": "Verbannt"
 }

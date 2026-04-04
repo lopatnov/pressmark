@@ -3,7 +3,10 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
+import { ExternalLink } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
 import { adminClient } from '@/api/clients'
 import { useAdminStore, type InviteItem } from '@/store/adminStore'
 import { toast } from 'sonner'
@@ -21,6 +24,7 @@ const settingsSchema = z.object({
   smtpUseTls: z.boolean(),
   smtpFromAddress: z.string(),
   commentsEnabled: z.boolean(),
+  feedRetentionDays: z.number().int().min(1).max(3650),
 })
 type SettingsForm = z.infer<typeof settingsSchema>
 
@@ -42,7 +46,6 @@ function SiteSettingsSection() {
         ...settings,
         smtpPassword: '', // never pre-fill the password field
       })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [settings])
 
   const onSubmit = async (data: SettingsForm) => {
@@ -59,11 +62,21 @@ function SiteSettingsSection() {
           smtpUseTls: data.smtpUseTls,
           smtpFromAddress: data.smtpFromAddress,
           commentsEnabled: data.commentsEnabled,
+          feedRetentionDays: data.feedRetentionDays,
         },
       })
       setSettings(data)
       setSaved(true)
       setTimeout(() => setSaved(false), 2000)
+    } catch {
+      toast.error(t('common:error'))
+    }
+  }
+
+  const handleClearOldFeeds = async () => {
+    try {
+      await adminClient.clearOldFeeds({})
+      toast.success(t('admin:settings.oldFeedsCleared'))
     } catch {
       toast.error(t('common:error'))
     }
@@ -177,6 +190,27 @@ function SiteSettingsSection() {
           </label>
         </div>
 
+        <div className="space-y-1">
+          <label className="text-sm font-medium  pr-2">
+            {t('admin:settings.feedRetentionDays')}
+          </label>
+          <input
+            {...register('feedRetentionDays', { valueAsNumber: true })}
+            type="number"
+            min={1}
+            max={3650}
+            className="w-32 rounded-md border border-border bg-background px-3 py-2 text-sm"
+          />
+          {errors.feedRetentionDays && (
+            <p className="text-xs text-destructive">{errors.feedRetentionDays.message}</p>
+          )}
+        </div>
+        <div className="space-y-1">
+          <Button type="button" size="sm" variant="outline" onClick={() => handleClearOldFeeds()}>
+            {t('admin:settings.clearOldFeedsNow')}
+          </Button>
+        </div>
+
         <div className="flex items-center gap-3">
           <Button type="submit" size="sm" disabled={isSubmitting || !settings}>
             {t('common:save')}
@@ -188,116 +222,47 @@ function SiteSettingsSection() {
   )
 }
 
-// ── Moderation section ──────────────────────────────────────────────────────
-
-function ModerationSection() {
-  const { t } = useTranslation(['admin', 'common'])
-  const [itemId, setItemId] = useState('')
-  const [subId, setSubId] = useState('')
-  const [itemMsg, setItemMsg] = useState('')
-  const [subMsg, setSubMsg] = useState('')
-
-  const handleHide = async (hidden: boolean) => {
-    if (!itemId.trim()) return
-    try {
-      await adminClient.hideFeedItem({ feedItemId: itemId.trim(), hidden })
-      setItemMsg(hidden ? t('admin:moderation.hide') : t('admin:moderation.unhide'))
-      setTimeout(() => setItemMsg(''), 2000)
-    } catch {
-      toast.error(t('common:error'))
-    }
-  }
-
-  const handleBan = async (banned: boolean) => {
-    if (!subId.trim()) return
-    try {
-      await adminClient.banSubscription({ subscriptionId: subId.trim(), banned })
-      setSubMsg(banned ? t('admin:moderation.ban') : t('admin:moderation.unban'))
-      setTimeout(() => setSubMsg(''), 2000)
-    } catch {
-      toast.error(t('common:error'))
-    }
-  }
-
-  return (
-    <section className="space-y-3">
-      <h2 className="text-base font-semibold">{t('admin:moderation.title')}</h2>
-      <div className="space-y-3 rounded-lg border border-border p-4">
-        <div className="space-y-1.5">
-          <label htmlFor="mod-item-id" className="text-sm font-medium">
-            Feed Item ID
-          </label>
-          <div className="flex gap-2">
-            <input
-              id="mod-item-id"
-              value={itemId}
-              onChange={(e) => setItemId(e.target.value)}
-              placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-              className="flex-1 rounded-md border border-border bg-background px-3 py-2 text-sm font-mono"
-            />
-            <Button size="sm" variant="outline" onClick={() => handleHide(true)}>
-              {t('admin:moderation.hide')}
-            </Button>
-            <Button size="sm" variant="outline" onClick={() => handleHide(false)}>
-              {t('admin:moderation.unhide')}
-            </Button>
-          </div>
-          {itemMsg && <p className="text-xs text-green-600">{itemMsg} ✓</p>}
-        </div>
-
-        <div className="space-y-1.5">
-          <label htmlFor="mod-sub-id" className="text-sm font-medium">
-            Subscription ID
-          </label>
-          <div className="flex gap-2">
-            <input
-              id="mod-sub-id"
-              value={subId}
-              onChange={(e) => setSubId(e.target.value)}
-              placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-              className="flex-1 rounded-md border border-border bg-background px-3 py-2 text-sm font-mono"
-            />
-            <Button size="sm" variant="outline" onClick={() => handleBan(true)}>
-              {t('admin:moderation.ban')}
-            </Button>
-            <Button size="sm" variant="outline" onClick={() => handleBan(false)}>
-              {t('admin:moderation.unban')}
-            </Button>
-          </div>
-          {subMsg && <p className="text-xs text-green-600">{subMsg} ✓</p>}
-        </div>
-      </div>
-    </section>
-  )
-}
-
 // ── Banned subscriptions section ────────────────────────────────────────────
+
+const PAGE_SIZE = 20
 
 function BannedSubscriptionsSection() {
   const { t } = useTranslation(['admin', 'common'])
-  const { bannedSubscriptions, setBannedSubscriptions, unbanSubscription } = useAdminStore()
+  const [items, setItems] = useState<{ id: string; rssUrl: string; title: string }[]>([])
+  const [totalCount, setTotalCount] = useState(0)
+  const [page, setPage] = useState(0)
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE))
+
+  const load = (p: number) => {
+    setLoading(true)
     adminClient
-      .listBannedSubscriptions({})
-      .then((res) =>
-        setBannedSubscriptions(
-          res.items.map((b) => ({ id: b.id, rssUrl: b.rssUrl, title: b.title })),
-        ),
-      )
+      .listBannedSubscriptions({ pageSize: PAGE_SIZE, page: p })
+      .then((res) => {
+        setItems(res.items.map((b) => ({ id: b.id, rssUrl: b.rssUrl, title: b.title })))
+        setTotalCount(res.totalCount)
+      })
       .catch(() => toast.error(t('common:error')))
       .finally(() => setLoading(false))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }
+
+  useEffect(() => {
+    load(0)
   }, [])
 
   const handleUnban = async (id: string) => {
     try {
       await adminClient.banSubscription({ subscriptionId: id, banned: false })
-      unbanSubscription(id)
+      load(page)
     } catch {
       toast.error(t('common:error'))
     }
+  }
+
+  const handlePage = (p: number) => {
+    setPage(p)
+    load(p)
   }
 
   return (
@@ -305,17 +270,25 @@ function BannedSubscriptionsSection() {
       <h2 className="text-base font-semibold">{t('admin:bannedSubs.title')}</h2>
       <div className="rounded-lg border border-border">
         {loading ? (
-          <p className="px-4 py-6 text-center text-sm text-muted-foreground">
-            {t('common:loading')}
-          </p>
-        ) : bannedSubscriptions.length === 0 ? (
+          <div className="divide-y divide-border">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="flex items-center justify-between px-4 py-3">
+                <div className="space-y-1.5">
+                  <Skeleton className="h-4 w-36" />
+                  <Skeleton className="h-3 w-52" />
+                </div>
+                <Skeleton className="h-8 w-16" />
+              </div>
+            ))}
+          </div>
+        ) : items.length === 0 ? (
           <p className="px-4 py-6 text-center text-sm text-muted-foreground">
             {t('admin:bannedSubs.empty')}
           </p>
         ) : (
           <table className="w-full text-sm">
             <tbody>
-              {bannedSubscriptions.map((sub) => (
+              {items.map((sub) => (
                 <tr key={sub.id} className="border-b border-border last:border-0">
                   <td className="px-4 py-2">
                     <p className="font-medium">{sub.title || sub.rssUrl}</p>
@@ -336,6 +309,27 @@ function BannedSubscriptionsSection() {
           </table>
         )}
       </div>
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between text-sm text-muted-foreground">
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={page === 0 || loading}
+            onClick={() => handlePage(page - 1)}
+          >
+            {t('admin:pagination.prev')}
+          </Button>
+          <span>{t('admin:pagination.pageOf', { page: page + 1, total: totalPages })}</span>
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={page >= totalPages - 1 || loading}
+            onClick={() => handlePage(page + 1)}
+          >
+            {t('admin:pagination.next')}
+          </Button>
+        </div>
+      )}
     </section>
   )
 }
@@ -347,12 +341,17 @@ function HiddenArticlesSection() {
   const [hiddenItems, setHiddenItems] = useState<
     { id: string; title: string; url: string; sourceTitle: string }[]
   >([])
+  const [totalCount, setTotalCount] = useState(0)
+  const [page, setPage] = useState(0)
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE))
+
+  const load = (p: number) => {
+    setLoading(true)
     adminClient
-      .listHiddenFeedItems({})
-      .then((res) =>
+      .listHiddenFeedItems({ pageSize: PAGE_SIZE, page: p })
+      .then((res) => {
         setHiddenItems(
           res.items.map((item) => ({
             id: item.id,
@@ -360,21 +359,30 @@ function HiddenArticlesSection() {
             url: item.url,
             sourceTitle: item.sourceTitle,
           })),
-        ),
-      )
+        )
+        setTotalCount(res.totalCount)
+      })
       .catch(() => toast.error(t('common:error')))
       .finally(() => setLoading(false))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }
+
+  useEffect(() => {
+    load(0)
   }, [])
 
   const handleUnhide = async (id: string) => {
     try {
       await adminClient.hideFeedItem({ feedItemId: id, hidden: false })
-      setHiddenItems((prev) => prev.filter((item) => item.id !== id))
       toast.success(t('admin:moderation.unhidden'))
+      load(page)
     } catch {
       toast.error(t('common:error'))
     }
+  }
+
+  const handlePage = (p: number) => {
+    setPage(p)
+    load(p)
   }
 
   return (
@@ -382,9 +390,17 @@ function HiddenArticlesSection() {
       <h2 className="text-base font-semibold">{t('admin:moderation.hiddenArticles')}</h2>
       <div className="rounded-lg border border-border">
         {loading ? (
-          <p className="px-4 py-6 text-center text-sm text-muted-foreground">
-            {t('common:loading')}
-          </p>
+          <div className="divide-y divide-border">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="flex items-center justify-between px-4 py-3">
+                <div className="space-y-1.5">
+                  <Skeleton className="h-4 w-52" />
+                  <Skeleton className="h-3 w-24" />
+                </div>
+                <Skeleton className="h-8 w-16" />
+              </div>
+            ))}
+          </div>
         ) : hiddenItems.length === 0 ? (
           <p className="px-4 py-6 text-center text-sm text-muted-foreground">
             {t('admin:moderation.noHiddenArticles')}
@@ -395,14 +411,23 @@ function HiddenArticlesSection() {
               {hiddenItems.map((item) => (
                 <tr key={item.id} className="border-b border-border last:border-0">
                   <td className="px-4 py-2">
-                    <a
-                      href={item.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-medium hover:underline line-clamp-2"
-                    >
-                      {item.title}
-                    </a>
+                    <div className="flex items-start gap-1.5">
+                      <a
+                        href={item.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-medium hover:underline line-clamp-2"
+                      >
+                        {item.title}
+                      </a>
+                      <Link
+                        to={`/article/${item.id}`}
+                        title={t('admin:moderation.openArticle')}
+                        className="mt-0.5 shrink-0 text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        <ExternalLink className="h-3.5 w-3.5" />
+                      </Link>
+                    </div>
                     <p className="text-xs text-muted-foreground">{item.sourceTitle}</p>
                   </td>
                   <td className="px-4 py-2 text-right">
@@ -416,21 +441,56 @@ function HiddenArticlesSection() {
           </table>
         )}
       </div>
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between text-sm text-muted-foreground">
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={page === 0 || loading}
+            onClick={() => handlePage(page - 1)}
+          >
+            {t('admin:pagination.prev')}
+          </Button>
+          <span>{t('admin:pagination.pageOf', { page: page + 1, total: totalPages })}</span>
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={page >= totalPages - 1 || loading}
+            onClick={() => handlePage(page + 1)}
+          >
+            {t('admin:pagination.next')}
+          </Button>
+        </div>
+      )}
     </section>
   )
 }
 
 // ── Users section ───────────────────────────────────────────────────────────
 
+interface UserRow {
+  id: string
+  email: string
+  role: string
+  createdAt: string
+  isCommentingBanned: boolean
+  isSiteBanned: boolean
+}
+
 function UsersSection() {
   const { t } = useTranslation(['admin', 'common'])
-  const { users, setUsers, updateUserCommentBan } = useAdminStore()
+  const [users, setUsers] = useState<UserRow[]>([])
+  const [totalCount, setTotalCount] = useState(0)
+  const [page, setPage] = useState(0)
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE))
+
+  const load = (p: number) => {
+    setLoading(true)
     adminClient
-      .listUsers({})
-      .then((res) =>
+      .listUsers({ pageSize: PAGE_SIZE, page: p })
+      .then((res) => {
         setUsers(
           res.users.map((u) => ({
             id: u.id,
@@ -438,18 +498,41 @@ function UsersSection() {
             role: u.role,
             createdAt: u.createdAt,
             isCommentingBanned: u.isCommentingBanned,
+            isSiteBanned: u.isSiteBanned,
           })),
-        ),
-      )
+        )
+        setTotalCount(res.totalCount)
+      })
       .catch(() => toast.error(t('common:error')))
       .finally(() => setLoading(false))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }
+
+  useEffect(() => {
+    load(0)
   }, [])
+
+  const handlePage = (p: number) => {
+    setPage(p)
+    load(p)
+  }
 
   const handleToggleCommentBan = async (userId: string, currentlyBanned: boolean) => {
     try {
       await adminClient.banUserFromCommenting({ userId, banned: !currentlyBanned })
-      updateUserCommentBan(userId, !currentlyBanned)
+      setUsers((prev) =>
+        prev.map((u) => (u.id === userId ? { ...u, isCommentingBanned: !currentlyBanned } : u)),
+      )
+    } catch {
+      toast.error(t('common:error'))
+    }
+  }
+
+  const handleToggleSiteBan = async (userId: string, currentlyBanned: boolean) => {
+    try {
+      await adminClient.sitebanUser({ userId, banned: !currentlyBanned })
+      setUsers((prev) =>
+        prev.map((u) => (u.id === userId ? { ...u, isSiteBanned: !currentlyBanned } : u)),
+      )
     } catch {
       toast.error(t('common:error'))
     }
@@ -460,9 +543,18 @@ function UsersSection() {
       <h2 className="text-base font-semibold">{t('admin:users.title')}</h2>
       <div className="rounded-lg border border-border">
         {loading ? (
-          <p className="px-4 py-6 text-center text-sm text-muted-foreground">
-            {t('common:loading')}
-          </p>
+          <div className="divide-y divide-border">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="flex items-center gap-4 px-4 py-3">
+                <Skeleton className="h-4 w-40 flex-shrink-0" />
+                <Skeleton className="h-5 w-12 flex-shrink-0" />
+                <Skeleton className="h-4 w-20 flex-shrink-0" />
+                <Skeleton className="h-8 w-24 flex-shrink-0" />
+                <Skeleton className="h-8 w-20 flex-shrink-0" />
+                <Skeleton className="ml-auto h-4 w-16 flex-shrink-0" />
+              </div>
+            ))}
+          </div>
         ) : users.length === 0 ? (
           <p className="px-4 py-6 text-center text-sm text-muted-foreground">
             {t('admin:users.empty')}
@@ -475,12 +567,23 @@ function UsersSection() {
                 <th className="px-4 py-2 text-left font-medium">{t('admin:users.role')}</th>
                 <th className="px-4 py-2 text-left font-medium">{t('admin:users.joined')}</th>
                 <th className="px-4 py-2 text-left font-medium">{t('admin:users.comments')}</th>
+                <th className="px-4 py-2 text-left font-medium">{t('admin:users.siteBanCol')}</th>
+                <th className="px-4 py-2" />
               </tr>
             </thead>
             <tbody>
               {users.map((user) => (
                 <tr key={user.id} className="border-b border-border last:border-0">
-                  <td className="px-4 py-2 text-muted-foreground">{user.email}</td>
+                  <td className="px-4 py-2">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="text-muted-foreground">{user.email}</span>
+                      {user.isSiteBanned && (
+                        <span className="rounded bg-destructive/10 px-1.5 py-0.5 text-[10px] font-medium text-destructive">
+                          {t('admin:users.siteBanned')}
+                        </span>
+                      )}
+                    </div>
+                  </td>
                   <td className="px-4 py-2">
                     <span
                       className={`rounded px-1.5 py-0.5 text-xs font-medium ${user.role === 'Admin' ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'}`}
@@ -496,16 +599,28 @@ function UsersSection() {
                       size="sm"
                       variant={user.isCommentingBanned ? 'destructive' : 'outline'}
                       onClick={() => handleToggleCommentBan(user.id, user.isCommentingBanned)}
-                      title={
-                        user.isCommentingBanned
-                          ? t('admin:users.unbanComments')
-                          : t('admin:users.banComments')
-                      }
                     >
                       {user.isCommentingBanned
                         ? t('admin:users.unbanComments')
                         : t('admin:users.banComments')}
                     </Button>
+                  </td>
+                  <td className="px-4 py-2">
+                    <Button
+                      size="sm"
+                      variant={user.isSiteBanned ? 'destructive' : 'outline'}
+                      onClick={() => handleToggleSiteBan(user.id, user.isSiteBanned)}
+                    >
+                      {user.isSiteBanned ? t('admin:users.unsiteBan') : t('admin:users.siteBan')}
+                    </Button>
+                  </td>
+                  <td className="px-4 py-2 text-right">
+                    <Link
+                      to={`/admin/users/${user.id}`}
+                      className="text-xs text-primary hover:underline"
+                    >
+                      {t('admin:users.viewProfile')}
+                    </Link>
                   </td>
                 </tr>
               ))}
@@ -513,6 +628,27 @@ function UsersSection() {
           </table>
         )}
       </div>
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between text-sm text-muted-foreground">
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={page === 0 || loading}
+            onClick={() => handlePage(page - 1)}
+          >
+            {t('admin:pagination.prev')}
+          </Button>
+          <span>{t('admin:pagination.pageOf', { page: page + 1, total: totalPages })}</span>
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={page >= totalPages - 1 || loading}
+            onClick={() => handlePage(page + 1)}
+          >
+            {t('admin:pagination.next')}
+          </Button>
+        </div>
+      )}
     </section>
   )
 }
@@ -525,16 +661,28 @@ interface ReportItem {
   targetId: string
   reason: string
   createdAt: string
+  reporterEmail: string
+  reporterJoined: string
+  content: string
+  contentUrl: string
+  articleId: string
+  targetUserEmail: string
 }
 
 function ReportsSection() {
   const { t } = useTranslation(['admin', 'common'])
   const [reports, setReports] = useState<ReportItem[]>([])
+  const [totalCount, setTotalCount] = useState(0)
+  const [page, setPage] = useState(0)
+  const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE))
+
+  const load = (p: number) => {
+    setLoading(true)
     adminClient
-      .listReports({})
-      .then((res) =>
+      .listReports({ pageSize: PAGE_SIZE, page: p })
+      .then((res) => {
         setReports(
           res.items.map((r) => ({
             id: r.id,
@@ -542,61 +690,155 @@ function ReportsSection() {
             targetId: r.targetId,
             reason: r.reason,
             createdAt: r.createdAt,
+            reporterEmail: r.reporterEmail,
+            reporterJoined: r.reporterJoined,
+            content: r.content,
+            contentUrl: r.contentUrl,
+            articleId: r.articleId,
+            targetUserEmail: r.targetUserEmail,
           })),
-        ),
-      )
-      .catch(() => toast.error(t('reports.loadError')))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        )
+        setTotalCount(res.totalCount)
+      })
+      .catch(() => toast.error(t('admin:reports.loadError')))
+      .finally(() => setLoading(false))
+  }
+
+  useEffect(() => {
+    load(0)
   }, [])
 
   const handleResolve = async (id: string) => {
     try {
       await adminClient.resolveReport({ id })
       setReports((prev) => prev.filter((r) => r.id !== id))
+      setTotalCount((c) => c - 1)
     } catch {
-      toast.error(t('reports.resolveError'))
+      toast.error(t('admin:reports.resolveError'))
     }
+  }
+
+  const handlePage = (p: number) => {
+    setPage(p)
+    load(p)
   }
 
   return (
     <section className="space-y-3">
-      <h2 className="text-base font-medium">{t('reports.title')}</h2>
-      {reports.length === 0 ? (
-        <p className="text-sm text-muted-foreground">{t('reports.empty')}</p>
+      <h2 className="text-base font-medium">{t('admin:reports.title')}</h2>
+      {loading ? (
+        <div className="overflow-x-auto rounded-lg border border-border">
+          <div className="divide-y divide-border">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="flex items-start gap-4 px-4 py-3">
+                <div className="min-w-[7rem] space-y-1.5">
+                  <Skeleton className="h-3 w-28" />
+                  <Skeleton className="h-4 w-20" />
+                  <Skeleton className="h-3 w-36" />
+                </div>
+                <div className="min-w-[8rem] space-y-1.5">
+                  <Skeleton className="h-3 w-32" />
+                  <Skeleton className="h-3 w-20" />
+                </div>
+                <Skeleton className="ml-auto h-8 w-16 flex-shrink-0" />
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : reports.length === 0 ? (
+        <p className="text-sm text-muted-foreground">{t('admin:reports.empty')}</p>
       ) : (
         <div className="overflow-x-auto rounded-lg border border-border">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border bg-muted/40">
-                <th className="px-4 py-2 text-left font-medium">{t('reports.type')}</th>
-                <th className="px-4 py-2 text-left font-medium">ID</th>
-                <th className="px-4 py-2 text-left font-medium">{t('reports.reason')}</th>
-                <th className="px-4 py-2 text-left font-medium">{t('admin:users.joined')}</th>
+                <th className="px-4 py-2 text-left font-medium">{t('admin:reports.issue')}</th>
+                <th className="px-4 py-2 text-left font-medium">{t('admin:reports.reporter')}</th>
                 <th className="px-4 py-2" />
               </tr>
             </thead>
             <tbody>
               {reports.map((r) => (
                 <tr key={r.id} className="border-b border-border last:border-0">
-                  <td className="px-4 py-2 text-xs text-muted-foreground">
-                    {r.type === 'comment' ? t('reports.comment') : t('reports.subscription')}
+                  <td className="px-4 py-2 min-w-[7rem]">
+                    <p className="text-xs text-muted-foreground font-mono">
+                      {r.createdAt
+                        ? new Intl.DateTimeFormat(undefined, {
+                            day: 'numeric',
+                            month: 'long',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          }).format(new Date(r.createdAt))
+                        : '—'}
+                    </p>
+                    <p className="text-xs font-medium">
+                      {r.type === 'comment'
+                        ? t('admin:reports.comment')
+                        : t('admin:reports.subscription')}
+                      {r.type === 'comment' && r.targetUserEmail && (
+                        <span className="ml-1 font-normal text-muted-foreground">
+                          {r.targetUserEmail}
+                        </span>
+                      )}
+                    </p>
+                    <div className=" text-xs text-muted-foreground min-w-[8rem]">
+                      <p className="text-xs text-muted-foreground line-clamp-2">
+                        {r.content || '—'}
+                      </p>
+                      {r.contentUrl && (
+                        <p className="text-[10px] text-muted-foreground truncate">{r.contentUrl}</p>
+                      )}
+                      {r.articleId && (
+                        <Link
+                          to={`/article/${r.articleId}`}
+                          className="text-[10px] text-primary hover:underline flex items-center gap-0.5 mt-0.5"
+                        >
+                          <ExternalLink className="h-2.5 w-2.5" />
+                          {t('admin:reports.openArticle')}
+                        </Link>
+                      )}
+                    </div>
                   </td>
-                  <td className="px-4 py-2 text-xs font-mono text-muted-foreground truncate max-w-[8rem]">
-                    {r.targetId.slice(0, 8)}…
-                  </td>
-                  <td className="px-4 py-2 text-xs text-muted-foreground">{r.reason || '—'}</td>
-                  <td className="px-4 py-2 text-xs text-muted-foreground">
-                    {r.createdAt ? new Date(r.createdAt).toLocaleDateString() : '—'}
+                  <td className="px-4 py-2 text-xs text-muted-foreground min-w-[8rem]">
+                    <p>{r.reporterEmail || '—'}</p>
+                    {r.reporterJoined && (
+                      <p className="text-[10px]">
+                        ({new Date(r.reporterJoined).toLocaleDateString()})
+                      </p>
+                    )}
+                    <p className="text-xs text-muted-foreground">{r.reason || '—'}</p>
                   </td>
                   <td className="px-4 py-2">
                     <Button size="sm" variant="outline" onClick={() => handleResolve(r.id)}>
-                      {t('reports.resolve')}
+                      {t('admin:reports.resolve')}
                     </Button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between text-sm text-muted-foreground">
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={page === 0 || loading}
+            onClick={() => handlePage(page - 1)}
+          >
+            {t('admin:pagination.prev')}
+          </Button>
+          <span>{t('admin:pagination.pageOf', { page: page + 1, total: totalPages })}</span>
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={page >= totalPages - 1 || loading}
+            onClick={() => handlePage(page + 1)}
+          >
+            {t('admin:pagination.next')}
+          </Button>
         </div>
       )}
     </section>
@@ -607,16 +849,27 @@ function ReportsSection() {
 
 function InvitesSection() {
   const { t } = useTranslation(['admin', 'common'])
-  const { invites, setInvites, addInvite, removeInvite } = useAdminStore()
+  const { addInvite, settings } = useAdminStore()
+  const [invites, setInvites] = useState<InviteItem[]>([])
+  const [totalCount, setTotalCount] = useState(0)
+  const [page, setPage] = useState(0)
+  const [loadingList, setLoadingList] = useState(true)
   const [note, setNote] = useState('')
   const [expiresDays, setExpiresDays] = useState(7)
+  const [sendNotification, setSendNotification] = useState(false)
   const [newToken, setNewToken] = useState<InviteItem | null>(null)
   const [copiedId, setCopiedId] = useState<string | null>(null)
 
-  useEffect(() => {
+  const smtpConfigured = Boolean(settings?.smtpHost)
+  const noteIsValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(note)
+
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE))
+
+  const loadList = (p: number) => {
+    setLoadingList(true)
     adminClient
-      .listInvites({})
-      .then((res) =>
+      .listInvites({ pageSize: PAGE_SIZE, page: p })
+      .then((res) => {
         setInvites(
           res.items.map((i) => ({
             id: i.id,
@@ -625,15 +878,25 @@ function InvitesSection() {
             createdAt: i.createdAt,
             expiresAt: i.expiresAt,
           })),
-        ),
-      )
+        )
+        setTotalCount(res.totalCount)
+      })
       .catch(() => toast.error(t('common:error')))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+      .finally(() => setLoadingList(false))
+  }
+
+  useEffect(() => {
+    loadList(0)
   }, [])
 
   const handleGenerate = async () => {
     try {
-      const res = await adminClient.generateInvite({ note, expiresDays })
+      const notifyEmailArg = sendNotification && smtpConfigured && noteIsValidEmail ? note : ''
+      const res = await adminClient.generateInvite({
+        note,
+        expiresDays,
+        notifyEmail: notifyEmailArg,
+      })
       const item: InviteItem = {
         id: res.id,
         token: res.token,
@@ -644,6 +907,8 @@ function InvitesSection() {
       addInvite(item)
       setNewToken(item)
       setNote('')
+      loadList(0)
+      setPage(0)
     } catch {
       toast.error(t('common:error'))
     }
@@ -658,11 +923,16 @@ function InvitesSection() {
   const handleDelete = async (id: string) => {
     try {
       await adminClient.deleteInvite({ id })
-      removeInvite(id)
       if (newToken?.id === id) setNewToken(null)
+      loadList(page)
     } catch {
       toast.error(t('common:error'))
     }
+  }
+
+  const handlePage = (p: number) => {
+    setPage(p)
+    loadList(p)
   }
 
   return (
@@ -674,7 +944,11 @@ function InvitesSection() {
           <input
             value={note}
             onChange={(e) => setNote(e.target.value)}
-            placeholder={t('admin:invites.notePlaceholder')}
+            placeholder={
+              smtpConfigured
+                ? t('admin:invites.notifyEmailPlaceholder')
+                : t('admin:invites.notePlaceholder')
+            }
             className="flex-1 rounded-md border border-border bg-background px-3 py-2 text-sm"
           />
           <select
@@ -687,10 +961,24 @@ function InvitesSection() {
             <option value={30}>{t('admin:invites.expiry30Days')}</option>
             <option value={0}>{t('admin:invites.expiryNone')}</option>
           </select>
-          <Button size="sm" onClick={handleGenerate}>
+          <Button size="lg" onClick={handleGenerate}>
             {t('admin:invites.generate')}
           </Button>
         </div>
+        {smtpConfigured && (
+          <label className="flex items-center gap-2 text-sm cursor-pointer">
+            <input
+              type="checkbox"
+              checked={sendNotification}
+              onChange={(e) => setSendNotification(e.target.checked)}
+              disabled={!noteIsValidEmail}
+              className="h-4 w-4"
+            />
+            <span className={!noteIsValidEmail ? 'text-muted-foreground' : ''}>
+              {t('admin:invites.sendNotification')}
+            </span>
+          </label>
+        )}
 
         {newToken && (
           <div className="rounded-md bg-muted p-3 space-y-1">
@@ -712,7 +1000,17 @@ function InvitesSection() {
       </div>
 
       <div className="rounded-lg border border-border">
-        {invites.length === 0 ? (
+        {loadingList ? (
+          <div className="divide-y divide-border">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="flex items-center justify-between px-4 py-3">
+                <Skeleton className="h-4 w-28" />
+                <Skeleton className="h-4 w-36" />
+                <Skeleton className="h-8 w-16" />
+              </div>
+            ))}
+          </div>
+        ) : invites.length === 0 ? (
           <p className="px-4 py-6 text-center text-sm text-muted-foreground">
             {t('admin:invites.empty')}
           </p>
@@ -739,6 +1037,27 @@ function InvitesSection() {
           </table>
         )}
       </div>
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between text-sm text-muted-foreground">
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={page === 0 || loadingList}
+            onClick={() => handlePage(page - 1)}
+          >
+            {t('admin:pagination.prev')}
+          </Button>
+          <span>{t('admin:pagination.pageOf', { page: page + 1, total: totalPages })}</span>
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={page >= totalPages - 1 || loadingList}
+            onClick={() => handlePage(page + 1)}
+          >
+            {t('admin:pagination.next')}
+          </Button>
+        </div>
+      )}
     </section>
   )
 }
@@ -765,19 +1084,18 @@ export function AdminPage() {
           smtpUseTls: res.smtpUseTls,
           smtpFromAddress: res.smtpFromAddress,
           commentsEnabled: res.commentsEnabled,
+          feedRetentionDays: res.feedRetentionDays || 90,
         }),
       )
       .finally(() => setLoading(false))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
-    <div className="mx-auto max-w-2xl space-y-8 p-4">
+    <div className="mx-auto max-w-4xl space-y-8 p-4">
       <h1 className="text-xl font-semibold">{t('title')}</h1>
       <SiteSettingsSection />
       <ReportsSection />
       <InvitesSection />
-      <ModerationSection />
       <BannedSubscriptionsSection />
       <HiddenArticlesSection />
       <UsersSection />

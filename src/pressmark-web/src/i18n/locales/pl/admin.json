@@ -3,7 +3,7 @@
   "settings": {
     "title": "Ustawienia strony",
     "siteName": "Nazwa strony",
-    "communityWindowDays": "Okno kanału społeczności (dni)",
+    "communityWindowDays": "Historia kanału informacyjnego społeczności (dni)",
     "registrationMode": "Tryb rejestracji",
     "open": "Otwarty",
     "inviteOnly": "Tylko na zaproszenie",
@@ -16,7 +16,10 @@
     "smtpPasswordPlaceholder": "Pozostaw puste, aby zachować bieżące",
     "smtpUseTls": "Użyj TLS (STARTTLS)",
     "smtpFromAddress": "Adres nadawcy",
-    "commentsEnabled": "Włącz komentarze"
+    "commentsEnabled": "Włącz komentarze",
+    "feedRetentionDays": "Utrzymanie kanału informacyjnego (dni)",
+    "oldFeedsCleared": "Stare kanały zostały pomyślnie wyczyszczone",
+    "clearOldFeedsNow": "Wyczyść stare kanały teraz"
   },
   "moderation": {
     "title": "Moderacja",
@@ -28,12 +31,14 @@
     "unhidden": "Artykuł pokazany",
     "banned": "Źródło zablokowane",
     "hiddenArticles": "Ukryte artykuły",
-    "noHiddenArticles": "Brak ukrytych artykułów"
+    "noHiddenArticles": "Brak ukrytych artykułów",
+    "openArticle": "Otwórz stronę artykułu"
   },
   "bannedSubs": {
     "title": "Zablokowane źródła",
     "empty": "Brak zablokowanych źródeł",
-    "unban": "Odblokuj"
+    "unban": "Odblokuj",
+    "banned": "zbanowany"
   },
   "users": {
     "title": "Użytkownicy",
@@ -43,7 +48,28 @@
     "empty": "Nie znaleziono użytkowników",
     "comments": "Komentarze",
     "banComments": "Zablokuj",
-    "unbanComments": "Odblokuj"
+    "unbanComments": "Odblokuj",
+    "siteBanCol": "Ban na stronie",
+    "siteBan": "Ban na stronie",
+    "unsiteBan": "Zniesienie zakazu witryny",
+    "siteBanned": "strona zbanowana",
+    "commentBanned": "komentarz zbanowany",
+    "viewProfile": "Wyświetl profil",
+    "profileTitle": "Profil użytkownika",
+    "promoteToAdmin": "Awans do administratora",
+    "demoteToUser": "Zdegradowanie do użytkownika",
+    "deleteUser": "Usuń użytkownika",
+    "confirmDeleteTitle": "Usunąć użytkownika?",
+    "confirmDeleteDesc": "Spowoduje to trwałe usunięcie {{email}} i wszystkich jego danych. Tej akcji nie można cofnąć.",
+    "deleted": "Użytkownik usunięty",
+    "cannotDemoteLastAdmin": "Nie można zdegradować ostatniego administratora",
+    "cannotDeleteLastAdmin": "Nie można usunąć ostatniego administratora",
+    "cannotDeleteSelf": "Nie można usunąć własnego konta",
+    "notFound": "Nie znaleziono użytkownika",
+    "subscriptions": "Subskrypcje",
+    "noSubscriptions": "Brak subskrypcji",
+    "noComments": "Brak komentarzy",
+    "commentRemoved": "[usunięte przez administratora]"
   },
   "reports": {
     "title": "Zgłoszenia",
@@ -54,7 +80,18 @@
     "comment": "Komentarz",
     "subscription": "Źródło",
     "loadError": "Nie udało się załadować zgłoszeń",
-    "resolveError": "Nie udało się rozwiązać zgłoszenia"
+    "resolveError": "Nie udało się rozwiązać zgłoszenia",
+    "typeId": "Typ / ID",
+    "reporter": "Reporter",
+    "content": "Treść",
+    "copyId": "Kopiuj ID",
+    "openArticle": "Otwórz artykuł",
+    "issue": "Problem"
+  },
+  "pagination": {
+    "prev": "Poprzednia",
+    "next": "Następna",
+    "pageOf": "Strona {{page}} z {{total}}"
   },
   "invites": {
     "title": "Tokeny zaproszeń",
@@ -71,6 +108,8 @@
     "expiry1Day": "1 dzień",
     "expiry7Days": "7 dni",
     "expiry30Days": "30 dni",
-    "expiryNone": "Bez limitu"
+    "expiryNone": "Bez limitu",
+    "sendNotification": "Wyślij powiadomienie",
+    "notifyEmailPlaceholder": "Adres e-mail"
   }
 }

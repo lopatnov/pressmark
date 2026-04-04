@@ -31,7 +31,9 @@
     "toggle": "コメントの表示/非表示",
     "loadError": "コメントの読み込みに失敗しました",
     "submitError": "コメントの送信に失敗しました",
-    "removeError": "コメントの削除に失敗しました"
+    "removeError": "コメントの削除に失敗しました",
+    "subscribeNotifications": "コメント通知を購読する",
+    "unsubscribeNotifications": "コメント通知を購読解除する"
   },
   "report": "報告",
   "reportComment": "コメントを報告",

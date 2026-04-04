@@ -18,5 +18,7 @@
     "register": "Cadastrar",
     "logout": "Sair",
     "openMenu": "Abrir menu"
-  }
+  },
+  "builtBy": "Desenvolvido por",
+  "banned": "banido"
 }

@@ -1,7 +1,17 @@
 import { useEffect } from 'react'
 import { NavLink, useNavigate, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Globe, Rss, Bookmark, Settings, LogOut, LogIn, UserPlus, BookOpen } from 'lucide-react'
+import {
+  Globe,
+  Rss,
+  Bookmark,
+  Settings,
+  LogOut,
+  LogIn,
+  UserPlus,
+  BookOpen,
+  UserStar,
+} from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/store/authStore'
 import { useFeedStore } from '@/store/feedStore'
@@ -21,7 +31,6 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 
   useEffect(() => {
     onClose()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname])
   const user = useAuthStore((s) => s.user)
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated())
@@ -47,10 +56,10 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           smtpUseTls: res.smtpUseTls,
           smtpFromAddress: res.smtpFromAddress,
           commentsEnabled: res.commentsEnabled,
+          feedRetentionDays: res.feedRetentionDays || 30,
         })
       })
       .catch(() => {})
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAdmin])
 
   const handleLogout = async () => {
@@ -137,7 +146,34 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             )}
           </>
         )}
+        <div className="my-1.5 border-t border-sidebar-border" />
+        <div className="border-sidebar-border">
+          <div className="flex items-center gap-2.5 rounded-md px-3 py-2 text-left text-xs text-muted-foreground transition-colors">
+            <UserStar className="h-4 w-4 shrink-0"></UserStar>
+            <div className="transition-colors rounded-md ">
+              {t('common:builtBy')}&nbsp;
+              <a
+                href="https://github.com/lopatnov"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="transition-colors text-sidebar-foreground hover:bg-sidebar-accent/60"
+              >
+                lopatnov
+              </a>
+              &nbsp;•&nbsp;
+              <a
+                href="https://linkedin.com/in/lopatnov"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="transition-colors text-sidebar-foreground hover:bg-sidebar-accent/60"
+              >
+                LinkedIn
+              </a>
+            </div>
+          </div>
+        </div>
       </nav>
+
       <div className="border-t border-sidebar-border">
         <LanguageSwitcher />
       </div>

@@ -16,5 +16,10 @@
   "errors": {
     "invalidUrl": "URL RSS invalide",
     "fetchFailed": "Impossible de récupérer le flux RSS"
-  }
+  },
+  "banned": "Banni",
+  "editTitle": "Modifier le titre",
+  "digest": "Digest",
+  "digestEnable": "Activer le digest quotidien",
+  "digestDisable": "Désactiver le digest quotidien"
 }

@@ -18,5 +18,7 @@
     "register": "Înregistrare",
     "logout": "Deconectare",
     "openMenu": "Deschide meniu"
-  }
+  },
+  "builtBy": "Dezvoltat de",
+  "banned": "interzis"
 }

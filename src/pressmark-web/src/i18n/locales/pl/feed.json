@@ -31,7 +31,9 @@
     "toggle": "Pokaż/ukryj komentarze",
     "loadError": "Nie udało się załadować komentarzy",
     "submitError": "Nie udało się wysłać komentarza",
-    "removeError": "Nie udało się usunąć komentarza"
+    "removeError": "Nie udało się usunąć komentarza",
+    "subscribeNotifications": "Subskrybuj powiadomienia o komentarzach",
+    "unsubscribeNotifications": "Rezygnuj z powiadomień o komentarzach"
   },
   "report": "Zgłoś",
   "reportComment": "Zgłoś komentarz",

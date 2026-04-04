@@ -31,7 +31,9 @@
     "toggle": "Mostra/nascondi commenti",
     "loadError": "Impossibile caricare i commenti",
     "submitError": "Impossibile inviare il commento",
-    "removeError": "Impossibile rimuovere il commento"
+    "removeError": "Impossibile rimuovere il commento",
+    "subscribeNotifications": "Iscriviti alle notifiche dei commenti",
+    "unsubscribeNotifications": "Annulla l'iscrizione alle notifiche dei commenti"
   },
   "report": "Segnala",
   "reportComment": "Segnala commento",

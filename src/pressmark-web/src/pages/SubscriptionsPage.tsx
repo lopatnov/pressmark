@@ -5,7 +5,19 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { Download, Plus, RefreshCw, Trash2, Upload } from 'lucide-react'
+import {
+  Ban,
+  Bell,
+  BellOff,
+  Check,
+  Download,
+  Pencil,
+  Plus,
+  RefreshCw,
+  Trash2,
+  Upload,
+  X,
+} from 'lucide-react'
 import { Code, ConnectError } from '@connectrpc/connect'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -22,15 +34,20 @@ export function SubscriptionsPage() {
   const { t } = useTranslation(['subscriptions', 'common'])
   const {
     subscriptions,
+    digestEnabled,
     isLoading,
     setSubscriptions,
     addSubscription,
     removeSubscription,
+    updateSubscriptionTitle,
+    setDigestEnabled,
     setLoading,
   } = useSubscriptionStore()
   const [showForm, setShowForm] = useState(false)
   const [importStatus, setImportStatus] = useState<string | null>(null)
   const [fetchingId, setFetchingId] = useState<string | null>(null)
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [editValue, setEditValue] = useState('')
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const {
@@ -53,11 +70,12 @@ export function SubscriptionsPage() {
             title: s.title,
             lastFetchedAt: s.lastFetchedAt,
             createdAt: s.createdAt,
+            isCommunityBanned: s.isCommunityBanned,
           })),
         )
+        setDigestEnabled(res.digestEnabled)
       })
       .finally(() => setLoading(false))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const onSubmit = async (data: FormData) => {
@@ -72,6 +90,7 @@ export function SubscriptionsPage() {
         title: sub.title,
         lastFetchedAt: sub.lastFetchedAt,
         createdAt: sub.createdAt,
+        isCommunityBanned: sub.isCommunityBanned,
       })
       reset()
       setShowForm(false)
@@ -122,6 +141,7 @@ export function SubscriptionsPage() {
             title: s.title,
             lastFetchedAt: s.lastFetchedAt,
             createdAt: s.createdAt,
+            isCommunityBanned: s.isCommunityBanned,
           })),
         )
       } catch {
@@ -150,6 +170,7 @@ export function SubscriptionsPage() {
           title: s.title,
           lastFetchedAt: s.lastFetchedAt,
           createdAt: s.createdAt,
+          isCommunityBanned: s.isCommunityBanned,
         })),
       )
     } catch {
@@ -159,10 +180,37 @@ export function SubscriptionsPage() {
     }
   }
 
+  const handleStartEdit = (id: string, title: string) => {
+    setEditingId(id)
+    setEditValue(title)
+  }
+
+  const handleSaveEdit = async (id: string) => {
+    try {
+      const res = await subscriptionClient.updateSubscription({
+        subscriptionId: id,
+        displayName: editValue,
+      })
+      updateSubscriptionTitle(id, res.title)
+      setEditingId(null)
+    } catch {
+      toast.error(t('common:error'))
+    }
+  }
+
   const handleRemove = async (id: string) => {
     if (!confirm(t('subscriptions:removeConfirm'))) return
     removeSubscription(id)
     await subscriptionClient.removeSubscription({ subscriptionId: id }).catch(() => {})
+  }
+
+  const handleToggleDigest = async () => {
+    try {
+      const res = await subscriptionClient.toggleDigestSubscription({})
+      setDigestEnabled(res.enabled)
+    } catch {
+      toast.error(t('common:error'))
+    }
   }
 
   return (
@@ -170,6 +218,21 @@ export function SubscriptionsPage() {
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">{t('subscriptions:title')}</h1>
         <div className="flex gap-2">
+          <Button
+            size="sm"
+            variant={digestEnabled ? 'default' : 'outline'}
+            onClick={handleToggleDigest}
+            title={
+              digestEnabled ? t('subscriptions:digestDisable') : t('subscriptions:digestEnable')
+            }
+          >
+            {digestEnabled ? (
+              <Bell className="mr-1 h-4 w-4" />
+            ) : (
+              <BellOff className="mr-1 h-4 w-4" />
+            )}
+            {t('subscriptions:digest')}
+          </Button>
           <Button size="sm" variant="outline" onClick={handleExport}>
             <Download className="mr-1 h-4 w-4" />
             {t('subscriptions:export')}
@@ -258,15 +321,62 @@ export function SubscriptionsPage() {
         {subscriptions.map((sub) => (
           <div
             key={sub.id}
-            className="flex items-center justify-between rounded-lg border border-border bg-card px-4 py-3"
+            className={`group flex items-center justify-between rounded-lg border bg-card px-4 py-3 ${sub.isCommunityBanned ? 'border-destructive/50' : 'border-border'}`}
           >
             <div className="min-w-0 space-y-0.5">
-              <Link
-                to={`/feed?sub=${sub.id}`}
-                className="block truncate text-sm font-medium hover:underline"
-              >
-                {sub.title}
-              </Link>
+              <div className="flex items-center gap-1.5">
+                {editingId === sub.id ? (
+                  <>
+                    <input
+                      value={editValue}
+                      onChange={(e) => setEditValue(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') handleSaveEdit(sub.id)
+                        if (e.key === 'Escape') setEditingId(null)
+                      }}
+                      autoFocus
+                      className="rounded border border-border bg-background px-2 py-0.5 text-sm"
+                    />
+                    <button
+                      onClick={() => handleSaveEdit(sub.id)}
+                      aria-label={t('common:save')}
+                      className="cursor-pointer rounded p-0.5 text-muted-foreground hover:text-foreground"
+                    >
+                      <Check className="h-3.5 w-3.5" />
+                    </button>
+                    <button
+                      onClick={() => setEditingId(null)}
+                      aria-label={t('common:cancel')}
+                      className="cursor-pointer rounded p-0.5 text-muted-foreground hover:text-foreground"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      to={`/feed?sub=${sub.id}`}
+                      className="truncate text-sm font-medium hover:underline"
+                    >
+                      {sub.title}
+                    </Link>
+                    <button
+                      onClick={() => handleStartEdit(sub.id, sub.title)}
+                      title={t('subscriptions:editTitle')}
+                      aria-label={t('subscriptions:editTitle')}
+                      className="cursor-pointer rounded p-0.5 text-muted-foreground opacity-0 transition-opacity hover:text-foreground group-hover:opacity-100"
+                    >
+                      <Pencil className="h-3 w-3" />
+                    </button>
+                    {sub.isCommunityBanned && (
+                      <span className="flex shrink-0 items-center gap-1 rounded-full bg-destructive/10 px-2 py-0.5 text-xs text-destructive">
+                        <Ban className="h-3 w-3" />
+                        {t('subscriptions:banned')}
+                      </span>
+                    )}
+                  </>
+                )}
+              </div>
               <p className="truncate text-xs text-muted-foreground">{sub.rssUrl}</p>
               {sub.lastFetchedAt && (
                 <p className="text-xs text-muted-foreground">

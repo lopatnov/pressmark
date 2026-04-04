@@ -18,5 +18,7 @@
     "register": "Registreren",
     "logout": "Uitloggen",
     "openMenu": "Menu openen"
-  }
+  },
+  "builtBy": "Gebouwd door",
+  "banned": "verboden"
 }

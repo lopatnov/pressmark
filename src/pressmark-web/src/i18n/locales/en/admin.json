@@ -3,7 +3,7 @@
   "settings": {
     "title": "Site settings",
     "siteName": "Site name",
-    "communityWindowDays": "Community feed window (days)",
+    "communityWindowDays": "Community feed history (days)",
     "registrationMode": "Registration mode",
     "open": "Open",
     "inviteOnly": "Invite only",
@@ -16,7 +16,10 @@
     "smtpPasswordPlaceholder": "Leave blank to keep current",
     "smtpUseTls": "Use TLS (STARTTLS)",
     "smtpFromAddress": "From address",
-    "commentsEnabled": "Enable comments"
+    "commentsEnabled": "Enable comments",
+    "feedRetentionDays": "Feed retention (days)",
+    "oldFeedsCleared": "Old feeds cleared successfully",
+    "clearOldFeedsNow": "Clear old feeds now"
   },
   "moderation": {
     "title": "Moderation",
@@ -28,12 +31,14 @@
     "unhidden": "Article unhidden",
     "banned": "Source banned",
     "hiddenArticles": "Hidden Articles",
-    "noHiddenArticles": "No hidden articles"
+    "noHiddenArticles": "No hidden articles",
+    "openArticle": "Open article page"
   },
   "bannedSubs": {
     "title": "Banned sources",
     "empty": "No banned sources",
-    "unban": "Unban"
+    "unban": "Unban",
+    "banned": "banned"
   },
   "users": {
     "title": "Users",
@@ -43,18 +48,50 @@
     "empty": "No users found",
     "comments": "Comments",
     "banComments": "Ban",
-    "unbanComments": "Unban"
+    "unbanComments": "Unban",
+    "siteBanCol": "Site ban",
+    "siteBan": "Site ban",
+    "unsiteBan": "Lift site ban",
+    "siteBanned": "site banned",
+    "commentBanned": "comment banned",
+    "viewProfile": "View profile",
+    "profileTitle": "User profile",
+    "promoteToAdmin": "Promote to Admin",
+    "demoteToUser": "Demote to User",
+    "deleteUser": "Delete user",
+    "confirmDeleteTitle": "Delete user?",
+    "confirmDeleteDesc": "This will permanently delete {{email}} and all their data. This action cannot be undone.",
+    "deleted": "User deleted",
+    "cannotDemoteLastAdmin": "Cannot demote the last admin",
+    "cannotDeleteLastAdmin": "Cannot delete the last admin",
+    "cannotDeleteSelf": "Cannot delete your own account",
+    "notFound": "User not found",
+    "subscriptions": "Subscriptions",
+    "noSubscriptions": "No subscriptions",
+    "noComments": "No comments",
+    "commentRemoved": "[removed by admin]"
   },
   "reports": {
     "title": "Reports",
     "empty": "No pending reports",
     "type": "Type",
+    "typeId": "Type / ID",
+    "reporter": "Reporter",
+    "content": "Content",
+    "copyId": "Copy ID",
+    "openArticle": "Open article",
     "reason": "Reason",
     "resolve": "Resolve",
     "comment": "Comment",
     "subscription": "Source",
     "loadError": "Failed to load reports",
-    "resolveError": "Failed to resolve report"
+    "resolveError": "Failed to resolve report",
+    "issue": "Issue"
+  },
+  "pagination": {
+    "prev": "Previous",
+    "next": "Next",
+    "pageOf": "Page {{page}} of {{total}}"
   },
   "invites": {
     "title": "Invite tokens",
@@ -71,6 +108,8 @@
     "expiry1Day": "1 day",
     "expiry7Days": "7 days",
     "expiry30Days": "30 days",
-    "expiryNone": "No expiry"
+    "expiryNone": "No expiry",
+    "sendNotification": "Send notification",
+    "notifyEmailPlaceholder": "Email address"
   }
 }

@@ -38,7 +38,7 @@ export function CommunityPage() {
 
   const [items, setItems] = useState<CommunityItem[]>([])
   const [nextCursor, setNextCursor] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const subscribedUrls = useMemo(() => new Set(subscriptions.map((s) => s.rssUrl)), [subscriptions])
   const [reportedSubs, setReportedSubs] = useState<Set<string>>(new Set())
 
@@ -122,6 +122,7 @@ export function CommunityPage() {
         title: res.title,
         lastFetchedAt: res.lastFetchedAt,
         createdAt: '',
+        isCommunityBanned: false,
       })
       toast.success(t('feed:subscribeSuccess'))
     } catch {

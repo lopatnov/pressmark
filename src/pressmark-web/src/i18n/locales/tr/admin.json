@@ -3,7 +3,7 @@
   "settings": {
     "title": "Site ayarları",
     "siteName": "Site adı",
-    "communityWindowDays": "Topluluk akış penceresi (gün)",
+    "communityWindowDays": "Topluluk besleme geçmişi (gün)",
     "registrationMode": "Kayıt modu",
     "open": "Açık",
     "inviteOnly": "Yalnızca davetli",
@@ -16,7 +16,10 @@
     "smtpPasswordPlaceholder": "Mevcut şifreyi korumak için boş bırakın",
     "smtpUseTls": "TLS kullan (STARTTLS)",
     "smtpFromAddress": "Gönderen adresi",
-    "commentsEnabled": "Yorumları etkinleştir"
+    "commentsEnabled": "Yorumları etkinleştir",
+    "feedRetentionDays": "Besleme saklama süresi (gün)",
+    "oldFeedsCleared": "Eski beslemeler başarıyla temizlendi",
+    "clearOldFeedsNow": "Eski beslemeleri şimdi temizle"
   },
   "moderation": {
     "title": "Moderasyon",
@@ -28,12 +31,14 @@
     "unhidden": "Makale gösterildi",
     "banned": "Kaynak yasaklandı",
     "hiddenArticles": "Gizli Makaleler",
-    "noHiddenArticles": "Gizli makale yok"
+    "noHiddenArticles": "Gizli makale yok",
+    "openArticle": "Makale sayfasını açın"
   },
   "bannedSubs": {
     "title": "Yasaklı kaynaklar",
     "empty": "Yasaklı kaynak yok",
-    "unban": "Yasağı kaldır"
+    "unban": "Yasağı kaldır",
+    "banned": "yasaklı"
   },
   "users": {
     "title": "Kullanıcılar",
@@ -43,7 +48,28 @@
     "empty": "Kullanıcı bulunamadı",
     "comments": "Yorumlar",
     "banComments": "Yasakla",
-    "unbanComments": "İzin ver"
+    "unbanComments": "İzin ver",
+    "siteBanCol": "Site yasağı",
+    "siteBan": "Site yasağı",
+    "unsiteBan": "Site yasağını kaldır",
+    "siteBanned": "site yasaklandı",
+    "commentBanned": "yorum yasaklandı",
+    "viewProfile": "Profili görüntüle",
+    "profileTitle": "Kullanıcı profili",
+    "promoteToAdmin": "Yöneticiliğe terfi et",
+    "demoteToUser": "Kullanıcıya düşür",
+    "deleteUser": "Kullanıcıyı sil",
+    "confirmDeleteTitle": "Kullanıcı silinsin mi?",
+    "confirmDeleteDesc": "Bu işlem {{email}} ve tüm verilerini kalıcı olarak silecektir. Bu eylem geri alınamaz.",
+    "deleted": "Kullanıcı silindi",
+    "cannotDemoteLastAdmin": "Son yöneticinin rütbesi düşürülemez",
+    "cannotDeleteLastAdmin": "Son yönetici silinemez",
+    "cannotDeleteSelf": "Kendi hesabınızı silemezsiniz",
+    "notFound": "Kullanıcı bulunamadı",
+    "subscriptions": "Abonelikler",
+    "noSubscriptions": "Abonelik yok",
+    "noComments": "Yorum yok",
+    "commentRemoved": "[admin tarafından kaldırıldı]"
   },
   "reports": {
     "title": "Raporlar",
@@ -54,7 +80,18 @@
     "comment": "Yorum",
     "subscription": "Kaynak",
     "loadError": "Raporlar yüklenemedi",
-    "resolveError": "Rapor çözümlenemedi"
+    "resolveError": "Rapor çözümlenemedi",
+    "typeId": "Tür / ID",
+    "reporter": "Muhabir",
+    "content": "İçerik",
+    "copyId": "ID kopyala",
+    "openArticle": "Makaleyi aç",
+    "issue": "Sorun"
+  },
+  "pagination": {
+    "prev": "Önceki",
+    "next": "Sonraki",
+    "pageOf": "Sayfa {{page}} / {{total}}"
   },
   "invites": {
     "title": "Davet tokenleri",
@@ -71,6 +108,8 @@
     "expiry1Day": "1 gün",
     "expiry7Days": "7 gün",
     "expiry30Days": "30 gün",
-    "expiryNone": "Süresiz"
+    "expiryNone": "Süresiz",
+    "sendNotification": "Bildirim gönder",
+    "notifyEmailPlaceholder": "E-posta adresi"
   }
 }

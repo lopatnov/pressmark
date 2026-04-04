@@ -10,7 +10,13 @@ using Pressmark.Api.Protos;
 namespace Pressmark.Api.Services;
 
 [Authorize]
-public class FeedServiceImpl(AppDbContext db, IDbContextFactory<AppDbContext> dbFactory, FeedUpdateBroadcaster broadcaster) : FeedService.FeedServiceBase
+public class FeedServiceImpl(
+    AppDbContext db,
+    IDbContextFactory<AppDbContext> dbFactory,
+    FeedUpdateBroadcaster broadcaster,
+    IServiceScopeFactory scopeFactory,
+    ILogger<FeedServiceImpl> logger,
+    IConfiguration config) : FeedService.FeedServiceBase
 {
     private const int DefaultPageSize = 20;
     private const int MaxPageSize = 100;
@@ -174,6 +180,13 @@ public class FeedServiceImpl(AppDbContext db, IDbContextFactory<AppDbContext> db
             .Include(f => f.Subscription)
             .Where(f => db.Bookmarks.Any(b => b.UserId == userId && b.FeedItemId == f.Id));
 
+        if (!string.IsNullOrEmpty(request.SubscriptionId))
+        {
+            if (!Guid.TryParse(request.SubscriptionId, out var subscriptionId))
+                throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid subscription_id format"));
+            query = query.Where(f => f.SubscriptionId == subscriptionId);
+        }
+
         if (!string.IsNullOrEmpty(request.Cursor) && CursorHelper.TryParse(request.Cursor,
                 out var cursorDate, out var cursorId))
         {
@@ -216,7 +229,9 @@ public class FeedServiceImpl(AppDbContext db, IDbContextFactory<AppDbContext> db
             .Include(f => f.Subscription)
             .Where(f => !f.IsCommunityHidden
                      && !f.Subscription.IsCommunityBanned
-                     && db.Likes.Any(l => l.FeedItemId == f.Id && l.CreatedAt >= since));
+                     && db.Likes.Any(l => l.FeedItemId == f.Id
+                         && l.CreatedAt >= since
+                         && !db.Users.Any(u => u.Id == l.UserId && u.IsSiteBanned)));
 
         if (!string.IsNullOrEmpty(request.SourceRssUrl))
             query = query.Where(f => f.Subscription.RssUrl == request.SourceRssUrl);
@@ -371,6 +386,7 @@ public class FeedServiceImpl(AppDbContext db, IDbContextFactory<AppDbContext> db
             SourceTitle = item.Subscription?.Title ?? "",
             ImageUrl = item.ImageUrl ?? "",
             SourceRssUrl = item.Subscription?.RssUrl ?? "",
+            IsSourceBanned = item.Subscription?.IsCommunityBanned ?? false,
         };
 
     // New items are never read/liked/bookmarked by definition
@@ -389,6 +405,7 @@ public class FeedServiceImpl(AppDbContext db, IDbContextFactory<AppDbContext> db
         SourceTitle = item.Subscription?.Title ?? "",
         ImageUrl = item.ImageUrl ?? "",
         SourceRssUrl = item.Subscription?.RssUrl ?? "",
+        IsSourceBanned = item.Subscription?.IsCommunityBanned ?? false,
     };
 
     private static Protos.FeedItem MapBroadcastEvent(FeedUpdateEvent evt) => new()
@@ -405,6 +422,7 @@ public class FeedServiceImpl(AppDbContext db, IDbContextFactory<AppDbContext> db
         IsBookmarked = false,
         SourceTitle = evt.SourceTitle,
         ImageUrl = evt.ImageUrl,
+        IsSourceBanned = false, // streaming is pre-filtered to exclude banned sources
     };
 
     [AllowAnonymous]
@@ -424,7 +442,15 @@ public class FeedServiceImpl(AppDbContext db, IDbContextFactory<AppDbContext> db
             .Take(200)
             .ToListAsync(ct);
 
-        var result = new CommentList();
+        Guid? userId = null;
+        var claim = context.GetHttpContext().User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (claim != null && Guid.TryParse(claim, out var parsedId)) userId = parsedId;
+
+        var isSubscribed = userId.HasValue &&
+            await db.CommentSubscriptions.AnyAsync(
+                s => s.UserId == userId.Value && s.FeedItemId == feedItemId, ct);
+
+        var result = new CommentList { IsSubscribed = isSubscribed };
         result.Items.AddRange(comments.Select(c => new Protos.Comment
         {
             Id = c.Id.ToString(),
@@ -432,6 +458,7 @@ public class FeedServiceImpl(AppDbContext db, IDbContextFactory<AppDbContext> db
             Body = c.RemovedByAdmin ? "" : c.Body,
             CreatedAt = c.CreatedAt.ToString("o"),
             RemovedByAdmin = c.RemovedByAdmin,
+            IsCommentingBanned = c.RemovedByAdmin ? false : c.User.IsCommentingBanned,
         }));
         return result;
     }
@@ -477,6 +504,10 @@ public class FeedServiceImpl(AppDbContext db, IDbContextFactory<AppDbContext> db
         db.Comments.Add(comment);
         await db.SaveChangesAsync(ct);
 
+        var feedItem = await db.FeedItems.FindAsync([feedItemId], ct);
+        if (feedItem != null)
+            _ = SendCommentNotificationsAsync(feedItemId, user.Email, feedItem.Title, feedItem.Url, comment.Body);
+
         return new Protos.Comment
         {
             Id = comment.Id.ToString(),
@@ -484,7 +515,79 @@ public class FeedServiceImpl(AppDbContext db, IDbContextFactory<AppDbContext> db
             Body = comment.Body,
             CreatedAt = comment.CreatedAt.ToString("o"),
             RemovedByAdmin = false,
+            IsCommentingBanned = user.IsCommentingBanned,
         };
+    }
+
+    public override async Task<ToggleCommentSubscriptionResponse> ToggleCommentSubscription(
+        ToggleCommentSubscriptionRequest request, ServerCallContext context)
+    {
+        var ct = context.CancellationToken;
+        var userId = GetUserId(context);
+
+        if (!Guid.TryParse(request.FeedItemId, out var feedItemId))
+            throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid feed_item_id"));
+
+        var existing = await db.CommentSubscriptions
+            .FirstOrDefaultAsync(s => s.UserId == userId && s.FeedItemId == feedItemId, ct);
+
+        if (existing != null)
+        {
+            db.CommentSubscriptions.Remove(existing);
+            await db.SaveChangesAsync(ct);
+            return new ToggleCommentSubscriptionResponse { Subscribed = false };
+        }
+
+        var feedItemExists = await db.FeedItems.AnyAsync(f => f.Id == feedItemId, ct);
+        if (!feedItemExists)
+            throw new RpcException(new Status(StatusCode.NotFound, "Feed item not found"));
+
+        db.CommentSubscriptions.Add(new Entities.CommentSubscription
+        {
+            UserId = userId,
+            FeedItemId = feedItemId,
+        });
+        await db.SaveChangesAsync(ct);
+        return new ToggleCommentSubscriptionResponse { Subscribed = true };
+    }
+
+    private async Task SendCommentNotificationsAsync(
+        Guid feedItemId, string commenterEmail, string articleTitle, string articleUrl, string commentBody)
+    {
+        try
+        {
+            using var scope = scopeFactory.CreateScope();
+            var scopedDb = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            var emailService = scope.ServiceProvider.GetRequiredService<IEmailService>();
+
+            var subscribers = await scopedDb.CommentSubscriptions
+                .AsNoTracking()
+                .Where(s => s.FeedItemId == feedItemId && s.User.Email != commenterEmail)
+                .Include(s => s.User)
+                .Select(s => s.User.Email)
+                .ToListAsync();
+
+            var baseUrl = config["App:BaseUrl"] ?? "http://localhost:5173";
+            var articlePageUrl = $"{baseUrl.TrimEnd('/')}/article/{feedItemId}";
+
+            foreach (var email in subscribers)
+            {
+                try
+                {
+                    await emailService.SendCommentNotificationAsync(
+                        email, commenterEmail, articleTitle, articlePageUrl, commentBody,
+                        CancellationToken.None);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogWarning(ex, "Failed to send comment notification to a subscriber");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error in SendCommentNotificationsAsync for feed item {FeedItemId}", feedItemId);
+        }
     }
 
     [AllowAnonymous]

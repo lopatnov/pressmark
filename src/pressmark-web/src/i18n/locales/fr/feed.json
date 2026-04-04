@@ -32,7 +32,9 @@
     "toggle": "Afficher/masquer les commentaires",
     "loadError": "Impossible de charger les commentaires",
     "submitError": "Impossible d'envoyer le commentaire",
-    "removeError": "Impossible de supprimer le commentaire"
+    "removeError": "Impossible de supprimer le commentaire",
+    "subscribeNotifications": "S'abonner aux notifications de commentaires",
+    "unsubscribeNotifications": "Se désabonner des notifications de commentaires"
   },
   "report": "Signaler",
   "reportComment": "Signaler un commentaire",

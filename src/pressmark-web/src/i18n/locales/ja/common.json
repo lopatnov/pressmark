@@ -18,5 +18,7 @@
     "register": "新規登録",
     "logout": "ログアウト",
     "openMenu": "メニューを開く"
-  }
+  },
+  "builtBy": "開発者",
+  "banned": "禁止"
 }

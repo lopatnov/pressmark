@@ -7,14 +7,18 @@ interface Subscription {
   title: string
   lastFetchedAt: string
   createdAt: string
+  isCommunityBanned: boolean
 }
 
 interface SubscriptionState {
   subscriptions: Subscription[]
+  digestEnabled: boolean
   isLoading: boolean
   setSubscriptions: (subscriptions: Subscription[]) => void
   addSubscription: (sub: Subscription) => void
   removeSubscription: (id: string) => void
+  updateSubscriptionTitle: (id: string, title: string) => void
+  setDigestEnabled: (enabled: boolean) => void
   setLoading: (loading: boolean) => void
   reset: () => void
 }
@@ -23,6 +27,7 @@ export const useSubscriptionStore = create<SubscriptionState>()(
   devtools(
     (set) => ({
       subscriptions: [],
+      digestEnabled: false,
       isLoading: false,
       setSubscriptions: (subscriptions) => set({ subscriptions }),
       addSubscription: (sub) => set((s) => ({ subscriptions: [...s.subscriptions, sub] })),
@@ -30,8 +35,13 @@ export const useSubscriptionStore = create<SubscriptionState>()(
         set((s) => ({
           subscriptions: s.subscriptions.filter((s) => s.id !== id),
         })),
+      updateSubscriptionTitle: (id, title) =>
+        set((s) => ({
+          subscriptions: s.subscriptions.map((sub) => (sub.id === id ? { ...sub, title } : sub)),
+        })),
+      setDigestEnabled: (digestEnabled) => set({ digestEnabled }),
       setLoading: (isLoading) => set({ isLoading }),
-      reset: () => set({ subscriptions: [], isLoading: false }),
+      reset: () => set({ subscriptions: [], isLoading: false, digestEnabled: false }),
     }),
     { name: 'subscriptions' },
   ),

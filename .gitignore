@@ -56,3 +56,5 @@ nunit-*.xml
 /Claude.log.md
 /.claude
 /.vs
+/docs/claude
+/src/pressmark-web/coverage

@@ -31,7 +31,9 @@
     "toggle": "显示/隐藏评论",
     "loadError": "加载评论失败",
     "submitError": "发布评论失败",
-    "removeError": "删除评论失败"
+    "removeError": "删除评论失败",
+    "subscribeNotifications": "订阅评论通知",
+    "unsubscribeNotifications": "取消订阅评论通知"
   },
   "report": "举报",
   "reportComment": "举报评论",

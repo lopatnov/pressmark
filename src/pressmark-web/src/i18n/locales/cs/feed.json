@@ -31,7 +31,9 @@
     "toggle": "Zobrazit/skrýt komentáře",
     "loadError": "Nepodařilo se načíst komentáře",
     "submitError": "Nepodařilo se odeslat komentář",
-    "removeError": "Nepodařilo se odstranit komentář"
+    "removeError": "Nepodařilo se odstranit komentář",
+    "subscribeNotifications": "Přihlásit se k odběru oznámení o komentářích",
+    "unsubscribeNotifications": "Odhlásit se z odběru oznámení o komentářích"
   },
   "report": "Nahlásit",
   "reportComment": "Nahlásit komentář",

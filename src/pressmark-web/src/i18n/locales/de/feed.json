@@ -31,7 +31,9 @@
     "toggle": "Kommentare ein-/ausblenden",
     "loadError": "Kommentare konnten nicht geladen werden",
     "submitError": "Kommentar konnte nicht gesendet werden",
-    "removeError": "Kommentar konnte nicht entfernt werden"
+    "removeError": "Kommentar konnte nicht entfernt werden",
+    "subscribeNotifications": "Kommentarbenachrichtigungen abonnieren",
+    "unsubscribeNotifications": "Kommentarbenachrichtigungen abbestellen"
   },
   "report": "Melden",
   "reportComment": "Kommentar melden",

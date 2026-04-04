@@ -81,6 +81,17 @@ public class AuthServiceImpl(
             invite.IsUsed = true;
             invite.UsedAt = DateTime.UtcNow;
             invite.UsedByUserId = user.Id;
+
+            // Remove other unused tokens whose note matches the registered email
+            if (!string.IsNullOrWhiteSpace(invite.Note) &&
+                string.Equals(invite.Note, user.Email, StringComparison.OrdinalIgnoreCase))
+            {
+                var stale = await db.InviteTokens
+                    .Where(t => t.Note == invite.Note && !t.IsUsed && t.Id != invite.Id)
+                    .ToListAsync(ct);
+                db.InviteTokens.RemoveRange(stale);
+            }
+
             await db.SaveChangesAsync(ct);
         }
 
@@ -100,6 +111,9 @@ public class AuthServiceImpl(
         if (user is null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
             throw new RpcException(new Status(StatusCode.Unauthenticated,
                 "Invalid credentials"));
+
+        if (user.IsSiteBanned)
+            throw new RpcException(new Status(StatusCode.PermissionDenied, "account_banned"));
 
         return await IssueTokens(user, context.GetHttpContext(), ct);
     }
@@ -147,6 +161,15 @@ public class AuthServiceImpl(
             return Unauthenticated(context, "User not found");
         }
 
+        if (user.IsSiteBanned)
+        {
+            stored.IsRevoked = true;
+            stored.RevokedAt = DateTime.UtcNow;
+            await db.SaveChangesAsync(ct);
+            http.Response.Cookies.Delete(jwt.CookieName);
+            return Unauthenticated(context, "account_banned");
+        }
+
         stored.IsRevoked = true;
         stored.RevokedAt = DateTime.UtcNow;
 
@@ -192,11 +215,12 @@ public class AuthServiceImpl(
         var ct = context.CancellationToken;
         var hasAdmin = await db.Users.AnyAsync(ct);
         var settings = await db.SiteSettings
-            .Where(s => s.Key == "registration_mode" || s.Key == "community_window_days")
+            .Where(s => s.Key == "registration_mode" || s.Key == "community_window_days" || s.Key == "comments_enabled")
             .ToDictionaryAsync(s => s.Key, s => s.Value, ct);
         var mode = settings.GetValueOrDefault("registration_mode", "open");
         var windowDays = int.TryParse(settings.GetValueOrDefault("community_window_days", "1"), out var d) ? d : 1;
-        return new RegistrationStatus { HasAdmin = hasAdmin, RegistrationMode = mode, CommunityWindowDays = windowDays };
+        var commentsEnabled = settings.GetValueOrDefault("comments_enabled", "true") == "true";
+        return new RegistrationStatus { HasAdmin = hasAdmin, RegistrationMode = mode, CommunityWindowDays = windowDays, CommentsEnabled = commentsEnabled };
     }
 
     [AllowAnonymous]

@@ -31,7 +31,9 @@
     "toggle": "Mostrar/ocultar comentários",
     "loadError": "Falha ao carregar comentários",
     "submitError": "Falha ao publicar comentário",
-    "removeError": "Falha ao remover comentário"
+    "removeError": "Falha ao remover comentário",
+    "subscribeNotifications": "Subscrever notificações de comentários",
+    "unsubscribeNotifications": "Cancelar a subscrição de notificações de comentários"
   },
   "report": "Denunciar",
   "reportComment": "Denunciar comentário",

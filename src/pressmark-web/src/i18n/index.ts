@@ -109,7 +109,36 @@ import trFeed from './locales/tr/feed.json'
 import trSubscriptions from './locales/tr/subscriptions.json'
 import trAdmin from './locales/tr/admin.json'
 
-const savedLocale = localStorage.getItem('i18n-locale') ?? 'en'
+const supportedLocales = [
+  'en',
+  'de',
+  'fr',
+  'es',
+  'ru',
+  'uk',
+  'it',
+  'pl',
+  'pt',
+  'ro',
+  'sv',
+  'tr',
+  'ja',
+  'ko',
+  'zh',
+  'cs',
+  'hu',
+  'nl',
+]
+function detectLocale(): string {
+  const saved = localStorage.getItem('i18n-locale')
+  if (saved && supportedLocales.includes(saved)) return saved
+  for (const lang of navigator.languages ?? [navigator.language]) {
+    const code = lang.split('-')[0].toLowerCase()
+    if (supportedLocales.includes(code)) return code
+  }
+  return 'en'
+}
+const savedLocale = detectLocale()
 
 i18n.use(initReactI18next).init({
   resources: {

@@ -3,7 +3,7 @@
   "settings": {
     "title": "사이트 설정",
     "siteName": "사이트 이름",
-    "communityWindowDays": "커뮤니티 피드 기간 (일)",
+    "communityWindowDays": "커뮤니티 피드 기록(일)",
     "registrationMode": "회원가입 모드",
     "open": "공개",
     "inviteOnly": "초대만",
@@ -16,7 +16,10 @@
     "smtpPasswordPlaceholder": "현재 비밀번호를 유지하려면 비워두세요",
     "smtpUseTls": "TLS 사용 (STARTTLS)",
     "smtpFromAddress": "발신자 주소",
-    "commentsEnabled": "댓글 활성화"
+    "commentsEnabled": "댓글 활성화",
+    "feedRetentionDays": "피드 보존 기간(일)",
+    "oldFeedsCleared": "오래된 피드들이 성공적으로 삭제되었습니다",
+    "clearOldFeedsNow": "지금 오래된 피드 삭제"
   },
   "moderation": {
     "title": "모더레이션",
@@ -28,12 +31,14 @@
     "unhidden": "게시글 표시됨",
     "banned": "소스 차단됨",
     "hiddenArticles": "숨겨진 게시글",
-    "noHiddenArticles": "숨겨진 게시글 없음"
+    "noHiddenArticles": "숨겨진 게시글 없음",
+    "openArticle": "글 페이지 열기"
   },
   "bannedSubs": {
     "title": "차단된 소스",
     "empty": "차단된 소스 없음",
-    "unban": "차단 해제"
+    "unban": "차단 해제",
+    "banned": "금지됨"
   },
   "users": {
     "title": "사용자",
@@ -43,7 +48,28 @@
     "empty": "사용자를 찾을 수 없습니다",
     "comments": "댓글",
     "banComments": "차단",
-    "unbanComments": "허용"
+    "unbanComments": "허용",
+    "siteBanCol": "사이트 금지",
+    "siteBan": "사이트 금지",
+    "unsiteBan": "사이트 금지 해제",
+    "siteBanned": "사이트 금지됨",
+    "commentBanned": "댓글 금지됨",
+    "viewProfile": "프로필 보기",
+    "profileTitle": "사용자 프로필",
+    "promoteToAdmin": "관리자로 승격",
+    "demoteToUser": "사용자로 강등",
+    "deleteUser": "사용자 삭제",
+    "confirmDeleteTitle": "사용자를 삭제하시겠습니까?",
+    "confirmDeleteDesc": "그러면 {{email}}과 해당 사용자의 모든 데이터가 영구 삭제됩니다. 이 작업은 취소할 수 없습니다.",
+    "deleted": "사용자 삭제됨",
+    "cannotDemoteLastAdmin": "마지막 관리자를 강등할 수 없음",
+    "cannotDeleteLastAdmin": "마지막 관리자를 삭제할 수 없습니다",
+    "cannotDeleteSelf": "자신의 계정을 삭제할 수 없습니다",
+    "notFound": "사용자를 찾을 수 없음",
+    "subscriptions": "구독",
+    "noSubscriptions": "구독 없음",
+    "noComments": "댓글 없음",
+    "commentRemoved": "[관리자에 의해 삭제됨]"
   },
   "reports": {
     "title": "신고",
@@ -54,7 +80,18 @@
     "comment": "댓글",
     "subscription": "출체",
     "loadError": "신고를 불러오는 데 실패했습니다",
-    "resolveError": "신고를 해결하는 데 실패했습니다"
+    "resolveError": "신고를 해결하는 데 실패했습니다",
+    "typeId": "유형 / ID",
+    "reporter": "기자",
+    "content": "콘텐츠",
+    "copyId": "ID 복사",
+    "openArticle": "기사 열기",
+    "issue": "이슈"
+  },
+  "pagination": {
+    "prev": "이전",
+    "next": "다음",
+    "pageOf": "{{total}}페이지 중 {{page}}페이지"
   },
   "invites": {
     "title": "초대 토큰",
@@ -71,6 +108,8 @@
     "expiry1Day": "1일",
     "expiry7Days": "7일",
     "expiry30Days": "30일",
-    "expiryNone": "만료 없음"
+    "expiryNone": "만료 없음",
+    "sendNotification": "알림 보내기",
+    "notifyEmailPlaceholder": "이메일 주소"
   }
 }

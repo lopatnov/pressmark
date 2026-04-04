@@ -27,8 +27,9 @@ service FeedService {
   rpc StreamFeedUpdates (StreamFeedRequest) returns (stream FeedItem);
 
   // Comments
-  rpc AddComment   (AddCommentRequest)   returns (Comment);
-  rpc ListComments (ListCommentsRequest) returns (CommentList); // AllowAnonymous
+  rpc AddComment                (AddCommentRequest)                returns (Comment);
+  rpc ListComments              (ListCommentsRequest)              returns (CommentList); // AllowAnonymous
+  rpc ToggleCommentSubscription (ToggleCommentSubscriptionRequest) returns (ToggleCommentSubscriptionResponse);
 
   // Article page (anonymous)
   rpc GetFeedItem (GetFeedItemRequest) returns (FeedItem); // AllowAnonymous
@@ -51,8 +52,9 @@ message GetCommunityFeedRequest {
 }
 
 message GetBookmarksRequest {
-  int32  page_size = 1;
-  string cursor    = 2;
+  int32  page_size       = 1;
+  string cursor          = 2;
+  string subscription_id = 3; // empty = all bookmarks
 }
 
 message StreamFeedRequest {
@@ -79,7 +81,8 @@ message FeedItem {
   string source_title    = 11;
   string image_url       = 12; // empty if RSS has no image
   string source_rss_url  = 13; // RSS URL of the source subscription
-  bool   is_hidden       = 14; // true if community-hidden (only set for Admin callers)
+  bool   is_hidden        = 14; // true if community-hidden (only set for Admin callers)
+  bool   is_source_banned = 15; // true if this item's subscription is community-banned
 }
 
 message MarkAsReadRequest {
@@ -121,15 +124,25 @@ message ListCommentsRequest {
 }
 
 message Comment {
-  string id               = 1;
-  string user_email       = 2;
-  string body             = 3;
-  string created_at       = 4;
-  bool   removed_by_admin = 5;
+  string id                   = 1;
+  string user_email           = 2;
+  string body                 = 3;
+  string created_at           = 4;
+  bool   removed_by_admin     = 5;
+  bool   is_commenting_banned = 6;
 }
 
 message CommentList {
-  repeated Comment items = 1;
+  repeated Comment items  = 1;
+  bool            is_subscribed = 2; // true if the authenticated user is subscribed to comment notifications for this item
+}
+
+message ToggleCommentSubscriptionRequest {
+  string feed_item_id = 1;
+}
+
+message ToggleCommentSubscriptionResponse {
+  bool subscribed = 1;
 }
 
 message GetFeedItemRequest {

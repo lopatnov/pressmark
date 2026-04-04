@@ -3,7 +3,7 @@
   "settings": {
     "title": "Настройки сайта",
     "siteName": "Название сайта",
-    "communityWindowDays": "Окно ленты сообщества (дни)",
+    "communityWindowDays": "История ленты сообщества (дней)",
     "registrationMode": "Режим регистрации",
     "open": "Открытая",
     "inviteOnly": "Только по приглашениям",
@@ -16,7 +16,10 @@
     "smtpPasswordPlaceholder": "Оставьте пустым для сохранения текущего",
     "smtpUseTls": "Использовать TLS (STARTTLS)",
     "smtpFromAddress": "Адрес отправителя",
-    "commentsEnabled": "Включить комментарии"
+    "commentsEnabled": "Включить комментарии",
+    "feedRetentionDays": "Хранение ленты (дней)",
+    "oldFeedsCleared": "Старые фиды очищены успешно",
+    "clearOldFeedsNow": "Очистить старые фиды сейчас"
   },
   "moderation": {
     "title": "Модерация",
@@ -28,12 +31,14 @@
     "unhidden": "Статья показана",
     "banned": "Источник заблокирован",
     "hiddenArticles": "Скрытые статьи",
-    "noHiddenArticles": "Нет скрытых статей"
+    "noHiddenArticles": "Нет скрытых статей",
+    "openArticle": "Открыть страницу статьи"
   },
   "bannedSubs": {
     "title": "Заблокированные источники",
     "empty": "Нет заблокированных источников",
-    "unban": "Разблокировать"
+    "unban": "Разблокировать",
+    "banned": "заблокировано"
   },
   "users": {
     "title": "Пользователи",
@@ -43,7 +48,28 @@
     "empty": "Пользователи не найдены",
     "comments": "Комментарии",
     "banComments": "Запрет",
-    "unbanComments": "Разрешить"
+    "unbanComments": "Разрешить",
+    "siteBanCol": "Бан на сайте",
+    "siteBan": "Бан на сайте",
+    "unsiteBan": "Снять бан с сайта",
+    "siteBanned": "сайт заблокирован",
+    "commentBanned": "комментарий заблокирован",
+    "viewProfile": "Просмотреть профиль",
+    "profileTitle": "Профиль пользователя",
+    "promoteToAdmin": "Повысить до администратора",
+    "demoteToUser": "Понизить до пользователя",
+    "deleteUser": "Удалить пользователя",
+    "confirmDeleteTitle": "Удалить пользователя?",
+    "confirmDeleteDesc": "Это приведёт к окончательному удалению {{email}} и всех его данных. Это действие нельзя отменить.",
+    "deleted": "Пользователь удалён",
+    "cannotDemoteLastAdmin": "Невозможно понизить последнего администратора",
+    "cannotDeleteLastAdmin": "Невозможно удалить последнего администратора",
+    "cannotDeleteSelf": "Невозможно удалить собственную учётную запись",
+    "notFound": "Пользователь не найден",
+    "subscriptions": "Подписки",
+    "noSubscriptions": "Нет подписок",
+    "noComments": "Нет комментариев",
+    "commentRemoved": "[удалено администратором]"
   },
   "reports": {
     "title": "Жалобы",
@@ -54,7 +80,18 @@
     "comment": "Комментарий",
     "subscription": "Источник",
     "loadError": "Не удалось загрузить жалобы",
-    "resolveError": "Не удалось решить жалобу"
+    "resolveError": "Не удалось решить жалобу",
+    "typeId": "Тип / ID",
+    "reporter": "Репортёр",
+    "content": "Содержание",
+    "copyId": "Копировать ID",
+    "openArticle": "Открыть статью",
+    "issue": "Проблема"
+  },
+  "pagination": {
+    "prev": "Назад",
+    "next": "Вперёд",
+    "pageOf": "Страница {{page}} из {{total}}"
   },
   "invites": {
     "title": "Токены приглашений",
@@ -71,6 +108,8 @@
     "expiry1Day": "1 день",
     "expiry7Days": "7 дней",
     "expiry30Days": "30 дней",
-    "expiryNone": "Без срока"
+    "expiryNone": "Без срока",
+    "sendNotification": "Отправить уведомление",
+    "notifyEmailPlaceholder": "Адрес электронной почты"
   }
 }

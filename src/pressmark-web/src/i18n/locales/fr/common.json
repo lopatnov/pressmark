@@ -18,5 +18,7 @@
     "register": "S'inscrire",
     "logout": "Se déconnecter",
     "openMenu": "Ouvrir le menu"
-  }
+  },
+  "builtBy": "Développé par",
+  "banned": "banni"
 }

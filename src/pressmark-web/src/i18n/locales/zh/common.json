@@ -18,5 +18,7 @@
     "register": "注册",
     "logout": "退出登录",
     "openMenu": "打开菜单"
-  }
+  },
+  "builtBy": "开发者",
+  "banned": "禁止"
 }

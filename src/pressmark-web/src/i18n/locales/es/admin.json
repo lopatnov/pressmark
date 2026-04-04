@@ -3,7 +3,7 @@
   "settings": {
     "title": "Configuración del sitio",
     "siteName": "Nombre del sitio",
-    "communityWindowDays": "Ventana del feed comunitario (días)",
+    "communityWindowDays": "Historial del feed de la comunidad (días)",
     "registrationMode": "Modo de registro",
     "open": "Abierto",
     "inviteOnly": "Solo por invitación",
@@ -16,7 +16,10 @@
     "smtpPasswordPlaceholder": "Dejar en blanco para mantener la actual",
     "smtpUseTls": "Usar TLS (STARTTLS)",
     "smtpFromAddress": "Dirección de remitente",
-    "commentsEnabled": "Habilitar comentarios"
+    "commentsEnabled": "Habilitar comentarios",
+    "feedRetentionDays": "Retención de noticias (días)",
+    "oldFeedsCleared": "Feeds antiguos eliminados exitosamente",
+    "clearOldFeedsNow": "Limpiar feeds antiguos ahora"
   },
   "moderation": {
     "title": "Moderación",
@@ -28,12 +31,14 @@
     "unhidden": "Artículo mostrado",
     "banned": "Fuente prohibida",
     "hiddenArticles": "Artículos ocultos",
-    "noHiddenArticles": "No hay artículos ocultos"
+    "noHiddenArticles": "No hay artículos ocultos",
+    "openArticle": "Abrir la página del artículo"
   },
   "bannedSubs": {
     "title": "Fuentes prohibidas",
     "empty": "No hay fuentes prohibidas",
-    "unban": "Desbloquear"
+    "unban": "Desbloquear",
+    "banned": "prohibido"
   },
   "users": {
     "title": "Usuarios",
@@ -43,7 +48,28 @@
     "empty": "No se encontraron usuarios",
     "comments": "Comentarios",
     "banComments": "Prohibir",
-    "unbanComments": "Permitir"
+    "unbanComments": "Permitir",
+    "siteBanCol": "Prohibición del sitio",
+    "siteBan": "Prohibición del sitio",
+    "unsiteBan": "Levantar prohibición de sitio",
+    "siteBanned": "sitio prohibido",
+    "commentBanned": "comentario prohibido",
+    "viewProfile": "Ver perfil",
+    "profileTitle": "Perfil de usuario",
+    "promoteToAdmin": "Ascender a Admin",
+    "demoteToUser": "Degradar a Usuario",
+    "deleteUser": "Eliminar usuario",
+    "confirmDeleteTitle": "¿Borrar usuario?",
+    "confirmDeleteDesc": "Esto eliminará permanentemente {{email}} y todos sus datos. Esta acción no se puede deshacer.",
+    "deleted": "Usuario eliminado",
+    "cannotDemoteLastAdmin": "No se puede degradar al último admin",
+    "cannotDeleteLastAdmin": "No se puede eliminar al último admin",
+    "cannotDeleteSelf": "No puede eliminar su propia cuenta",
+    "notFound": "Usuario no encontrado",
+    "subscriptions": "Suscripciones",
+    "noSubscriptions": "No hay suscripciones",
+    "noComments": "Sin comentarios",
+    "commentRemoved": "[eliminado por admin]"
   },
   "reports": {
     "title": "Reportes",
@@ -54,7 +80,18 @@
     "comment": "Comentario",
     "subscription": "Fuente",
     "loadError": "Error al cargar los reportes",
-    "resolveError": "Error al resolver el reporte"
+    "resolveError": "Error al resolver el reporte",
+    "typeId": "Tipo / ID",
+    "reporter": "Reportero",
+    "content": "Contenido",
+    "copyId": "Copiar ID",
+    "openArticle": "Abrir artículo",
+    "issue": "Edición"
+  },
+  "pagination": {
+    "prev": "Anterior",
+    "next": "Siguiente",
+    "pageOf": "Página {{page}} de {{total}}"
   },
   "invites": {
     "title": "Tokens de invitación",
@@ -71,6 +108,8 @@
     "expiry1Day": "1 día",
     "expiry7Days": "7 días",
     "expiry30Days": "30 días",
-    "expiryNone": "Sin expiración"
+    "expiryNone": "Sin expiración",
+    "sendNotification": "Enviar notificación",
+    "notifyEmailPlaceholder": "Dirección de correo electrónico"
   }
 }

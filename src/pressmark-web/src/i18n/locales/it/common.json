@@ -18,5 +18,7 @@
     "register": "Registrati",
     "logout": "Esci",
     "openMenu": "Apri menu"
-  }
+  },
+  "builtBy": "Sviluppato da",
+  "banned": "vietato"
 }

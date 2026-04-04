@@ -16,5 +16,10 @@
   "errors": {
     "invalidUrl": "Invalid RSS URL",
     "fetchFailed": "Could not fetch RSS feed"
-  }
+  },
+  "banned": "Banned",
+  "editTitle": "Edit title",
+  "digest": "Digest",
+  "digestEnable": "Enable daily digest",
+  "digestDisable": "Disable daily digest"
 }

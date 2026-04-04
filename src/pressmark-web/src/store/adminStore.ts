@@ -12,6 +12,7 @@ interface SiteSettings {
   smtpUseTls: boolean
   smtpFromAddress: string
   commentsEnabled: boolean
+  feedRetentionDays: number
 }
 
 interface UserInfo {
@@ -20,6 +21,7 @@ interface UserInfo {
   role: string
   createdAt: string
   isCommentingBanned: boolean
+  isSiteBanned: boolean
 }
 
 export interface BannedSubscriptionItem {
@@ -50,6 +52,7 @@ interface AdminState {
   setBannedSubscriptions: (items: BannedSubscriptionItem[]) => void
   unbanSubscription: (id: string) => void
   updateUserCommentBan: (userId: string, banned: boolean) => void
+  updateUserSiteBan: (userId: string, banned: boolean) => void
   setLoading: (loading: boolean) => void
   reset: () => void
 }
@@ -73,6 +76,10 @@ export const useAdminStore = create<AdminState>()(
       updateUserCommentBan: (userId, banned) =>
         set((s) => ({
           users: s.users.map((u) => (u.id === userId ? { ...u, isCommentingBanned: banned } : u)),
+        })),
+      updateUserSiteBan: (userId, banned) =>
+        set((s) => ({
+          users: s.users.map((u) => (u.id === userId ? { ...u, isSiteBanned: banned } : u)),
         })),
       setLoading: (isLoading) => set({ isLoading }),
       reset: () =>

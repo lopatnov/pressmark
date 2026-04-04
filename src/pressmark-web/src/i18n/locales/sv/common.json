@@ -18,5 +18,7 @@
     "register": "Registrera",
     "logout": "Logga ut",
     "openMenu": "Öppna meny"
-  }
+  },
+  "builtBy": "Byggt av",
+  "banned": "förbjuden"
 }

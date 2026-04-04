@@ -14,6 +14,7 @@ interface FeedItem {
   isBookmarked: boolean
   sourceTitle: string
   imageUrl: string
+  isSourceBanned: boolean
 }
 
 interface FeedState {
@@ -40,7 +41,7 @@ export const useFeedStore = create<FeedState>()(
       items: [],
       nextCursor: '',
       totalUnread: 0,
-      isLoading: false,
+      isLoading: true,
       unreadOnly: false,
       subscriptionIdFilter: '',
       setItems: (items, cursor, unread) => set({ items, nextCursor: cursor, totalUnread: unread }),

@@ -17,6 +17,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<PasswordResetToken> PasswordResetTokens => Set<PasswordResetToken>();
     public DbSet<Comment> Comments => Set<Comment>();
     public DbSet<Report> Reports => Set<Report>();
+    public DbSet<CommentSubscription> CommentSubscriptions => Set<CommentSubscription>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -167,6 +168,23 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 .OnDelete(DeleteBehavior.NoAction);
         });
 
+        // CommentSubscriptions (composite PK)
+        modelBuilder.Entity<CommentSubscription>(e =>
+        {
+            e.ToTable("comment_subscriptions");
+            e.HasKey(x => new { x.UserId, x.FeedItemId });
+            e.HasIndex(x => x.FeedItemId);
+            // NoAction on User side: MSSQL disallows multiple cascade paths
+            e.HasOne(x => x.User)
+                .WithMany()
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+            e.HasOne(x => x.FeedItem)
+                .WithMany()
+                .HasForeignKey(x => x.FeedItemId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
         // SiteSettings
         modelBuilder.Entity<SiteSetting>(e =>
         {
@@ -179,7 +197,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             new SiteSetting { Key = "site_name", Value = "Pressmark" },
             new SiteSetting { Key = "community_window_days", Value = "1" },
             new SiteSetting { Key = "registration_mode", Value = "open" },
-            new SiteSetting { Key = "comments_enabled", Value = "true" }
+            new SiteSetting { Key = "comments_enabled", Value = "true" },
+            new SiteSetting { Key = "feed_retention_days", Value = "90" }
         );
     }
 }
