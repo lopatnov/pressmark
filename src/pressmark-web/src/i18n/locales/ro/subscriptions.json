@@ -17,5 +17,6 @@
     "invalidUrl": "URL RSS invalid",
     "fetchFailed": "Nu s-a putut prelua fluxul RSS"
   },
-  "banned": "Blocat"
+  "banned": "Blocat",
+  "editTitle": "Editează titlul"
 }

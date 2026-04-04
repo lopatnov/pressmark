@@ -17,5 +17,6 @@
     "invalidUrl": "Invalid RSS URL",
     "fetchFailed": "Could not fetch RSS feed"
   },
-  "banned": "Banned"
+  "banned": "Banned",
+  "editTitle": "Edit title"
 }

@@ -17,5 +17,6 @@
     "invalidUrl": "無効な RSS URL",
     "fetchFailed": "RSS フィードを取得できませんでした"
   },
-  "banned": "禁止済み"
+  "banned": "禁止済み",
+  "editTitle": "編集タイトル"
 }

@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { ExternalLink } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
 import { adminClient } from '@/api/clients'
 import { useAdminStore, type InviteItem } from '@/store/adminStore'
 import { toast } from 'sonner'
@@ -269,9 +270,17 @@ function BannedSubscriptionsSection() {
       <h2 className="text-base font-semibold">{t('admin:bannedSubs.title')}</h2>
       <div className="rounded-lg border border-border">
         {loading ? (
-          <p className="px-4 py-6 text-center text-sm text-muted-foreground">
-            {t('common:loading')}
-          </p>
+          <div className="divide-y divide-border">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="flex items-center justify-between px-4 py-3">
+                <div className="space-y-1.5">
+                  <Skeleton className="h-4 w-36" />
+                  <Skeleton className="h-3 w-52" />
+                </div>
+                <Skeleton className="h-8 w-16" />
+              </div>
+            ))}
+          </div>
         ) : items.length === 0 ? (
           <p className="px-4 py-6 text-center text-sm text-muted-foreground">
             {t('admin:bannedSubs.empty')}
@@ -381,9 +390,17 @@ function HiddenArticlesSection() {
       <h2 className="text-base font-semibold">{t('admin:moderation.hiddenArticles')}</h2>
       <div className="rounded-lg border border-border">
         {loading ? (
-          <p className="px-4 py-6 text-center text-sm text-muted-foreground">
-            {t('common:loading')}
-          </p>
+          <div className="divide-y divide-border">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="flex items-center justify-between px-4 py-3">
+                <div className="space-y-1.5">
+                  <Skeleton className="h-4 w-52" />
+                  <Skeleton className="h-3 w-24" />
+                </div>
+                <Skeleton className="h-8 w-16" />
+              </div>
+            ))}
+          </div>
         ) : hiddenItems.length === 0 ? (
           <p className="px-4 py-6 text-center text-sm text-muted-foreground">
             {t('admin:moderation.noHiddenArticles')}
@@ -526,9 +543,18 @@ function UsersSection() {
       <h2 className="text-base font-semibold">{t('admin:users.title')}</h2>
       <div className="rounded-lg border border-border">
         {loading ? (
-          <p className="px-4 py-6 text-center text-sm text-muted-foreground">
-            {t('common:loading')}
-          </p>
+          <div className="divide-y divide-border">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="flex items-center gap-4 px-4 py-3">
+                <Skeleton className="h-4 w-40 flex-shrink-0" />
+                <Skeleton className="h-5 w-12 flex-shrink-0" />
+                <Skeleton className="h-4 w-20 flex-shrink-0" />
+                <Skeleton className="h-8 w-24 flex-shrink-0" />
+                <Skeleton className="h-8 w-20 flex-shrink-0" />
+                <Skeleton className="ml-auto h-4 w-16 flex-shrink-0" />
+              </div>
+            ))}
+          </div>
         ) : users.length === 0 ? (
           <p className="px-4 py-6 text-center text-sm text-muted-foreground">
             {t('admin:users.empty')}
@@ -701,7 +727,24 @@ function ReportsSection() {
     <section className="space-y-3">
       <h2 className="text-base font-medium">{t('admin:reports.title')}</h2>
       {loading ? (
-        <p className="text-sm text-muted-foreground">{t('common:loading')}</p>
+        <div className="overflow-x-auto rounded-lg border border-border">
+          <div className="divide-y divide-border">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="flex items-start gap-4 px-4 py-3">
+                <div className="min-w-[7rem] space-y-1.5">
+                  <Skeleton className="h-3 w-28" />
+                  <Skeleton className="h-4 w-20" />
+                  <Skeleton className="h-3 w-36" />
+                </div>
+                <div className="min-w-[8rem] space-y-1.5">
+                  <Skeleton className="h-3 w-32" />
+                  <Skeleton className="h-3 w-20" />
+                </div>
+                <Skeleton className="ml-auto h-8 w-16 flex-shrink-0" />
+              </div>
+            ))}
+          </div>
+        </div>
       ) : reports.length === 0 ? (
         <p className="text-sm text-muted-foreground">{t('admin:reports.empty')}</p>
       ) : (
@@ -958,9 +1001,15 @@ function InvitesSection() {
 
       <div className="rounded-lg border border-border">
         {loadingList ? (
-          <p className="px-4 py-6 text-center text-sm text-muted-foreground">
-            {t('common:loading')}
-          </p>
+          <div className="divide-y divide-border">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="flex items-center justify-between px-4 py-3">
+                <Skeleton className="h-4 w-28" />
+                <Skeleton className="h-4 w-36" />
+                <Skeleton className="h-8 w-16" />
+              </div>
+            ))}
+          </div>
         ) : invites.length === 0 ? (
           <p className="px-4 py-6 text-center text-sm text-muted-foreground">
             {t('admin:invites.empty')}

@@ -73,6 +73,27 @@ public class SubscriptionServiceImpl(AppDbContext db, IHttpClientFactory httpCli
         return ToProto(entity);
     }
 
+    public override async Task<Protos.Subscription> UpdateSubscription(
+        UpdateSubscriptionRequest request, ServerCallContext context)
+    {
+        var userId = GetUserId(context);
+        var ct = context.CancellationToken;
+
+        if (!Guid.TryParse(request.SubscriptionId, out var subId))
+            throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid subscription_id"));
+
+        var sub = await db.Subscriptions
+            .FirstOrDefaultAsync(s => s.Id == subId && s.UserId == userId, ct);
+
+        if (sub is null)
+            throw new RpcException(new Status(StatusCode.NotFound, "Subscription not found"));
+
+        sub.DisplayName = string.IsNullOrWhiteSpace(request.DisplayName) ? null : request.DisplayName.Trim();
+        await db.SaveChangesAsync(ct);
+
+        return ToProto(sub);
+    }
+
     public override async Task<Empty> RemoveSubscription(
         RemoveSubscriptionRequest request, ServerCallContext context)
     {
@@ -102,7 +123,7 @@ public class SubscriptionServiceImpl(AppDbContext db, IHttpClientFactory httpCli
 
         var subs = await db.Subscriptions
             .Where(s => s.UserId == userId)
-            .OrderBy(s => s.Title)
+            .OrderBy(s => s.DisplayName ?? s.Title)
             .ToListAsync(ct);
 
         var list = new SubscriptionList();
@@ -206,7 +227,7 @@ public class SubscriptionServiceImpl(AppDbContext db, IHttpClientFactory httpCli
         Id = s.Id.ToString(),
         UserId = s.UserId.ToString(),
         RssUrl = s.RssUrl,
-        Title = s.Title,
+        Title = s.DisplayName ?? s.Title,
         LastFetchedAt = s.LastFetchedAt?.ToString("o") ?? "",
         CreatedAt = s.CreatedAt.ToString("o"),
         IsCommunityBanned = s.IsCommunityBanned,

@@ -16,6 +16,9 @@ public class Subscription
     [Column("title")]
     public required string Title { get; set; }
 
+    [Column("display_name")]
+    public string? DisplayName { get; set; }
+
     [Column("last_fetched_at")]
     public DateTime? LastFetchedAt { get; set; }
 

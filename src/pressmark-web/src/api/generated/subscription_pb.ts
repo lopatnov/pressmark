@@ -12,7 +12,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file subscription.proto.
  */
 export const file_subscription: GenFile = /*@__PURE__*/
-  fileDesc("ChJzdWJzY3JpcHRpb24ucHJvdG8SFnByZXNzbWFyay5zdWJzY3JpcHRpb24iOAoWQWRkU3Vic2NyaXB0aW9uUmVxdWVzdBIPCgdyc3NfdXJsGAEgASgJEg0KBXRpdGxlGAIgASgJIjQKGVJlbW92ZVN1YnNjcmlwdGlvblJlcXVlc3QSFwoPc3Vic2NyaXB0aW9uX2lkGAEgASgJIpUBCgxTdWJzY3JpcHRpb24SCgoCaWQYASABKAkSDwoHdXNlcl9pZBgCIAEoCRIPCgdyc3NfdXJsGAMgASgJEg0KBXRpdGxlGAQgASgJEhcKD2xhc3RfZmV0Y2hlZF9hdBgFIAEoCRISCgpjcmVhdGVkX2F0GAYgASgJEhsKE2lzX2NvbW11bml0eV9iYW5uZWQYByABKAgiTwoQU3Vic2NyaXB0aW9uTGlzdBI7Cg1zdWJzY3JpcHRpb25zGAEgAygLMiQucHJlc3NtYXJrLnN1YnNjcmlwdGlvbi5TdWJzY3JpcHRpb24iMgoaSW1wb3J0U3Vic2NyaXB0aW9uc1JlcXVlc3QSFAoMb3BtbF9jb250ZW50GAEgASgJIkAKG0ltcG9ydFN1YnNjcmlwdGlvbnNSZXNwb25zZRIQCghpbXBvcnRlZBgBIAEoBRIPCgdza2lwcGVkGAIgASgFIjMKG0V4cG9ydFN1YnNjcmlwdGlvbnNSZXNwb25zZRIUCgxvcG1sX2NvbnRlbnQYASABKAkiLgoTVHJpZ2dlckZldGNoUmVxdWVzdBIXCg9zdWJzY3JpcHRpb25faWQYASABKAkiKQoUVHJpZ2dlckZldGNoUmVzcG9uc2USEQoJbmV3X2l0ZW1zGAEgASgFMoUFChNTdWJzY3JpcHRpb25TZXJ2aWNlEmcKD0FkZFN1YnNjcmlwdGlvbhIuLnByZXNzbWFyay5zdWJzY3JpcHRpb24uQWRkU3Vic2NyaXB0aW9uUmVxdWVzdBokLnByZXNzbWFyay5zdWJzY3JpcHRpb24uU3Vic2NyaXB0aW9uEl8KElJlbW92ZVN1YnNjcmlwdGlvbhIxLnByZXNzbWFyay5zdWJzY3JpcHRpb24uUmVtb3ZlU3Vic2NyaXB0aW9uUmVxdWVzdBoWLmdvb2dsZS5wcm90b2J1Zi5FbXB0eRJVChFMaXN0U3Vic2NyaXB0aW9ucxIWLmdvb2dsZS5wcm90b2J1Zi5FbXB0eRooLnByZXNzbWFyay5zdWJzY3JpcHRpb24uU3Vic2NyaXB0aW9uTGlzdBJ+ChNJbXBvcnRTdWJzY3JpcHRpb25zEjIucHJlc3NtYXJrLnN1YnNjcmlwdGlvbi5JbXBvcnRTdWJzY3JpcHRpb25zUmVxdWVzdBozLnByZXNzbWFyay5zdWJzY3JpcHRpb24uSW1wb3J0U3Vic2NyaXB0aW9uc1Jlc3BvbnNlEmIKE0V4cG9ydFN1YnNjcmlwdGlvbnMSFi5nb29nbGUucHJvdG9idWYuRW1wdHkaMy5wcmVzc21hcmsuc3Vic2NyaXB0aW9uLkV4cG9ydFN1YnNjcmlwdGlvbnNSZXNwb25zZRJpCgxUcmlnZ2VyRmV0Y2gSKy5wcmVzc21hcmsuc3Vic2NyaXB0aW9uLlRyaWdnZXJGZXRjaFJlcXVlc3QaLC5wcmVzc21hcmsuc3Vic2NyaXB0aW9uLlRyaWdnZXJGZXRjaFJlc3BvbnNlQheqAhRQcmVzc21hcmsuQXBpLlByb3Rvc2IGcHJvdG8z", [file_google_protobuf_empty]);
+  fileDesc("ChJzdWJzY3JpcHRpb24ucHJvdG8SFnByZXNzbWFyay5zdWJzY3JpcHRpb24iOAoWQWRkU3Vic2NyaXB0aW9uUmVxdWVzdBIPCgdyc3NfdXJsGAEgASgJEg0KBXRpdGxlGAIgASgJIjQKGVJlbW92ZVN1YnNjcmlwdGlvblJlcXVlc3QSFwoPc3Vic2NyaXB0aW9uX2lkGAEgASgJIkoKGVVwZGF0ZVN1YnNjcmlwdGlvblJlcXVlc3QSFwoPc3Vic2NyaXB0aW9uX2lkGAEgASgJEhQKDGRpc3BsYXlfbmFtZRgCIAEoCSKVAQoMU3Vic2NyaXB0aW9uEgoKAmlkGAEgASgJEg8KB3VzZXJfaWQYAiABKAkSDwoHcnNzX3VybBgDIAEoCRINCgV0aXRsZRgEIAEoCRIXCg9sYXN0X2ZldGNoZWRfYXQYBSABKAkSEgoKY3JlYXRlZF9hdBgGIAEoCRIbChNpc19jb21tdW5pdHlfYmFubmVkGAcgASgIIk8KEFN1YnNjcmlwdGlvbkxpc3QSOwoNc3Vic2NyaXB0aW9ucxgBIAMoCzIkLnByZXNzbWFyay5zdWJzY3JpcHRpb24uU3Vic2NyaXB0aW9uIjIKGkltcG9ydFN1YnNjcmlwdGlvbnNSZXF1ZXN0EhQKDG9wbWxfY29udGVudBgBIAEoCSJAChtJbXBvcnRTdWJzY3JpcHRpb25zUmVzcG9uc2USEAoIaW1wb3J0ZWQYASABKAUSDwoHc2tpcHBlZBgCIAEoBSIzChtFeHBvcnRTdWJzY3JpcHRpb25zUmVzcG9uc2USFAoMb3BtbF9jb250ZW50GAEgASgJIi4KE1RyaWdnZXJGZXRjaFJlcXVlc3QSFwoPc3Vic2NyaXB0aW9uX2lkGAEgASgJIikKFFRyaWdnZXJGZXRjaFJlc3BvbnNlEhEKCW5ld19pdGVtcxgBIAEoBTL0BQoTU3Vic2NyaXB0aW9uU2VydmljZRJnCg9BZGRTdWJzY3JpcHRpb24SLi5wcmVzc21hcmsuc3Vic2NyaXB0aW9uLkFkZFN1YnNjcmlwdGlvblJlcXVlc3QaJC5wcmVzc21hcmsuc3Vic2NyaXB0aW9uLlN1YnNjcmlwdGlvbhJfChJSZW1vdmVTdWJzY3JpcHRpb24SMS5wcmVzc21hcmsuc3Vic2NyaXB0aW9uLlJlbW92ZVN1YnNjcmlwdGlvblJlcXVlc3QaFi5nb29nbGUucHJvdG9idWYuRW1wdHkSVQoRTGlzdFN1YnNjcmlwdGlvbnMSFi5nb29nbGUucHJvdG9idWYuRW1wdHkaKC5wcmVzc21hcmsuc3Vic2NyaXB0aW9uLlN1YnNjcmlwdGlvbkxpc3QSbQoSVXBkYXRlU3Vic2NyaXB0aW9uEjEucHJlc3NtYXJrLnN1YnNjcmlwdGlvbi5VcGRhdGVTdWJzY3JpcHRpb25SZXF1ZXN0GiQucHJlc3NtYXJrLnN1YnNjcmlwdGlvbi5TdWJzY3JpcHRpb24SfgoTSW1wb3J0U3Vic2NyaXB0aW9ucxIyLnByZXNzbWFyay5zdWJzY3JpcHRpb24uSW1wb3J0U3Vic2NyaXB0aW9uc1JlcXVlc3QaMy5wcmVzc21hcmsuc3Vic2NyaXB0aW9uLkltcG9ydFN1YnNjcmlwdGlvbnNSZXNwb25zZRJiChNFeHBvcnRTdWJzY3JpcHRpb25zEhYuZ29vZ2xlLnByb3RvYnVmLkVtcHR5GjMucHJlc3NtYXJrLnN1YnNjcmlwdGlvbi5FeHBvcnRTdWJzY3JpcHRpb25zUmVzcG9uc2USaQoMVHJpZ2dlckZldGNoEisucHJlc3NtYXJrLnN1YnNjcmlwdGlvbi5UcmlnZ2VyRmV0Y2hSZXF1ZXN0GiwucHJlc3NtYXJrLnN1YnNjcmlwdGlvbi5UcmlnZ2VyRmV0Y2hSZXNwb25zZUIXqgIUUHJlc3NtYXJrLkFwaS5Qcm90b3NiBnByb3RvMw", [file_google_protobuf_empty]);
 
 /**
  * @generated from message pressmark.subscription.AddSubscriptionRequest
@@ -52,6 +52,28 @@ export type RemoveSubscriptionRequest = Message<"pressmark.subscription.RemoveSu
  */
 export const RemoveSubscriptionRequestSchema: GenMessage<RemoveSubscriptionRequest> = /*@__PURE__*/
   messageDesc(file_subscription, 1);
+
+/**
+ * @generated from message pressmark.subscription.UpdateSubscriptionRequest
+ */
+export type UpdateSubscriptionRequest = Message<"pressmark.subscription.UpdateSubscriptionRequest"> & {
+  /**
+   * @generated from field: string subscription_id = 1;
+   */
+  subscriptionId: string;
+
+  /**
+   * @generated from field: string display_name = 2;
+   */
+  displayName: string;
+};
+
+/**
+ * Describes the message pressmark.subscription.UpdateSubscriptionRequest.
+ * Use `create(UpdateSubscriptionRequestSchema)` to create a new message.
+ */
+export const UpdateSubscriptionRequestSchema: GenMessage<UpdateSubscriptionRequest> = /*@__PURE__*/
+  messageDesc(file_subscription, 2);
 
 /**
  * @generated from message pressmark.subscription.Subscription
@@ -98,7 +120,7 @@ export type Subscription = Message<"pressmark.subscription.Subscription"> & {
  * Use `create(SubscriptionSchema)` to create a new message.
  */
 export const SubscriptionSchema: GenMessage<Subscription> = /*@__PURE__*/
-  messageDesc(file_subscription, 2);
+  messageDesc(file_subscription, 3);
 
 /**
  * @generated from message pressmark.subscription.SubscriptionList
@@ -115,7 +137,7 @@ export type SubscriptionList = Message<"pressmark.subscription.SubscriptionList"
  * Use `create(SubscriptionListSchema)` to create a new message.
  */
 export const SubscriptionListSchema: GenMessage<SubscriptionList> = /*@__PURE__*/
-  messageDesc(file_subscription, 3);
+  messageDesc(file_subscription, 4);
 
 /**
  * @generated from message pressmark.subscription.ImportSubscriptionsRequest
@@ -132,7 +154,7 @@ export type ImportSubscriptionsRequest = Message<"pressmark.subscription.ImportS
  * Use `create(ImportSubscriptionsRequestSchema)` to create a new message.
  */
 export const ImportSubscriptionsRequestSchema: GenMessage<ImportSubscriptionsRequest> = /*@__PURE__*/
-  messageDesc(file_subscription, 4);
+  messageDesc(file_subscription, 5);
 
 /**
  * @generated from message pressmark.subscription.ImportSubscriptionsResponse
@@ -154,7 +176,7 @@ export type ImportSubscriptionsResponse = Message<"pressmark.subscription.Import
  * Use `create(ImportSubscriptionsResponseSchema)` to create a new message.
  */
 export const ImportSubscriptionsResponseSchema: GenMessage<ImportSubscriptionsResponse> = /*@__PURE__*/
-  messageDesc(file_subscription, 5);
+  messageDesc(file_subscription, 6);
 
 /**
  * @generated from message pressmark.subscription.ExportSubscriptionsResponse
@@ -171,7 +193,7 @@ export type ExportSubscriptionsResponse = Message<"pressmark.subscription.Export
  * Use `create(ExportSubscriptionsResponseSchema)` to create a new message.
  */
 export const ExportSubscriptionsResponseSchema: GenMessage<ExportSubscriptionsResponse> = /*@__PURE__*/
-  messageDesc(file_subscription, 6);
+  messageDesc(file_subscription, 7);
 
 /**
  * @generated from message pressmark.subscription.TriggerFetchRequest
@@ -188,7 +210,7 @@ export type TriggerFetchRequest = Message<"pressmark.subscription.TriggerFetchRe
  * Use `create(TriggerFetchRequestSchema)` to create a new message.
  */
 export const TriggerFetchRequestSchema: GenMessage<TriggerFetchRequest> = /*@__PURE__*/
-  messageDesc(file_subscription, 7);
+  messageDesc(file_subscription, 8);
 
 /**
  * @generated from message pressmark.subscription.TriggerFetchResponse
@@ -205,7 +227,7 @@ export type TriggerFetchResponse = Message<"pressmark.subscription.TriggerFetchR
  * Use `create(TriggerFetchResponseSchema)` to create a new message.
  */
 export const TriggerFetchResponseSchema: GenMessage<TriggerFetchResponse> = /*@__PURE__*/
-  messageDesc(file_subscription, 8);
+  messageDesc(file_subscription, 9);
 
 /**
  * @generated from service pressmark.subscription.SubscriptionService
@@ -234,6 +256,14 @@ export const SubscriptionService: GenService<{
     methodKind: "unary";
     input: typeof EmptySchema;
     output: typeof SubscriptionListSchema;
+  },
+  /**
+   * @generated from rpc pressmark.subscription.SubscriptionService.UpdateSubscription
+   */
+  updateSubscription: {
+    methodKind: "unary";
+    input: typeof UpdateSubscriptionRequestSchema;
+    output: typeof SubscriptionSchema;
   },
   /**
    * @generated from rpc pressmark.subscription.SubscriptionService.ImportSubscriptions

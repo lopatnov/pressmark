@@ -17,5 +17,6 @@
     "invalidUrl": "Érvénytelen RSS URL",
     "fetchFailed": "Az RSS hírfolyam betöltése nem sikerült"
   },
-  "banned": "Kitiltva"
+  "banned": "Kitiltva",
+  "editTitle": "Cím szerkesztése"
 }

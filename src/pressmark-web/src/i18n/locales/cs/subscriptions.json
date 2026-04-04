@@ -17,5 +17,6 @@
     "invalidUrl": "Neplatná URL RSS",
     "fetchFailed": "Nepodařilo se načíst RSS kanál"
   },
-  "banned": "Zakázáno"
+  "banned": "Zakázáno",
+  "editTitle": "Upravit název"
 }

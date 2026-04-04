@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { Ban, Download, Plus, RefreshCw, Trash2, Upload } from 'lucide-react'
+import { Ban, Check, Download, Pencil, Plus, RefreshCw, Trash2, Upload, X } from 'lucide-react'
 import { Code, ConnectError } from '@connectrpc/connect'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -26,11 +26,14 @@ export function SubscriptionsPage() {
     setSubscriptions,
     addSubscription,
     removeSubscription,
+    updateSubscriptionTitle,
     setLoading,
   } = useSubscriptionStore()
   const [showForm, setShowForm] = useState(false)
   const [importStatus, setImportStatus] = useState<string | null>(null)
   const [fetchingId, setFetchingId] = useState<string | null>(null)
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [editValue, setEditValue] = useState('')
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const {
@@ -162,6 +165,24 @@ export function SubscriptionsPage() {
     }
   }
 
+  const handleStartEdit = (id: string, title: string) => {
+    setEditingId(id)
+    setEditValue(title)
+  }
+
+  const handleSaveEdit = async (id: string) => {
+    try {
+      const res = await subscriptionClient.updateSubscription({
+        subscriptionId: id,
+        displayName: editValue,
+      })
+      updateSubscriptionTitle(id, res.title)
+      setEditingId(null)
+    } catch {
+      toast.error(t('common:error'))
+    }
+  }
+
   const handleRemove = async (id: string) => {
     if (!confirm(t('subscriptions:removeConfirm'))) return
     removeSubscription(id)
@@ -261,21 +282,60 @@ export function SubscriptionsPage() {
         {subscriptions.map((sub) => (
           <div
             key={sub.id}
-            className={`flex items-center justify-between rounded-lg border bg-card px-4 py-3 ${sub.isCommunityBanned ? 'border-destructive/50' : 'border-border'}`}
+            className={`group flex items-center justify-between rounded-lg border bg-card px-4 py-3 ${sub.isCommunityBanned ? 'border-destructive/50' : 'border-border'}`}
           >
             <div className="min-w-0 space-y-0.5">
-              <div className="flex items-center gap-2">
-                <Link
-                  to={`/feed?sub=${sub.id}`}
-                  className="truncate text-sm font-medium hover:underline"
-                >
-                  {sub.title}
-                </Link>
-                {sub.isCommunityBanned && (
-                  <span className="flex shrink-0 items-center gap-1 rounded-full bg-destructive/10 px-2 py-0.5 text-xs text-destructive">
-                    <Ban className="h-3 w-3" />
-                    {t('subscriptions:banned')}
-                  </span>
+              <div className="flex items-center gap-1.5">
+                {editingId === sub.id ? (
+                  <>
+                    <input
+                      value={editValue}
+                      onChange={(e) => setEditValue(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') handleSaveEdit(sub.id)
+                        if (e.key === 'Escape') setEditingId(null)
+                      }}
+                      autoFocus
+                      className="rounded border border-border bg-background px-2 py-0.5 text-sm"
+                    />
+                    <button
+                      onClick={() => handleSaveEdit(sub.id)}
+                      aria-label={t('common:save')}
+                      className="cursor-pointer rounded p-0.5 text-muted-foreground hover:text-foreground"
+                    >
+                      <Check className="h-3.5 w-3.5" />
+                    </button>
+                    <button
+                      onClick={() => setEditingId(null)}
+                      aria-label={t('common:cancel')}
+                      className="cursor-pointer rounded p-0.5 text-muted-foreground hover:text-foreground"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      to={`/feed?sub=${sub.id}`}
+                      className="truncate text-sm font-medium hover:underline"
+                    >
+                      {sub.title}
+                    </Link>
+                    <button
+                      onClick={() => handleStartEdit(sub.id, sub.title)}
+                      title={t('subscriptions:editTitle')}
+                      aria-label={t('subscriptions:editTitle')}
+                      className="cursor-pointer rounded p-0.5 text-muted-foreground opacity-0 transition-opacity hover:text-foreground group-hover:opacity-100"
+                    >
+                      <Pencil className="h-3 w-3" />
+                    </button>
+                    {sub.isCommunityBanned && (
+                      <span className="flex shrink-0 items-center gap-1 rounded-full bg-destructive/10 px-2 py-0.5 text-xs text-destructive">
+                        <Ban className="h-3 w-3" />
+                        {t('subscriptions:banned')}
+                      </span>
+                    )}
+                  </>
                 )}
               </div>
               <p className="truncate text-xs text-muted-foreground">{sub.rssUrl}</p>

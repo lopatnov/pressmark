@@ -17,5 +17,6 @@
     "invalidUrl": "URL RSS non valido",
     "fetchFailed": "Impossibile recuperare il feed RSS"
   },
-  "banned": "Bannato"
+  "banned": "Bannato",
+  "editTitle": "Modifica del titolo"
 }

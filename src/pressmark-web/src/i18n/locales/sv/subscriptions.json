@@ -17,5 +17,6 @@
     "invalidUrl": "Ogiltig RSS-URL",
     "fetchFailed": "Kunde inte hämta RSS-flöde"
   },
-  "banned": "Blockerad"
+  "banned": "Blockerad",
+  "editTitle": "Redigera titel"
 }

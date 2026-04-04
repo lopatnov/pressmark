@@ -17,5 +17,6 @@
     "invalidUrl": "Ongeldige RSS-URL",
     "fetchFailed": "Kan RSS-feed niet ophalen"
   },
-  "banned": "Geblokkeerd"
+  "banned": "Geblokkeerd",
+  "editTitle": "Titel bewerken"
 }
