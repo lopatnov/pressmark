@@ -12,6 +12,18 @@ The public community page — articles liked by users — is open to anyone with
 
 ---
 
+## Screenshots
+
+| Community | Feed |
+|---|---|
+| ![Community](docs/images/community.png) | ![Feed](docs/images/feed.png) |
+
+| Subscriptions | Bookmarks |
+|---|---|
+| ![Subscriptions](docs/images/subscriptions.png) | ![Bookmarks](docs/images/bookmarks.png) |
+
+---
+
 ## Features
 
 - **Personal feed** — subscribe to any RSS source, track read/unread status
@@ -134,7 +146,7 @@ cd pressmark
 
 ### 2. Configure environment variables
 
-A `.env` file is included in the repository with default values. **Before deploying to production, edit `.env`** and change:
+A `.env` file with development defaults is included in the repository. It works out of the box for local use. **Before deploying to production, edit `.env`** and change:
 
 | Variable              | What to set                                                    |
 | --------------------- | -------------------------------------------------------------- |
