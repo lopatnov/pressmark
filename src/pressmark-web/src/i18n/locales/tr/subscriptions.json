@@ -18,5 +18,8 @@
     "fetchFailed": "RSS akışı alınamadı"
   },
   "banned": "Yasaklandı",
-  "editTitle": "Başlığı düzenle"
+  "editTitle": "Başlığı düzenle",
+  "digest": "Özet",
+  "digestEnable": "Günlük özeti etkinleştir",
+  "digestDisable": "Günlük özeti devre dışı bırak"
 }

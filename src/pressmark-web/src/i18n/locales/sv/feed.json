@@ -31,7 +31,9 @@
     "toggle": "Visa/dölj kommentarer",
     "loadError": "Det gick inte att ladda kommentarer",
     "submitError": "Det gick inte att skicka kommentaren",
-    "removeError": "Det gick inte att ta bort kommentaren"
+    "removeError": "Det gick inte att ta bort kommentaren",
+    "subscribeNotifications": "Prenumerera på kommentarmeddelanden",
+    "unsubscribeNotifications": "Avprenumerera på kommentarmeddelanden"
   },
   "report": "Rapportera",
   "reportComment": "Rapportera kommentar",

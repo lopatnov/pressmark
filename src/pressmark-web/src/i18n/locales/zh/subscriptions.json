@@ -18,5 +18,8 @@
     "fetchFailed": "无法获取 RSS 订阅源"
   },
   "banned": "已封禁",
-  "editTitle": "编辑标题"
+  "editTitle": "编辑标题",
+  "digest": "每日摘要",
+  "digestEnable": "启用每日摘要",
+  "digestDisable": "禁用每日摘要"
 }

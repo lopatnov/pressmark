@@ -18,5 +18,8 @@
     "fetchFailed": "Kan RSS-feed niet ophalen"
   },
   "banned": "Geblokkeerd",
-  "editTitle": "Titel bewerken"
+  "editTitle": "Titel bewerken",
+  "digest": "Digest",
+  "digestEnable": "Dagelijkse digest inschakelen",
+  "digestDisable": "Dagelijkse digest uitschakelen"
 }

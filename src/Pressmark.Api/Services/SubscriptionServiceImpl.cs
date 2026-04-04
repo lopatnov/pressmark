@@ -126,9 +126,26 @@ public class SubscriptionServiceImpl(AppDbContext db, IHttpClientFactory httpCli
             .OrderBy(s => s.DisplayName ?? s.Title)
             .ToListAsync(ct);
 
-        var list = new SubscriptionList();
+        var user = await db.Users.FindAsync([userId], ct);
+
+        var list = new SubscriptionList { DigestEnabled = user?.DigestEnabled ?? false };
         list.Subscriptions.AddRange(subs.Select(ToProto));
         return list;
+    }
+
+    public override async Task<ToggleDigestSubscriptionResponse> ToggleDigestSubscription(
+        Empty request, ServerCallContext context)
+    {
+        var userId = GetUserId(context);
+        var ct = context.CancellationToken;
+
+        var user = await db.Users.FindAsync([userId], ct)
+            ?? throw new RpcException(new Status(StatusCode.NotFound, "User not found"));
+
+        user.DigestEnabled = !user.DigestEnabled;
+        await db.SaveChangesAsync(ct);
+
+        return new ToggleDigestSubscriptionResponse { Enabled = user.DigestEnabled };
     }
 
     public override async Task<ImportSubscriptionsResponse> ImportSubscriptions(

@@ -18,5 +18,8 @@
     "fetchFailed": "Nu s-a putut prelua fluxul RSS"
   },
   "banned": "Blocat",
-  "editTitle": "Editează titlul"
+  "editTitle": "Editează titlul",
+  "digest": "Digest",
+  "digestEnable": "Activați digestul zilnic",
+  "digestDisable": "Desactivați digestul zilnic"
 }

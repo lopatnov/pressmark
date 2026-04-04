@@ -18,5 +18,8 @@
     "fetchFailed": "Az RSS hírfolyam betöltése nem sikerült"
   },
   "banned": "Kitiltva",
-  "editTitle": "Cím szerkesztése"
+  "editTitle": "Cím szerkesztése",
+  "digest": "Digest",
+  "digestEnable": "Napi kivonat engedélyezése",
+  "digestDisable": "Napi kivonat letiltása"
 }

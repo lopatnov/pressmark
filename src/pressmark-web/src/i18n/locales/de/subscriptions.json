@@ -18,5 +18,8 @@
     "fetchFailed": "RSS-Feed konnte nicht abgerufen werden"
   },
   "banned": "Gesperrt",
-  "editTitle": "Titel bearbeiten"
+  "editTitle": "Titel bearbeiten",
+  "digest": "Digest",
+  "digestEnable": "Tagesübersicht aktivieren",
+  "digestDisable": "Tagesübersicht deaktivieren"
 }

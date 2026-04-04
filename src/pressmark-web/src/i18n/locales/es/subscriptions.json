@@ -18,5 +18,8 @@
     "fetchFailed": "No se pudo cargar el feed RSS"
   },
   "banned": "Bloqueado",
-  "editTitle": "Editar título"
+  "editTitle": "Editar título",
+  "digest": "Digest",
+  "digestEnable": "Activar el resumen diario",
+  "digestDisable": "Desactivar el resumen diario"
 }

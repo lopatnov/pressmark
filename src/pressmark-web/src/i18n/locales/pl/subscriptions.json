@@ -18,5 +18,8 @@
     "fetchFailed": "Nie udało się pobrać kanału RSS"
   },
   "banned": "Zablokowany",
-  "editTitle": "Edytuj tytuł"
+  "editTitle": "Edytuj tytuł",
+  "digest": "Digest",
+  "digestEnable": "Włącz codzienne podsumowanie",
+  "digestDisable": "Wyłącz codzienne podsumowanie"
 }

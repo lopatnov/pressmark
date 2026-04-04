@@ -10,7 +10,13 @@ using Pressmark.Api.Protos;
 namespace Pressmark.Api.Services;
 
 [Authorize]
-public class FeedServiceImpl(AppDbContext db, IDbContextFactory<AppDbContext> dbFactory, FeedUpdateBroadcaster broadcaster) : FeedService.FeedServiceBase
+public class FeedServiceImpl(
+    AppDbContext db,
+    IDbContextFactory<AppDbContext> dbFactory,
+    FeedUpdateBroadcaster broadcaster,
+    IServiceScopeFactory scopeFactory,
+    ILogger<FeedServiceImpl> logger,
+    IConfiguration config) : FeedService.FeedServiceBase
 {
     private const int DefaultPageSize = 20;
     private const int MaxPageSize = 100;
@@ -436,7 +442,15 @@ public class FeedServiceImpl(AppDbContext db, IDbContextFactory<AppDbContext> db
             .Take(200)
             .ToListAsync(ct);
 
-        var result = new CommentList();
+        Guid? userId = null;
+        var claim = context.GetHttpContext().User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (claim != null && Guid.TryParse(claim, out var parsedId)) userId = parsedId;
+
+        var isSubscribed = userId.HasValue &&
+            await db.CommentSubscriptions.AnyAsync(
+                s => s.UserId == userId.Value && s.FeedItemId == feedItemId, ct);
+
+        var result = new CommentList { IsSubscribed = isSubscribed };
         result.Items.AddRange(comments.Select(c => new Protos.Comment
         {
             Id = c.Id.ToString(),
@@ -490,6 +504,10 @@ public class FeedServiceImpl(AppDbContext db, IDbContextFactory<AppDbContext> db
         db.Comments.Add(comment);
         await db.SaveChangesAsync(ct);
 
+        var feedItem = await db.FeedItems.FindAsync([feedItemId], ct);
+        if (feedItem != null)
+            _ = SendCommentNotificationsAsync(feedItemId, user.Email, feedItem.Title, feedItem.Url, comment.Body);
+
         return new Protos.Comment
         {
             Id = comment.Id.ToString(),
@@ -499,6 +517,77 @@ public class FeedServiceImpl(AppDbContext db, IDbContextFactory<AppDbContext> db
             RemovedByAdmin = false,
             IsCommentingBanned = user.IsCommentingBanned,
         };
+    }
+
+    public override async Task<ToggleCommentSubscriptionResponse> ToggleCommentSubscription(
+        ToggleCommentSubscriptionRequest request, ServerCallContext context)
+    {
+        var ct = context.CancellationToken;
+        var userId = GetUserId(context);
+
+        if (!Guid.TryParse(request.FeedItemId, out var feedItemId))
+            throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid feed_item_id"));
+
+        var existing = await db.CommentSubscriptions
+            .FirstOrDefaultAsync(s => s.UserId == userId && s.FeedItemId == feedItemId, ct);
+
+        if (existing != null)
+        {
+            db.CommentSubscriptions.Remove(existing);
+            await db.SaveChangesAsync(ct);
+            return new ToggleCommentSubscriptionResponse { Subscribed = false };
+        }
+
+        var feedItemExists = await db.FeedItems.AnyAsync(f => f.Id == feedItemId, ct);
+        if (!feedItemExists)
+            throw new RpcException(new Status(StatusCode.NotFound, "Feed item not found"));
+
+        db.CommentSubscriptions.Add(new Entities.CommentSubscription
+        {
+            UserId = userId,
+            FeedItemId = feedItemId,
+        });
+        await db.SaveChangesAsync(ct);
+        return new ToggleCommentSubscriptionResponse { Subscribed = true };
+    }
+
+    private async Task SendCommentNotificationsAsync(
+        Guid feedItemId, string commenterEmail, string articleTitle, string articleUrl, string commentBody)
+    {
+        try
+        {
+            using var scope = scopeFactory.CreateScope();
+            var scopedDb = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            var emailService = scope.ServiceProvider.GetRequiredService<IEmailService>();
+
+            var subscribers = await scopedDb.CommentSubscriptions
+                .AsNoTracking()
+                .Where(s => s.FeedItemId == feedItemId && s.User.Email != commenterEmail)
+                .Include(s => s.User)
+                .Select(s => s.User.Email)
+                .ToListAsync();
+
+            var baseUrl = config["App:BaseUrl"] ?? "http://localhost:5173";
+            var articlePageUrl = $"{baseUrl.TrimEnd('/')}/article/{feedItemId}";
+
+            foreach (var email in subscribers)
+            {
+                try
+                {
+                    await emailService.SendCommentNotificationAsync(
+                        email, commenterEmail, articleTitle, articlePageUrl, commentBody,
+                        CancellationToken.None);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogWarning(ex, "Failed to send comment notification to {Email}", email);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error in SendCommentNotificationsAsync for feed item {FeedItemId}", feedItemId);
+        }
     }
 
     [AllowAnonymous]

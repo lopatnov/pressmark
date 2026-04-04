@@ -5,7 +5,19 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { Ban, Check, Download, Pencil, Plus, RefreshCw, Trash2, Upload, X } from 'lucide-react'
+import {
+  Ban,
+  Bell,
+  BellOff,
+  Check,
+  Download,
+  Pencil,
+  Plus,
+  RefreshCw,
+  Trash2,
+  Upload,
+  X,
+} from 'lucide-react'
 import { Code, ConnectError } from '@connectrpc/connect'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -22,11 +34,13 @@ export function SubscriptionsPage() {
   const { t } = useTranslation(['subscriptions', 'common'])
   const {
     subscriptions,
+    digestEnabled,
     isLoading,
     setSubscriptions,
     addSubscription,
     removeSubscription,
     updateSubscriptionTitle,
+    setDigestEnabled,
     setLoading,
   } = useSubscriptionStore()
   const [showForm, setShowForm] = useState(false)
@@ -59,6 +73,7 @@ export function SubscriptionsPage() {
             isCommunityBanned: s.isCommunityBanned,
           })),
         )
+        setDigestEnabled(res.digestEnabled)
       })
       .finally(() => setLoading(false))
   }, [])
@@ -189,11 +204,35 @@ export function SubscriptionsPage() {
     await subscriptionClient.removeSubscription({ subscriptionId: id }).catch(() => {})
   }
 
+  const handleToggleDigest = async () => {
+    try {
+      const res = await subscriptionClient.toggleDigestSubscription({})
+      setDigestEnabled(res.enabled)
+    } catch {
+      toast.error(t('common:error'))
+    }
+  }
+
   return (
     <div className="mx-auto max-w-2xl space-y-4 p-4">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">{t('subscriptions:title')}</h1>
         <div className="flex gap-2">
+          <Button
+            size="sm"
+            variant={digestEnabled ? 'default' : 'outline'}
+            onClick={handleToggleDigest}
+            title={
+              digestEnabled ? t('subscriptions:digestDisable') : t('subscriptions:digestEnable')
+            }
+          >
+            {digestEnabled ? (
+              <Bell className="mr-1 h-4 w-4" />
+            ) : (
+              <BellOff className="mr-1 h-4 w-4" />
+            )}
+            {t('subscriptions:digest')}
+          </Button>
           <Button size="sm" variant="outline" onClick={handleExport}>
             <Download className="mr-1 h-4 w-4" />
             {t('subscriptions:export')}

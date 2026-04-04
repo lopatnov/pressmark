@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { MessageSquare, Trash2, Flag, Check } from 'lucide-react'
+import { Bell, BellOff, Check, Flag, MessageSquare, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { adminClient, feedClient } from '@/api/clients'
@@ -29,6 +29,7 @@ export function CommentSection({ feedItemId, initiallyOpen = false }: CommentSec
   const [open, setOpen] = useState(initiallyOpen)
   const [loaded, setLoaded] = useState(false)
   const [comments, setComments] = useState<CommentItem[]>([])
+  const [isSubscribed, setIsSubscribed] = useState(false)
   const [body, setBody] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [reportedComments, setReportedComments] = useState<Set<string>>(new Set())
@@ -48,6 +49,7 @@ export function CommentSection({ feedItemId, initiallyOpen = false }: CommentSec
           isCommentingBanned: c.isCommentingBanned,
         })),
       )
+      setIsSubscribed(res.isSubscribed)
       setLoaded(true)
     } catch {
       toast.error(t('comments.loadError'))
@@ -100,6 +102,15 @@ export function CommentSection({ feedItemId, initiallyOpen = false }: CommentSec
     }
   }
 
+  const handleToggleSubscription = async () => {
+    try {
+      const res = await feedClient.toggleCommentSubscription({ feedItemId })
+      setIsSubscribed(res.subscribed)
+    } catch {
+      toast.error(t('common:error'))
+    }
+  }
+
   const handleReport = async (commentId: string) => {
     try {
       await feedClient.reportContent({ type: 'comment', targetId: commentId, reason: reportReason })
@@ -116,14 +127,34 @@ export function CommentSection({ feedItemId, initiallyOpen = false }: CommentSec
 
   return (
     <div className="border-t border-border mt-2 pt-2">
-      <button
-        onClick={handleToggle}
-        className="flex cursor-pointer items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
-        aria-label={t('comments.toggle')}
-      >
-        <MessageSquare className="h-3.5 w-3.5" />
-        {loaded && count > 0 ? t('comments.count', { count }) : t('comments.title')}
-      </button>
+      <div className="flex items-center gap-2">
+        <button
+          onClick={handleToggle}
+          className="flex cursor-pointer items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+          aria-label={t('comments.toggle')}
+        >
+          <MessageSquare className="h-3.5 w-3.5" />
+          {loaded && count > 0 ? t('comments.count', { count }) : t('comments.title')}
+        </button>
+        {isAuthenticated && loaded && (
+          <button
+            onClick={handleToggleSubscription}
+            title={
+              isSubscribed
+                ? t('comments.unsubscribeNotifications')
+                : t('comments.subscribeNotifications')
+            }
+            aria-label={
+              isSubscribed
+                ? t('comments.unsubscribeNotifications')
+                : t('comments.subscribeNotifications')
+            }
+            className="cursor-pointer text-muted-foreground hover:text-foreground transition-colors"
+          >
+            {isSubscribed ? <Bell className="h-3.5 w-3.5" /> : <BellOff className="h-3.5 w-3.5" />}
+          </button>
+        )}
+      </div>
 
       {open && (
         <div className="mt-3 space-y-3">

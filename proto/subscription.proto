@@ -10,8 +10,9 @@ service SubscriptionService {
   rpc AddSubscription    (AddSubscriptionRequest)    returns (Subscription);
   rpc RemoveSubscription (RemoveSubscriptionRequest) returns (google.protobuf.Empty);
   rpc ListSubscriptions  (google.protobuf.Empty)     returns (SubscriptionList);
-  rpc UpdateSubscription (UpdateSubscriptionRequest) returns (Subscription);
-  rpc ImportSubscriptions (ImportSubscriptionsRequest) returns (ImportSubscriptionsResponse);
+  rpc UpdateSubscription       (UpdateSubscriptionRequest)       returns (Subscription);
+  rpc ToggleDigestSubscription (google.protobuf.Empty)           returns (ToggleDigestSubscriptionResponse);
+  rpc ImportSubscriptions      (ImportSubscriptionsRequest)      returns (ImportSubscriptionsResponse);
   rpc ExportSubscriptions (google.protobuf.Empty)      returns (ExportSubscriptionsResponse);
   rpc TriggerFetch       (TriggerFetchRequest)       returns (TriggerFetchResponse);
 }
@@ -42,6 +43,11 @@ message Subscription {
 
 message SubscriptionList {
   repeated Subscription subscriptions = 1;
+  bool                  digest_enabled = 2; // true if the authenticated user has daily digest enabled
+}
+
+message ToggleDigestSubscriptionResponse {
+  bool enabled = 1;
 }
 
 message ImportSubscriptionsRequest {

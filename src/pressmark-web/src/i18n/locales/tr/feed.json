@@ -31,7 +31,9 @@
     "toggle": "Yorumları göster/gizle",
     "loadError": "Yorumlar yüklenemedi",
     "submitError": "Yorum gönderilemedi",
-    "removeError": "Yorum kaldırılamadı"
+    "removeError": "Yorum kaldırılamadı",
+    "subscribeNotifications": "Yorum bildirimlerine abone ol",
+    "unsubscribeNotifications": "Yorum bildirimleri aboneliğini iptal et"
   },
   "report": "Raporla",
   "reportComment": "Yorumu raporla",

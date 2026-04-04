@@ -18,5 +18,8 @@
     "fetchFailed": "Não foi possível buscar o feed RSS"
   },
   "banned": "Banido",
-  "editTitle": "Editar título"
+  "editTitle": "Editar título",
+  "digest": "Digest",
+  "digestEnable": "Ativar o resumo diário",
+  "digestDisable": "Desativar o resumo diário"
 }

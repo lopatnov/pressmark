@@ -18,5 +18,8 @@
     "fetchFailed": "Kunde inte hämta RSS-flöde"
   },
   "banned": "Blockerad",
-  "editTitle": "Redigera titel"
+  "editTitle": "Redigera titel",
+  "digest": "Sammanställning",
+  "digestEnable": "Aktivera daglig sammanställning",
+  "digestDisable": "Avaktivera daglig sammanställning"
 }

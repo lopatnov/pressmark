@@ -31,7 +31,9 @@
     "toggle": "Arată/ascunde comentariile",
     "loadError": "Nu s-au putut încărca comentariile",
     "submitError": "Nu s-a putut trimite comentariul",
-    "removeError": "Nu s-a putut elimina comentariul"
+    "removeError": "Nu s-a putut elimina comentariul",
+    "subscribeNotifications": "Abonarea la notificările de comentarii",
+    "unsubscribeNotifications": "Desabonarea de la notificările de comentarii"
   },
   "report": "Raportează",
   "reportComment": "Raportează comentariu",

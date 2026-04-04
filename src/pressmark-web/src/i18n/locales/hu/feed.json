@@ -31,7 +31,9 @@
     "toggle": "Hozzászólások megjelenítése/elrejtése",
     "loadError": "Nem sikerült betölteni a hozzászólásokat",
     "submitError": "Nem sikerült elküldeni a hozzászólást",
-    "removeError": "Nem sikerült eltávolítani a hozzászólást"
+    "removeError": "Nem sikerült eltávolítani a hozzászólást",
+    "subscribeNotifications": "Feliratkozás a hozzászólás értesítésekre",
+    "unsubscribeNotifications": "Leiratkozás a hozzászólás értesítésekről"
   },
   "report": "Bejelentés",
   "reportComment": "Megjegyzés bejelentése",
