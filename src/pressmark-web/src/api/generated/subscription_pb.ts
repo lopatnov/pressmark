@@ -12,7 +12,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file subscription.proto.
  */
 export const file_subscription: GenFile = /*@__PURE__*/
-  fileDesc("ChJzdWJzY3JpcHRpb24ucHJvdG8SFnByZXNzbWFyay5zdWJzY3JpcHRpb24iOAoWQWRkU3Vic2NyaXB0aW9uUmVxdWVzdBIPCgdyc3NfdXJsGAEgASgJEg0KBXRpdGxlGAIgASgJIjQKGVJlbW92ZVN1YnNjcmlwdGlvblJlcXVlc3QSFwoPc3Vic2NyaXB0aW9uX2lkGAEgASgJIkoKGVVwZGF0ZVN1YnNjcmlwdGlvblJlcXVlc3QSFwoPc3Vic2NyaXB0aW9uX2lkGAEgASgJEhQKDGRpc3BsYXlfbmFtZRgCIAEoCSKVAQoMU3Vic2NyaXB0aW9uEgoKAmlkGAEgASgJEg8KB3VzZXJfaWQYAiABKAkSDwoHcnNzX3VybBgDIAEoCRINCgV0aXRsZRgEIAEoCRIXCg9sYXN0X2ZldGNoZWRfYXQYBSABKAkSEgoKY3JlYXRlZF9hdBgGIAEoCRIbChNpc19jb21tdW5pdHlfYmFubmVkGAcgASgIIk8KEFN1YnNjcmlwdGlvbkxpc3QSOwoNc3Vic2NyaXB0aW9ucxgBIAMoCzIkLnByZXNzbWFyay5zdWJzY3JpcHRpb24uU3Vic2NyaXB0aW9uIjIKGkltcG9ydFN1YnNjcmlwdGlvbnNSZXF1ZXN0EhQKDG9wbWxfY29udGVudBgBIAEoCSJAChtJbXBvcnRTdWJzY3JpcHRpb25zUmVzcG9uc2USEAoIaW1wb3J0ZWQYASABKAUSDwoHc2tpcHBlZBgCIAEoBSIzChtFeHBvcnRTdWJzY3JpcHRpb25zUmVzcG9uc2USFAoMb3BtbF9jb250ZW50GAEgASgJIi4KE1RyaWdnZXJGZXRjaFJlcXVlc3QSFwoPc3Vic2NyaXB0aW9uX2lkGAEgASgJIikKFFRyaWdnZXJGZXRjaFJlc3BvbnNlEhEKCW5ld19pdGVtcxgBIAEoBTL0BQoTU3Vic2NyaXB0aW9uU2VydmljZRJnCg9BZGRTdWJzY3JpcHRpb24SLi5wcmVzc21hcmsuc3Vic2NyaXB0aW9uLkFkZFN1YnNjcmlwdGlvblJlcXVlc3QaJC5wcmVzc21hcmsuc3Vic2NyaXB0aW9uLlN1YnNjcmlwdGlvbhJfChJSZW1vdmVTdWJzY3JpcHRpb24SMS5wcmVzc21hcmsuc3Vic2NyaXB0aW9uLlJlbW92ZVN1YnNjcmlwdGlvblJlcXVlc3QaFi5nb29nbGUucHJvdG9idWYuRW1wdHkSVQoRTGlzdFN1YnNjcmlwdGlvbnMSFi5nb29nbGUucHJvdG9idWYuRW1wdHkaKC5wcmVzc21hcmsuc3Vic2NyaXB0aW9uLlN1YnNjcmlwdGlvbkxpc3QSbQoSVXBkYXRlU3Vic2NyaXB0aW9uEjEucHJlc3NtYXJrLnN1YnNjcmlwdGlvbi5VcGRhdGVTdWJzY3JpcHRpb25SZXF1ZXN0GiQucHJlc3NtYXJrLnN1YnNjcmlwdGlvbi5TdWJzY3JpcHRpb24SfgoTSW1wb3J0U3Vic2NyaXB0aW9ucxIyLnByZXNzbWFyay5zdWJzY3JpcHRpb24uSW1wb3J0U3Vic2NyaXB0aW9uc1JlcXVlc3QaMy5wcmVzc21hcmsuc3Vic2NyaXB0aW9uLkltcG9ydFN1YnNjcmlwdGlvbnNSZXNwb25zZRJiChNFeHBvcnRTdWJzY3JpcHRpb25zEhYuZ29vZ2xlLnByb3RvYnVmLkVtcHR5GjMucHJlc3NtYXJrLnN1YnNjcmlwdGlvbi5FeHBvcnRTdWJzY3JpcHRpb25zUmVzcG9uc2USaQoMVHJpZ2dlckZldGNoEisucHJlc3NtYXJrLnN1YnNjcmlwdGlvbi5UcmlnZ2VyRmV0Y2hSZXF1ZXN0GiwucHJlc3NtYXJrLnN1YnNjcmlwdGlvbi5UcmlnZ2VyRmV0Y2hSZXNwb25zZUIXqgIUUHJlc3NtYXJrLkFwaS5Qcm90b3NiBnByb3RvMw", [file_google_protobuf_empty]);
+  fileDesc("ChJzdWJzY3JpcHRpb24ucHJvdG8SFnByZXNzbWFyay5zdWJzY3JpcHRpb24iOAoWQWRkU3Vic2NyaXB0aW9uUmVxdWVzdBIPCgdyc3NfdXJsGAEgASgJEg0KBXRpdGxlGAIgASgJIjQKGVJlbW92ZVN1YnNjcmlwdGlvblJlcXVlc3QSFwoPc3Vic2NyaXB0aW9uX2lkGAEgASgJIkoKGVVwZGF0ZVN1YnNjcmlwdGlvblJlcXVlc3QSFwoPc3Vic2NyaXB0aW9uX2lkGAEgASgJEhQKDGRpc3BsYXlfbmFtZRgCIAEoCSKVAQoMU3Vic2NyaXB0aW9uEgoKAmlkGAEgASgJEg8KB3VzZXJfaWQYAiABKAkSDwoHcnNzX3VybBgDIAEoCRINCgV0aXRsZRgEIAEoCRIXCg9sYXN0X2ZldGNoZWRfYXQYBSABKAkSEgoKY3JlYXRlZF9hdBgGIAEoCRIbChNpc19jb21tdW5pdHlfYmFubmVkGAcgASgIImcKEFN1YnNjcmlwdGlvbkxpc3QSOwoNc3Vic2NyaXB0aW9ucxgBIAMoCzIkLnByZXNzbWFyay5zdWJzY3JpcHRpb24uU3Vic2NyaXB0aW9uEhYKDmRpZ2VzdF9lbmFibGVkGAIgASgIIjMKIFRvZ2dsZURpZ2VzdFN1YnNjcmlwdGlvblJlc3BvbnNlEg8KB2VuYWJsZWQYASABKAgiMgoaSW1wb3J0U3Vic2NyaXB0aW9uc1JlcXVlc3QSFAoMb3BtbF9jb250ZW50GAEgASgJIkAKG0ltcG9ydFN1YnNjcmlwdGlvbnNSZXNwb25zZRIQCghpbXBvcnRlZBgBIAEoBRIPCgdza2lwcGVkGAIgASgFIjMKG0V4cG9ydFN1YnNjcmlwdGlvbnNSZXNwb25zZRIUCgxvcG1sX2NvbnRlbnQYASABKAkiLgoTVHJpZ2dlckZldGNoUmVxdWVzdBIXCg9zdWJzY3JpcHRpb25faWQYASABKAkiKQoUVHJpZ2dlckZldGNoUmVzcG9uc2USEQoJbmV3X2l0ZW1zGAEgASgFMuIGChNTdWJzY3JpcHRpb25TZXJ2aWNlEmcKD0FkZFN1YnNjcmlwdGlvbhIuLnByZXNzbWFyay5zdWJzY3JpcHRpb24uQWRkU3Vic2NyaXB0aW9uUmVxdWVzdBokLnByZXNzbWFyay5zdWJzY3JpcHRpb24uU3Vic2NyaXB0aW9uEl8KElJlbW92ZVN1YnNjcmlwdGlvbhIxLnByZXNzbWFyay5zdWJzY3JpcHRpb24uUmVtb3ZlU3Vic2NyaXB0aW9uUmVxdWVzdBoWLmdvb2dsZS5wcm90b2J1Zi5FbXB0eRJVChFMaXN0U3Vic2NyaXB0aW9ucxIWLmdvb2dsZS5wcm90b2J1Zi5FbXB0eRooLnByZXNzbWFyay5zdWJzY3JpcHRpb24uU3Vic2NyaXB0aW9uTGlzdBJtChJVcGRhdGVTdWJzY3JpcHRpb24SMS5wcmVzc21hcmsuc3Vic2NyaXB0aW9uLlVwZGF0ZVN1YnNjcmlwdGlvblJlcXVlc3QaJC5wcmVzc21hcmsuc3Vic2NyaXB0aW9uLlN1YnNjcmlwdGlvbhJsChhUb2dnbGVEaWdlc3RTdWJzY3JpcHRpb24SFi5nb29nbGUucHJvdG9idWYuRW1wdHkaOC5wcmVzc21hcmsuc3Vic2NyaXB0aW9uLlRvZ2dsZURpZ2VzdFN1YnNjcmlwdGlvblJlc3BvbnNlEn4KE0ltcG9ydFN1YnNjcmlwdGlvbnMSMi5wcmVzc21hcmsuc3Vic2NyaXB0aW9uLkltcG9ydFN1YnNjcmlwdGlvbnNSZXF1ZXN0GjMucHJlc3NtYXJrLnN1YnNjcmlwdGlvbi5JbXBvcnRTdWJzY3JpcHRpb25zUmVzcG9uc2USYgoTRXhwb3J0U3Vic2NyaXB0aW9ucxIWLmdvb2dsZS5wcm90b2J1Zi5FbXB0eRozLnByZXNzbWFyay5zdWJzY3JpcHRpb24uRXhwb3J0U3Vic2NyaXB0aW9uc1Jlc3BvbnNlEmkKDFRyaWdnZXJGZXRjaBIrLnByZXNzbWFyay5zdWJzY3JpcHRpb24uVHJpZ2dlckZldGNoUmVxdWVzdBosLnByZXNzbWFyay5zdWJzY3JpcHRpb24uVHJpZ2dlckZldGNoUmVzcG9uc2VCF6oCFFByZXNzbWFyay5BcGkuUHJvdG9zYgZwcm90bzM", [file_google_protobuf_empty]);
 
 /**
  * @generated from message pressmark.subscription.AddSubscriptionRequest
@@ -130,6 +130,13 @@ export type SubscriptionList = Message<"pressmark.subscription.SubscriptionList"
    * @generated from field: repeated pressmark.subscription.Subscription subscriptions = 1;
    */
   subscriptions: Subscription[];
+
+  /**
+   * true if the authenticated user has daily digest enabled
+   *
+   * @generated from field: bool digest_enabled = 2;
+   */
+  digestEnabled: boolean;
 };
 
 /**
@@ -138,6 +145,23 @@ export type SubscriptionList = Message<"pressmark.subscription.SubscriptionList"
  */
 export const SubscriptionListSchema: GenMessage<SubscriptionList> = /*@__PURE__*/
   messageDesc(file_subscription, 4);
+
+/**
+ * @generated from message pressmark.subscription.ToggleDigestSubscriptionResponse
+ */
+export type ToggleDigestSubscriptionResponse = Message<"pressmark.subscription.ToggleDigestSubscriptionResponse"> & {
+  /**
+   * @generated from field: bool enabled = 1;
+   */
+  enabled: boolean;
+};
+
+/**
+ * Describes the message pressmark.subscription.ToggleDigestSubscriptionResponse.
+ * Use `create(ToggleDigestSubscriptionResponseSchema)` to create a new message.
+ */
+export const ToggleDigestSubscriptionResponseSchema: GenMessage<ToggleDigestSubscriptionResponse> = /*@__PURE__*/
+  messageDesc(file_subscription, 5);
 
 /**
  * @generated from message pressmark.subscription.ImportSubscriptionsRequest
@@ -154,7 +178,7 @@ export type ImportSubscriptionsRequest = Message<"pressmark.subscription.ImportS
  * Use `create(ImportSubscriptionsRequestSchema)` to create a new message.
  */
 export const ImportSubscriptionsRequestSchema: GenMessage<ImportSubscriptionsRequest> = /*@__PURE__*/
-  messageDesc(file_subscription, 5);
+  messageDesc(file_subscription, 6);
 
 /**
  * @generated from message pressmark.subscription.ImportSubscriptionsResponse
@@ -176,7 +200,7 @@ export type ImportSubscriptionsResponse = Message<"pressmark.subscription.Import
  * Use `create(ImportSubscriptionsResponseSchema)` to create a new message.
  */
 export const ImportSubscriptionsResponseSchema: GenMessage<ImportSubscriptionsResponse> = /*@__PURE__*/
-  messageDesc(file_subscription, 6);
+  messageDesc(file_subscription, 7);
 
 /**
  * @generated from message pressmark.subscription.ExportSubscriptionsResponse
@@ -193,7 +217,7 @@ export type ExportSubscriptionsResponse = Message<"pressmark.subscription.Export
  * Use `create(ExportSubscriptionsResponseSchema)` to create a new message.
  */
 export const ExportSubscriptionsResponseSchema: GenMessage<ExportSubscriptionsResponse> = /*@__PURE__*/
-  messageDesc(file_subscription, 7);
+  messageDesc(file_subscription, 8);
 
 /**
  * @generated from message pressmark.subscription.TriggerFetchRequest
@@ -210,7 +234,7 @@ export type TriggerFetchRequest = Message<"pressmark.subscription.TriggerFetchRe
  * Use `create(TriggerFetchRequestSchema)` to create a new message.
  */
 export const TriggerFetchRequestSchema: GenMessage<TriggerFetchRequest> = /*@__PURE__*/
-  messageDesc(file_subscription, 8);
+  messageDesc(file_subscription, 9);
 
 /**
  * @generated from message pressmark.subscription.TriggerFetchResponse
@@ -227,7 +251,7 @@ export type TriggerFetchResponse = Message<"pressmark.subscription.TriggerFetchR
  * Use `create(TriggerFetchResponseSchema)` to create a new message.
  */
 export const TriggerFetchResponseSchema: GenMessage<TriggerFetchResponse> = /*@__PURE__*/
-  messageDesc(file_subscription, 9);
+  messageDesc(file_subscription, 10);
 
 /**
  * @generated from service pressmark.subscription.SubscriptionService
@@ -264,6 +288,14 @@ export const SubscriptionService: GenService<{
     methodKind: "unary";
     input: typeof UpdateSubscriptionRequestSchema;
     output: typeof SubscriptionSchema;
+  },
+  /**
+   * @generated from rpc pressmark.subscription.SubscriptionService.ToggleDigestSubscription
+   */
+  toggleDigestSubscription: {
+    methodKind: "unary";
+    input: typeof EmptySchema;
+    output: typeof ToggleDigestSubscriptionResponseSchema;
   },
   /**
    * @generated from rpc pressmark.subscription.SubscriptionService.ImportSubscriptions
