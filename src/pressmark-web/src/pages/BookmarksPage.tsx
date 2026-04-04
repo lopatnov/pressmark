@@ -28,7 +28,7 @@ export function BookmarksPage() {
 
   const [items, setItems] = useState<BookmarkItem[]>([])
   const [nextCursor, setNextCursor] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
 
   const loadBookmarks = useCallback(
     async (cursor = '') => {
