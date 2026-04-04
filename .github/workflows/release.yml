@@ -102,7 +102,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Scan API image
-        uses: aquasecurity/trivy-action@0.29.0
+        uses: aquasecurity/trivy-action@0.35.0
         with:
           image-ref: ${{ env.API_IMAGE }}:${{ needs.build-api.outputs.version }}
           format: table
@@ -112,7 +112,7 @@ jobs:
           severity: CRITICAL,HIGH
 
       - name: Scan Web image
-        uses: aquasecurity/trivy-action@0.29.0
+        uses: aquasecurity/trivy-action@0.35.0
         with:
           image-ref: ${{ env.WEB_IMAGE }}:${{ needs.build-web.outputs.version }}
           format: table
