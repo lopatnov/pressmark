@@ -41,13 +41,15 @@ export function LoginPage() {
       })
       navigate('/feed')
     } catch (err) {
-      const isSiteBanned =
-        err instanceof ConnectError &&
-        err.code === Code.PermissionDenied &&
-        err.rawMessage === 'account_banned'
-      setError('root', {
-        message: t(isSiteBanned ? 'errors.accountBanned' : 'errors.invalidCredentials'),
-      })
+      let key = 'errors.invalidCredentials'
+      if (err instanceof ConnectError) {
+        if (err.code === Code.PermissionDenied && err.rawMessage === 'account_banned') {
+          key = 'errors.accountBanned'
+        } else if (err.code === Code.ResourceExhausted) {
+          key = 'errors.tooManyRequests'
+        }
+      }
+      setError('root', { message: t(key) })
     }
   }
 
