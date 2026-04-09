@@ -5,7 +5,7 @@ RUN npm ci
 COPY src/pressmark-web/ .
 RUN npm run build
 
-FROM nginx:1.29-alpine
+FROM nginx:1.29.7-alpine3.23-slim
 RUN apk upgrade --no-cache
 COPY --from=build /app/dist /usr/share/nginx/html
 COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf
