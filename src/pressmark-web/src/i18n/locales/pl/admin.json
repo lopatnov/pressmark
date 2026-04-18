@@ -110,6 +110,7 @@
     "expiry30Days": "30 dni",
     "expiryNone": "Bez limitu",
     "sendNotification": "Wyślij powiadomienie",
-    "notifyEmailPlaceholder": "Adres e-mail"
+    "notifyEmailPlaceholder": "Adres e-mail",
+    "expiryLabel": "Wygaśnięcie"
   }
 }

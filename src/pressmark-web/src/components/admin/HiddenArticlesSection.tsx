@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { adminClient } from '@/api/clients'
 import { toast } from 'sonner'
+import { AdminPagination } from './AdminPagination'
+import { AdminSkeletonRows } from './AdminSkeletonRows'
 
 const PAGE_SIZE = 20
 
@@ -58,83 +60,71 @@ export default function HiddenArticlesSection() {
     load(p)
   }
 
+  const renderContent = () => {
+    if (loading) {
+      return (
+        <AdminSkeletonRows>
+          {(key) => (
+            <div key={key} className="flex items-center justify-between px-4 py-3">
+              <div className="space-y-1.5">
+                <Skeleton className="h-4 w-52" />
+                <Skeleton className="h-3 w-24" />
+              </div>
+              <Skeleton className="h-8 w-16" />
+            </div>
+          )}
+        </AdminSkeletonRows>
+      )
+    }
+    if (hiddenItems.length === 0) {
+      return (
+        <p className="px-4 py-6 text-center text-sm text-muted-foreground">
+          {t('admin:moderation.noHiddenArticles')}
+        </p>
+      )
+    }
+    return (
+      <table className="w-full text-sm">
+        <tbody>
+          {hiddenItems.map((item) => (
+            <tr key={item.id} className="border-b border-border last:border-0">
+              <td className="px-4 py-2">
+                <div className="flex items-start gap-1.5">
+                  <a
+                    href={item.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-medium hover:underline line-clamp-2"
+                  >
+                    {item.title}
+                  </a>
+                  <Link
+                    to={`/article/${item.id}`}
+                    title={t('admin:moderation.openArticle')}
+                    className="mt-0.5 shrink-0 text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <ExternalLink className="h-3.5 w-3.5" />
+                  </Link>
+                </div>
+                <p className="text-xs text-muted-foreground">{item.sourceTitle}</p>
+              </td>
+              <td className="px-4 py-2 text-right">
+                <Button size="sm" variant="outline" onClick={() => handleUnhide(item.id)}>
+                  {t('admin:moderation.unhide')}
+                </Button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    )
+  }
+
   return (
     <section className="space-y-3">
       <h2 className="text-base font-semibold">{t('admin:moderation.hiddenArticles')}</h2>
-      <div className="rounded-lg border border-border">
-        {loading ? (
-          <div className="divide-y divide-border">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="flex items-center justify-between px-4 py-3">
-                <div className="space-y-1.5">
-                  <Skeleton className="h-4 w-52" />
-                  <Skeleton className="h-3 w-24" />
-                </div>
-                <Skeleton className="h-8 w-16" />
-              </div>
-            ))}
-          </div>
-        ) : hiddenItems.length === 0 ? (
-          <p className="px-4 py-6 text-center text-sm text-muted-foreground">
-            {t('admin:moderation.noHiddenArticles')}
-          </p>
-        ) : (
-          <table className="w-full text-sm">
-            <tbody>
-              {hiddenItems.map((item) => (
-                <tr key={item.id} className="border-b border-border last:border-0">
-                  <td className="px-4 py-2">
-                    <div className="flex items-start gap-1.5">
-                      <a
-                        href={item.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="font-medium hover:underline line-clamp-2"
-                      >
-                        {item.title}
-                      </a>
-                      <Link
-                        to={`/article/${item.id}`}
-                        title={t('admin:moderation.openArticle')}
-                        className="mt-0.5 shrink-0 text-muted-foreground hover:text-foreground transition-colors"
-                      >
-                        <ExternalLink className="h-3.5 w-3.5" />
-                      </Link>
-                    </div>
-                    <p className="text-xs text-muted-foreground">{item.sourceTitle}</p>
-                  </td>
-                  <td className="px-4 py-2 text-right">
-                    <Button size="sm" variant="outline" onClick={() => handleUnhide(item.id)}>
-                      {t('admin:moderation.unhide')}
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
-      {totalPages > 1 && (
-        <div className="flex items-center justify-between text-sm text-muted-foreground">
-          <Button
-            size="sm"
-            variant="outline"
-            disabled={page === 0 || loading}
-            onClick={() => handlePage(page - 1)}
-          >
-            {t('admin:pagination.prev')}
-          </Button>
-          <span>{t('admin:pagination.pageOf', { page: page + 1, total: totalPages })}</span>
-          <Button
-            size="sm"
-            variant="outline"
-            disabled={page >= totalPages - 1 || loading}
-            onClick={() => handlePage(page + 1)}
-          >
-            {t('admin:pagination.next')}
-          </Button>
-        </div>
-      )}
+      <div className="rounded-lg border border-border">{renderContent()}</div>
+      <AdminPagination page={page} totalPages={totalPages} loading={loading} onPage={handlePage} />
     </section>
   )
 }

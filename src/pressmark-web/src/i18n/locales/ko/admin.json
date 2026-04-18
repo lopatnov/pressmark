@@ -110,6 +110,7 @@
     "expiry30Days": "30일",
     "expiryNone": "만료 없음",
     "sendNotification": "알림 보내기",
-    "notifyEmailPlaceholder": "이메일 주소"
+    "notifyEmailPlaceholder": "이메일 주소",
+    "expiryLabel": "만료"
   }
 }

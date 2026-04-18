@@ -110,6 +110,7 @@
     "expiry30Days": "30 dní",
     "expiryNone": "Bez platnosti",
     "sendNotification": "Odeslat oznámení",
-    "notifyEmailPlaceholder": "E-mailová adresa"
+    "notifyEmailPlaceholder": "E-mailová adresa",
+    "expiryLabel": "Expirace"
   }
 }

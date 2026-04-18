@@ -110,6 +110,7 @@
     "expiry30Days": "30 giorni",
     "expiryNone": "Senza scadenza",
     "sendNotification": "Invia notifica",
-    "notifyEmailPlaceholder": "Indirizzo e-mail"
+    "notifyEmailPlaceholder": "Indirizzo e-mail",
+    "expiryLabel": "Scadenza"
   }
 }

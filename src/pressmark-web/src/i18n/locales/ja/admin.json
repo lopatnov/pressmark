@@ -110,6 +110,7 @@
     "expiry30Days": "30日",
     "expiryNone": "無期限",
     "sendNotification": "通知を送る",
-    "notifyEmailPlaceholder": "メールアドレス"
+    "notifyEmailPlaceholder": "メールアドレス",
+    "expiryLabel": "期限切れ"
   }
 }

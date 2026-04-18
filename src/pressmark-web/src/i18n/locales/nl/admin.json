@@ -110,6 +110,7 @@
     "expiry30Days": "30 dagen",
     "expiryNone": "Geen vervaldatum",
     "sendNotification": "Kennisgeving verzenden",
-    "notifyEmailPlaceholder": "E-mailadres"
+    "notifyEmailPlaceholder": "E-mailadres",
+    "expiryLabel": "Vervaldatum"
   }
 }

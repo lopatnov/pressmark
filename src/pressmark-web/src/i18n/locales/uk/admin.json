@@ -110,6 +110,7 @@
     "expiry30Days": "30 днів",
     "expiryNone": "Без терміну",
     "sendNotification": "Надіслати сповіщення",
-    "notifyEmailPlaceholder": "Адреса електронної пошти"
+    "notifyEmailPlaceholder": "Адреса електронної пошти",
+    "expiryLabel": "Закінчення терміну дії"
   }
 }

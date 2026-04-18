@@ -110,6 +110,7 @@
     "expiry30Days": "30 gün",
     "expiryNone": "Süresiz",
     "sendNotification": "Bildirim gönder",
-    "notifyEmailPlaceholder": "E-posta adresi"
+    "notifyEmailPlaceholder": "E-posta adresi",
+    "expiryLabel": "Son kullanma tarihi"
   }
 }

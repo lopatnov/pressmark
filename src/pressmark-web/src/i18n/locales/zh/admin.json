@@ -110,6 +110,7 @@
     "expiry30Days": "30天",
     "expiryNone": "永不过期",
     "sendNotification": "发送通知",
-    "notifyEmailPlaceholder": "电子邮件地址"
+    "notifyEmailPlaceholder": "电子邮件地址",
+    "expiryLabel": "到期"
   }
 }
