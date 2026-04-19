@@ -12,6 +12,7 @@ export function RootLayout() {
   const setRegistrationMode = useAuthStore((s) => s.setRegistrationMode)
   const setCommunityWindowDays = useAuthStore((s) => s.setCommunityWindowDays)
   const setCommentsEnabled = useAuthStore((s) => s.setCommentsEnabled)
+  const setCommunityPageEnabled = useAuthStore((s) => s.setCommunityPageEnabled)
 
   useEffect(() => {
     authClient
@@ -20,6 +21,7 @@ export function RootLayout() {
         setRegistrationMode(res.registrationMode as 'open' | 'invite_only')
         if (res.communityWindowDays > 0) setCommunityWindowDays(res.communityWindowDays)
         setCommentsEnabled(res.commentsEnabled)
+        setCommunityPageEnabled(res.communityPageEnabled)
       })
       .catch(() => {})
 

@@ -176,6 +176,11 @@ export type RegistrationStatus = Message<"pressmark.auth.RegistrationStatus"> & 
    * @generated from field: bool comments_enabled = 4;
    */
   commentsEnabled: boolean;
+
+  /**
+   * @generated from field: bool community_page_enabled = 5;
+   */
+  communityPageEnabled: boolean;
 };
 
 /**

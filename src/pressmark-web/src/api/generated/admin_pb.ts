@@ -80,6 +80,11 @@ export type SiteSettings = Message<"pressmark.admin.SiteSettings"> & {
    * @generated from field: int32 feed_retention_days = 11;
    */
   feedRetentionDays: number;
+
+  /**
+   * @generated from field: bool community_page_enabled = 12;
+   */
+  communityPageEnabled: boolean;
 };
 
 /**

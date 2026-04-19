@@ -6,6 +6,7 @@ import { RootLayout } from '@/components/layout/RootLayout'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { ProtectedRoute } from './ProtectedRoute'
 import { AdminRoute } from './AdminRoute'
+import { CommunityRoute } from './CommunityRoute'
 import { Skeleton } from '@/components/ui/skeleton'
 
 // Public pages (keep synchronous for fast initial load)
@@ -77,7 +78,10 @@ export const router = createBrowserRouter([
       {
         element: <AppLayout />,
         children: [
-          { path: '/', element: <CommunityPageWithSuspense /> },
+          {
+            element: <CommunityRoute />,
+            children: [{ path: '/', element: <CommunityPageWithSuspense /> }],
+          },
           { path: '/article/:id', element: <ArticlePageWithSuspense /> },
           {
             element: <ProtectedRoute />,

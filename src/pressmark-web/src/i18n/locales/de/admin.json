@@ -16,6 +16,7 @@
     "smtpPasswordPlaceholder": "Leer lassen, um das aktuelle beizubehalten",
     "smtpUseTls": "TLS verwenden (STARTTLS)",
     "smtpFromAddress": "Absenderadresse",
+    "communityPageEnabled": "Aktivieren Sie die Gemeinschaftsseite",
     "commentsEnabled": "Kommentare aktivieren",
     "feedRetentionDays": "Aufbewahrung des Newsfeeds (Tage)",
     "oldFeedsCleared": "Alte Feeds erfolgreich gelöscht",

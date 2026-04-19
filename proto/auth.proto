@@ -50,4 +50,5 @@ message RegistrationStatus {
   string registration_mode     = 2;  // "open" | "invite_only"
   int32  community_window_days = 3;
   bool   comments_enabled      = 4;
+  bool   community_page_enabled = 5; // default true
 }

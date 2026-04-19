@@ -20,6 +20,7 @@ const settingsSchema = z.object({
   smtpFromAddress: z.string(),
   commentsEnabled: z.boolean(),
   feedRetentionDays: z.number().int().min(1).max(3650),
+  communityPageEnabled: z.boolean(),
 })
 type SettingsForm = z.infer<typeof settingsSchema>
 
@@ -58,6 +59,7 @@ export default function SiteSettingsSection() {
           smtpFromAddress: data.smtpFromAddress,
           commentsEnabled: data.commentsEnabled,
           feedRetentionDays: data.feedRetentionDays,
+          communityPageEnabled: data.communityPageEnabled,
         },
       })
       setSettings(data)
@@ -178,7 +180,11 @@ export default function SiteSettingsSection() {
           </label>
         </div>
 
-        <div className="border-t border-border pt-3">
+        <div className="border-t border-border pt-3 space-y-2">
+          <label className="flex items-center gap-2 text-sm font-medium cursor-pointer">
+            <input {...register('communityPageEnabled')} type="checkbox" className="h-4 w-4" />
+            {t('admin:settings.communityPageEnabled')}
+          </label>
           <label className="flex items-center gap-2 text-sm font-medium cursor-pointer">
             <input {...register('commentsEnabled')} type="checkbox" className="h-4 w-4" />
             {t('admin:settings.commentsEnabled')}

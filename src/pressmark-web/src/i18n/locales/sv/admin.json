@@ -16,6 +16,7 @@
     "smtpPasswordPlaceholder": "Lämna tomt för att behålla nuvarande",
     "smtpUseTls": "Använd TLS (STARTTLS)",
     "smtpFromAddress": "Avsändaradress",
+    "communityPageEnabled": "Aktivera community-sida",
     "commentsEnabled": "Aktivera kommentarer",
     "feedRetentionDays": "Flödeslagring (dagar)",
     "oldFeedsCleared": "Gamla flöden rensades framgångsrikt",

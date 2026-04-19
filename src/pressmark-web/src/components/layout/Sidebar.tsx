@@ -57,6 +57,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           smtpFromAddress: res.smtpFromAddress,
           commentsEnabled: res.commentsEnabled,
           feedRetentionDays: res.feedRetentionDays || 30,
+          communityPageEnabled: res.communityPageEnabled,
         })
       })
       .catch(() => {})

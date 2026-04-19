@@ -16,6 +16,7 @@
     "smtpPasswordPlaceholder": "Hagyja üresen a megtartáshoz",
     "smtpUseTls": "TLS használata (STARTTLS)",
     "smtpFromAddress": "Feladó címe",
+    "communityPageEnabled": "Közösségi oldal engedélyezése",
     "commentsEnabled": "Hozzászólások engedélyezése",
     "feedRetentionDays": "Hírfolyam megtartása (napok)",
     "oldFeedsCleared": "Régi hírfolyamok sikeresen törölve",

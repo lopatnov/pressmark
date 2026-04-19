@@ -13,6 +13,7 @@ interface SiteSettings {
   smtpFromAddress: string
   commentsEnabled: boolean
   feedRetentionDays: number
+  communityPageEnabled: boolean
 }
 
 interface UserInfo {

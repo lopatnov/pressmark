@@ -45,6 +45,7 @@ export function AdminPage() {
           smtpFromAddress: res.smtpFromAddress,
           commentsEnabled: res.commentsEnabled,
           feedRetentionDays: res.feedRetentionDays || 90,
+          communityPageEnabled: res.communityPageEnabled,
         }),
       )
       .catch(() => toast.error(t('common:error')))

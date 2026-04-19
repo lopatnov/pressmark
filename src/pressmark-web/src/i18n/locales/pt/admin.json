@@ -16,6 +16,7 @@
     "smtpPasswordPlaceholder": "Deixe em branco para manter o atual",
     "smtpUseTls": "Usar TLS (STARTTLS)",
     "smtpFromAddress": "Endereço de remetente",
+    "communityPageEnabled": "Ativar a página da comunidade",
     "commentsEnabled": "Habilitar comentários",
     "feedRetentionDays": "Retenção de feeds (dias)",
     "oldFeedsCleared": "Feeds antigos limpos com sucesso",

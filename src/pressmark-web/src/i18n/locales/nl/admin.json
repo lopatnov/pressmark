@@ -16,6 +16,7 @@
     "smtpPasswordPlaceholder": "Leeg laten om huidig te behouden",
     "smtpUseTls": "TLS gebruiken (STARTTLS)",
     "smtpFromAddress": "Afzenderadres",
+    "communityPageEnabled": "Pagina voor gemeenschap inschakelen",
     "commentsEnabled": "Reacties inschakelen",
     "feedRetentionDays": "Nieuwsfeed bewaring (dagen)",
     "oldFeedsCleared": "Oude feeds succesvol gewist",

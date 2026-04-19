@@ -16,6 +16,7 @@
     "smtpPasswordPlaceholder": "留空保持当前密码",
     "smtpUseTls": "使用 TLS（STARTTLS）",
     "smtpFromAddress": "发件人地址",
+    "communityPageEnabled": "启用社区页面",
     "commentsEnabled": "启用评论",
     "feedRetentionDays": "新闻源保留时间（天数）",
     "oldFeedsCleared": "旧源已成功清除",

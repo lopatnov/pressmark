@@ -16,6 +16,7 @@
     "smtpPasswordPlaceholder": "Mevcut şifreyi korumak için boş bırakın",
     "smtpUseTls": "TLS kullan (STARTTLS)",
     "smtpFromAddress": "Gönderen adresi",
+    "communityPageEnabled": "Topluluk sayfasını etkinleştirin",
     "commentsEnabled": "Yorumları etkinleştir",
     "feedRetentionDays": "Besleme saklama süresi (gün)",
     "oldFeedsCleared": "Eski beslemeler başarıyla temizlendi",

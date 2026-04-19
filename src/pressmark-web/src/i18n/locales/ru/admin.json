@@ -16,6 +16,7 @@
     "smtpPasswordPlaceholder": "Оставьте пустым для сохранения текущего",
     "smtpUseTls": "Использовать TLS (STARTTLS)",
     "smtpFromAddress": "Адрес отправителя",
+    "communityPageEnabled": "Включить страницу сообщества",
     "commentsEnabled": "Включить комментарии",
     "feedRetentionDays": "Хранение ленты (дней)",
     "oldFeedsCleared": "Старые фиды очищены успешно",

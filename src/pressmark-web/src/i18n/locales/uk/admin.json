@@ -16,6 +16,7 @@
     "smtpPasswordPlaceholder": "Залиште порожнім для збереження поточного",
     "smtpUseTls": "Використовувати TLS (STARTTLS)",
     "smtpFromAddress": "Адреса відправника",
+    "communityPageEnabled": "Увімкнути сторінку спільноти",
     "commentsEnabled": "Увімкнути коментарі",
     "feedRetentionDays": "Збереження стрічки новин (дні)",
     "oldFeedsCleared": "Старі стрічки успішно очищено",
