@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { adminClient } from '@/api/clients'
 import { useAdminStore } from '@/store/adminStore'
+import { useAuthStore } from '@/store/authStore'
 import { toast } from 'sonner'
 
 const settingsSchema = z.object({
@@ -27,6 +28,8 @@ type SettingsForm = z.infer<typeof settingsSchema>
 export default function SiteSettingsSection() {
   const { t } = useTranslation(['admin', 'common'])
   const { settings, setSettings } = useAdminStore()
+  const setCommunityPageEnabled = useAuthStore((s) => s.setCommunityPageEnabled)
+  const setCommentsEnabled = useAuthStore((s) => s.setCommentsEnabled)
   const [saved, setSaved] = useState(false)
 
   const {
@@ -63,6 +66,8 @@ export default function SiteSettingsSection() {
         },
       })
       setSettings(data)
+      setCommunityPageEnabled(data.communityPageEnabled)
+      setCommentsEnabled(data.commentsEnabled)
       setSaved(true)
       setTimeout(() => setSaved(false), 2000)
     } catch {
