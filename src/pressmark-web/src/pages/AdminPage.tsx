@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Skeleton } from '@/components/ui/skeleton'
 import { adminClient } from '@/api/clients'
 import { useAdminStore } from '@/store/adminStore'
+import { toast } from 'sonner'
 
 // Lazy load admin sections
 const SiteSettingsSection = lazy(() => import('@/components/admin/SiteSettingsSection'))
@@ -25,37 +26,50 @@ const SectionLoading = () => (
 )
 
 export function AdminPage() {
-  const { t } = useTranslation('admin')
+  const { t } = useTranslation(['admin', 'common'])
   const { setSettings } = useAdminStore()
 
   useEffect(() => {
-    adminClient.getSiteSettings({}).then((res) =>
-      setSettings({
-        siteName: res.siteName,
-        communityWindowDays: res.communityWindowDays,
-        registrationMode: res.registrationMode as 'open' | 'invite_only',
-        smtpHost: res.smtpHost,
-        smtpPort: res.smtpPort || 587,
-        smtpUser: res.smtpUser,
-        smtpPassword: '', // write-only
-        smtpUseTls: res.smtpUseTls,
-        smtpFromAddress: res.smtpFromAddress,
-        commentsEnabled: res.commentsEnabled,
-        feedRetentionDays: res.feedRetentionDays || 90,
-      }),
-    )
-  }, [])
+    adminClient
+      .getSiteSettings({})
+      .then((res) =>
+        setSettings({
+          siteName: res.siteName,
+          communityWindowDays: res.communityWindowDays,
+          registrationMode: res.registrationMode as 'open' | 'invite_only',
+          smtpHost: res.smtpHost,
+          smtpPort: res.smtpPort || 587,
+          smtpUser: res.smtpUser,
+          smtpPassword: '', // write-only
+          smtpUseTls: res.smtpUseTls,
+          smtpFromAddress: res.smtpFromAddress,
+          commentsEnabled: res.commentsEnabled,
+          feedRetentionDays: res.feedRetentionDays || 90,
+        }),
+      )
+      .catch(() => toast.error(t('common:error')))
+  }, [setSettings, t])
 
   return (
     <div className="mx-auto max-w-4xl space-y-8 p-4">
-      <h1 className="text-xl font-semibold">{t('title')}</h1>
+      <h1 className="text-xl font-semibold">{t('admin:title')}</h1>
 
       <Suspense fallback={<SectionLoading />}>
         <SiteSettingsSection />
+      </Suspense>
+      <Suspense fallback={<SectionLoading />}>
         <ReportsSection />
+      </Suspense>
+      <Suspense fallback={<SectionLoading />}>
         <InvitesSection />
+      </Suspense>
+      <Suspense fallback={<SectionLoading />}>
         <BannedSubscriptionsSection />
+      </Suspense>
+      <Suspense fallback={<SectionLoading />}>
         <HiddenArticlesSection />
+      </Suspense>
+      <Suspense fallback={<SectionLoading />}>
         <UsersSection />
       </Suspense>
     </div>

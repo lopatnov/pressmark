@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { ExternalLink } from 'lucide-react'
@@ -31,14 +31,17 @@ export default function ReportsSection() {
   const [totalCount, setTotalCount] = useState(0)
   const [page, setPage] = useState(0)
   const [loading, setLoading] = useState(true)
+  const reqRef = useRef(0)
 
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE))
 
   const load = (p: number) => {
+    const req = ++reqRef.current
     setLoading(true)
     adminClient
       .listReports({ pageSize: PAGE_SIZE, page: p })
       .then((res) => {
+        if (req !== reqRef.current) return
         setReports(
           res.items.map((r) => ({
             id: r.id,
@@ -57,7 +60,9 @@ export default function ReportsSection() {
         setTotalCount(res.totalCount)
       })
       .catch(() => toast.error(t('admin:reports.loadError')))
-      .finally(() => setLoading(false))
+      .finally(() => {
+        if (req === reqRef.current) setLoading(false)
+      })
   }
 
   useEffect(() => {
@@ -67,8 +72,15 @@ export default function ReportsSection() {
   const handleResolve = async (id: string) => {
     try {
       await adminClient.resolveReport({ id })
-      setReports((prev) => prev.filter((r) => r.id !== id))
-      setTotalCount((c) => c - 1)
+      const remaining = reports.filter((r) => r.id !== id)
+      if (remaining.length === 0 && page > 0) {
+        const newPage = page - 1
+        setPage(newPage)
+        load(newPage)
+      } else {
+        setReports(remaining)
+        setTotalCount((c) => c - 1)
+      }
     } catch {
       toast.error(t('admin:reports.resolveError'))
     }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -22,6 +22,8 @@ export default function InvitesSection() {
   const [sendNotification, setSendNotification] = useState(false)
   const [newToken, setNewToken] = useState<InviteItem | null>(null)
   const [copiedId, setCopiedId] = useState<string | null>(null)
+  const [generating, setGenerating] = useState(false)
+  const listReqRef = useRef(0)
 
   const smtpConfigured = Boolean(settings?.smtpHost)
 
@@ -74,10 +76,12 @@ export default function InvitesSection() {
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE))
 
   const loadList = (p: number) => {
+    const req = ++listReqRef.current
     setLoadingList(true)
     adminClient
       .listInvites({ pageSize: PAGE_SIZE, page: p })
       .then((res) => {
+        if (req !== listReqRef.current) return
         setInvites(
           res.items.map((i) => ({
             id: i.id,
@@ -90,7 +94,9 @@ export default function InvitesSection() {
         setTotalCount(res.totalCount)
       })
       .catch(() => toast.error(t('common:error')))
-      .finally(() => setLoadingList(false))
+      .finally(() => {
+        if (req === listReqRef.current) setLoadingList(false)
+      })
   }
 
   useEffect(() => {
@@ -98,6 +104,8 @@ export default function InvitesSection() {
   }, [])
 
   const handleGenerate = async () => {
+    if (generating) return
+    setGenerating(true)
     try {
       const notifyEmailArg = sendNotification && smtpConfigured && noteIsValidEmail ? note : ''
       const res = await adminClient.generateInvite({
@@ -119,20 +127,28 @@ export default function InvitesSection() {
       setPage(0)
     } catch {
       toast.error(t('common:error'))
+    } finally {
+      setGenerating(false)
     }
   }
 
-  const handleCopy = (token: string, id: string) => {
-    navigator.clipboard.writeText(token)
-    setCopiedId(id)
-    setTimeout(() => setCopiedId(null), 2000)
+  const handleCopy = async (token: string, id: string) => {
+    try {
+      await navigator.clipboard.writeText(token)
+      setCopiedId(id)
+      setTimeout(() => setCopiedId(null), 2000)
+    } catch {
+      toast.error(t('common:error'))
+    }
   }
 
   const handleDelete = async (id: string) => {
     try {
       await adminClient.deleteInvite({ id })
       if (newToken?.id === id) setNewToken(null)
-      loadList(page)
+      const newPage = invites.length === 1 && page > 0 ? page - 1 : page
+      setPage(newPage)
+      loadList(newPage)
     } catch {
       toast.error(t('common:error'))
     }
@@ -170,7 +186,7 @@ export default function InvitesSection() {
             <option value={30}>{t('admin:invites.expiry30Days')}</option>
             <option value={0}>{t('admin:invites.expiryNone')}</option>
           </select>
-          <Button size="lg" onClick={handleGenerate}>
+          <Button size="lg" onClick={handleGenerate} disabled={generating}>
             {t('admin:invites.generate')}
           </Button>
         </div>

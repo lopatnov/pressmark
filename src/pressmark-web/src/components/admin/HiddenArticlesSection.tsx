@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { ExternalLink } from 'lucide-react'
@@ -19,14 +19,17 @@ export default function HiddenArticlesSection() {
   const [totalCount, setTotalCount] = useState(0)
   const [page, setPage] = useState(0)
   const [loading, setLoading] = useState(true)
+  const reqRef = useRef(0)
 
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE))
 
   const load = (p: number) => {
+    const req = ++reqRef.current
     setLoading(true)
     adminClient
       .listHiddenFeedItems({ pageSize: PAGE_SIZE, page: p })
       .then((res) => {
+        if (req !== reqRef.current) return
         setHiddenItems(
           res.items.map((item) => ({
             id: item.id,
@@ -38,7 +41,9 @@ export default function HiddenArticlesSection() {
         setTotalCount(res.totalCount)
       })
       .catch(() => toast.error(t('common:error')))
-      .finally(() => setLoading(false))
+      .finally(() => {
+        if (req === reqRef.current) setLoading(false)
+      })
   }
 
   useEffect(() => {
@@ -101,6 +106,7 @@ export default function HiddenArticlesSection() {
                   <Link
                     to={`/article/${item.id}`}
                     title={t('admin:moderation.openArticle')}
+                    aria-label={t('admin:moderation.openArticle')}
                     className="mt-0.5 shrink-0 text-muted-foreground hover:text-foreground transition-colors"
                   >
                     <ExternalLink className="h-3.5 w-3.5" />

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -15,19 +15,24 @@ export default function BannedSubscriptionsSection() {
   const [totalCount, setTotalCount] = useState(0)
   const [page, setPage] = useState(0)
   const [loading, setLoading] = useState(true)
+  const reqRef = useRef(0)
 
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE))
 
   const load = (p: number) => {
+    const req = ++reqRef.current
     setLoading(true)
     adminClient
       .listBannedSubscriptions({ pageSize: PAGE_SIZE, page: p })
       .then((res) => {
+        if (req !== reqRef.current) return
         setItems(res.items.map((b) => ({ id: b.id, rssUrl: b.rssUrl, title: b.title })))
         setTotalCount(res.totalCount)
       })
       .catch(() => toast.error(t('common:error')))
-      .finally(() => setLoading(false))
+      .finally(() => {
+        if (req === reqRef.current) setLoading(false)
+      })
   }
 
   useEffect(() => {
