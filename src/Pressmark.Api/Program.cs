@@ -152,4 +152,44 @@ app.MapGrpcService<SubscriptionServiceImpl>();
 app.MapGrpcService<FeedServiceImpl>();
 app.MapGrpcService<AdminServiceImpl>();
 
+app.MapGet("/proxy/favicon", async (string? url, IHttpClientFactory httpClientFactory, HttpContext ctx) =>
+{
+    if (string.IsNullOrWhiteSpace(url))
+        return Results.NoContent();
+
+    if (!Uri.TryCreate(url, UriKind.Absolute, out var uri) ||
+        (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps))
+        return Results.NoContent();
+
+    // Block loopback and private IP ranges to prevent SSRF
+    var host = uri.Host.ToLowerInvariant();
+    if (host is "localhost" or "127.0.0.1" or "::1" ||
+        host.StartsWith("192.168.") || host.StartsWith("10.") || host.StartsWith("172."))
+        return Results.NoContent();
+
+    var faviconUrl = uri.GetLeftPart(UriPartial.Authority) + "/favicon.ico";
+
+    try
+    {
+        var client = httpClientFactory.CreateClient("Pressmark");
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+        using var response = await client.GetAsync(faviconUrl, cts.Token);
+
+        if (!response.IsSuccessStatusCode)
+            return Results.NoContent();
+
+        var contentType = response.Content.Headers.ContentType?.MediaType ?? "";
+        if (!contentType.StartsWith("image/"))
+            return Results.NoContent();
+
+        ctx.Response.Headers.CacheControl = "public, max-age=86400";
+        var bytes = await response.Content.ReadAsByteArrayAsync(cts.Token);
+        return Results.Bytes(bytes, contentType);
+    }
+    catch
+    {
+        return Results.NoContent();
+    }
+});
+
 app.Run();

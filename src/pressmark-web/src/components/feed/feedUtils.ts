@@ -25,7 +25,8 @@ export function getYouTubeId(url: string): string | null {
 
 export function getFaviconUrl(url: string): string | null {
   try {
-    return new URL(url).origin + '/favicon.ico'
+    const origin = new URL(url).origin
+    return `/proxy/favicon?url=${encodeURIComponent(origin)}`
   } catch {
     return null
   }
