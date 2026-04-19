@@ -205,9 +205,14 @@ Certificates can be obtained via [Let's Encrypt / certbot](https://certbot.eff.o
 
 ### Option B — Pre-built images (no git required)
 
-Docker images are published to the [GitHub Container Registry](https://github.com/lopatnov/pressmark/pkgs/container/pressmark-api) on every release. This is the quickest way to get Pressmark running — no source code or build step required.
+Two images are published to the GitHub Container Registry on every release:
+[`pressmark-api`](https://github.com/lopatnov/pressmark/pkgs/container/pressmark-api) and
+[`pressmark-web`](https://github.com/lopatnov/pressmark/pkgs/container/pressmark-web).
+This is the quickest way to get Pressmark running — no source code or build step required.
 
 > **Note:** this example compose file covers the minimal setup: database, API, and web. It does not include automatic database backups or HTTPS configuration — add those when you need them.
+>
+> The example uses `:latest`. For reproducible production deployments, pin a specific version tag, e.g. `ghcr.io/lopatnov/pressmark-api:1.0.0`.
 
 #### 1. Create a working directory
 
