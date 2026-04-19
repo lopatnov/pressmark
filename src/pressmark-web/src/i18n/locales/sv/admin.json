@@ -110,6 +110,7 @@
     "expiry30Days": "30 dagar",
     "expiryNone": "Ingen giltighetstid",
     "sendNotification": "Skicka meddelande",
-    "notifyEmailPlaceholder": "E-postadress"
+    "notifyEmailPlaceholder": "E-postadress",
+    "expiryLabel": "Utgång"
   }
 }

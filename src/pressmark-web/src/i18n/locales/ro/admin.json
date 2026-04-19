@@ -110,6 +110,7 @@
     "expiry30Days": "30 zile",
     "expiryNone": "Fără expirare",
     "sendNotification": "Trimiteți o notificare",
-    "notifyEmailPlaceholder": "Adresa de e-mail"
+    "notifyEmailPlaceholder": "Adresa de e-mail",
+    "expiryLabel": "Expirare"
   }
 }

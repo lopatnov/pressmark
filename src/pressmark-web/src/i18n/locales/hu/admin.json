@@ -110,6 +110,7 @@
     "expiry30Days": "30 nap",
     "expiryNone": "Nem jár le",
     "sendNotification": "Értesítés küldése",
-    "notifyEmailPlaceholder": "E-mail cím"
+    "notifyEmailPlaceholder": "E-mail cím",
+    "expiryLabel": "Lejárat"
   }
 }

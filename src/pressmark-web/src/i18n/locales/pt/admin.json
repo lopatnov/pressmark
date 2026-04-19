@@ -110,6 +110,7 @@
     "expiry30Days": "30 dias",
     "expiryNone": "Sem expiração",
     "sendNotification": "Enviar notificação",
-    "notifyEmailPlaceholder": "Endereço de correio eletrónico"
+    "notifyEmailPlaceholder": "Endereço de correio eletrónico",
+    "expiryLabel": "Prazo de validade"
   }
 }
