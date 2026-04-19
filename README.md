@@ -137,14 +137,16 @@ Compatible tools: [Azure Data Studio](https://aka.ms/azuredatastudio), SSMS, DBe
 
 **Prerequisites:** a Linux server (or any host) with Docker and Docker Compose installed.
 
-### 1. Clone the repository
+### Option A — Build from source
+
+#### 1. Clone the repository
 
 ```bash
 git clone https://github.com/lopatnov/pressmark.git
 cd pressmark
 ```
 
-### 2. Configure environment variables
+#### 2. Configure environment variables
 
 A `.env` file with development defaults is included in the repository. It works out of the box for local use. **Before deploying to production, edit `.env`** and change:
 
@@ -156,7 +158,7 @@ A `.env` file with development defaults is included in the repository. It works 
 
 The remaining variables in `.env` have sensible defaults and rarely need changing.
 
-### 3. Configure the database
+#### 3. Configure the database
 
 By default, `docker-compose.yml` starts a bundled MSSQL container.
 If you prefer to use an existing database (Azure SQL, a managed server, or a local instance),
@@ -169,16 +171,13 @@ The connection string format is:
 Server=<host>,<port>;Database=pressmark;User Id=<user>;Password=<pass>;TrustServerCertificate=True
 ```
 
-For local development without Docker, edit `src/Pressmark.Api/Properties/launchSettings.json`
-and update the `ConnectionStrings__Default` value there.
-
 EF Core applies migrations automatically on startup. To run them manually:
 
 ```bash
 dotnet ef database update --project src/Pressmark.Api
 ```
 
-### 4. Start the stack
+#### 4. Start the stack
 
 ```bash
 docker compose up -d
@@ -193,7 +192,7 @@ This starts:
 
 Open **http://your-server-ip**. The first registered account automatically becomes **Admin**.
 
-### 5. HTTPS (recommended)
+#### 5. HTTPS (recommended)
 
 The nginx config and Docker Compose file contain commented-out instructions for enabling TLS:
 
@@ -201,6 +200,92 @@ The nginx config and Docker Compose file contain commented-out instructions for 
 2. **`docker-compose.yml`** — uncomment the `"443:443"` port mapping in the `web` service.
 
 Certificates can be obtained via [Let's Encrypt / certbot](https://certbot.eff.org/) and mounted as a read-only volume into the `web` container (see the comment in `nginx/nginx.conf`).
+
+---
+
+### Option B — Pre-built images (no git required)
+
+Docker images are published to the [GitHub Container Registry](https://github.com/lopatnov/pressmark/pkgs/container/pressmark-api) on every release. This is the quickest way to get Pressmark running — no source code or build step required.
+
+> **Note:** this example compose file covers the minimal setup: database, API, and web. It does not include automatic database backups or HTTPS configuration — add those when you need them.
+
+#### 1. Create a working directory
+
+```bash
+mkdir pressmark && cd pressmark
+```
+
+#### 2. Create `docker-compose.yml`
+
+```yaml
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:latest
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "${MSSQL_SA_PASSWORD}"
+    volumes:
+      - mssql_data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD", "/opt/mssql-tools18/bin/sqlcmd", "-S", "localhost",
+             "-U", "sa", "-P", "${MSSQL_SA_PASSWORD}", "-C", "-Q", "SELECT 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  api:
+    image: ghcr.io/lopatnov/pressmark-api:latest
+    environment:
+      ConnectionStrings__Default: "Server=db,1433;Database=pressmark;User Id=sa;Password=${MSSQL_SA_PASSWORD};TrustServerCertificate=True"
+      Jwt__Secret: "${JWT_SECRET}"
+      Jwt__ExpiryMinutes: "15"
+      Jwt__RefreshExpiryDays: "7"
+      Jwt__RefreshCookieName: "refresh_token"
+      Cors__AllowedOrigins: "${CORS_ALLOWED_ORIGINS}"
+      RssFetcher__IntervalMinutes: "15"
+      RssFetcher__MaxItemsPerFeed: "50"
+    ports:
+      - "5000:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8080/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    image: ghcr.io/lopatnov/pressmark-web:latest
+    ports:
+      - "80:80"
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  mssql_data:
+```
+
+#### 3. Create `.env`
+
+```env
+MSSQL_SA_PASSWORD=change_me_strong_password
+JWT_SECRET=change_me_random_secret_min_32_chars
+CORS_ALLOWED_ORIGINS=http://your-server-ip
+```
+
+Generate a secure JWT secret with: `openssl rand -base64 32`
+
+#### 4. Pull images and start
+
+```bash
+docker compose pull
+docker compose up -d
+```
+
+Open **http://your-server-ip**. The first registered account automatically becomes **Admin**.
 
 ---
 
