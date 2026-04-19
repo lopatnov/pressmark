@@ -37,6 +37,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const isAdmin = useAuthStore((s) => s.isAdmin())
   const clearAuth = useAuthStore((s) => s.clearAuth)
   const registrationMode = useAuthStore((s) => s.registrationMode)
+  const communityPageEnabled = useAuthStore((s) => s.communityPageEnabled)
   const totalUnread = useFeedStore((s) => s.totalUnread)
   const { settings, setSettings } = useAdminStore()
 
@@ -93,10 +94,12 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         )}
       </div>
       <nav className="flex flex-1 flex-col gap-0.5 p-2">
-        <NavLink to="/" end className={cls}>
-          <Globe className="h-4 w-4 shrink-0" />
-          {t('nav.community')}
-        </NavLink>
+        {communityPageEnabled && (
+          <NavLink to="/" end className={cls}>
+            <Globe className="h-4 w-4 shrink-0" />
+            {t('nav.community')}
+          </NavLink>
+        )}
         {isAuthenticated && (
           <>
             <NavLink to="/feed" className={cls}>

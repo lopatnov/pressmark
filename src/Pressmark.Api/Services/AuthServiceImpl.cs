@@ -4,6 +4,7 @@ using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Pressmark.Api.Data;
 using Pressmark.Api.Entities;
@@ -118,6 +119,7 @@ public class AuthServiceImpl(
         return await IssueTokens(user, context.GetHttpContext(), ct);
     }
 
+    [DisableRateLimiting]
     public override async Task<AuthResponse> Refresh(
     RefreshRequest request, ServerCallContext context)
     {
@@ -184,6 +186,7 @@ public class AuthServiceImpl(
         return new AuthResponse();
     }
 
+    [DisableRateLimiting]
     public override async Task<Empty> Logout(Empty request, ServerCallContext context)
     {
         var ct = context.CancellationToken;
@@ -209,6 +212,7 @@ public class AuthServiceImpl(
     }
 
     [AllowAnonymous]
+    [DisableRateLimiting]
     public override async Task<RegistrationStatus> GetRegistrationStatus(
         Empty request, ServerCallContext context)
     {

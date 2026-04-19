@@ -15,7 +15,7 @@ export function RootLayout() {
   const setCommunityPageEnabled = useAuthStore((s) => s.setCommunityPageEnabled)
 
   useEffect(() => {
-    authClient
+    const statusPromise = authClient
       .getRegistrationStatus({})
       .then((res) => {
         setRegistrationMode(res.registrationMode as 'open' | 'invite_only')
@@ -35,7 +35,7 @@ export function RootLayout() {
         })
       })
       .catch(() => clearAuth())
-      .finally(() => setInitialized())
+      .finally(() => statusPromise.then(() => setInitialized()))
   }, [])
 
   if (!isInitialized) return null

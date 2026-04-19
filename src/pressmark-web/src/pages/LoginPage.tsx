@@ -20,6 +20,7 @@ export function LoginPage() {
   const navigate = useNavigate()
   const setAuth = useAuthStore((s) => s.setAuth)
   const registrationMode = useAuthStore((s) => s.registrationMode)
+  const communityPageEnabled = useAuthStore((s) => s.communityPageEnabled)
 
   const {
     register,
@@ -105,15 +106,17 @@ export function LoginPage() {
             </Link>
           </p>
         </div>
-        <div className="text-center">
-          <Link
-            to="/"
-            className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
-          >
-            <ArrowLeft className="h-3.5 w-3.5" />
-            {t('common:nav.community')}
-          </Link>
-        </div>
+        {communityPageEnabled && (
+          <div className="text-center">
+            <Link
+              to="/"
+              className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" />
+              {t('common:nav.community')}
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   )
