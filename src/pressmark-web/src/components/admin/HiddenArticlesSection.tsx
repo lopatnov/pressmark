@@ -40,7 +40,9 @@ export default function HiddenArticlesSection() {
         )
         setTotalCount(res.totalCount)
       })
-      .catch(() => toast.error(t('common:error')))
+      .catch(() => {
+        if (req === reqRef.current) toast.error(t('common:error'))
+      })
       .finally(() => {
         if (req === reqRef.current) setLoading(false)
       })

@@ -45,7 +45,7 @@ export function LoginPage() {
       if (err instanceof ConnectError) {
         if (err.code === Code.PermissionDenied && err.rawMessage === 'account_banned') {
           key = 'errors.accountBanned'
-        } else if (err.code === Code.ResourceExhausted) {
+        } else if (err.code === Code.Unavailable) {
           key = 'errors.tooManyRequests'
         }
       }

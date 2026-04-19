@@ -59,7 +59,9 @@ export default function ReportsSection() {
         )
         setTotalCount(res.totalCount)
       })
-      .catch(() => toast.error(t('admin:reports.loadError')))
+      .catch(() => {
+        if (req === reqRef.current) toast.error(t('admin:reports.loadError'))
+      })
       .finally(() => {
         if (req === reqRef.current) setLoading(false)
       })

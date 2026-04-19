@@ -93,7 +93,9 @@ export default function InvitesSection() {
         )
         setTotalCount(res.totalCount)
       })
-      .catch(() => toast.error(t('common:error')))
+      .catch(() => {
+        if (req === listReqRef.current) toast.error(t('common:error'))
+      })
       .finally(() => {
         if (req === listReqRef.current) setLoadingList(false)
       })
