@@ -7,7 +7,7 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
-## [1.1.0] — 2026-04-20
+## [1.1.0] — Community, SEO & nginx — 2026-04-20
 
 ### Added
 
