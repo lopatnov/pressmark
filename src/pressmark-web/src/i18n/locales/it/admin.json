@@ -3,6 +3,7 @@
   "settings": {
     "title": "Impostazioni sito",
     "siteName": "Nome del sito",
+    "siteDescription": "Descrizione del sito",
     "communityWindowDays": "Cronologia del feed di notizie della comunità (giorni)",
     "registrationMode": "Modalità di registrazione",
     "open": "Aperta",
@@ -16,6 +17,7 @@
     "smtpPasswordPlaceholder": "Lascia vuoto per mantenere quello attuale",
     "smtpUseTls": "Usa TLS (STARTTLS)",
     "smtpFromAddress": "Indirizzo mittente",
+    "communityPageEnabled": "Abilita la pagina della community",
     "commentsEnabled": "Abilita commenti",
     "feedRetentionDays": "Mantenimento del feed di notizie (giorni)",
     "oldFeedsCleared": "Vecchi feed cancellati con successo",

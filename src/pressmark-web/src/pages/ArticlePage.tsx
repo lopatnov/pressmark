@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { usePageTitle } from '@/hooks/usePageTitle'
 import { EyeOff, Eye, Flag } from 'lucide-react'
 import { toast } from 'sonner'
 import { adminClient, feedClient } from '@/api/clients'
@@ -16,6 +17,7 @@ export function ArticlePage() {
   const isAdmin = useAuthStore((s) => s.isAdmin())
 
   const [item, setItem] = useState<FeedItemData | null>(null)
+  usePageTitle(item?.title ?? t('common:nav.feed'))
   const [notFound, setNotFound] = useState(false)
 
   const [showReportForm, setShowReportForm] = useState(false)

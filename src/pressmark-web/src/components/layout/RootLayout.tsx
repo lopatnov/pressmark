@@ -12,14 +12,36 @@ export function RootLayout() {
   const setRegistrationMode = useAuthStore((s) => s.setRegistrationMode)
   const setCommunityWindowDays = useAuthStore((s) => s.setCommunityWindowDays)
   const setCommentsEnabled = useAuthStore((s) => s.setCommentsEnabled)
+  const setCommunityPageEnabled = useAuthStore((s) => s.setCommunityPageEnabled)
+  const setSiteName = useAuthStore((s) => s.setSiteName)
+  const setSiteDescription = useAuthStore((s) => s.setSiteDescription)
 
   useEffect(() => {
-    authClient
+    fetch('/api/meta')
+      .then((r) => r.json())
+      .then((data) => {
+        setSiteName(data.siteName)
+        setSiteDescription(data.siteDescription)
+        const setMeta = (selector: string, content: string) =>
+          document.querySelector(selector)?.setAttribute('content', content)
+        setMeta('meta[name="description"]', data.siteDescription)
+        setMeta('meta[property="og:title"]', data.siteName)
+        setMeta('meta[property="og:description"]', data.siteDescription)
+        setMeta('meta[property="og:url"]', data.baseUrl)
+        setMeta('meta[name="twitter:title"]', data.siteName)
+        setMeta('meta[name="twitter:description"]', data.siteDescription)
+      })
+      .catch(() => {})
+  }, [])
+
+  useEffect(() => {
+    const statusPromise = authClient
       .getRegistrationStatus({})
       .then((res) => {
         setRegistrationMode(res.registrationMode as 'open' | 'invite_only')
         if (res.communityWindowDays > 0) setCommunityWindowDays(res.communityWindowDays)
         setCommentsEnabled(res.commentsEnabled)
+        setCommunityPageEnabled(res.communityPageEnabled)
       })
       .catch(() => {})
 
@@ -33,7 +55,7 @@ export function RootLayout() {
         })
       })
       .catch(() => clearAuth())
-      .finally(() => setInitialized())
+      .finally(() => statusPromise.then(() => setInitialized()))
   }, [])
 
   if (!isInitialized) return null

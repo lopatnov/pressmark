@@ -3,6 +3,7 @@
   "settings": {
     "title": "Site ayarları",
     "siteName": "Site adı",
+    "siteDescription": "Site açıklaması",
     "communityWindowDays": "Topluluk besleme geçmişi (gün)",
     "registrationMode": "Kayıt modu",
     "open": "Açık",
@@ -16,6 +17,7 @@
     "smtpPasswordPlaceholder": "Mevcut şifreyi korumak için boş bırakın",
     "smtpUseTls": "TLS kullan (STARTTLS)",
     "smtpFromAddress": "Gönderen adresi",
+    "communityPageEnabled": "Topluluk sayfasını etkinleştirin",
     "commentsEnabled": "Yorumları etkinleştir",
     "feedRetentionDays": "Besleme saklama süresi (gün)",
     "oldFeedsCleared": "Eski beslemeler başarıyla temizlendi",

@@ -3,6 +3,7 @@ import { devtools } from 'zustand/middleware'
 
 interface SiteSettings {
   siteName: string
+  siteDescription: string
   communityWindowDays: number
   registrationMode: 'open' | 'invite_only'
   smtpHost: string
@@ -13,6 +14,7 @@ interface SiteSettings {
   smtpFromAddress: string
   commentsEnabled: boolean
   feedRetentionDays: number
+  communityPageEnabled: boolean
 }
 
 interface UserInfo {

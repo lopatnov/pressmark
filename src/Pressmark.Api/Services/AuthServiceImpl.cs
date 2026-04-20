@@ -4,6 +4,7 @@ using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Pressmark.Api.Data;
 using Pressmark.Api.Entities;
@@ -13,7 +14,8 @@ namespace Pressmark.Api.Services;
 
 public class AuthServiceImpl(
     AppDbContext db, JwtService jwt,
-    IEmailService emailService, IConfiguration config) : AuthService.AuthServiceBase
+    IEmailService emailService, IConfiguration config,
+    IWebHostEnvironment env) : AuthService.AuthServiceBase
 {
     public override async Task<AuthResponse> Register(
         RegisterRequest request, ServerCallContext context)
@@ -118,6 +120,7 @@ public class AuthServiceImpl(
         return await IssueTokens(user, context.GetHttpContext(), ct);
     }
 
+    [DisableRateLimiting]
     public override async Task<AuthResponse> Refresh(
     RefreshRequest request, ServerCallContext context)
     {
@@ -184,6 +187,7 @@ public class AuthServiceImpl(
         return new AuthResponse();
     }
 
+    [DisableRateLimiting]
     public override async Task<Empty> Logout(Empty request, ServerCallContext context)
     {
         var ct = context.CancellationToken;
@@ -209,18 +213,20 @@ public class AuthServiceImpl(
     }
 
     [AllowAnonymous]
+    [DisableRateLimiting]
     public override async Task<RegistrationStatus> GetRegistrationStatus(
         Empty request, ServerCallContext context)
     {
         var ct = context.CancellationToken;
         var hasAdmin = await db.Users.AnyAsync(ct);
         var settings = await db.SiteSettings
-            .Where(s => s.Key == "registration_mode" || s.Key == "community_window_days" || s.Key == "comments_enabled")
+            .Where(s => s.Key == "registration_mode" || s.Key == "community_window_days" || s.Key == "comments_enabled" || s.Key == "community_page_enabled")
             .ToDictionaryAsync(s => s.Key, s => s.Value, ct);
         var mode = settings.GetValueOrDefault("registration_mode", "open");
         var windowDays = int.TryParse(settings.GetValueOrDefault("community_window_days", "1"), out var d) ? d : 1;
         var commentsEnabled = settings.GetValueOrDefault("comments_enabled", "true") == "true";
-        return new RegistrationStatus { HasAdmin = hasAdmin, RegistrationMode = mode, CommunityWindowDays = windowDays, CommentsEnabled = commentsEnabled };
+        var communityPageEnabled = settings.GetValueOrDefault("community_page_enabled", "true") == "true";
+        return new RegistrationStatus { HasAdmin = hasAdmin, RegistrationMode = mode, CommunityWindowDays = windowDays, CommentsEnabled = commentsEnabled, CommunityPageEnabled = communityPageEnabled };
     }
 
     [AllowAnonymous]
@@ -315,7 +321,7 @@ public class AuthServiceImpl(
         {
             HttpOnly = true,
             SameSite = SameSiteMode.Strict,
-            Secure = http.Request.IsHttps,
+            Secure = !env.IsDevelopment() || http.Request.IsHttps,
             Expires = DateTimeOffset.UtcNow.AddDays(jwt.RefreshExpiryDays),
         });
 

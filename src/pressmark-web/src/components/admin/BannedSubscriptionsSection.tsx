@@ -1,4 +1,3 @@
-import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -6,40 +5,24 @@ import { adminClient } from '@/api/clients'
 import { toast } from 'sonner'
 import { AdminPagination } from './AdminPagination'
 import { AdminSkeletonRows } from './AdminSkeletonRows'
+import { useAdminPaginatedList, ADMIN_PAGE_SIZE } from '@/hooks/useAdminPaginatedList'
 
-const PAGE_SIZE = 20
+interface BannedSub {
+  id: string
+  rssUrl: string
+  title: string
+}
 
 export default function BannedSubscriptionsSection() {
   const { t } = useTranslation(['admin', 'common'])
-  const [items, setItems] = useState<{ id: string; rssUrl: string; title: string }[]>([])
-  const [totalCount, setTotalCount] = useState(0)
-  const [page, setPage] = useState(0)
-  const [loading, setLoading] = useState(true)
-  const reqRef = useRef(0)
 
-  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE))
-
-  const load = (p: number) => {
-    const req = ++reqRef.current
-    setLoading(true)
-    adminClient
-      .listBannedSubscriptions({ pageSize: PAGE_SIZE, page: p })
-      .then((res) => {
-        if (req !== reqRef.current) return
-        setItems(res.items.map((b) => ({ id: b.id, rssUrl: b.rssUrl, title: b.title })))
-        setTotalCount(res.totalCount)
-      })
-      .catch(() => {
-        if (req === reqRef.current) toast.error(t('common:error'))
-      })
-      .finally(() => {
-        if (req === reqRef.current) setLoading(false)
-      })
-  }
-
-  useEffect(() => {
-    load(0)
-  }, [])
+  const { items, loading, page, totalPages, handlePage, load } = useAdminPaginatedList<BannedSub>(
+    (p) =>
+      adminClient.listBannedSubscriptions({ pageSize: ADMIN_PAGE_SIZE, page: p }).then((res) => ({
+        items: res.items.map((b) => ({ id: b.id, rssUrl: b.rssUrl, title: b.title })),
+        totalCount: res.totalCount,
+      })),
+  )
 
   const handleUnban = async (id: string) => {
     try {
@@ -48,11 +31,6 @@ export default function BannedSubscriptionsSection() {
     } catch {
       toast.error(t('common:error'))
     }
-  }
-
-  const handlePage = (p: number) => {
-    setPage(p)
-    load(p)
   }
 
   const renderContent = () => {

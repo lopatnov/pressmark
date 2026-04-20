@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { usePageTitle } from '@/hooks/usePageTitle'
 import { ExternalLink, ArrowLeft, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -44,6 +45,7 @@ export function AdminUserPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const { t } = useTranslation(['admin', 'common'])
+  usePageTitle(t('admin:users.profileTitle'))
   const [details, setDetails] = useState<UserDetails | null>(null)
   const [loading, setLoading] = useState(true)
 

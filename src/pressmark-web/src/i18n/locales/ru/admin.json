@@ -3,6 +3,7 @@
   "settings": {
     "title": "Настройки сайта",
     "siteName": "Название сайта",
+    "siteDescription": "Описание сайта",
     "communityWindowDays": "История ленты сообщества (дней)",
     "registrationMode": "Режим регистрации",
     "open": "Открытая",
@@ -16,6 +17,7 @@
     "smtpPasswordPlaceholder": "Оставьте пустым для сохранения текущего",
     "smtpUseTls": "Использовать TLS (STARTTLS)",
     "smtpFromAddress": "Адрес отправителя",
+    "communityPageEnabled": "Включить страницу сообщества",
     "commentsEnabled": "Включить комментарии",
     "feedRetentionDays": "Хранение ленты (дней)",
     "oldFeedsCleared": "Старые фиды очищены успешно",

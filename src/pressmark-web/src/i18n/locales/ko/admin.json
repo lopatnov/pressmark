@@ -3,6 +3,7 @@
   "settings": {
     "title": "사이트 설정",
     "siteName": "사이트 이름",
+    "siteDescription": "사이트 설명",
     "communityWindowDays": "커뮤니티 피드 기록(일)",
     "registrationMode": "회원가입 모드",
     "open": "공개",
@@ -16,6 +17,7 @@
     "smtpPasswordPlaceholder": "현재 비밀번호를 유지하려면 비워두세요",
     "smtpUseTls": "TLS 사용 (STARTTLS)",
     "smtpFromAddress": "발신자 주소",
+    "communityPageEnabled": "커뮤니티 페이지 활성화",
     "commentsEnabled": "댓글 활성화",
     "feedRetentionDays": "피드 보존 기간(일)",
     "oldFeedsCleared": "오래된 피드들이 성공적으로 삭제되었습니다",

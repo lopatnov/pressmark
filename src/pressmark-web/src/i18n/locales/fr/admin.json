@@ -3,6 +3,7 @@
   "settings": {
     "title": "Paramètres du site",
     "siteName": "Nom du site",
+    "siteDescription": "Description du site",
     "communityWindowDays": "Historique des flux de la communauté (jours)",
     "registrationMode": "Mode d'inscription",
     "open": "Ouvert",
@@ -16,6 +17,7 @@
     "smtpPasswordPlaceholder": "Laisser vide pour conserver l'actuel",
     "smtpUseTls": "Utiliser TLS (STARTTLS)",
     "smtpFromAddress": "Adresse d'expéditeur",
+    "communityPageEnabled": "Activer la page communautaire",
     "commentsEnabled": "Activer les commentaires",
     "feedRetentionDays": "Rétention des flux (jours)",
     "oldFeedsCleared": "Anciens flux supprimés avec succès",

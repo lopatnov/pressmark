@@ -3,6 +3,7 @@
   "settings": {
     "title": "Ustawienia strony",
     "siteName": "Nazwa strony",
+    "siteDescription": "Opis strony",
     "communityWindowDays": "Historia kanału informacyjnego społeczności (dni)",
     "registrationMode": "Tryb rejestracji",
     "open": "Otwarty",
@@ -16,6 +17,7 @@
     "smtpPasswordPlaceholder": "Pozostaw puste, aby zachować bieżące",
     "smtpUseTls": "Użyj TLS (STARTTLS)",
     "smtpFromAddress": "Adres nadawcy",
+    "communityPageEnabled": "Włącz stronę społeczności",
     "commentsEnabled": "Włącz komentarze",
     "feedRetentionDays": "Utrzymanie kanału informacyjnego (dni)",
     "oldFeedsCleared": "Stare kanały zostały pomyślnie wyczyszczone",

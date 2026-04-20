@@ -136,6 +136,61 @@ var app = builder.Build();
 
 app.MapGet("/health", () => Results.Ok(new { status = "healthy" }));
 
+app.MapGet("/api/meta", async (AppDbContext db, IConfiguration config, CancellationToken ct) =>
+{
+    var settings = await db.SiteSettings
+        .Where(s => s.Key == "site_name" || s.Key == "site_description")
+        .ToDictionaryAsync(s => s.Key, s => s.Value, ct);
+    var siteName = settings.GetValueOrDefault("site_name", "Pressmark");
+    var siteDescription = settings.GetValueOrDefault("site_description", "");
+    var baseUrl = (config["App:BaseUrl"] ?? "http://localhost:5173").TrimEnd('/');
+    return Results.Ok(new { siteName, siteDescription, baseUrl });
+}).AllowAnonymous();
+
+app.MapGet("/sitemap.xml", async (AppDbContext db, IConfiguration config, CancellationToken ct) =>
+{
+    var baseUrl = System.Security.SecurityElement.Escape(
+        (config["App:BaseUrl"] ?? "http://localhost:5173").TrimEnd('/'));
+    var settings = await db.SiteSettings
+        .Where(s => s.Key == "registration_mode" || s.Key == "community_page_enabled")
+        .ToDictionaryAsync(s => s.Key, s => s.Value, ct);
+
+    var communityEnabled = settings.GetValueOrDefault("community_page_enabled", "true") == "true";
+    var registrationOpen = settings.GetValueOrDefault("registration_mode", "open") == "open";
+    var lastmod = DateTime.UtcNow.ToString("yyyy-MM-dd");
+
+    var sb = new StringBuilder();
+    sb.AppendLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+    sb.AppendLine("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">");
+    if (communityEnabled)
+        sb.AppendLine($"  <url><loc>{baseUrl}/</loc><lastmod>{lastmod}</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>");
+    sb.AppendLine($"  <url><loc>{baseUrl}/login</loc><lastmod>{lastmod}</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>");
+    if (registrationOpen)
+        sb.AppendLine($"  <url><loc>{baseUrl}/register</loc><lastmod>{lastmod}</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>");
+    sb.AppendLine("</urlset>");
+
+    return Results.Content(sb.ToString(), "application/xml");
+}).AllowAnonymous();
+
+app.MapGet("/robots.txt", (IConfiguration config) =>
+{
+    var baseUrl = (config["App:BaseUrl"] ?? "http://localhost:5173").TrimEnd('/');
+    var content = $"""
+        User-agent: *
+        Allow: /
+        Allow: /login
+        Allow: /register
+        Disallow: /feed
+        Disallow: /subscriptions
+        Disallow: /bookmarks
+        Disallow: /admin
+        Disallow: /article/
+
+        Sitemap: {baseUrl}/sitemap.xml
+        """;
+    return Results.Content(content, "text/plain");
+}).AllowAnonymous();
+
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
     ForwardedHeaders = ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedFor,
@@ -152,4 +207,61 @@ app.MapGrpcService<SubscriptionServiceImpl>();
 app.MapGrpcService<FeedServiceImpl>();
 app.MapGrpcService<AdminServiceImpl>();
 
-app.Run();
+app.MapGet("/proxy/favicon", async (string? url, IHttpClientFactory httpClientFactory, HttpContext ctx) =>
+{
+    if (string.IsNullOrWhiteSpace(url))
+        return Results.NoContent();
+
+    if (!Uri.TryCreate(url, UriKind.Absolute, out var uri) ||
+        (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps))
+        return Results.NoContent();
+
+    // Block loopback and private IP ranges to prevent SSRF
+    var host = uri.Host.ToLowerInvariant();
+    if (host is "localhost" or "127.0.0.1" or "::1" ||
+        host.StartsWith("192.168.") ||
+        host.StartsWith("10.") ||
+        host.StartsWith("169.254.") ||
+        IsPrivate172(host))
+        return Results.NoContent();
+
+    var faviconUrl = uri.GetLeftPart(UriPartial.Authority) + "/favicon.ico";
+
+    try
+    {
+        var client = httpClientFactory.CreateClient("Pressmark");
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+        using var response = await client.GetAsync(faviconUrl, cts.Token);
+
+        if (!response.IsSuccessStatusCode)
+            return Results.NoContent();
+
+        var contentType = response.Content.Headers.ContentType?.MediaType ?? "";
+        if (!contentType.StartsWith("image/"))
+            return Results.NoContent();
+
+        const int maxFaviconBytes = 1024 * 1024; // 1 MB
+        if (response.Content.Headers.ContentLength > maxFaviconBytes)
+            return Results.NoContent();
+
+        ctx.Response.Headers.CacheControl = "public, max-age=86400";
+        var bytes = await response.Content.ReadAsByteArrayAsync(cts.Token);
+        if (bytes.Length > maxFaviconBytes)
+            return Results.NoContent();
+
+        return Results.Bytes(bytes, contentType);
+    }
+    catch
+    {
+        return Results.NoContent();
+    }
+});
+
+await app.RunAsync();
+
+static bool IsPrivate172(string host)
+{
+    if (!host.StartsWith("172.")) return false;
+    var parts = host.Split('.');
+    return parts.Length >= 2 && int.TryParse(parts[1], out var octet) && octet is >= 16 and <= 31;
+}

@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { usePageTitle } from '@/hooks/usePageTitle'
 import { Button } from '@/components/ui/button'
 import { authClient } from '@/api/clients'
 
@@ -14,6 +15,7 @@ type FormData = z.infer<typeof schema>
 
 export function ForgotPasswordPage() {
   const { t } = useTranslation('auth')
+  usePageTitle(t('forgotPasswordTitle'))
   const [submitted, setSubmitted] = useState(false)
 
   const {

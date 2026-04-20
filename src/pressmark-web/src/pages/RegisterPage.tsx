@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { usePageTitle } from '@/hooks/usePageTitle'
 import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { authClient } from '@/api/clients'
@@ -12,11 +13,13 @@ import { Code, ConnectError } from '@connectrpc/connect'
 
 export function RegisterPage() {
   const { t } = useTranslation(['auth', 'common'])
+  usePageTitle(t('auth:register.title'))
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const tokenFromUrl = searchParams.get('invite_token') ?? ''
   const setAuth = useAuthStore((s) => s.setAuth)
   const registrationMode = useAuthStore((s) => s.registrationMode)
+  const communityPageEnabled = useAuthStore((s) => s.communityPageEnabled)
   const [showInvite, setShowInvite] = useState(registrationMode === 'invite_only' || !!tokenFromUrl)
   const [isFirstUser, setIsFirstUser] = useState(false)
 
@@ -153,15 +156,17 @@ export function RegisterPage() {
             {t('register.login')}
           </Link>
         </p>
-        <div className="text-center">
-          <Link
-            to="/"
-            className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
-          >
-            <ArrowLeft className="h-3.5 w-3.5" />
-            {t('common:nav.community')}
-          </Link>
-        </div>
+        {communityPageEnabled && (
+          <div className="text-center">
+            <Link
+              to="/"
+              className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" />
+              {t('common:nav.community')}
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   )

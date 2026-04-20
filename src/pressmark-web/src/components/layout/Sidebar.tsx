@@ -37,6 +37,8 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const isAdmin = useAuthStore((s) => s.isAdmin())
   const clearAuth = useAuthStore((s) => s.clearAuth)
   const registrationMode = useAuthStore((s) => s.registrationMode)
+  const communityPageEnabled = useAuthStore((s) => s.communityPageEnabled)
+  const siteName = useAuthStore((s) => s.siteName)
   const totalUnread = useFeedStore((s) => s.totalUnread)
   const { settings, setSettings } = useAdminStore()
 
@@ -47,6 +49,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       .then((res) => {
         setSettings({
           siteName: res.siteName,
+          siteDescription: res.siteDescription,
           communityWindowDays: res.communityWindowDays,
           registrationMode: res.registrationMode as 'open' | 'invite_only',
           smtpHost: res.smtpHost,
@@ -56,7 +59,8 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           smtpUseTls: res.smtpUseTls,
           smtpFromAddress: res.smtpFromAddress,
           commentsEnabled: res.commentsEnabled,
-          feedRetentionDays: res.feedRetentionDays || 30,
+          feedRetentionDays: res.feedRetentionDays || 90,
+          communityPageEnabled: res.communityPageEnabled,
         })
       })
       .catch(() => {})
@@ -83,7 +87,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
     >
       <div className="flex flex-col border-b border-sidebar-border px-4 py-3">
         <span className="text-sm font-semibold text-sidebar-foreground">
-          {settings?.siteName || t('appName')}
+          {siteName || t('appName')}
         </span>
         {user && (
           <span className="truncate text-xs text-muted-foreground" title={user.email}>
@@ -92,10 +96,12 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         )}
       </div>
       <nav className="flex flex-1 flex-col gap-0.5 p-2">
-        <NavLink to="/" end className={cls}>
-          <Globe className="h-4 w-4 shrink-0" />
-          {t('nav.community')}
-        </NavLink>
+        {communityPageEnabled && (
+          <NavLink to="/" end className={cls}>
+            <Globe className="h-4 w-4 shrink-0" />
+            {t('nav.community')}
+          </NavLink>
+        )}
         {isAuthenticated && (
           <>
             <NavLink to="/feed" className={cls}>

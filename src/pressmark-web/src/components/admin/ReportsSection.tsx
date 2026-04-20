@@ -1,4 +1,3 @@
-import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { ExternalLink } from 'lucide-react'
@@ -8,8 +7,7 @@ import { adminClient } from '@/api/clients'
 import { toast } from 'sonner'
 import { AdminPagination } from './AdminPagination'
 import { AdminSkeletonRows } from './AdminSkeletonRows'
-
-const PAGE_SIZE = 20
+import { useAdminPaginatedList, ADMIN_PAGE_SIZE } from '@/hooks/useAdminPaginatedList'
 
 interface ReportItem {
   id: string
@@ -27,49 +25,37 @@ interface ReportItem {
 
 export default function ReportsSection() {
   const { t } = useTranslation(['admin', 'common'])
-  const [reports, setReports] = useState<ReportItem[]>([])
-  const [totalCount, setTotalCount] = useState(0)
-  const [page, setPage] = useState(0)
-  const [loading, setLoading] = useState(true)
-  const reqRef = useRef(0)
 
-  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE))
-
-  const load = (p: number) => {
-    const req = ++reqRef.current
-    setLoading(true)
-    adminClient
-      .listReports({ pageSize: PAGE_SIZE, page: p })
-      .then((res) => {
-        if (req !== reqRef.current) return
-        setReports(
-          res.items.map((r) => ({
-            id: r.id,
-            type: r.type,
-            targetId: r.targetId,
-            reason: r.reason,
-            createdAt: r.createdAt,
-            reporterEmail: r.reporterEmail,
-            reporterJoined: r.reporterJoined,
-            content: r.content,
-            contentUrl: r.contentUrl,
-            articleId: r.articleId,
-            targetUserEmail: r.targetUserEmail,
-          })),
-        )
-        setTotalCount(res.totalCount)
-      })
-      .catch(() => {
-        if (req === reqRef.current) toast.error(t('admin:reports.loadError'))
-      })
-      .finally(() => {
-        if (req === reqRef.current) setLoading(false)
-      })
-  }
-
-  useEffect(() => {
-    load(0)
-  }, [])
+  const {
+    items: reports,
+    loading,
+    page,
+    totalPages,
+    handlePage,
+    load,
+    setItems,
+    setTotalCount,
+    setPage,
+  } = useAdminPaginatedList<ReportItem>(
+    (p) =>
+      adminClient.listReports({ pageSize: ADMIN_PAGE_SIZE, page: p }).then((res) => ({
+        items: res.items.map((r) => ({
+          id: r.id,
+          type: r.type,
+          targetId: r.targetId,
+          reason: r.reason,
+          createdAt: r.createdAt,
+          reporterEmail: r.reporterEmail,
+          reporterJoined: r.reporterJoined,
+          content: r.content,
+          contentUrl: r.contentUrl,
+          articleId: r.articleId,
+          targetUserEmail: r.targetUserEmail,
+        })),
+        totalCount: res.totalCount,
+      })),
+    'admin:reports.loadError',
+  )
 
   const handleResolve = async (id: string) => {
     try {
@@ -80,17 +66,12 @@ export default function ReportsSection() {
         setPage(newPage)
         load(newPage)
       } else {
-        setReports(remaining)
+        setItems(remaining)
         setTotalCount((c) => c - 1)
       }
     } catch {
       toast.error(t('admin:reports.resolveError'))
     }
-  }
-
-  const handlePage = (p: number) => {
-    setPage(p)
-    load(p)
   }
 
   const renderContent = () => {

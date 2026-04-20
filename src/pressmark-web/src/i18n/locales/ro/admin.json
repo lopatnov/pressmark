@@ -3,6 +3,7 @@
   "settings": {
     "title": "Setări site",
     "siteName": "Nume site",
+    "siteDescription": "Descrierea site-ului",
     "communityWindowDays": "Istoricul fluxului de știri al comunității (zile)",
     "registrationMode": "Mod înregistrare",
     "open": "Deschis",
@@ -16,6 +17,7 @@
     "smtpPasswordPlaceholder": "Lăsați gol pentru a păstra parola curentă",
     "smtpUseTls": "Folosiți TLS (STARTTLS)",
     "smtpFromAddress": "Adresă expeditor",
+    "communityPageEnabled": "Activați pagina comunității",
     "commentsEnabled": "Activează comentariile",
     "feedRetentionDays": "Reținerea fluxului de știri (zile)",
     "oldFeedsCleared": "Fluxurile vechi au fost șterse cu succes",

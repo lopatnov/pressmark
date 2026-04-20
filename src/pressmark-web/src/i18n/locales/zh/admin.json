@@ -3,6 +3,7 @@
   "settings": {
     "title": "网站设置",
     "siteName": "网站名称",
+    "siteDescription": "网站描述",
     "communityWindowDays": "社区新闻源历史（天数）",
     "registrationMode": "注册模式",
     "open": "开放",
@@ -16,6 +17,7 @@
     "smtpPasswordPlaceholder": "留空保持当前密码",
     "smtpUseTls": "使用 TLS（STARTTLS）",
     "smtpFromAddress": "发件人地址",
+    "communityPageEnabled": "启用社区页面",
     "commentsEnabled": "启用评论",
     "feedRetentionDays": "新闻源保留时间（天数）",
     "oldFeedsCleared": "旧源已成功清除",

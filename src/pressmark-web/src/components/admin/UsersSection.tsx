@@ -1,4 +1,3 @@
-import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
@@ -7,8 +6,7 @@ import { adminClient } from '@/api/clients'
 import { toast } from 'sonner'
 import { AdminPagination } from './AdminPagination'
 import { AdminSkeletonRows } from './AdminSkeletonRows'
-
-const PAGE_SIZE = 20
+import { useAdminPaginatedList, ADMIN_PAGE_SIZE } from '@/hooks/useAdminPaginatedList'
 
 interface UserRow {
   id: string
@@ -21,54 +19,32 @@ interface UserRow {
 
 export default function UsersSection() {
   const { t } = useTranslation(['admin', 'common'])
-  const [users, setUsers] = useState<UserRow[]>([])
-  const [totalCount, setTotalCount] = useState(0)
-  const [page, setPage] = useState(0)
-  const [loading, setLoading] = useState(true)
-  const reqRef = useRef(0)
 
-  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE))
-
-  const load = (p: number) => {
-    const req = ++reqRef.current
-    setLoading(true)
-    adminClient
-      .listUsers({ pageSize: PAGE_SIZE, page: p })
-      .then((res) => {
-        if (req !== reqRef.current) return
-        setUsers(
-          res.users.map((u) => ({
-            id: u.id,
-            email: u.email,
-            role: u.role,
-            createdAt: u.createdAt,
-            isCommentingBanned: u.isCommentingBanned,
-            isSiteBanned: u.isSiteBanned,
-          })),
-        )
-        setTotalCount(res.totalCount)
-      })
-      .catch(() => {
-        if (req === reqRef.current) toast.error(t('common:error'))
-      })
-      .finally(() => {
-        if (req === reqRef.current) setLoading(false)
-      })
-  }
-
-  useEffect(() => {
-    load(0)
-  }, [])
-
-  const handlePage = (p: number) => {
-    setPage(p)
-    load(p)
-  }
+  const {
+    items: users,
+    loading,
+    page,
+    totalPages,
+    handlePage,
+    setItems,
+  } = useAdminPaginatedList<UserRow>((p) =>
+    adminClient.listUsers({ pageSize: ADMIN_PAGE_SIZE, page: p }).then((res) => ({
+      items: res.users.map((u) => ({
+        id: u.id,
+        email: u.email,
+        role: u.role,
+        createdAt: u.createdAt,
+        isCommentingBanned: u.isCommentingBanned,
+        isSiteBanned: u.isSiteBanned,
+      })),
+      totalCount: res.totalCount,
+    })),
+  )
 
   const handleToggleCommentBan = async (userId: string, currentlyBanned: boolean) => {
     try {
       await adminClient.banUserFromCommenting({ userId, banned: !currentlyBanned })
-      setUsers((prev) =>
+      setItems((prev) =>
         prev.map((u) => (u.id === userId ? { ...u, isCommentingBanned: !currentlyBanned } : u)),
       )
     } catch {
@@ -79,7 +55,7 @@ export default function UsersSection() {
   const handleToggleSiteBan = async (userId: string, currentlyBanned: boolean) => {
     try {
       await adminClient.sitebanUser({ userId, banned: !currentlyBanned })
-      setUsers((prev) =>
+      setItems((prev) =>
         prev.map((u) => (u.id === userId ? { ...u, isSiteBanned: !currentlyBanned } : u)),
       )
     } catch {

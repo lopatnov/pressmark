@@ -1,6 +1,7 @@
 [![CI](https://github.com/lopatnov/pressmark/actions/workflows/ci.yml/badge.svg)](https://github.com/lopatnov/pressmark/actions/workflows/ci.yml)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
 [![GitHub issues](https://img.shields.io/github/issues/lopatnov/pressmark)](https://github.com/lopatnov/pressmark/issues)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=lopatnov_pressmark&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=lopatnov_pressmark)
 [![GitHub stars](https://img.shields.io/github/stars/lopatnov/pressmark?style=social)](https://github.com/lopatnov/pressmark/stargazers)
 
 # Pressmark
@@ -14,12 +15,12 @@ The public community page — articles liked by users — is open to anyone with
 
 ## Screenshots
 
-| Community | Feed |
-|---|---|
+| Community                               | Feed                          |
+| --------------------------------------- | ----------------------------- |
 | ![Community](docs/images/community.png) | ![Feed](docs/images/feed.png) |
 
-| Subscriptions | Bookmarks |
-|---|---|
+| Subscriptions                                   | Bookmarks                               |
+| ----------------------------------------------- | --------------------------------------- |
 | ![Subscriptions](docs/images/subscriptions.png) | ![Bookmarks](docs/images/bookmarks.png) |
 
 ---
@@ -29,7 +30,8 @@ The public community page — articles liked by users — is open to anyone with
 - **Personal feed** — subscribe to any RSS source, track read/unread status
 - **Public community page** — top-liked articles from the last N days, visible without an account
 - **Like & bookmark** — like articles to surface them on the community page; bookmark privately for later
-- **Admin panel** — configure site name, community window, moderate content, view user list
+- **Admin panel** — configure site name, site description, community window, moderate content, view user list
+- **SEO-ready** — `sitemap.xml`, `robots.txt`, Open Graph and Twitter Card meta tags, gzip compression, long-lived cache headers for static assets
 - **One-command setup** — `docker compose up` starts the full stack
 - **Invite-only mode** — optionally restrict registration (configurable in admin)
 - **Comments** — discuss articles with other users; subscribe to per-article comment threads for email notifications
@@ -61,10 +63,10 @@ The public community page — articles liked by users — is open to anyone with
 
 You need a running MSSQL instance — either **local** or **Docker**:
 
-| Setup                 | Host port   | How to get MSSQL running                                                            |
-| --------------------- | ----------- | ----------------------------------------------------------------------------------- |
-| Docker                | `1434`      | `docker compose up db -d` (requires [Docker](https://docs.docker.com/get-docker/)) |
-| Local MSSQL installed | `1433`      | Already running — change port to `1433` in `launchSettings.json` and `launch.json` |
+| Setup                 | Host port | How to get MSSQL running                                                           |
+| --------------------- | --------- | ---------------------------------------------------------------------------------- |
+| Docker                | `1434`    | `docker compose up db -d` (requires [Docker](https://docs.docker.com/get-docker/)) |
+| Local MSSQL installed | `1433`    | Already running — change port to `1433` in `launchSettings.json` and `launch.json` |
 
 The default connection string (`sa` / `Dev_Password1!`) targets **Docker on port 1434** and is pre-configured in `launchSettings.json` and `.vscode/launch.json`.
 If using a local SQL Server instance, change `1434` → `1433` in `ConnectionStrings__Default` in both files.
@@ -101,7 +103,7 @@ cd src/pressmark-web
 npm install
 npm run dev
 # Open http://localhost:5173
-# Vite proxies /grpc/* → http://localhost:5000 automatically
+# Vite proxies /grpc/*, /api/*, /sitemap.xml, /robots.txt → http://localhost:5000
 ```
 
 ### Connecting a database client
@@ -150,11 +152,11 @@ cd pressmark
 
 A `.env` file with development defaults is included in the repository. It works out of the box for local use. **Before deploying to production, edit `.env`** and change:
 
-| Variable              | What to set                                                    |
-| --------------------- | -------------------------------------------------------------- |
-| `MSSQL_SA_PASSWORD`   | Strong SA password (uppercase + lowercase + digit + symbol)    |
-| `JWT_SECRET`          | Random secret, min 32 chars — `openssl rand -base64 32`        |
-| `CORS_ALLOWED_ORIGINS`| Your public domain, e.g. `https://your-domain.com`            |
+| Variable               | What to set                                                 |
+| ---------------------- | ----------------------------------------------------------- |
+| `MSSQL_SA_PASSWORD`    | Strong SA password (uppercase + lowercase + digit + symbol) |
+| `JWT_SECRET`           | Random secret, min 32 chars — `openssl rand -base64 32`     |
+| `CORS_ALLOWED_ORIGINS` | Your public domain, e.g. `https://your-domain.com`          |
 
 The remaining variables in `.env` have sensible defaults and rarely need changing.
 
@@ -232,8 +234,20 @@ services:
     volumes:
       - mssql_data:/var/opt/mssql
     healthcheck:
-      test: ["CMD", "/opt/mssql-tools18/bin/sqlcmd", "-S", "localhost",
-             "-U", "sa", "-P", "${MSSQL_SA_PASSWORD}", "-C", "-Q", "SELECT 1"]
+      test:
+        [
+          "CMD",
+          "/opt/mssql-tools18/bin/sqlcmd",
+          "-S",
+          "localhost",
+          "-U",
+          "sa",
+          "-P",
+          "${MSSQL_SA_PASSWORD}",
+          "-C",
+          "-Q",
+          "SELECT 1",
+        ]
       interval: 10s
       timeout: 5s
       retries: 10
@@ -359,17 +373,17 @@ pressmark/
 
 ## Environment Variables
 
-| Variable                      | Default                 | Description                                         |
-| ----------------------------- | ----------------------- | --------------------------------------------------- |
-| `ConnectionStrings__Default`  | _(required)_            | MSSQL connection string                             |
-| `Jwt__Secret`                 | _(required)_            | JWT signing secret — min 32 chars, **change this!** |
-| `Jwt__ExpiryMinutes`          | `15`                    | Access token lifetime (minutes)                     |
-| `Jwt__RefreshExpiryDays`      | `7`                     | Refresh token lifetime (days)                       |
-| `Jwt__RefreshCookieName`      | `refresh_token`         | Name of the httpOnly refresh cookie                 |
-| `Cors__AllowedOrigins`        | `http://localhost:5173` | Allowed CORS origins                                |
-| `RssFetcher__IntervalMinutes` | `15`                    | How often to poll RSS feeds                         |
-| `RssFetcher__MaxItemsPerFeed` | `50`                    | Maximum items fetched per feed per poll             |
-| `App__BaseUrl`                | `http://localhost:5173` | Public base URL — used in email links (password reset, comment notifications, digest) |
+| Variable                      | Default                 | Description                                                                                                               |
+| ----------------------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `ConnectionStrings__Default`  | _(required)_            | MSSQL connection string                                                                                                   |
+| `Jwt__Secret`                 | _(required)_            | JWT signing secret — min 32 chars, **change this!**                                                                       |
+| `Jwt__ExpiryMinutes`          | `15`                    | Access token lifetime (minutes)                                                                                           |
+| `Jwt__RefreshExpiryDays`      | `7`                     | Refresh token lifetime (days)                                                                                             |
+| `Jwt__RefreshCookieName`      | `refresh_token`         | Name of the httpOnly refresh cookie                                                                                       |
+| `Cors__AllowedOrigins`        | `http://localhost:5173` | Allowed CORS origins                                                                                                      |
+| `RssFetcher__IntervalMinutes` | `15`                    | How often to poll RSS feeds                                                                                               |
+| `RssFetcher__MaxItemsPerFeed` | `50`                    | Maximum items fetched per feed per poll                                                                                   |
+| `App__BaseUrl`                | `http://localhost:5173` | Public base URL — used in email links (password reset, comment notifications, digest) and in `sitemap.xml` / `robots.txt` |
 
 ---
 

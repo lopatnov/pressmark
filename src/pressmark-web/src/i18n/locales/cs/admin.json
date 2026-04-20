@@ -3,6 +3,7 @@
   "settings": {
     "title": "Nastavení webu",
     "siteName": "Název webu",
+    "siteDescription": "Popis webu",
     "communityWindowDays": "Historie zpravodajského kanálu komunity (dny)",
     "registrationMode": "Režim registrace",
     "open": "Otevřená",
@@ -16,6 +17,7 @@
     "smtpPasswordPlaceholder": "Ponechte prázdné pro zachování stávajícího",
     "smtpUseTls": "Použít TLS (STARTTLS)",
     "smtpFromAddress": "Adresa odesílatele",
+    "communityPageEnabled": "Povolení stránky komunity",
     "commentsEnabled": "Povolit komentáře",
     "feedRetentionDays": "Udržení zpravodajského kanálu (dny)",
     "oldFeedsCleared": "Staré kanály byly úspěšně vymazány",

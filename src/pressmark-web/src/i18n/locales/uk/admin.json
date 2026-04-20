@@ -3,6 +3,7 @@
   "settings": {
     "title": "Налаштування сайту",
     "siteName": "Назва сайту",
+    "siteDescription": "Опис сайту",
     "communityWindowDays": "Історія стрічки новин спільноти (дні)",
     "registrationMode": "Режим реєстрації",
     "open": "Відкрита",
@@ -16,6 +17,7 @@
     "smtpPasswordPlaceholder": "Залиште порожнім для збереження поточного",
     "smtpUseTls": "Використовувати TLS (STARTTLS)",
     "smtpFromAddress": "Адреса відправника",
+    "communityPageEnabled": "Увімкнути сторінку спільноти",
     "commentsEnabled": "Увімкнути коментарі",
     "feedRetentionDays": "Збереження стрічки новин (дні)",
     "oldFeedsCleared": "Старі стрічки успішно очищено",

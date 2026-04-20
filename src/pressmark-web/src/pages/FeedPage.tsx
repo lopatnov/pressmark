@@ -1,6 +1,7 @@
 import { useCallback, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { usePageTitle } from '@/hooks/usePageTitle'
 import { toast } from 'sonner'
 import { Ban, Heart, Bookmark, BookMarked, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -28,6 +29,7 @@ function FeedCardSkeleton() {
 
 export function FeedPage() {
   const { t } = useTranslation(['feed', 'common', 'subscriptions'])
+  usePageTitle(t('common:nav.feed'))
   const [searchParams, setSearchParams] = useSearchParams()
   const activeSubId = searchParams.get('sub') ?? ''
   const activeSub = useSubscriptionStore((s) =>

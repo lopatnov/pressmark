@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { usePageTitle } from '@/hooks/usePageTitle'
 import { toast } from 'sonner'
 import { Ban, BookMarked, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -23,6 +24,7 @@ interface BookmarkItem {
 
 export function BookmarksPage() {
   const { t } = useTranslation(['feed', 'common', 'subscriptions'])
+  usePageTitle(t('common:nav.bookmarks'))
   const [searchParams, setSearchParams] = useSearchParams()
   const activeSubId = searchParams.get('sub') ?? ''
 

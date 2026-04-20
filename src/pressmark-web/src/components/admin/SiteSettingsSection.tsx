@@ -6,10 +6,12 @@ import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { adminClient } from '@/api/clients'
 import { useAdminStore } from '@/store/adminStore'
+import { useAuthStore } from '@/store/authStore'
 import { toast } from 'sonner'
 
 const settingsSchema = z.object({
   siteName: z.string().min(1),
+  siteDescription: z.string(),
   communityWindowDays: z.number().int().min(1).max(365),
   registrationMode: z.enum(['open', 'invite_only']),
   smtpHost: z.string(),
@@ -20,12 +22,15 @@ const settingsSchema = z.object({
   smtpFromAddress: z.string(),
   commentsEnabled: z.boolean(),
   feedRetentionDays: z.number().int().min(1).max(3650),
+  communityPageEnabled: z.boolean(),
 })
 type SettingsForm = z.infer<typeof settingsSchema>
 
 export default function SiteSettingsSection() {
   const { t } = useTranslation(['admin', 'common'])
   const { settings, setSettings } = useAdminStore()
+  const setCommunityPageEnabled = useAuthStore((s) => s.setCommunityPageEnabled)
+  const setCommentsEnabled = useAuthStore((s) => s.setCommentsEnabled)
   const [saved, setSaved] = useState(false)
 
   const {
@@ -48,6 +53,7 @@ export default function SiteSettingsSection() {
       await adminClient.updateSiteSettings({
         settings: {
           siteName: data.siteName,
+          siteDescription: data.siteDescription,
           communityWindowDays: data.communityWindowDays,
           registrationMode: data.registrationMode,
           smtpHost: data.smtpHost,
@@ -58,9 +64,12 @@ export default function SiteSettingsSection() {
           smtpFromAddress: data.smtpFromAddress,
           commentsEnabled: data.commentsEnabled,
           feedRetentionDays: data.feedRetentionDays,
+          communityPageEnabled: data.communityPageEnabled,
         },
       })
       setSettings(data)
+      setCommunityPageEnabled(data.communityPageEnabled)
+      setCommentsEnabled(data.commentsEnabled)
       setSaved(true)
       setTimeout(() => setSaved(false), 2000)
     } catch {
@@ -91,6 +100,15 @@ export default function SiteSettingsSection() {
             className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
           />
           {errors.siteName && <p className="text-xs text-destructive">{errors.siteName.message}</p>}
+        </div>
+
+        <div className="space-y-1">
+          <label className="text-sm font-medium">{t('admin:settings.siteDescription')}</label>
+          <textarea
+            {...register('siteDescription')}
+            rows={2}
+            className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm resize-none"
+          />
         </div>
 
         <div className="space-y-1">
@@ -178,7 +196,11 @@ export default function SiteSettingsSection() {
           </label>
         </div>
 
-        <div className="border-t border-border pt-3">
+        <div className="border-t border-border pt-3 space-y-2">
+          <label className="flex items-center gap-2 text-sm font-medium cursor-pointer">
+            <input {...register('communityPageEnabled')} type="checkbox" className="h-4 w-4" />
+            {t('admin:settings.communityPageEnabled')}
+          </label>
           <label className="flex items-center gap-2 text-sm font-medium cursor-pointer">
             <input {...register('commentsEnabled')} type="checkbox" className="h-4 w-4" />
             {t('admin:settings.commentsEnabled')}

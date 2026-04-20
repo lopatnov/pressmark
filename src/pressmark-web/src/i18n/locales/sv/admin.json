@@ -3,6 +3,7 @@
   "settings": {
     "title": "Webbplatsinställningar",
     "siteName": "Webbplatsnamn",
+    "siteDescription": "Beskrivning av webbplatsen",
     "communityWindowDays": "Historik för gemenskapsflöden (dagar)",
     "registrationMode": "Registreringsläge",
     "open": "Öppen",
@@ -16,6 +17,7 @@
     "smtpPasswordPlaceholder": "Lämna tomt för att behålla nuvarande",
     "smtpUseTls": "Använd TLS (STARTTLS)",
     "smtpFromAddress": "Avsändaradress",
+    "communityPageEnabled": "Aktivera community-sida",
     "commentsEnabled": "Aktivera kommentarer",
     "feedRetentionDays": "Flödeslagring (dagar)",
     "oldFeedsCleared": "Gamla flöden rensades framgångsrikt",

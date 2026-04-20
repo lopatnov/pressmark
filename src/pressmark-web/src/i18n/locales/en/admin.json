@@ -3,6 +3,7 @@
   "settings": {
     "title": "Site settings",
     "siteName": "Site name",
+    "siteDescription": "Site description",
     "communityWindowDays": "Community feed history (days)",
     "registrationMode": "Registration mode",
     "open": "Open",
@@ -16,6 +17,7 @@
     "smtpPasswordPlaceholder": "Leave blank to keep current",
     "smtpUseTls": "Use TLS (STARTTLS)",
     "smtpFromAddress": "From address",
+    "communityPageEnabled": "Enable community page",
     "commentsEnabled": "Enable comments",
     "feedRetentionDays": "Feed retention (days)",
     "oldFeedsCleared": "Old feeds cleared successfully",
