@@ -3,6 +3,7 @@
   "settings": {
     "title": "Webbplatsinställningar",
     "siteName": "Webbplatsnamn",
+    "siteDescription": "Beskrivning av webbplatsen",
     "communityWindowDays": "Historik för gemenskapsflöden (dagar)",
     "registrationMode": "Registreringsläge",
     "open": "Öppen",

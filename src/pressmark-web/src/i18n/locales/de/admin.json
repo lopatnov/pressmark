@@ -3,6 +3,7 @@
   "settings": {
     "title": "Website-Einstellungen",
     "siteName": "Website-Name",
+    "siteDescription": "Beschreibung der Website",
     "communityWindowDays": "Historie des Community-Newsfeeds (Tage)",
     "registrationMode": "Registrierungsmodus",
     "open": "Offen",

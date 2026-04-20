@@ -3,6 +3,7 @@
   "settings": {
     "title": "サイト設定",
     "siteName": "サイト名",
+    "siteDescription": "サイトの説明",
     "communityWindowDays": "コミュニティフィード履歴（日）",
     "registrationMode": "登録モード",
     "open": "公開",

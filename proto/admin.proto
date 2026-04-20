@@ -42,6 +42,7 @@ message SiteSettings {
   bool comments_enabled = 10; // default true
   int32 feed_retention_days = 11; // days to keep items without bookmarks; default 90
   bool community_page_enabled = 12; // default true; when false, / redirects to /login or /feed
+  string site_description = 13;
 }
 
 message UpdateSiteSettingsRequest {

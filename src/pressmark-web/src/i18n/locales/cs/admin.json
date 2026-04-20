@@ -3,6 +3,7 @@
   "settings": {
     "title": "Nastavení webu",
     "siteName": "Název webu",
+    "siteDescription": "Popis webu",
     "communityWindowDays": "Historie zpravodajského kanálu komunity (dny)",
     "registrationMode": "Režim registrace",
     "open": "Otevřená",

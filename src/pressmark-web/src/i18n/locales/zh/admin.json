@@ -3,6 +3,7 @@
   "settings": {
     "title": "网站设置",
     "siteName": "网站名称",
+    "siteDescription": "场地说明",
     "communityWindowDays": "社区新闻源历史（天数）",
     "registrationMode": "注册模式",
     "open": "开放",

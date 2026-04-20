@@ -3,6 +3,7 @@
   "settings": {
     "title": "Site-instellingen",
     "siteName": "Sitenaam",
+    "siteDescription": "Beschrijving",
     "communityWindowDays": "Geschiedenis community-nieuwsfeed (dagen)",
     "registrationMode": "Registratiemodus",
     "open": "Open",

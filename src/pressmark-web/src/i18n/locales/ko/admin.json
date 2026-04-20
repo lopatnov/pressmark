@@ -3,6 +3,7 @@
   "settings": {
     "title": "사이트 설정",
     "siteName": "사이트 이름",
+    "siteDescription": "사이트 설명",
     "communityWindowDays": "커뮤니티 피드 기록(일)",
     "registrationMode": "회원가입 모드",
     "open": "공개",

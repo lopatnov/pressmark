@@ -3,6 +3,7 @@
   "settings": {
     "title": "Site settings",
     "siteName": "Site name",
+    "siteDescription": "Site description",
     "communityWindowDays": "Community feed history (days)",
     "registrationMode": "Registration mode",
     "open": "Open",

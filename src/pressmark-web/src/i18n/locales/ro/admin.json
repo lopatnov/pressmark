@@ -3,6 +3,7 @@
   "settings": {
     "title": "Setări site",
     "siteName": "Nume site",
+    "siteDescription": "Descrierea site-ului",
     "communityWindowDays": "Istoricul fluxului de știri al comunității (zile)",
     "registrationMode": "Mod înregistrare",
     "open": "Deschis",

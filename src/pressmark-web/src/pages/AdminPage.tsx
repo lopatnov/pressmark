@@ -48,6 +48,7 @@ export function AdminPage() {
           commentsEnabled: res.commentsEnabled,
           feedRetentionDays: res.feedRetentionDays || 90,
           communityPageEnabled: res.communityPageEnabled,
+          siteDescription: res.siteDescription,
         }),
       )
       .catch(() => toast.error(t('common:error')))

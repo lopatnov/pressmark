@@ -136,13 +136,15 @@ var app = builder.Build();
 
 app.MapGet("/health", () => Results.Ok(new { status = "healthy" }));
 
-app.MapGet("/api/meta", async (AppDbContext db, CancellationToken ct) =>
+app.MapGet("/api/meta", async (AppDbContext db, IConfiguration config, CancellationToken ct) =>
 {
-    var siteName = await db.SiteSettings
-        .Where(s => s.Key == "site_name")
-        .Select(s => s.Value)
-        .FirstOrDefaultAsync(ct) ?? "Pressmark";
-    return Results.Ok(new { siteName });
+    var settings = await db.SiteSettings
+        .Where(s => s.Key == "site_name" || s.Key == "site_description")
+        .ToDictionaryAsync(s => s.Key, s => s.Value, ct);
+    var siteName = settings.GetValueOrDefault("site_name", "Pressmark");
+    var siteDescription = settings.GetValueOrDefault("site_description", "");
+    var baseUrl = (config["App:BaseUrl"] ?? "http://localhost:5173").TrimEnd('/');
+    return Results.Ok(new { siteName, siteDescription, baseUrl });
 }).AllowAnonymous();
 
 app.MapGet("/sitemap.xml", async (AppDbContext db, IConfiguration config, CancellationToken ct) =>
@@ -154,16 +156,38 @@ app.MapGet("/sitemap.xml", async (AppDbContext db, IConfiguration config, Cancel
 
     var communityEnabled = settings.GetValueOrDefault("community_page_enabled", "true") == "true";
     var registrationOpen = settings.GetValueOrDefault("registration_mode", "open") == "open";
+    var lastmod = DateTime.UtcNow.ToString("yyyy-MM-dd");
 
     var sb = new StringBuilder();
     sb.AppendLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
     sb.AppendLine("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">");
-    if (communityEnabled) sb.AppendLine($"  <url><loc>{baseUrl}/</loc></url>");
-    sb.AppendLine($"  <url><loc>{baseUrl}/login</loc></url>");
-    if (registrationOpen) sb.AppendLine($"  <url><loc>{baseUrl}/register</loc></url>");
+    if (communityEnabled)
+        sb.AppendLine($"  <url><loc>{baseUrl}/</loc><lastmod>{lastmod}</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>");
+    sb.AppendLine($"  <url><loc>{baseUrl}/login</loc><lastmod>{lastmod}</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>");
+    if (registrationOpen)
+        sb.AppendLine($"  <url><loc>{baseUrl}/register</loc><lastmod>{lastmod}</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>");
     sb.AppendLine("</urlset>");
 
     return Results.Content(sb.ToString(), "application/xml");
+}).AllowAnonymous();
+
+app.MapGet("/robots.txt", (IConfiguration config) =>
+{
+    var baseUrl = (config["App:BaseUrl"] ?? "http://localhost:5173").TrimEnd('/');
+    var content = $"""
+        User-agent: *
+        Allow: /
+        Allow: /login
+        Allow: /register
+        Disallow: /feed
+        Disallow: /subscriptions
+        Disallow: /bookmarks
+        Disallow: /admin
+        Disallow: /article/
+
+        Sitemap: {baseUrl}/sitemap.xml
+        """;
+    return Results.Content(content, "text/plain");
 }).AllowAnonymous();
 
 app.UseForwardedHeaders(new ForwardedHeadersOptions

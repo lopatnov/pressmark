@@ -14,11 +14,23 @@ export function RootLayout() {
   const setCommentsEnabled = useAuthStore((s) => s.setCommentsEnabled)
   const setCommunityPageEnabled = useAuthStore((s) => s.setCommunityPageEnabled)
   const setSiteName = useAuthStore((s) => s.setSiteName)
+  const setSiteDescription = useAuthStore((s) => s.setSiteDescription)
 
   useEffect(() => {
     fetch('/api/meta')
       .then((r) => r.json())
-      .then((data) => setSiteName(data.siteName))
+      .then((data) => {
+        setSiteName(data.siteName)
+        setSiteDescription(data.siteDescription)
+        const setMeta = (selector: string, content: string) =>
+          document.querySelector(selector)?.setAttribute('content', content)
+        setMeta('meta[name="description"]', data.siteDescription)
+        setMeta('meta[property="og:title"]', data.siteName)
+        setMeta('meta[property="og:description"]', data.siteDescription)
+        setMeta('meta[property="og:url"]', data.baseUrl)
+        setMeta('meta[name="twitter:title"]', data.siteName)
+        setMeta('meta[name="twitter:description"]', data.siteDescription)
+      })
       .catch(() => {})
   }, [])
 

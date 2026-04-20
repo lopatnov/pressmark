@@ -3,6 +3,7 @@
   "settings": {
     "title": "Ustawienia strony",
     "siteName": "Nazwa strony",
+    "siteDescription": "Opis strony",
     "communityWindowDays": "Historia kanału informacyjnego społeczności (dni)",
     "registrationMode": "Tryb rejestracji",
     "open": "Otwarty",

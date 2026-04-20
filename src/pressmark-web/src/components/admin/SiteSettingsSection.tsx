@@ -11,6 +11,7 @@ import { toast } from 'sonner'
 
 const settingsSchema = z.object({
   siteName: z.string().min(1),
+  siteDescription: z.string(),
   communityWindowDays: z.number().int().min(1).max(365),
   registrationMode: z.enum(['open', 'invite_only']),
   smtpHost: z.string(),
@@ -52,6 +53,7 @@ export default function SiteSettingsSection() {
       await adminClient.updateSiteSettings({
         settings: {
           siteName: data.siteName,
+          siteDescription: data.siteDescription,
           communityWindowDays: data.communityWindowDays,
           registrationMode: data.registrationMode,
           smtpHost: data.smtpHost,
@@ -98,6 +100,15 @@ export default function SiteSettingsSection() {
             className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
           />
           {errors.siteName && <p className="text-xs text-destructive">{errors.siteName.message}</p>}
+        </div>
+
+        <div className="space-y-1">
+          <label className="text-sm font-medium">{t('admin:settings.siteDescription')}</label>
+          <textarea
+            {...register('siteDescription')}
+            rows={2}
+            className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm resize-none"
+          />
         </div>
 
         <div className="space-y-1">

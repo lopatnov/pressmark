@@ -3,6 +3,7 @@
   "settings": {
     "title": "Webhely beállításai",
     "siteName": "Webhely neve",
+    "siteDescription": "A helyszín leírása",
     "communityWindowDays": "Közösségi hírfolyam előzményei (napok)",
     "registrationMode": "Regisztrációs mód",
     "open": "Nyílt",

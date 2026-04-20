@@ -3,6 +3,7 @@
   "settings": {
     "title": "Site ayarları",
     "siteName": "Site adı",
+    "siteDescription": "Site açıklaması",
     "communityWindowDays": "Topluluk besleme geçmişi (gün)",
     "registrationMode": "Kayıt modu",
     "open": "Açık",

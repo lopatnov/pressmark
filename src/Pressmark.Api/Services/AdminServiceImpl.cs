@@ -31,6 +31,7 @@ public class AdminServiceImpl(AppDbContext db, ISmtpPasswordProtector passwordPr
             CommentsEnabled = settings.GetValueOrDefault("comments_enabled", "true") == "true",
             FeedRetentionDays = int.TryParse(settings.GetValueOrDefault("feed_retention_days"), out var r) ? r : 90,
             CommunityPageEnabled = settings.GetValueOrDefault("community_page_enabled", "true") == "true",
+            SiteDescription = settings.GetValueOrDefault("site_description", "A self-hosted RSS reader and community feed"),
         };
     }
 
@@ -55,6 +56,7 @@ public class AdminServiceImpl(AppDbContext db, ISmtpPasswordProtector passwordPr
         await UpsertSetting("comments_enabled", s.CommentsEnabled ? "true" : "false", ct);
         await UpsertSetting("feed_retention_days", s.FeedRetentionDays.ToString(), ct);
         await UpsertSetting("community_page_enabled", s.CommunityPageEnabled ? "true" : "false", ct);
+        await UpsertSetting("site_description", s.SiteDescription, ct);
 
         return new Empty();
     }

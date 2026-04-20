@@ -3,6 +3,7 @@
   "settings": {
     "title": "Настройки сайта",
     "siteName": "Название сайта",
+    "siteDescription": "Описание сайта",
     "communityWindowDays": "История ленты сообщества (дней)",
     "registrationMode": "Режим регистрации",
     "open": "Открытая",

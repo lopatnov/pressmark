@@ -3,6 +3,7 @@
   "settings": {
     "title": "Configuración del sitio",
     "siteName": "Nombre del sitio",
+    "siteDescription": "Descripción",
     "communityWindowDays": "Historial del feed de la comunidad (días)",
     "registrationMode": "Modo de registro",
     "open": "Abierto",

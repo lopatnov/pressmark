@@ -49,6 +49,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       .then((res) => {
         setSettings({
           siteName: res.siteName,
+          siteDescription: res.siteDescription,
           communityWindowDays: res.communityWindowDays,
           registrationMode: res.registrationMode as 'open' | 'invite_only',
           smtpHost: res.smtpHost,
