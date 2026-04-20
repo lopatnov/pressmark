@@ -149,7 +149,8 @@ app.MapGet("/api/meta", async (AppDbContext db, IConfiguration config, Cancellat
 
 app.MapGet("/sitemap.xml", async (AppDbContext db, IConfiguration config, CancellationToken ct) =>
 {
-    var baseUrl = (config["App:BaseUrl"] ?? "http://localhost:5173").TrimEnd('/');
+    var baseUrl = System.Security.SecurityElement.Escape(
+        (config["App:BaseUrl"] ?? "http://localhost:5173").TrimEnd('/'));
     var settings = await db.SiteSettings
         .Where(s => s.Key == "registration_mode" || s.Key == "community_page_enabled")
         .ToDictionaryAsync(s => s.Key, s => s.Value, ct);
@@ -218,7 +219,10 @@ app.MapGet("/proxy/favicon", async (string? url, IHttpClientFactory httpClientFa
     // Block loopback and private IP ranges to prevent SSRF
     var host = uri.Host.ToLowerInvariant();
     if (host is "localhost" or "127.0.0.1" or "::1" ||
-        host.StartsWith("192.168.") || host.StartsWith("10.") || host.StartsWith("172."))
+        host.StartsWith("192.168.") ||
+        host.StartsWith("10.") ||
+        host.StartsWith("169.254.") ||
+        IsPrivate172(host))
         return Results.NoContent();
 
     var faviconUrl = uri.GetLeftPart(UriPartial.Authority) + "/favicon.ico";
@@ -236,8 +240,15 @@ app.MapGet("/proxy/favicon", async (string? url, IHttpClientFactory httpClientFa
         if (!contentType.StartsWith("image/"))
             return Results.NoContent();
 
+        const int maxFaviconBytes = 1024 * 1024; // 1 MB
+        if (response.Content.Headers.ContentLength > maxFaviconBytes)
+            return Results.NoContent();
+
         ctx.Response.Headers.CacheControl = "public, max-age=86400";
         var bytes = await response.Content.ReadAsByteArrayAsync(cts.Token);
+        if (bytes.Length > maxFaviconBytes)
+            return Results.NoContent();
+
         return Results.Bytes(bytes, contentType);
     }
     catch
@@ -247,3 +258,10 @@ app.MapGet("/proxy/favicon", async (string? url, IHttpClientFactory httpClientFa
 });
 
 app.Run();
+
+static bool IsPrivate172(string host)
+{
+    if (!host.StartsWith("172.")) return false;
+    var parts = host.Split('.');
+    return parts.Length >= 2 && int.TryParse(parts[1], out var octet) && octet is >= 16 and <= 31;
+}
