@@ -320,7 +320,7 @@ public class AuthServiceImpl(
         {
             HttpOnly = true,
             SameSite = SameSiteMode.Strict,
-            Secure = http.Request.IsHttps,
+            Secure = true,
             Expires = DateTimeOffset.UtcNow.AddDays(jwt.RefreshExpiryDays),
         });
 
