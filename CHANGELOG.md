@@ -32,12 +32,7 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Rate-limit error code corrected; stale-request toasts suppressed; `pt` locale string fixes
 - Profile-specific page title used in `AdminUserPage`
 - `usePageTitle` moved after item state declaration in `ArticlePage` to fix hook order
-- UTF-8 BOM removed and CRLF normalised to LF in migration files
-
-### Changed
-
-- `useAdminPaginatedList` hook extracted to remove duplication across admin list views
-- Codacy configuration removed
+- UTF-8 BOM removed and CRLF normalized to LF in migration files
 
 ### Dependencies
 
