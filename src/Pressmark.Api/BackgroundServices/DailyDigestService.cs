@@ -30,13 +30,12 @@ public class DailyDigestService(
 
             var todayUtc = DateTime.UtcNow.Date;
 
-            // Users with digest enabled who haven't received one yet today
             var users = await db.Users
                 .AsNoTracking()
                 .Where(u => u.DigestEnabled
                     && !u.IsSiteBanned
                     && (u.LastDigestSentAt == null || u.LastDigestSentAt < todayUtc))
-                .Select(u => new { u.Id, u.Email })
+                .Select(u => new { u.Id, u.Email, u.LastDigestSentAt })
                 .ToListAsync(ct);
 
             if (users.Count == 0) return;
@@ -48,39 +47,54 @@ public class DailyDigestService(
                 .FirstOrDefaultAsync(ct);
             if (int.TryParse(windowSetting, out var w)) windowDays = w;
 
-            var since = DateTime.UtcNow.AddDays(-windowDays);
             var baseUrl = config["App:BaseUrl"] ?? "http://localhost:5173";
-
-            // Top 20 articles liked by the community in the window (same query as community feed)
-            var topItems = await db.Likes
-                .AsNoTracking()
-                .Where(l => l.CreatedAt >= since
-                    && !l.FeedItem.IsCommunityHidden
-                    && !l.FeedItem.Subscription.IsCommunityBanned
-                    && !l.User.IsSiteBanned)
-                .GroupBy(l => l.FeedItemId)
-                .OrderByDescending(g => g.Count())
-                .Take(20)
-                .Select(g => new
-                {
-                    FeedItemId = g.Key,
-                    LikeCount = g.Count(),
-                    Title = g.First().FeedItem.Title,
-                    Url = g.First().FeedItem.Url,
-                    SourceTitle = g.First().FeedItem.Subscription.Title,
-                })
-                .ToListAsync(ct);
-
-            if (topItems.Count == 0) return;
-
-            var digestItems = topItems
-                .Select(x => new DigestItem(x.Title, x.Url, x.SourceTitle, x.LikeCount))
-                .ToList();
 
             foreach (var user in users)
             {
                 try
                 {
+                    // Use last digest time as cutoff to avoid resending the same articles
+                    var since = user.LastDigestSentAt ?? DateTime.UtcNow.AddDays(-windowDays);
+
+                    // Community: top articles that received likes since last digest
+                    var communityItems = await db.Likes
+                        .AsNoTracking()
+                        .Where(l => l.CreatedAt >= since
+                            && !l.FeedItem.IsCommunityHidden
+                            && !l.FeedItem.Subscription.IsCommunityBanned
+                            && !l.User.IsSiteBanned)
+                        .GroupBy(l => l.FeedItemId)
+                        .OrderByDescending(g => g.Count())
+                        .Take(10)
+                        .Select(g => new DigestItem(
+                            g.First().FeedItem.Title,
+                            g.First().FeedItem.Url,
+                            g.First().FeedItem.Subscription.Title,
+                            g.Count()))
+                        .ToListAsync(ct);
+
+                    // Personal feed: new articles from user's own subscriptions since last digest
+                    var feedItems = await db.FeedItems
+                        .AsNoTracking()
+                        .Where(f => f.Subscription.UserId == user.Id
+                            && f.FetchedAt >= since)
+                        .OrderByDescending(f => f.PublishedAt)
+                        .Take(10)
+                        .Select(f => new DigestItem(
+                            f.Title,
+                            f.Url,
+                            f.Subscription.Title,
+                            0))
+                        .ToListAsync(ct);
+
+                    // Merge both sources, deduplicate by URL
+                    var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                    var digestItems = communityItems.Concat(feedItems)
+                        .Where(item => seen.Add(item.Url))
+                        .ToList();
+
+                    if (digestItems.Count == 0) continue;
+
                     await emailService.SendDailyDigestAsync(user.Email, baseUrl, digestItems, ct);
 
                     await db.Users
