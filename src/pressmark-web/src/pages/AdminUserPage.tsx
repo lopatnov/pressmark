@@ -45,7 +45,7 @@ export function AdminUserPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const { t } = useTranslation(['admin', 'common'])
-  usePageTitle(t('common:nav.admin'))
+  usePageTitle(t('admin:users.profileTitle'))
   const [details, setDetails] = useState<UserDetails | null>(null)
   const [loading, setLoading] = useState(true)
 
