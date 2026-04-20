@@ -29,7 +29,8 @@ The public community page — articles liked by users — is open to anyone with
 - **Personal feed** — subscribe to any RSS source, track read/unread status
 - **Public community page** — top-liked articles from the last N days, visible without an account
 - **Like & bookmark** — like articles to surface them on the community page; bookmark privately for later
-- **Admin panel** — configure site name, community window, moderate content, view user list
+- **Admin panel** — configure site name, site description, community window, moderate content, view user list
+- **SEO-ready** — `sitemap.xml`, `robots.txt`, Open Graph and Twitter Card meta tags, gzip compression, long-lived cache headers for static assets
 - **One-command setup** — `docker compose up` starts the full stack
 - **Invite-only mode** — optionally restrict registration (configurable in admin)
 - **Comments** — discuss articles with other users; subscribe to per-article comment threads for email notifications
@@ -101,7 +102,7 @@ cd src/pressmark-web
 npm install
 npm run dev
 # Open http://localhost:5173
-# Vite proxies /grpc/* → http://localhost:5000 automatically
+# Vite proxies /grpc/*, /api/*, /sitemap.xml, /robots.txt → http://localhost:5000
 ```
 
 ### Connecting a database client
@@ -369,7 +370,7 @@ pressmark/
 | `Cors__AllowedOrigins`        | `http://localhost:5173` | Allowed CORS origins                                |
 | `RssFetcher__IntervalMinutes` | `15`                    | How often to poll RSS feeds                         |
 | `RssFetcher__MaxItemsPerFeed` | `50`                    | Maximum items fetched per feed per poll             |
-| `App__BaseUrl`                | `http://localhost:5173` | Public base URL — used in email links (password reset, comment notifications, digest) |
+| `App__BaseUrl`                | `http://localhost:5173` | Public base URL — used in email links (password reset, comment notifications, digest) and in `sitemap.xml` / `robots.txt` |
 
 ---
 
