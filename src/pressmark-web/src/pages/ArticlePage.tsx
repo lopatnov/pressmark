@@ -13,11 +13,11 @@ import { useAuthStore } from '@/store/authStore'
 export function ArticlePage() {
   const { id } = useParams<{ id: string }>()
   const { t } = useTranslation(['feed', 'common', 'admin'])
-  usePageTitle(item?.title ?? t('common:nav.feed'))
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated())
   const isAdmin = useAuthStore((s) => s.isAdmin())
 
   const [item, setItem] = useState<FeedItemData | null>(null)
+  usePageTitle(item?.title ?? t('common:nav.feed'))
   const [notFound, setNotFound] = useState(false)
 
   const [showReportForm, setShowReportForm] = useState(false)
