@@ -13,6 +13,14 @@ export function RootLayout() {
   const setCommunityWindowDays = useAuthStore((s) => s.setCommunityWindowDays)
   const setCommentsEnabled = useAuthStore((s) => s.setCommentsEnabled)
   const setCommunityPageEnabled = useAuthStore((s) => s.setCommunityPageEnabled)
+  const setSiteName = useAuthStore((s) => s.setSiteName)
+
+  useEffect(() => {
+    fetch('/api/meta')
+      .then((r) => r.json())
+      .then((data) => setSiteName(data.siteName))
+      .catch(() => {})
+  }, [])
 
   useEffect(() => {
     const statusPromise = authClient

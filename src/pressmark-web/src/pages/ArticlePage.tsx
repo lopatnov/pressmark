@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { usePageTitle } from '@/hooks/usePageTitle'
 import { EyeOff, Eye, Flag } from 'lucide-react'
 import { toast } from 'sonner'
 import { adminClient, feedClient } from '@/api/clients'
@@ -12,6 +13,7 @@ import { useAuthStore } from '@/store/authStore'
 export function ArticlePage() {
   const { id } = useParams<{ id: string }>()
   const { t } = useTranslation(['feed', 'common', 'admin'])
+  usePageTitle(item?.title ?? t('common:nav.feed'))
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated())
   const isAdmin = useAuthStore((s) => s.isAdmin())
 

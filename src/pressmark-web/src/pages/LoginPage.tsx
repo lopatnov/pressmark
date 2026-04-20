@@ -3,6 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { usePageTitle } from '@/hooks/usePageTitle'
 import { Code, ConnectError } from '@connectrpc/connect'
 import { Button } from '@/components/ui/button'
 import { authClient } from '@/api/clients'
@@ -17,6 +18,7 @@ type FormData = z.infer<typeof schema>
 
 export function LoginPage() {
   const { t } = useTranslation(['auth', 'common'])
+  usePageTitle(t('auth:login.title'))
   const navigate = useNavigate()
   const setAuth = useAuthStore((s) => s.setAuth)
   const registrationMode = useAuthStore((s) => s.registrationMode)

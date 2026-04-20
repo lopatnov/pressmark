@@ -3,6 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { usePageTitle } from '@/hooks/usePageTitle'
 import { Button } from '@/components/ui/button'
 import { authClient } from '@/api/clients'
 import { ConnectError } from '@connectrpc/connect'
@@ -20,6 +21,7 @@ type FormData = z.infer<typeof schema>
 
 export function ResetPasswordPage() {
   const { t } = useTranslation('auth')
+  usePageTitle(t('resetPasswordTitle'))
   const navigate = useNavigate()
   const [params] = useSearchParams()
   const token = params.get('token') ?? ''

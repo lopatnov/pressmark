@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useTranslation } from 'react-i18next'
+import { usePageTitle } from '@/hooks/usePageTitle'
 import { toast } from 'sonner'
 import {
   Ban,
@@ -32,6 +33,7 @@ type FormData = z.infer<typeof schema>
 
 export function SubscriptionsPage() {
   const { t } = useTranslation(['subscriptions', 'common'])
+  usePageTitle(t('common:nav.subscriptions'))
   const {
     subscriptions,
     digestEnabled,

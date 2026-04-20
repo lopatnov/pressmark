@@ -38,6 +38,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const clearAuth = useAuthStore((s) => s.clearAuth)
   const registrationMode = useAuthStore((s) => s.registrationMode)
   const communityPageEnabled = useAuthStore((s) => s.communityPageEnabled)
+  const siteName = useAuthStore((s) => s.siteName)
   const totalUnread = useFeedStore((s) => s.totalUnread)
   const { settings, setSettings } = useAdminStore()
 
@@ -85,7 +86,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
     >
       <div className="flex flex-col border-b border-sidebar-border px-4 py-3">
         <span className="text-sm font-semibold text-sidebar-foreground">
-          {settings?.siteName || t('appName')}
+          {siteName || t('appName')}
         </span>
         {user && (
           <span className="truncate text-xs text-muted-foreground" title={user.email}>

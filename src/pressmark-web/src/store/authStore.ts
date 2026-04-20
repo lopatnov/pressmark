@@ -18,6 +18,7 @@ interface AuthState {
   communityWindowDays: number
   commentsEnabled: boolean
   communityPageEnabled: boolean
+  siteName: string
   setAuth: (token: string, user: AuthUser) => void
   clearAuth: () => void
   setInitialized: () => void
@@ -25,6 +26,7 @@ interface AuthState {
   setCommunityWindowDays: (days: number) => void
   setCommentsEnabled: (enabled: boolean) => void
   setCommunityPageEnabled: (enabled: boolean) => void
+  setSiteName: (name: string) => void
   isAuthenticated: () => boolean
   isAdmin: () => boolean
 }
@@ -39,6 +41,7 @@ export const useAuthStore = create<AuthState>()(
       communityWindowDays: 1,
       commentsEnabled: true,
       communityPageEnabled: true,
+      siteName: 'Pressmark',
       setAuth: (token, user) => set({ accessToken: token, user }),
       clearAuth: () => {
         set({ accessToken: null, user: null })
@@ -51,6 +54,7 @@ export const useAuthStore = create<AuthState>()(
       setCommunityWindowDays: (days) => set({ communityWindowDays: days }),
       setCommentsEnabled: (enabled) => set({ commentsEnabled: enabled }),
       setCommunityPageEnabled: (enabled) => set({ communityPageEnabled: enabled }),
+      setSiteName: (name) => set({ siteName: name }),
       isAuthenticated: () => !!get().accessToken,
       isAdmin: () => get().user?.role === 'Admin',
     }),

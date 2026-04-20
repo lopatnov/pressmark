@@ -136,6 +136,36 @@ var app = builder.Build();
 
 app.MapGet("/health", () => Results.Ok(new { status = "healthy" }));
 
+app.MapGet("/api/meta", async (AppDbContext db, CancellationToken ct) =>
+{
+    var siteName = await db.SiteSettings
+        .Where(s => s.Key == "site_name")
+        .Select(s => s.Value)
+        .FirstOrDefaultAsync(ct) ?? "Pressmark";
+    return Results.Ok(new { siteName });
+}).AllowAnonymous();
+
+app.MapGet("/sitemap.xml", async (AppDbContext db, IConfiguration config, CancellationToken ct) =>
+{
+    var baseUrl = (config["App:BaseUrl"] ?? "http://localhost:5173").TrimEnd('/');
+    var settings = await db.SiteSettings
+        .Where(s => s.Key == "registration_mode" || s.Key == "community_page_enabled")
+        .ToDictionaryAsync(s => s.Key, s => s.Value, ct);
+
+    var communityEnabled = settings.GetValueOrDefault("community_page_enabled", "true") == "true";
+    var registrationOpen = settings.GetValueOrDefault("registration_mode", "open") == "open";
+
+    var sb = new StringBuilder();
+    sb.AppendLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+    sb.AppendLine("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">");
+    if (communityEnabled) sb.AppendLine($"  <url><loc>{baseUrl}/</loc></url>");
+    sb.AppendLine($"  <url><loc>{baseUrl}/login</loc></url>");
+    if (registrationOpen) sb.AppendLine($"  <url><loc>{baseUrl}/register</loc></url>");
+    sb.AppendLine("</urlset>");
+
+    return Results.Content(sb.ToString(), "application/xml");
+}).AllowAnonymous();
+
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
     ForwardedHeaders = ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedFor,

@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { usePageTitle } from '@/hooks/usePageTitle'
 import { Skeleton } from '@/components/ui/skeleton'
 import { adminClient } from '@/api/clients'
 import { useAdminStore } from '@/store/adminStore'
@@ -27,6 +28,7 @@ const SectionLoading = () => (
 
 export function AdminPage() {
   const { t } = useTranslation(['admin', 'common'])
+  usePageTitle(t('common:nav.admin'))
   const { setSettings } = useAdminStore()
 
   useEffect(() => {

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSearchParams, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { usePageTitle } from '@/hooks/usePageTitle'
 import { toast } from 'sonner'
 import { Heart, EyeOff, Ban, Rss, Check, Flag, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -28,6 +29,7 @@ interface CommunityItem {
 
 export function CommunityPage() {
   const { t } = useTranslation(['feed', 'common', 'admin'])
+  usePageTitle(t('common:nav.community'))
   const [searchParams, setSearchParams] = useSearchParams()
   const activeSrcUrl = searchParams.get('src') ?? ''
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated())
