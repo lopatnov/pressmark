@@ -14,7 +14,8 @@ namespace Pressmark.Api.Services;
 
 public class AuthServiceImpl(
     AppDbContext db, JwtService jwt,
-    IEmailService emailService, IConfiguration config) : AuthService.AuthServiceBase
+    IEmailService emailService, IConfiguration config,
+    IWebHostEnvironment env) : AuthService.AuthServiceBase
 {
     public override async Task<AuthResponse> Register(
         RegisterRequest request, ServerCallContext context)
@@ -320,7 +321,7 @@ public class AuthServiceImpl(
         {
             HttpOnly = true,
             SameSite = SameSiteMode.Strict,
-            Secure = true,
+            Secure = !env.IsDevelopment() || http.Request.IsHttps,
             Expires = DateTimeOffset.UtcNow.AddDays(jwt.RefreshExpiryDays),
         });
 
