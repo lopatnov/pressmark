@@ -48,33 +48,32 @@ public class DailyDigestService(
             if (int.TryParse(windowSetting, out var w)) windowDays = w;
 
             var baseUrl = config["App:BaseUrl"] ?? "http://localhost:5173";
-
-            // Fetch community items once for the full window — avoids N+1 queries.
-            // Personal feed items are still fetched per user since they depend on user subscriptions.
-            var globalSince = DateTime.UtcNow.AddDays(-windowDays);
-            var communityItems = await db.Likes
-                .AsNoTracking()
-                .Where(l => l.CreatedAt >= globalSince
-                    && !l.FeedItem.IsCommunityHidden
-                    && !l.FeedItem.Subscription.IsCommunityBanned
-                    && !l.User.IsSiteBanned)
-                .GroupBy(l => l.FeedItemId)
-                .OrderByDescending(g => g.Count())
-                .Take(10)
-                .Select(g => new DigestItem(
-                    g.First().FeedItem.Title,
-                    g.First().FeedItem.Url,
-                    g.First().FeedItem.Subscription.Title,
-                    g.Count()))
-                .ToListAsync(ct);
-
+            var defaultSince = DateTime.UtcNow.AddDays(-windowDays);
             var sentCount = 0;
 
             foreach (var user in users)
             {
                 try
                 {
-                    var since = user.LastDigestSentAt ?? globalSince;
+                    // Use last digest time as cutoff so each user gets only new content
+                    var since = user.LastDigestSentAt ?? defaultSince;
+
+                    // Community: top articles liked since this user's last digest
+                    var communityItems = await db.Likes
+                        .AsNoTracking()
+                        .Where(l => l.CreatedAt >= since
+                            && !l.FeedItem.IsCommunityHidden
+                            && !l.FeedItem.Subscription.IsCommunityBanned
+                            && !l.User.IsSiteBanned)
+                        .GroupBy(l => l.FeedItemId)
+                        .OrderByDescending(g => g.Count())
+                        .Take(10)
+                        .Select(g => new DigestItem(
+                            g.First().FeedItem.Title,
+                            g.First().FeedItem.Url,
+                            g.First().FeedItem.Subscription.Title,
+                            g.Count()))
+                        .ToListAsync(ct);
 
                     // Personal feed: new articles from user's own subscriptions since last digest
                     var feedItems = await db.FeedItems

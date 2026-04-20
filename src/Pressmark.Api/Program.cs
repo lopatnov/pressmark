@@ -257,7 +257,7 @@ app.MapGet("/proxy/favicon", async (string? url, IHttpClientFactory httpClientFa
     }
 });
 
-app.Run();
+await app.RunAsync();
 
 static bool IsPrivate172(string host)
 {
