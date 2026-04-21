@@ -7,6 +7,44 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [1.1.0] — Community, SEO & nginx — 2026-04-20
+
+### Added
+
+- `community_page_enabled` site setting — admins can disable the public Community page; router guard redirects visitors when off
+- Dynamic page titles (`<title>`) on every route; `sitemap.xml` generated from published articles
+- SEO meta and Open Graph tags; `robots.txt` served by the backend; `site_description` admin setting
+- Favicon proxy endpoint — backend fetches and caches RSS source favicons to avoid CORB/CORP browser blocks
+- nginx gzip compression and static-asset cache headers for production deployment
+- Hardened nginx security headers (CSP, HSTS, X-Frame-Options, Referrer-Policy, Permissions-Policy)
+- Admin page split into lazy-loaded sub-components for faster initial load
+- Option A / Option B deployment docs — pre-built GHCR images with version-pinning note
+- Quality Gate badge in README
+
+### Fixed
+
+- Secure cookie flag now set based on environment, not request scheme
+- Per-user `since` timestamp restored in community digest; digest job switched to `RunAsync`
+- Personal feed included in daily digest; duplicate articles across digest runs prevented
+- `html[lang]` attribute synced with i18n language on app init and locale switch
+- HTTP images and `media-src` added to CSP so RSS article images render correctly
+- `authStore` synced after saving site settings
+- Rate-limit error code corrected; stale-request toasts suppressed; `pt` locale string fixes
+- Profile-specific page title used in `AdminUserPage`
+- `usePageTitle` moved after item state declaration in `ArticlePage` to fix hook order
+- UTF-8 BOM removed and CRLF normalized to LF in migration files
+
+### Dependencies
+
+- `Microsoft.AspNetCore.Authentication.JwtBearer` → 10.0.6
+- `Microsoft.AspNetCore.Mvc.Testing` → 10.0.6
+- `MailKit` → 4.16.0
+- `coverlet.collector` → 10.0.0
+- `Microsoft.NET.Test.Sdk` → 18.4.0
+- npm: `lucide-react` → 1.8.0, `vitest` → 4.1.4, `prettier` → 3.8.2, `@types/node`, `vite`, and other minor updates
+
+---
+
 ## [1.0.1] — 2026-04-04
 
 ### Fixed
@@ -98,5 +136,6 @@ what the community is reading — all on your own infrastructure.
 
 ---
 
+[1.1.0]: https://github.com/lopatnov/pressmark/releases/tag/v1.1.0
 [1.0.1]: https://github.com/lopatnov/pressmark/releases/tag/v1.0.1
 [1.0.0]: https://github.com/lopatnov/pressmark/releases/tag/v1.0.0
