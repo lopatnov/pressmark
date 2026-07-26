@@ -9,12 +9,9 @@ namespace Pressmark.Api.Services;
 /// </summary>
 internal static class FeedQueryExtensions
 {
-    private const int DefaultPageSize = 20;
-    private const int MaxPageSize = 100;
-
     /// <summary>Normalises a client-supplied page size to the supported range.</summary>
     internal static int ClampPageSize(int requested) =>
-        Math.Clamp(requested == 0 ? DefaultPageSize : requested, 1, MaxPageSize);
+        Math.Clamp(requested == 0 ? PagingDefaults.DefaultPageSize : requested, 1, PagingDefaults.MaxPageSize);
 
     /// <summary>
     /// Restricts the query to items strictly older than the cursor position.

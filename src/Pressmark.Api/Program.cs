@@ -11,6 +11,8 @@ using Pressmark.Api.BackgroundServices;
 using Pressmark.Api.Data;
 using Pressmark.Api.Services;
 
+const string DefaultBaseUrl = "http://localhost:5173";
+
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
 
@@ -156,14 +158,14 @@ app.MapGet("/api/meta", async (AppDbContext db, IConfiguration config, Cancellat
     // Unlike the admin screen, an unset description is reported as empty here
     // rather than falling back to the seeded copy.
     var siteDescription = settings.Value(SiteSettingKeys.SiteDescription, "");
-    var baseUrl = (config["App:BaseUrl"] ?? "http://localhost:5173").TrimEnd('/');
+    var baseUrl = (config["App:BaseUrl"] ?? DefaultBaseUrl).TrimEnd('/');
     return Results.Ok(new { siteName, siteDescription, baseUrl });
 }).AllowAnonymous();
 
 app.MapGet("/sitemap.xml", async (AppDbContext db, IConfiguration config, CancellationToken ct) =>
 {
     var baseUrl = System.Security.SecurityElement.Escape(
-        (config["App:BaseUrl"] ?? "http://localhost:5173").TrimEnd('/'));
+        (config["App:BaseUrl"] ?? DefaultBaseUrl).TrimEnd('/'));
     var settings = await SiteSettingsSnapshot.LoadAsync(db, [
         SiteSettingKeys.RegistrationMode,
         SiteSettingKeys.CommunityPageEnabled,
@@ -188,7 +190,7 @@ app.MapGet("/sitemap.xml", async (AppDbContext db, IConfiguration config, Cancel
 
 app.MapGet("/robots.txt", (IConfiguration config) =>
 {
-    var baseUrl = (config["App:BaseUrl"] ?? "http://localhost:5173").TrimEnd('/');
+    var baseUrl = (config["App:BaseUrl"] ?? DefaultBaseUrl).TrimEnd('/');
     var content = $"""
         User-agent: *
         Allow: /

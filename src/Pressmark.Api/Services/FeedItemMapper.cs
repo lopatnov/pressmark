@@ -37,23 +37,8 @@ internal static class FeedItemMapper
     /// Projects an item replayed to a reconnecting stream client.
     /// New items are never read/liked/bookmarked by definition.
     /// </summary>
-    internal static Protos.FeedItem ToCatchUpProto(Entities.FeedItem item) => new()
-    {
-        Id = item.Id.ToString(),
-        SubscriptionId = item.SubscriptionId.ToString(),
-        Title = item.Title,
-        Url = item.Url,
-        Summary = item.Summary ?? "",
-        PublishedAt = item.PublishedAt.ToString("o"),
-        IsRead = false,
-        LikeCount = 0,
-        IsLiked = false,
-        IsBookmarked = false,
-        SourceTitle = item.Subscription?.Title ?? "",
-        ImageUrl = item.ImageUrl ?? "",
-        SourceRssUrl = item.Subscription?.RssUrl ?? "",
-        IsSourceBanned = item.Subscription?.IsCommunityBanned ?? false,
-    };
+    internal static Protos.FeedItem ToCatchUpProto(Entities.FeedItem item) =>
+        ToProto(item, readIds: [], likedIds: [], bookmarkIds: [], likeCounts: []);
 
     /// <summary>Projects a live broadcast event pushed to streaming clients.</summary>
     internal static Protos.FeedItem ToBroadcastProto(FeedUpdateEvent evt) => new()
