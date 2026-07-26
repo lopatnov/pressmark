@@ -126,7 +126,7 @@ export function CommunityPage() {
         </div>
       )}
 
-      {isLoading && (
+      {isLoading && items.length > 0 && (
         <p className="text-center text-sm text-muted-foreground">{t('common:loading')}</p>
       )}
 

@@ -37,6 +37,7 @@ export function CommentSection({ feedItemId, initiallyOpen = false }: CommentSec
   const [reportedComments, setReportedComments] = useState<Set<string>>(new Set())
   const [reportingComment, setReportingComment] = useState<string | null>(null)
   const [reportReason, setReportReason] = useState('')
+  const [reportSubmitting, setReportSubmitting] = useState(false)
 
   const load = useCallback(async () => {
     try {
@@ -114,6 +115,8 @@ export function CommentSection({ feedItemId, initiallyOpen = false }: CommentSec
   }
 
   const handleReport = async (commentId: string) => {
+    if (reportSubmitting) return
+    setReportSubmitting(true)
     try {
       await feedClient.reportContent({ type: 'comment', targetId: commentId, reason: reportReason })
       setReportedComments((prev) => new Set(prev).add(commentId))
@@ -122,6 +125,8 @@ export function CommentSection({ feedItemId, initiallyOpen = false }: CommentSec
       toast.success(t('reportSent'))
     } catch {
       toast.error(t('reportSubmitError'))
+    } finally {
+      setReportSubmitting(false)
     }
   }
 
@@ -224,6 +229,7 @@ export function CommentSection({ feedItemId, initiallyOpen = false }: CommentSec
                         <ReportReasonForm
                           reason={reportReason}
                           onReasonChange={setReportReason}
+                          submitting={reportSubmitting}
                           onSubmit={() => handleReport(c.id)}
                           onCancel={() => {
                             setReportingComment(null)

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Ban, Check, Pencil, RefreshCw, Trash2, X } from 'lucide-react'
+import { formatDateTime } from '@/components/feed/feedUtils'
 import type { Subscription } from '@/store/subscriptionStore'
 
 interface Props {
@@ -98,7 +99,8 @@ export function SubscriptionRow({
         <p className="truncate text-xs text-muted-foreground">{sub.rssUrl}</p>
         {sub.lastFetchedAt && (
           <p className="text-xs text-muted-foreground">
-            {t('subscriptions:lastFetched')}: {new Date(sub.lastFetchedAt).toLocaleString()}
+            {t('subscriptions:lastFetched')}:{' '}
+            {formatDateTime(sub.lastFetchedAt, { includeYear: true })}
           </p>
         )}
       </div>
