@@ -25,7 +25,8 @@ public partial class FeedServiceImpl(
     AppDbContext db,
     FeedUpdateBroadcaster broadcaster,
     FeedPageAssembler pageAssembler,
-    CommentNotificationService commentNotifications) : FeedService.FeedServiceBase
+    CommentNotificationService commentNotifications,
+    ILogger<FeedServiceImpl> logger) : FeedService.FeedServiceBase
 {
     public override async Task<FeedPage> GetFeed(
         GetFeedRequest request, ServerCallContext context)

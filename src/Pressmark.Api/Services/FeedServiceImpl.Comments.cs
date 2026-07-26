@@ -87,8 +87,7 @@ public partial class FeedServiceImpl
 
         var feedItem = await db.FeedItems.FindAsync([feedItemId], ct);
         if (feedItem != null)
-            _ = commentNotifications.NotifySubscribersAsync(
-                feedItemId, user.Email, feedItem.Title, comment.Body);
+            NotifySubscribersInBackground(feedItemId, user.Email, feedItem.Title, comment.Body);
 
         return new Protos.Comment
         {
@@ -99,6 +98,36 @@ public partial class FeedServiceImpl
             RemovedByAdmin = false,
             IsCommentingBanned = user.IsCommentingBanned,
         };
+    }
+
+    /// <summary>
+    /// Sends the "new comment" emails without holding up the comment write.
+    /// </summary>
+    /// <remarks>
+    /// Safe to detach from the request: <see cref="CommentNotificationService"/> is a
+    /// singleton that opens its own DI scope, so nothing it touches is disposed when this
+    /// RPC returns. The wrapper exists to observe the task — a discarded one would let any
+    /// fault escape as an unobserved exception — and delivery failures are non-fatal, the
+    /// comment is already committed.
+    /// </remarks>
+    private void NotifySubscribersInBackground(
+        Guid feedItemId, string commenterEmail, string articleTitle, string commentBody)
+    {
+        _ = RunAsync();
+
+        async Task RunAsync()
+        {
+            try
+            {
+                await commentNotifications.NotifySubscribersAsync(
+                    feedItemId, commenterEmail, articleTitle, commentBody);
+            }
+            catch (Exception ex)
+            {
+                logger.LogWarning(ex,
+                    "Comment notification fan-out failed for feed item {FeedItemId}", feedItemId);
+            }
+        }
     }
 
     public override async Task<ToggleCommentSubscriptionResponse> ToggleCommentSubscription(

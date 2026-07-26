@@ -1,5 +1,6 @@
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Pressmark.Api.Entities;
 using Pressmark.Api.Protos;
@@ -25,7 +26,7 @@ public partial class FeedServiceImpl
         if (!exists)
         {
             db.ReadItems.Add(new ReadItem { UserId = userId, FeedItemId = itemId });
-            await db.SaveChangesAsync(ct);
+            await SaveEngagementAsync(ct);
         }
 
         return new Empty();
@@ -84,7 +85,7 @@ public partial class FeedServiceImpl
         else
             db.Likes.Add(new Like { UserId = userId, FeedItemId = itemId });
 
-        await db.SaveChangesAsync(ct);
+        await SaveEngagementAsync(ct);
 
         var count = await db.Likes.CountAsync(l => l.FeedItemId == itemId, ct);
         var isLiked = like is null; // if we removed it, now not liked; if we added, now liked
@@ -107,8 +108,38 @@ public partial class FeedServiceImpl
         else
             db.Bookmarks.Add(new Bookmark { UserId = userId, FeedItemId = itemId });
 
-        await db.SaveChangesAsync(ct);
+        await SaveEngagementAsync(ct);
 
         return new ToggleBookmarkResponse { IsBookmarked = bookmark is null };
     }
+
+    /// <summary>
+    /// Commits an engagement write that is idempotent by nature — the read/like/bookmark
+    /// tables record presence, not a count — and tolerates losing a race to an identical
+    /// concurrent request (a double tap or a client retry).
+    /// </summary>
+    /// <remarks>
+    /// The endpoints decide what to write from a preceding read, which is not atomic with
+    /// the write. A duplicate request can therefore try to insert a row that now exists
+    /// (composite-key violation) or delete one that is already gone (zero rows affected).
+    /// Both mean the caller's intended end state is already in place, so they are reported
+    /// as success instead of surfacing as an Unknown RPC fault.
+    /// </remarks>
+    private async Task SaveEngagementAsync(CancellationToken ct)
+    {
+        try
+        {
+            await db.SaveChangesAsync(ct);
+        }
+        catch (DbUpdateException ex) when (ex is DbUpdateConcurrencyException || IsDuplicateKey(ex))
+        {
+            // Drop the entries the failed save left pending so nothing is retried later
+            // in the request against a row another caller now owns.
+            db.ChangeTracker.Clear();
+        }
+    }
+
+    /// <summary>Unique index (2601) and primary key (2627) violations.</summary>
+    private static bool IsDuplicateKey(DbUpdateException ex) =>
+        (ex.InnerException as SqlException)?.Number is 2601 or 2627;
 }
