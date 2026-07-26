@@ -32,7 +32,7 @@ public class AuthTokenIssuer(AppDbContext db, JwtService jwt, IWebHostEnvironmen
         {
             HttpOnly = true,
             SameSite = SameSiteMode.Strict,
-            Secure = !env.IsDevelopment() || http.Request.IsHttps,
+            Secure = !env.IsDevelopment() || http.Request.IsHttps, // NOSONAR: always secure outside Development; in dev it tracks the actual request scheme so plain http://localhost keeps working (see commits 04702e8, 41b6dd0)
             Expires = DateTimeOffset.UtcNow.AddDays(jwt.RefreshExpiryDays),
         });
 
