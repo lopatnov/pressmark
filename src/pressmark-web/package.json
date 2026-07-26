@@ -72,5 +72,8 @@
       "eslint --max-warnings 0 --no-warn-ignored"
     ],
     "*.{js,json,css,md}": "prettier --write"
+  },
+  "overrides": {
+    "@hono/node-server": "^2.0.12"
   }
 }
