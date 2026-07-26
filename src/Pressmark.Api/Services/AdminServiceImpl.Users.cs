@@ -12,6 +12,9 @@ namespace Pressmark.Api.Services;
 /// </summary>
 public partial class AdminServiceImpl
 {
+    private const string UserIdField = "user_id";
+    private const string UserNotFoundMessage = "User not found";
+
     public override async Task<UserList> ListUsers(ListUsersRequest request, ServerCallContext context)
     {
         var ct = context.CancellationToken;
@@ -34,9 +37,9 @@ public partial class AdminServiceImpl
         BanUserFromCommentingRequest request, ServerCallContext context)
     {
         var ct = context.CancellationToken;
-        var userId = RpcGuards.ParseId(request.UserId, "user_id");
+        var userId = RpcGuards.ParseId(request.UserId, UserIdField);
 
-        var user = await db.Users.FindOrThrowAsync(userId, "User not found", ct);
+        var user = await db.Users.FindOrThrowAsync(userId, UserNotFoundMessage, ct);
 
         user.IsCommentingBanned = request.Banned;
         await db.SaveChangesAsync(ct);
@@ -47,9 +50,9 @@ public partial class AdminServiceImpl
     public override async Task<Empty> SitebanUser(SitebanUserRequest request, ServerCallContext context)
     {
         var ct = context.CancellationToken;
-        var userId = RpcGuards.ParseId(request.UserId, "user_id");
+        var userId = RpcGuards.ParseId(request.UserId, UserIdField);
 
-        var user = await db.Users.FindOrThrowAsync(userId, "User not found", ct);
+        var user = await db.Users.FindOrThrowAsync(userId, UserNotFoundMessage, ct);
 
         user.IsSiteBanned = request.Banned;
         await db.SaveChangesAsync(ct);
@@ -60,15 +63,15 @@ public partial class AdminServiceImpl
     public override async Task<Empty> DeleteUser(DeleteUserRequest request, ServerCallContext context)
     {
         var ct = context.CancellationToken;
-        var userId = RpcGuards.ParseId(request.UserId, "user_id");
+        var userId = RpcGuards.ParseId(request.UserId, UserIdField);
 
         var callerIdStr = context.GetHttpContext().User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (callerIdStr != null && Guid.TryParse(callerIdStr, out var callerId) && callerId == userId)
             throw new RpcException(new Status(StatusCode.FailedPrecondition, "Cannot delete your own account"));
 
-        var user = await db.Users.FindOrThrowAsync(userId, "User not found", ct);
+        var user = await db.Users.FindOrThrowAsync(userId, UserNotFoundMessage, ct);
 
-        if (user.Role == "Admin")
+        if (user.Role == UserRoles.Admin)
             await EnsureNotLastAdminAsync("Cannot delete the last admin", ct);
 
         await using var tx = await db.Database.BeginTransactionAsync(ct);
@@ -91,14 +94,14 @@ public partial class AdminServiceImpl
     public override async Task<Empty> ChangeUserRole(ChangeUserRoleRequest request, ServerCallContext context)
     {
         var ct = context.CancellationToken;
-        var userId = RpcGuards.ParseId(request.UserId, "user_id");
+        var userId = RpcGuards.ParseId(request.UserId, UserIdField);
 
-        if (request.Role != "User" && request.Role != "Admin")
+        if (request.Role != UserRoles.User && request.Role != UserRoles.Admin)
             throw new RpcException(new Status(StatusCode.InvalidArgument, "Role must be 'User' or 'Admin'"));
 
-        var user = await db.Users.FindOrThrowAsync(userId, "User not found", ct);
+        var user = await db.Users.FindOrThrowAsync(userId, UserNotFoundMessage, ct);
 
-        if (user.Role == "Admin" && request.Role == "User")
+        if (user.Role == UserRoles.Admin && request.Role == UserRoles.User)
             await EnsureNotLastAdminAsync("Cannot demote the last admin", ct);
 
         user.Role = request.Role;
@@ -110,9 +113,9 @@ public partial class AdminServiceImpl
     public override async Task<UserDetails> GetUserDetails(GetUserDetailsRequest request, ServerCallContext context)
     {
         var ct = context.CancellationToken;
-        var userId = RpcGuards.ParseId(request.UserId, "user_id");
+        var userId = RpcGuards.ParseId(request.UserId, UserIdField);
 
-        var user = await db.Users.FindOrThrowAsync(userId, "User not found", ct);
+        var user = await db.Users.FindOrThrowAsync(userId, UserNotFoundMessage, ct);
 
         var subscriptions = await db.Subscriptions
             .Where(s => s.UserId == userId)
@@ -141,7 +144,7 @@ public partial class AdminServiceImpl
     /// </summary>
     private async Task EnsureNotLastAdminAsync(string message, CancellationToken ct)
     {
-        var adminCount = await db.Users.CountAsync(u => u.Role == "Admin", ct);
+        var adminCount = await db.Users.CountAsync(u => u.Role == UserRoles.Admin, ct);
         if (adminCount <= 1)
             throw new RpcException(new Status(StatusCode.FailedPrecondition, message));
     }
