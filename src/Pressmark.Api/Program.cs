@@ -26,6 +26,10 @@ builder.Services.AddGrpc();
 // JWT
 builder.Services.AddSingleton<JwtService>();
 
+// Auth collaborators (scoped — wrap the request's AppDbContext)
+builder.Services.AddScoped<AuthTokenIssuer>();
+builder.Services.AddScoped<InviteRedemptionService>();
+
 // Real-time feed streaming
 builder.Services.AddSingleton<FeedUpdateBroadcaster>();
 
