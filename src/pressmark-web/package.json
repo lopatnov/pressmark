@@ -71,5 +71,8 @@
       "eslint --max-warnings 0 --no-warn-ignored"
     ],
     "*.{js,json,css,md}": "prettier --write"
+  },
+  "overrides": {
+    "@babel/plugin-transform-runtime": "^7.29.0"
   }
 }
