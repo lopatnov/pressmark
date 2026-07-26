@@ -40,14 +40,22 @@ public partial class AuthServiceImpl
         }
 
         var tokenHash = JwtService.HashToken(rawToken);
+        var now = DateTime.UtcNow;
 
-        var stored = await db.RefreshTokens
-            .FirstOrDefaultAsync(t =>
+        // Rotate first: claiming the presented token is a single conditional UPDATE, so
+        // exactly one of any number of concurrent requests can move it from active to
+        // revoked. Reading it and revoking it in separate round trips let a replayed
+        // (e.g. stolen) token mint a second session before the first revoke landed.
+        var claimed = await db.RefreshTokens
+            .Where(t =>
                 t.TokenHash == tokenHash &&
                 !t.IsRevoked &&
-                t.ExpiresAt > DateTime.UtcNow, ct);
+                t.ExpiresAt > now)
+            .ExecuteUpdateAsync(s => s
+                .SetProperty(t => t.IsRevoked, true)
+                .SetProperty(t => t.RevokedAt, now), ct);
 
-        if (stored is null)
+        if (claimed == 0)
         {
             return Unauthenticated(context, "Refresh token revoked or not found");
         }
@@ -60,18 +68,10 @@ public partial class AuthServiceImpl
 
         if (user.IsSiteBanned)
         {
-            stored.IsRevoked = true;
-            stored.RevokedAt = DateTime.UtcNow;
-            await db.SaveChangesAsync(ct);
+            // The token is already revoked by the claim above; just drop the cookie.
             http.Response.Cookies.Delete(jwt.CookieName);
             return Unauthenticated(context, "account_banned");
         }
-
-        // Rotate: the presented token is single-use
-        stored.IsRevoked = true;
-        stored.RevokedAt = DateTime.UtcNow;
-
-        await db.SaveChangesAsync(ct);
 
         return await tokenIssuer.IssueAsync(user, http, ct);
     }

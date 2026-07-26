@@ -29,6 +29,14 @@ public partial class AuthServiceImpl
                             .Replace('+', '-').Replace('/', '_').TrimEnd('=');
         var tokenHash = JwtService.HashToken(rawToken);
 
+        // Single outstanding token per user: burn any still-live ones so a reset link
+        // from an earlier request cannot be used once a newer one has been issued.
+        await db.PasswordResetTokens
+            .Where(t => t.UserId == user.Id && !t.IsUsed)
+            .ExecuteUpdateAsync(s => s
+                .SetProperty(t => t.IsUsed, true)
+                .SetProperty(t => t.UsedAt, DateTime.UtcNow), ct);
+
         db.PasswordResetTokens.Add(new PasswordResetToken
         {
             TokenHash = tokenHash,
@@ -50,6 +58,11 @@ public partial class AuthServiceImpl
         ResetPasswordRequest request, ServerCallContext context)
     {
         var ct = context.CancellationToken;
+
+        // Same policy as Register — a reset must not be a way around it.
+        if (request.NewPassword.Length < 8)
+            throw new RpcException(new Status(StatusCode.InvalidArgument, "Password must be at least 8 characters"));
+
         var tokenHash = JwtService.HashToken(request.Token);
 
         var record = await db.PasswordResetTokens
