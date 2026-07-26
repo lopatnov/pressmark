@@ -129,8 +129,10 @@ const supportedLocales = [
   'hu',
   'nl',
 ]
+export const I18N_LOCALE_STORAGE_KEY = 'i18n-locale'
+
 function detectLocale(): string {
-  const saved = localStorage.getItem('i18n-locale')
+  const saved = localStorage.getItem(I18N_LOCALE_STORAGE_KEY)
   if (saved && supportedLocales.includes(saved)) return saved
   for (const lang of navigator.languages ?? [navigator.language]) {
     const code = lang.split('-')[0].toLowerCase()
