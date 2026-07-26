@@ -27,17 +27,17 @@ function toSubscription(s: SubscriptionMessage): Subscription {
  */
 export function useSubscriptions() {
   const { t } = useTranslation(['subscriptions', 'common'])
-  const {
-    subscriptions,
-    digestEnabled,
-    isLoading,
-    setSubscriptions,
-    addSubscription: addToStore,
-    removeSubscription: removeFromStore,
-    updateSubscriptionTitle,
-    setDigestEnabled,
-    setLoading,
-  } = useSubscriptionStore()
+  // Selected field by field: this hook backs the page and every row, so
+  // subscribing to the whole store would re-render all of them on any change.
+  const subscriptions = useSubscriptionStore((s) => s.subscriptions)
+  const digestEnabled = useSubscriptionStore((s) => s.digestEnabled)
+  const isLoading = useSubscriptionStore((s) => s.isLoading)
+  const setSubscriptions = useSubscriptionStore((s) => s.setSubscriptions)
+  const addToStore = useSubscriptionStore((s) => s.addSubscription)
+  const removeFromStore = useSubscriptionStore((s) => s.removeSubscription)
+  const updateSubscriptionTitle = useSubscriptionStore((s) => s.updateSubscriptionTitle)
+  const setDigestEnabled = useSubscriptionStore((s) => s.setDigestEnabled)
+  const setLoading = useSubscriptionStore((s) => s.setLoading)
 
   const [importStatus, setImportStatus] = useState<string | null>(null)
   const [fetchingId, setFetchingId] = useState<string | null>(null)
@@ -55,6 +55,7 @@ export function useSubscriptions() {
         setSubscriptions(res.subscriptions.map(toSubscription))
         setDigestEnabled(res.digestEnabled)
       })
+      .catch(() => toast.error(t('common:error')))
       .finally(() => setLoading(false))
   }, [])
 
@@ -125,10 +126,19 @@ export function useSubscriptions() {
     }
   }
 
-  /** Optimistic: the row disappears immediately and the failure is ignored. */
+  /**
+   * Optimistic: the row disappears immediately and is put back if the server
+   * refuses, so the list never claims a subscription is gone when it is not.
+   */
   const removeSubscription = async (id: string) => {
+    const previous = subscriptions.find((s) => s.id === id)
     removeFromStore(id)
-    await subscriptionClient.removeSubscription({ subscriptionId: id }).catch(() => {})
+    try {
+      await subscriptionClient.removeSubscription({ subscriptionId: id })
+    } catch {
+      if (previous) addToStore(previous)
+      toast.error(t('common:error'))
+    }
   }
 
   const toggleDigest = async () => {
