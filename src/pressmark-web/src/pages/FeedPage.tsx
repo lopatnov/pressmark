@@ -5,27 +5,12 @@ import { usePageTitle } from '@/hooks/usePageTitle'
 import { toast } from 'sonner'
 import { Ban, Heart, Bookmark, BookMarked, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Skeleton } from '@/components/ui/skeleton'
 import { feedClient } from '@/api/clients'
 import { useFeedStore } from '@/store/feedStore'
 import { useSubscriptionStore } from '@/store/subscriptionStore'
 import { FeedItemCard } from '@/components/feed/FeedItemCard'
 import { useIntersectionLoader } from '@/hooks/useIntersectionLoader'
-
-function FeedCardSkeleton() {
-  return (
-    <div className="rounded-lg border border-border bg-card p-4 space-y-2">
-      <Skeleton className="h-4 w-3/4" />
-      <div className="flex items-center gap-2">
-        <Skeleton className="h-3.5 w-3.5 rounded-sm" />
-        <Skeleton className="h-3 w-24" />
-        <Skeleton className="h-3 w-32" />
-      </div>
-      <Skeleton className="h-3 w-full" />
-      <Skeleton className="h-3 w-5/6" />
-    </div>
-  )
-}
+import { FeedCardSkeletonList } from '@/components/feed/FeedCardSkeleton'
 
 export function FeedPage() {
   const { t } = useTranslation(['feed', 'common', 'subscriptions'])
@@ -229,42 +214,44 @@ export function FeedPage() {
       )}
 
       <div className="space-y-2">
-        {isLoading && items.length === 0
-          ? Array.from({ length: 5 }).map((_, i) => <FeedCardSkeleton key={i} />)
-          : items.map((item) => (
-              <FeedItemCard
-                key={item.id}
-                item={item}
-                articleId={item.id}
-                sourceHref={item.subscriptionId ? `/feed?sub=${item.subscriptionId}` : undefined}
-                onTitleClick={!item.isRead ? () => handleRead(item.id) : undefined}
-                actions={
-                  <>
-                    <button
-                      onClick={() => handleLike(item.id)}
-                      title={item.isLiked ? t('feed:unlike') : t('feed:like')}
-                      aria-label={item.isLiked ? t('feed:unlike') : t('feed:like')}
-                      className={`flex cursor-pointer items-center gap-1 rounded px-2 py-1 text-xs transition-colors hover:bg-muted ${item.isLiked ? 'text-rose-500' : 'text-muted-foreground'}`}
-                    >
-                      <Heart className={`h-3.5 w-3.5 ${item.isLiked ? 'fill-current' : ''}`} />
-                      {item.likeCount > 0 && <span>{item.likeCount}</span>}
-                    </button>
-                    <button
-                      onClick={() => handleBookmark(item.id)}
-                      title={item.isBookmarked ? t('feed:removeBookmark') : t('feed:bookmark')}
-                      aria-label={item.isBookmarked ? t('feed:removeBookmark') : t('feed:bookmark')}
-                      className={`flex cursor-pointer items-center gap-1 rounded px-2 py-1 text-xs transition-colors hover:bg-muted ${item.isBookmarked ? 'text-amber-500' : 'text-muted-foreground'}`}
-                    >
-                      {item.isBookmarked ? (
-                        <BookMarked className="h-3.5 w-3.5 fill-current" />
-                      ) : (
-                        <Bookmark className="h-3.5 w-3.5" />
-                      )}
-                    </button>
-                  </>
-                }
-              />
-            ))}
+        {isLoading && items.length === 0 ? (
+          <FeedCardSkeletonList />
+        ) : (
+          items.map((item) => (
+            <FeedItemCard
+              key={item.id}
+              item={item}
+              articleId={item.id}
+              sourceHref={item.subscriptionId ? `/feed?sub=${item.subscriptionId}` : undefined}
+              onTitleClick={!item.isRead ? () => handleRead(item.id) : undefined}
+              actions={
+                <>
+                  <button
+                    onClick={() => handleLike(item.id)}
+                    title={item.isLiked ? t('feed:unlike') : t('feed:like')}
+                    aria-label={item.isLiked ? t('feed:unlike') : t('feed:like')}
+                    className={`flex cursor-pointer items-center gap-1 rounded px-2 py-1 text-xs transition-colors hover:bg-muted ${item.isLiked ? 'text-rose-500' : 'text-muted-foreground'}`}
+                  >
+                    <Heart className={`h-3.5 w-3.5 ${item.isLiked ? 'fill-current' : ''}`} />
+                    {item.likeCount > 0 && <span>{item.likeCount}</span>}
+                  </button>
+                  <button
+                    onClick={() => handleBookmark(item.id)}
+                    title={item.isBookmarked ? t('feed:removeBookmark') : t('feed:bookmark')}
+                    aria-label={item.isBookmarked ? t('feed:removeBookmark') : t('feed:bookmark')}
+                    className={`flex cursor-pointer items-center gap-1 rounded px-2 py-1 text-xs transition-colors hover:bg-muted ${item.isBookmarked ? 'text-amber-500' : 'text-muted-foreground'}`}
+                  >
+                    {item.isBookmarked ? (
+                      <BookMarked className="h-3.5 w-3.5 fill-current" />
+                    ) : (
+                      <Bookmark className="h-3.5 w-3.5" />
+                    )}
+                  </button>
+                </>
+              }
+            />
+          ))
+        )}
       </div>
 
       {nextCursor && (
