@@ -13,7 +13,7 @@
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "ASPNETCORE_URLS": "http://localhost:5000",
-        "ConnectionStrings__Default": "Server=localhost,1434;Database=pressmark;User Id=sa;Password=Dev_Password1!;TrustServerCertificate=True",
+        "ConnectionStrings__Default": "Server=127.0.0.1,1434;Database=pressmark;User Id=sa;Password=Dev_Password1!;TrustServerCertificate=True",
         "Jwt__Secret": "dev-secret-min-32-chars-do-not-use-in-prod!!",
         "Jwt__ExpiryMinutes": "15",
         "Jwt__RefreshExpiryDays": "7",
