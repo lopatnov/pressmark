@@ -9,7 +9,8 @@
 [`.claude/rules/conventions.md`](.claude/rules/conventions.md).
 
 **Разделение ответственности файлов:**
-- **Процесс команды** (агенты, правила, ворота, RACI) — в `.claude/`. Веб-нейтрально.
+
+- **Процесс команды** (агенты, правила, ворота, RACI) — в `.claude/`.
 - **Специфика этого проекта** (стек, конвенции кода, команды сборки) — здесь, в CLAUDE.md,
   и в `.claude/docs/*.md` для развёрнутых how-to (добавление gRPC-эндпоинта, добавление страницы,
   обновление зависимостей).
@@ -34,7 +35,7 @@
 - **Frontend:** React 19 + TypeScript + Vite. Роутинг — `react-router-dom` (Data Router,
   `RouterProvider`, без SSR/framework mode). Состояние — `zustand`. Формы — `react-hook-form` +
   `zod`. UI — `radix-ui` / `shadcn` компоненты + Tailwind CSS v4. gRPC-клиент — `@connectrpc/connect`
-  + `@connectrpc/connect-web` поверх сгенерированного `@bufbuild/protobuf` кода (`buf generate`).
+  - `@connectrpc/connect-web` поверх сгенерированного `@bufbuild/protobuf` кода (`buf generate`).
 - **Database:** MSSQL через EF Core Migrations (`src/Pressmark.Api/Migrations`).
 - **Локализация:** `i18next` / `react-i18next`, 18 локалей в `src/pressmark-web/src/i18n/locales/`
   (`cs de en es fr hu it ja ko nl pl pt ro ru sv tr uk zh`). Все строки UI — только через
@@ -54,6 +55,7 @@
 не давай одному файлу сервиса расти обратно до сотен строк.
 
 Пример на `Admin`/`Auth`/`Feed`:
+
 - `AdminServiceImpl.cs` (основной класс) + `AdminServiceImpl.Invites.cs` +
   `AdminServiceImpl.Moderation.cs` + `AdminServiceImpl.Users.cs` — partial-классы по под-доменам
   одного gRPC-сервиса.
@@ -79,10 +81,11 @@
 разрезе, а не сваливай состояние/RPC/JSX в один файл на 700 строк.
 
 Пример: `src/pages/FeedPage.tsx` (~140 строк, layout + рендер состояний loading/error/empty/data)
-+ `src/hooks/useFeedPage.ts` (~190 строк, вся логика: gRPC-запросы, курсорная пагинация,
-фильтры, side-effects). Аналогично: `AdminUserPage.tsx` ↔ `useAdminUserDetails.ts`,
-`CommunityPage.tsx` ↔ `useCommunityFeed.ts`, `SubscriptionsPage.tsx` ↔ `useSubscriptions.ts`,
-`AdminPage.tsx` ↔ `useAdminPaginatedList.ts`.
+
+- `src/hooks/useFeedPage.ts` (~190 строк, вся логика: gRPC-запросы, курсорная пагинация,
+  фильтры, side-effects). Аналогично: `AdminUserPage.tsx` ↔ `useAdminUserDetails.ts`,
+  `CommunityPage.tsx` ↔ `useCommunityFeed.ts`, `SubscriptionsPage.tsx` ↔ `useSubscriptions.ts`,
+  `AdminPage.tsx` ↔ `useAdminPaginatedList.ts`.
 
 Правило: страница не делает gRPC-вызовы напрямую и не хранит бизнес-состояние — это забота хука.
 Хук не рендерит JSX. Общие переиспользуемые куски хука (пагинация через `IntersectionObserver`,
@@ -93,6 +96,7 @@
 
 Пошаговые инструкции по образцу существующего кода — в
 [`.claude/docs/extending-the-app.md`](.claude/docs/extending-the-app.md):
+
 - добавление нового gRPC-сервиса/эндпоинта (proto-контракт → partial-реализация → регистрация → DI);
 - добавление новой страницы фронтенда (page + hook + маршрут + локализация).
 
@@ -101,6 +105,7 @@
 Схема — через EF Core миграции (`src/Pressmark.Api/Migrations`), сущности — `src/Pressmark.Api/Entities`.
 Ключевые сущности (см. код для актуальных полей — не дублируем схему здесь, чтобы не рассинхронизироваться
 с миграциями):
+
 - `User` ↔ `Subscription` ↔ `Feed`/`FeedSource` — подписки пользователя на RSS-источники.
 - `FeedItem` — отдельная статья из источника; `Like`, `Bookmark` — реакции пользователя на статью.
 - `Comment` — комментарии к статье, с подпиской на уведомления по треду.
@@ -116,6 +121,7 @@
 ## Code & Quality Guidelines
 
 ### Общие принципы (наследуются из `.claude/rules/`)
+
 - **Простота важнее «умности».** Код пишется «как окружающий код» (стиль, нейминг, комментарии).
 - **Билд зелёный перед коммитом** (0 ошибок), предупреждения просмотрены — см.
   [`.claude/rules/index.md`](.claude/rules/index.md), «Дисциплина билдов».
@@ -124,6 +130,7 @@
 - **Весь код, комментарии и коммиты — на английском** (см. `CONTRIBUTING.md`).
 
 ### Специфика стека
+
 - **Backend:** `async`/`await` везде, `CancellationToken` прокидывается в методы сервисов.
   Партиал-классы по под-доменам + вынесенные мапперы/guard-хелперы (см. «Architecture» выше) —
   не полагаемся на один разрастающийся `*ServiceImpl.cs`.
@@ -137,6 +144,7 @@
   `security-engineer` при нетривиальных изменениях.
 
 ### Frontend / UI
+
 - Страница = layout + `useXxx` хук + презентационные компоненты (см. «Architecture» выше).
 - Состояния loading/error/empty — обязательны на каждой странице со списком данных.
 - Компоненты `radix-ui`/`shadcn` предпочтительнее кастомных — не изобретай то, что уже есть в UI-ките.
@@ -148,17 +156,20 @@
 > ⚠️ На эти команды опираются `/build`, агент `build-validator` и скилл `testing`.
 
 ### Development
+
 - `docker compose up` — поднять весь стек локально (backend + frontend + MSSQL), см. README.
 - `dotnet run --project src/Pressmark.Api` — запустить backend напрямую.
 - `cd src/pressmark-web && npm run dev` — запустить frontend (Vite dev server).
 - `cd src/pressmark-web && npm run generate` — перегенерировать gRPC-клиент из `.proto` (`buf generate`).
 
 ### Build
+
 - `dotnet restore` — восстановить NuGet-пакеты (из корня репозитория, решение `Pressmark.slnx`).
 - `dotnet build --configuration Release` — собрать backend, 0 ошибок обязательны.
 - `cd src/pressmark-web && npm run build` — собрать frontend (`tsc -b && vite build`), 0 ошибок TypeScript.
 
 ### Format / Lint
+
 - `dotnet format src/Pressmark.Api/Pressmark.Api.csproj --verify-no-changes` — проверка форматирования backend.
 - `dotnet format src/Pressmark.Api.Tests/Pressmark.Api.Tests.csproj --verify-no-changes` — то же для тестового проекта.
 - `cd src/pressmark-web && npm run format:check` — проверка форматирования frontend (Prettier); `npm run format` — исправить.
@@ -166,14 +177,17 @@
 - `cd src/pressmark-web && npm run typecheck` — `tsc --noEmit`, отдельно от `build` для быстрой проверки типов.
 
 ### Testing
+
 - `dotnet test --configuration Release` — backend unit/integration тесты (xUnit, `src/Pressmark.Api.Tests`).
 - `cd src/pressmark-web && npm run test` — frontend тесты (Vitest + coverage, `vitest run --coverage.enabled`).
 
 ### Database / Migrations
+
 - `dotnet ef migrations add <Name> --project src/Pressmark.Api` — создать миграцию.
 - `dotnet ef database update --project src/Pressmark.Api` — применить миграции локально.
 
 ### Dependencies
+
 - Патч-обновления / security-фиксы — обычный Dependabot-флоу.
 - Обновление до **действительно последних** версий (включая мажорные) — см. скилл
   [`.claude/skills/dependency-freshness/SKILL.md`](.claude/skills/dependency-freshness/SKILL.md).
@@ -181,6 +195,7 @@
   закрепиться на закэшированной или совместимой, но не последней версии.
 
 ### CI (для справки, ничего не запускать вручную без причины)
+
 CI (`.github/workflows/ci.yml`) гоняет ровно тот же набор команд в том же порядке — если локально
 всё зелёное, CI тоже должен быть зелёным.
 
