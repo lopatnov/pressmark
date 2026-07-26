@@ -51,6 +51,7 @@ export function SubscriptionRow({
                 className="rounded border border-border bg-background px-2 py-0.5 text-sm"
               />
               <button
+                type="button"
                 onClick={saveEdit}
                 aria-label={t('common:save')}
                 className="cursor-pointer rounded p-0.5 text-muted-foreground hover:text-foreground"
@@ -58,6 +59,7 @@ export function SubscriptionRow({
                 <Check className="h-3.5 w-3.5" />
               </button>
               <button
+                type="button"
                 onClick={() => setIsEditing(false)}
                 aria-label={t('common:cancel')}
                 className="cursor-pointer rounded p-0.5 text-muted-foreground hover:text-foreground"
@@ -74,6 +76,7 @@ export function SubscriptionRow({
                 {sub.title}
               </Link>
               <button
+                type="button"
                 onClick={startEdit}
                 title={t('subscriptions:editTitle')}
                 aria-label={t('subscriptions:editTitle')}
@@ -99,6 +102,7 @@ export function SubscriptionRow({
       </div>
       <div className="ml-3 flex items-center gap-1">
         <button
+          type="button"
           onClick={() => onRefresh(sub.id)}
           disabled={isFetching}
           title={t('subscriptions:fetch')}
@@ -108,6 +112,7 @@ export function SubscriptionRow({
           <RefreshCw className={`h-4 w-4 ${isFetching ? 'animate-spin' : ''}`} />
         </button>
         <button
+          type="button"
           onClick={() => onRemove(sub.id)}
           title={t('subscriptions:remove')}
           aria-label={t('subscriptions:remove')}

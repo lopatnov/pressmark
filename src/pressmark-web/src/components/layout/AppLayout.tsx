@@ -35,6 +35,7 @@ export function AppLayout() {
       <main className="flex-1 overflow-y-auto">
         <div className="sticky top-0 z-20 flex h-12 items-center justify-between border-b border-border bg-background px-3 md:hidden">
           <button
+            type="button"
             onClick={() => setSidebarOpen(true)}
             aria-label={t('nav.openMenu')}
             className="cursor-pointer rounded p-1.5 hover:bg-muted"
@@ -43,6 +44,7 @@ export function AppLayout() {
           </button>
           {isAdmin && (
             <button
+              type="button"
               onClick={() => navigate('/admin')}
               aria-label="Reports"
               className="relative cursor-pointer rounded p-1.5 hover:bg-muted"

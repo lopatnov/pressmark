@@ -24,6 +24,7 @@ export function FeedItemActions({
   return (
     <>
       <button
+        type="button"
         onClick={() => onLike(id)}
         title={isLiked ? t('feed:unlike') : t('feed:like')}
         aria-label={isLiked ? t('feed:unlike') : t('feed:like')}
@@ -33,6 +34,7 @@ export function FeedItemActions({
         {likeCount > 0 && <span>{likeCount}</span>}
       </button>
       <button
+        type="button"
         onClick={() => onBookmark(id)}
         title={isBookmarked ? t('feed:removeBookmark') : t('feed:bookmark')}
         aria-label={isBookmarked ? t('feed:removeBookmark') : t('feed:bookmark')}

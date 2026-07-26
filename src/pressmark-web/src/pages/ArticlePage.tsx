@@ -99,6 +99,7 @@ export function ArticlePage() {
       {isAdmin && (
         <div className="flex items-center gap-2">
           <button
+            type="button"
             onClick={async () => {
               try {
                 const hidden = !item.isHidden
@@ -143,6 +144,7 @@ export function ArticlePage() {
             />
           ) : (
             <button
+              type="button"
               onClick={() => setShowReportForm(true)}
               className="flex cursor-pointer items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
               title={t('feed:reportSource')}

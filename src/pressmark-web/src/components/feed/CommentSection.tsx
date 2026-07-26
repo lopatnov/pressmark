@@ -131,6 +131,7 @@ export function CommentSection({ feedItemId, initiallyOpen = false }: CommentSec
     <div className="border-t border-border mt-2 pt-2">
       <div className="flex items-center gap-2">
         <button
+          type="button"
           onClick={handleToggle}
           className="flex cursor-pointer items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
           aria-label={t('comments.toggle')}
@@ -140,6 +141,7 @@ export function CommentSection({ feedItemId, initiallyOpen = false }: CommentSec
         </button>
         {isAuthenticated && loaded && (
           <button
+            type="button"
             onClick={handleToggleSubscription}
             title={
               isSubscribed
@@ -190,6 +192,7 @@ export function CommentSection({ feedItemId, initiallyOpen = false }: CommentSec
                       </div>
                       {isAdmin && (
                         <button
+                          type="button"
                           onClick={() => handleRemove(c.id)}
                           title={t('comments.remove')}
                           aria-label={t('comments.remove')}
@@ -204,6 +207,7 @@ export function CommentSection({ feedItemId, initiallyOpen = false }: CommentSec
                           <Check className="h-3.5 w-3.5 shrink-0 text-muted-foreground/60" />
                         ) : (
                           <button
+                            type="button"
                             onClick={() =>
                               setReportingComment(reportingComment === c.id ? null : c.id)
                             }

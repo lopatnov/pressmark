@@ -81,6 +81,7 @@ export function FeedPage() {
             )}
           </span>
           <button
+            type="button"
             onClick={() => setSearchParams({})}
             className="cursor-pointer hover:text-foreground transition-colors"
             title={t('feed:clearFilter')}

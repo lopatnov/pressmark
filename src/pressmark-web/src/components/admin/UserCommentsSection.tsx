@@ -41,6 +41,7 @@ export function UserCommentsSection({ comments, onRemove }: Props) {
                   )}
                   {!c.removedByAdmin && (
                     <button
+                      type="button"
                       onClick={() => onRemove(c.id)}
                       title={t('admin:users.commentRemoved')}
                       className="cursor-pointer text-muted-foreground hover:text-destructive transition-colors"

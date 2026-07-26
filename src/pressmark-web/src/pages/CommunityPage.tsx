@@ -69,6 +69,7 @@ export function CommunityPage() {
             <span className="font-medium text-foreground">{items[0].sourceTitle}</span>
           </span>
           <button
+            type="button"
             onClick={() => setSearchParams({})}
             className="cursor-pointer hover:text-foreground transition-colors"
             title={t('feed:clearFilter')}

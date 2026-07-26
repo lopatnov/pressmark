@@ -107,6 +107,7 @@ export function BookmarksPage() {
             )}
           </span>
           <button
+            type="button"
             onClick={() => setSearchParams({})}
             className="cursor-pointer hover:text-foreground transition-colors"
             title={t('feed:clearFilter')}
@@ -145,6 +146,7 @@ export function BookmarksPage() {
                 }
                 actions={
                   <button
+                    type="button"
                     onClick={() => handleRemoveBookmark(item.id)}
                     title={t('feed:removeBookmark')}
                     aria-label={t('feed:removeBookmark')}
