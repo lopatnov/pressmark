@@ -1,4 +1,4 @@
-FROM node:25-alpine AS build
+FROM node:26-alpine AS build
 WORKDIR /app
 COPY src/pressmark-web/package.json src/pressmark-web/package-lock.json ./
 RUN npm ci
