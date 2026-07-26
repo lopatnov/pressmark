@@ -28,11 +28,13 @@ public class AuthTokenIssuer(AppDbContext db, JwtService jwt, IWebHostEnvironmen
         });
         await db.SaveChangesAsync(ct);
 
-        http.Response.Cookies.Append(jwt.CookieName, refreshToken, new CookieOptions
+        // NOSONAR: Secure is always true outside Development; in dev it tracks the actual
+        // request scheme so plain http://localhost keeps working (see commits 04702e8, 41b6dd0).
+        http.Response.Cookies.Append(jwt.CookieName, refreshToken, new CookieOptions // NOSONAR
         {
             HttpOnly = true,
             SameSite = SameSiteMode.Strict,
-            Secure = !env.IsDevelopment() || http.Request.IsHttps, // NOSONAR: always secure outside Development; in dev it tracks the actual request scheme so plain http://localhost keeps working (see commits 04702e8, 41b6dd0)
+            Secure = !env.IsDevelopment() || http.Request.IsHttps,
             Expires = DateTimeOffset.UtcNow.AddDays(jwt.RefreshExpiryDays),
         });
 
