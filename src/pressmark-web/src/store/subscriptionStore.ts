@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 
-interface Subscription {
+export interface Subscription {
   id: string
   rssUrl: string
   title: string
