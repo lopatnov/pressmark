@@ -38,8 +38,9 @@ public partial class AdminServiceImpl
             }
             catch (Exception ex)
             {
-                // Non-fatal: log and continue; the token is still returned to the admin
-                logger.LogWarning(ex, "Failed to send invite email to {Email}", request.NotifyEmail);
+                // Non-fatal: log and continue; the token is still returned to the admin.
+                // Logs the invite id, not the notify address, to keep PII out of logs.
+                logger.LogWarning(ex, "Failed to send invite email for invite {InviteId}", entity.Id);
             }
         }
 
