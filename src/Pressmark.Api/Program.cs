@@ -29,6 +29,12 @@ builder.Services.AddSingleton<JwtService>();
 // Real-time feed streaming
 builder.Services.AddSingleton<FeedUpdateBroadcaster>();
 
+// Feed response assembly (scoped — wraps the request's AppDbContext)
+builder.Services.AddScoped<FeedPageAssembler>();
+
+// Comment notification fan-out (runs detached from the request; creates its own scope)
+builder.Services.AddSingleton<CommentNotificationService>();
+
 // Email
 builder.Services.AddDataProtection();
 builder.Services.AddScoped<ISmtpPasswordProtector, SmtpPasswordProtector>();
