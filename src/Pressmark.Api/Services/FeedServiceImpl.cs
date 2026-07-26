@@ -40,9 +40,11 @@ public partial class FeedServiceImpl(
             .Include(f => f.Subscription)
             .Where(f => f.Subscription.UserId == userId);
 
-        if (!string.IsNullOrEmpty(request.SubscriptionId)
-            && Guid.TryParse(request.SubscriptionId, out var subId))
-            query = query.Where(f => f.SubscriptionId == subId);
+        if (!string.IsNullOrEmpty(request.SubscriptionId))
+        {
+            var subscriptionId = RpcGuards.ParseId(request.SubscriptionId, "subscription_id");
+            query = query.Where(f => f.SubscriptionId == subscriptionId);
+        }
 
         if (request.UnreadOnly)
             query = query.Where(f =>

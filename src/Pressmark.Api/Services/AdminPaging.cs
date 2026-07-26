@@ -10,8 +10,14 @@ internal static class AdminPaging
     /// Clamps a client-supplied page and page size to the supported range.
     /// A page size of zero (unset) means the default.
     /// </summary>
+    /// <remarks>
+    /// The page is bounded above as well as below: <see cref="ToPage{T}"/> multiplies it by
+    /// the page size, and an unbounded page overflows that product to a negative offset
+    /// that the SQL Server provider rejects. The ceiling keeps the largest permitted page
+    /// size in range.
+    /// </remarks>
     internal static (int Page, int PageSize) Normalize(int page, int pageSize) =>
-        (Math.Max(0, page),
+        (Math.Clamp(page, 0, int.MaxValue / Math.Max(1, PagingDefaults.MaxPageSize)),
          pageSize > 0 ? Math.Min(pageSize, PagingDefaults.MaxPageSize) : PagingDefaults.DefaultPageSize);
 
     /// <summary>Applies the offset window for the given normalised page.</summary>

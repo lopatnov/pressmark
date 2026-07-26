@@ -26,10 +26,10 @@ public class CommentNotificationService(
             var scopedDb = scope.ServiceProvider.GetRequiredService<AppDbContext>();
             var emailService = scope.ServiceProvider.GetRequiredService<IEmailService>();
 
+            // No Include: the projection selects the email, so EF Core would ignore it.
             var subscribers = await scopedDb.CommentSubscriptions
                 .AsNoTracking()
                 .Where(s => s.FeedItemId == feedItemId && s.User.Email != commenterEmail)
-                .Include(s => s.User)
                 .Select(s => s.User.Email)
                 .ToListAsync();
 

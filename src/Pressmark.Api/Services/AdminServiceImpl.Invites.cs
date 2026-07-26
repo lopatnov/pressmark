@@ -75,6 +75,7 @@ public partial class AdminServiceImpl
         var total = await query.CountAsync(ct);
         var invites = await query
             .ToPage(page, pageSize)
+            .AsNoTracking()
             .ToListAsync(ct);
 
         var result = new InviteList { TotalCount = total };

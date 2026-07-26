@@ -18,10 +18,13 @@ internal static class ServerCallContextExtensions
         var claim = context.GetHttpContext()
             .User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        if (claim is null)
+        // A malformed claim is an unusable identity, not a server fault: parse it the
+        // same way TryGetUserId does so it reports Unauthenticated rather than escaping
+        // as a FormatException.
+        if (!Guid.TryParse(claim, out var userId))
             throw new RpcException(new Status(StatusCode.Unauthenticated, "Not authenticated"));
 
-        return Guid.Parse(claim);
+        return userId;
     }
 
     /// <summary>

@@ -54,23 +54,38 @@ public partial class AdminServiceImpl(AppDbContext db, ISmtpPasswordProtector pa
         var ct = context.CancellationToken;
         var s = request.Settings;
 
-        await UpsertSetting(SiteSettingKeys.SiteName, s.SiteName, ct);
-        await UpsertSetting(SiteSettingKeys.CommunityWindowDays, s.CommunityWindowDays.ToString(), ct);
-        await UpsertSetting(SiteSettingKeys.RegistrationMode, s.RegistrationMode, ct);
-        await UpsertSetting(SiteSettingKeys.SmtpHost, s.SmtpHost, ct);
-        await UpsertSetting(SiteSettingKeys.SmtpPort, s.SmtpPort.ToString(), ct);
-        await UpsertSetting(SiteSettingKeys.SmtpUser, s.SmtpUser, ct);
-        await UpsertSetting(SiteSettingKeys.SmtpUseTls, s.SmtpUseTls ? "true" : "false", ct);
-        await UpsertSetting(SiteSettingKeys.SmtpFromAddress, s.SmtpFromAddress, ct);
+        // Stage every key against one snapshot of the table and commit them together:
+        // a save is all-or-nothing, and the whole screen costs two round trips rather
+        // than two per setting.
+        var existing = await db.SiteSettings.ToDictionaryAsync(x => x.Key, ct);
+
+        void Upsert(string key, string value)
+        {
+            if (existing.TryGetValue(key, out var setting))
+                setting.Value = value;
+            else
+                db.SiteSettings.Add(new Entities.SiteSetting { Key = key, Value = value });
+        }
+
+        Upsert(SiteSettingKeys.SiteName, s.SiteName);
+        Upsert(SiteSettingKeys.CommunityWindowDays, s.CommunityWindowDays.ToString());
+        Upsert(SiteSettingKeys.RegistrationMode, s.RegistrationMode);
+        Upsert(SiteSettingKeys.SmtpHost, s.SmtpHost);
+        Upsert(SiteSettingKeys.SmtpPort, s.SmtpPort.ToString());
+        Upsert(SiteSettingKeys.SmtpUser, s.SmtpUser);
+        Upsert(SiteSettingKeys.SmtpUseTls, s.SmtpUseTls ? "true" : "false");
+        Upsert(SiteSettingKeys.SmtpFromAddress, s.SmtpFromAddress);
 
         // Only update the password if a new value was provided; encrypt before storing
         if (!string.IsNullOrEmpty(s.SmtpPassword))
-            await UpsertSetting(SiteSettingKeys.SmtpPassword, passwordProtector.Protect(s.SmtpPassword), ct);
+            Upsert(SiteSettingKeys.SmtpPassword, passwordProtector.Protect(s.SmtpPassword));
 
-        await UpsertSetting(SiteSettingKeys.CommentsEnabled, s.CommentsEnabled ? "true" : "false", ct);
-        await UpsertSetting(SiteSettingKeys.FeedRetentionDays, s.FeedRetentionDays.ToString(), ct);
-        await UpsertSetting(SiteSettingKeys.CommunityPageEnabled, s.CommunityPageEnabled ? "true" : "false", ct);
-        await UpsertSetting(SiteSettingKeys.SiteDescription, s.SiteDescription, ct);
+        Upsert(SiteSettingKeys.CommentsEnabled, s.CommentsEnabled ? "true" : "false");
+        Upsert(SiteSettingKeys.FeedRetentionDays, s.FeedRetentionDays.ToString());
+        Upsert(SiteSettingKeys.CommunityPageEnabled, s.CommunityPageEnabled ? "true" : "false");
+        Upsert(SiteSettingKeys.SiteDescription, s.SiteDescription);
+
+        await db.SaveChangesAsync(ct);
 
         return new Empty();
     }
@@ -113,16 +128,5 @@ public partial class AdminServiceImpl(AppDbContext db, ISmtpPasswordProtector pa
             deletedLikes, windowDays, deletedItems, retentionDays);
 
         return new Empty();
-    }
-
-    private async Task UpsertSetting(string key, string value, CancellationToken ct)
-    {
-        var setting = await db.SiteSettings.FindAsync([key], ct);
-        if (setting is null)
-            db.SiteSettings.Add(new Entities.SiteSetting { Key = key, Value = value });
-        else
-            setting.Value = value;
-
-        await db.SaveChangesAsync(ct);
     }
 }

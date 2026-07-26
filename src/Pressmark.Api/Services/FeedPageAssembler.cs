@@ -30,7 +30,9 @@ public class FeedPageAssembler(AppDbContext db, IDbContextFactory<AppDbContext> 
         // does not allow concurrent operations on the same context.
         await using var ctx1 = await dbFactory.CreateDbContextAsync(ct);
         await using var ctx2 = await dbFactory.CreateDbContextAsync(ct);
-        await using var ctx3 = await dbFactory.CreateDbContextAsync(ct);
+        // Bookmarks are the one lookup that can be answered without asking the database,
+        // so its context is only opened when it is actually queried.
+        await using var ctx3 = allBookmarked ? null : await dbFactory.CreateDbContextAsync(ct);
         await using var ctx4 = await dbFactory.CreateDbContextAsync(ct);
 
         var readIdsTask = ctx1.ReadItems
@@ -41,7 +43,7 @@ public class FeedPageAssembler(AppDbContext db, IDbContextFactory<AppDbContext> 
             .Select(l => l.FeedItemId).ToHashSetAsync(ct);
         var bookmarkIdsTask = allBookmarked
             ? Task.FromResult(ids.ToHashSet())
-            : ctx3.Bookmarks
+            : ctx3!.Bookmarks
                 .Where(b => b.UserId == userId && ids.Contains(b.FeedItemId))
                 .Select(b => b.FeedItemId).ToHashSetAsync(ct);
         var likeCountsTask = ctx4.Likes

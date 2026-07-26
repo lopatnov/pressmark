@@ -69,12 +69,15 @@ internal sealed class SiteSettingsSnapshot(Dictionary<string, string> values)
     /// <summary>Loads every setting. Use when most keys are needed.</summary>
     internal static async Task<SiteSettingsSnapshot> LoadAllAsync(
         AppDbContext db, CancellationToken ct) =>
-        new(await db.SiteSettings.ToDictionaryAsync(s => s.Key, s => s.Value, ct));
+        new(await db.SiteSettings
+            .AsNoTracking()
+            .ToDictionaryAsync(s => s.Key, s => s.Value, ct));
 
     /// <summary>Loads only the requested keys.</summary>
     internal static async Task<SiteSettingsSnapshot> LoadAsync(
         AppDbContext db, string[] keys, CancellationToken ct) =>
         new(await db.SiteSettings
+            .AsNoTracking()
             .Where(s => keys.Contains(s.Key))
             .ToDictionaryAsync(s => s.Key, s => s.Value, ct));
 
@@ -99,6 +102,13 @@ internal sealed class SiteSettingsSnapshot(Dictionary<string, string> values)
     internal int Int(string key, int fallback) =>
         int.TryParse(values.GetValueOrDefault(key), out var parsed) ? parsed : fallback;
 
+    /// <summary>Reads a boolean setting, falling back when it is absent or unparseable.</summary>
+    /// <remarks>
+    /// Parsed rather than compared to "true", so a value stored with different casing by
+    /// another writer does not silently read as false and turn the setting off.
+    /// </remarks>
     internal bool Bool(string key, bool fallback) =>
-        values.TryGetValue(key, out var raw) ? raw == "true" : fallback;
+        values.TryGetValue(key, out var raw) && bool.TryParse(raw, out var parsed)
+            ? parsed
+            : fallback;
 }
