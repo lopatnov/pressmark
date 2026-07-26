@@ -1,15 +1,10 @@
+import { useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useTranslation } from 'react-i18next'
 import { Code, ConnectError } from '@connectrpc/connect'
 import { Button } from '@/components/ui/button'
-
-const schema = z.object({
-  rssUrl: z.string().url(),
-  title: z.string().optional(),
-})
-type FormData = z.infer<typeof schema>
 
 interface Props {
   readonly onAdd: (rssUrl: string, title: string) => Promise<void>
@@ -19,6 +14,19 @@ interface Props {
 
 export function AddSubscriptionForm({ onAdd, onDone, onCancel }: Props) {
   const { t } = useTranslation(['subscriptions', 'common'])
+
+  // Built here rather than at module scope so the validation message can be
+  // translated, the same way ResetPasswordPage builds its schema.
+  const schema = useMemo(
+    () =>
+      z.object({
+        rssUrl: z.url({ error: t('subscriptions:errors.invalidUrl') }),
+        title: z.string().optional(),
+      }),
+    [t],
+  )
+  type FormData = z.infer<typeof schema>
+
   const {
     register,
     handleSubmit,
