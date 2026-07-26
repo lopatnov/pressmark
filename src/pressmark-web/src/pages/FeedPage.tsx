@@ -1,15 +1,12 @@
-import { useCallback, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { Ban, X } from 'lucide-react'
 import { usePageTitle } from '@/hooks/usePageTitle'
-import { toast } from 'sonner'
-import { Ban, Heart, Bookmark, BookMarked, X } from 'lucide-react'
+import { useFeedPage } from '@/hooks/useFeedPage'
 import { Button } from '@/components/ui/button'
-import { feedClient } from '@/api/clients'
-import { useFeedStore } from '@/store/feedStore'
 import { useSubscriptionStore } from '@/store/subscriptionStore'
 import { FeedItemCard } from '@/components/feed/FeedItemCard'
-import { useIntersectionLoader } from '@/hooks/useIntersectionLoader'
+import { FeedItemActions } from '@/components/feed/FeedItemActions'
 import { FeedCardSkeletonList } from '@/components/feed/FeedCardSkeleton'
 
 export function FeedPage() {
@@ -20,138 +17,23 @@ export function FeedPage() {
   const activeSub = useSubscriptionStore((s) =>
     s.subscriptions.find((sub) => sub.id === activeSubId),
   )
+
   const {
     items,
     nextCursor,
     totalUnread,
     isLoading,
     unreadOnly,
-    setItems,
-    appendItems,
-    prependItem,
-    setLoading,
     setFilter,
-    updateLike,
-    updateBookmark,
-    markRead,
-    reset,
-  } = useFeedStore()
+    sentinelRef,
+    handleLoadMore,
+    toggleLike,
+    toggleBookmark,
+    markAsRead,
+    markAllRead,
+  } = useFeedPage(activeSubId)
 
-  const loadFeed = useCallback(
-    async (cursor = '', signal?: AbortSignal) => {
-      setLoading(true)
-      try {
-        const res = await feedClient.getFeed(
-          {
-            pageSize: 20,
-            cursor,
-            unreadOnly: useFeedStore.getState().unreadOnly,
-            subscriptionId: activeSubId,
-          },
-          { signal },
-        )
-        if (signal?.aborted) return
-        const mapped = res.items.map((item) => ({
-          id: item.id,
-          subscriptionId: item.subscriptionId,
-          title: item.title,
-          url: item.url,
-          summary: item.summary,
-          publishedAt: item.publishedAt,
-          isRead: item.isRead,
-          likeCount: item.likeCount,
-          isLiked: item.isLiked,
-          isBookmarked: item.isBookmarked,
-          sourceTitle: item.sourceTitle,
-          imageUrl: item.imageUrl,
-          isSourceBanned: item.isSourceBanned,
-        }))
-        if (cursor) {
-          appendItems(mapped, res.nextCursor)
-        } else {
-          setItems(mapped, res.nextCursor, res.totalUnread)
-        }
-      } catch {
-        if (!signal?.aborted) toast.error(t('common:error'))
-      } finally {
-        if (!signal?.aborted) setLoading(false)
-      }
-    },
-    [setLoading, appendItems, setItems, t, activeSubId],
-  )
-
-  const handleLoadMore = useCallback(() => {
-    const cursor = useFeedStore.getState().nextCursor
-    if (cursor && !useFeedStore.getState().isLoading) loadFeed(cursor)
-  }, [loadFeed])
-
-  const sentinelRef = useIntersectionLoader(handleLoadMore, !!nextCursor && !isLoading)
-
-  // Reload when filter changes; abort the previous in-flight request
-  useEffect(() => {
-    const controller = new AbortController()
-    reset()
-    loadFeed('', controller.signal)
-    return () => controller.abort()
-  }, [unreadOnly, activeSubId, loadFeed, reset])
-
-  // Real-time streaming: prepend new items as they arrive from the server
-  useEffect(() => {
-    const controller = new AbortController()
-
-    const connect = async () => {
-      try {
-        const sinceTimestamp = useFeedStore.getState().items[0]?.publishedAt ?? ''
-        const stream = feedClient.streamFeedUpdates(
-          { sinceTimestamp },
-          { signal: controller.signal },
-        )
-        for await (const item of stream) {
-          prependItem({
-            id: item.id,
-            subscriptionId: item.subscriptionId,
-            title: item.title,
-            url: item.url,
-            summary: item.summary,
-            publishedAt: item.publishedAt,
-            isRead: item.isRead,
-            likeCount: item.likeCount,
-            isLiked: item.isLiked,
-            isBookmarked: item.isBookmarked,
-            sourceTitle: item.sourceTitle,
-            imageUrl: item.imageUrl,
-            isSourceBanned: item.isSourceBanned,
-          })
-        }
-      } catch {
-        if (!controller.signal.aborted) setTimeout(connect, 5000)
-      }
-    }
-
-    connect()
-    return () => controller.abort()
-  }, [])
-
-  const handleLike = async (id: string) => {
-    const res = await feedClient.toggleLike({ feedItemId: id })
-    updateLike(id, res.isLiked, res.likeCount)
-  }
-
-  const handleBookmark = async (id: string) => {
-    const res = await feedClient.toggleBookmark({ feedItemId: id })
-    updateBookmark(id, res.isBookmarked)
-  }
-
-  const handleRead = (id: string) => {
-    markRead(id)
-    feedClient.markAsRead({ feedItemId: id }).catch(() => {})
-  }
-
-  const handleMarkAllRead = async () => {
-    await feedClient.markAllAsRead({ subscriptionId: '' })
-    reset()
-    loadFeed()
-  }
+  const isSourceBanned = items[0]?.isSourceBanned ?? activeSub?.isCommunityBanned
 
   return (
     <div className="mx-auto max-w-2xl space-y-4 p-4">
@@ -175,7 +57,7 @@ export function FeedPage() {
             {t('feed:unreadOnly')}
           </label>
           {totalUnread > 0 && (
-            <Button variant="ghost" size="sm" onClick={handleMarkAllRead}>
+            <Button variant="ghost" size="sm" onClick={markAllRead}>
               {t('feed:markAllRead')}
             </Button>
           )}
@@ -184,14 +66,14 @@ export function FeedPage() {
 
       {activeSubId && (items.length > 0 || activeSub) && (
         <div
-          className={`flex items-center gap-2 rounded-md border px-3 py-1.5 text-xs text-muted-foreground ${(items[0]?.isSourceBanned ?? activeSub?.isCommunityBanned) ? 'border-destructive/50 bg-destructive/5' : 'border-border bg-muted/40'}`}
+          className={`flex items-center gap-2 rounded-md border px-3 py-1.5 text-xs text-muted-foreground ${isSourceBanned ? 'border-destructive/50 bg-destructive/5' : 'border-border bg-muted/40'}`}
         >
           <span className="flex flex-1 items-center gap-2">
             {t('feed:filterBySource')}:{' '}
             <span className="font-medium text-foreground">
               {items[0]?.sourceTitle ?? activeSub?.title}
             </span>
-            {(items[0]?.isSourceBanned ?? activeSub?.isCommunityBanned) && (
+            {isSourceBanned && (
               <span className="flex shrink-0 items-center gap-1 rounded-full bg-destructive/10 px-2 py-0.5 text-destructive">
                 <Ban className="h-3 w-3" />
                 {t('subscriptions:banned')}
@@ -223,31 +105,16 @@ export function FeedPage() {
               item={item}
               articleId={item.id}
               sourceHref={item.subscriptionId ? `/feed?sub=${item.subscriptionId}` : undefined}
-              onTitleClick={!item.isRead ? () => handleRead(item.id) : undefined}
+              onTitleClick={!item.isRead ? () => markAsRead(item.id) : undefined}
               actions={
-                <>
-                  <button
-                    onClick={() => handleLike(item.id)}
-                    title={item.isLiked ? t('feed:unlike') : t('feed:like')}
-                    aria-label={item.isLiked ? t('feed:unlike') : t('feed:like')}
-                    className={`flex cursor-pointer items-center gap-1 rounded px-2 py-1 text-xs transition-colors hover:bg-muted ${item.isLiked ? 'text-rose-500' : 'text-muted-foreground'}`}
-                  >
-                    <Heart className={`h-3.5 w-3.5 ${item.isLiked ? 'fill-current' : ''}`} />
-                    {item.likeCount > 0 && <span>{item.likeCount}</span>}
-                  </button>
-                  <button
-                    onClick={() => handleBookmark(item.id)}
-                    title={item.isBookmarked ? t('feed:removeBookmark') : t('feed:bookmark')}
-                    aria-label={item.isBookmarked ? t('feed:removeBookmark') : t('feed:bookmark')}
-                    className={`flex cursor-pointer items-center gap-1 rounded px-2 py-1 text-xs transition-colors hover:bg-muted ${item.isBookmarked ? 'text-amber-500' : 'text-muted-foreground'}`}
-                  >
-                    {item.isBookmarked ? (
-                      <BookMarked className="h-3.5 w-3.5 fill-current" />
-                    ) : (
-                      <Bookmark className="h-3.5 w-3.5" />
-                    )}
-                  </button>
-                </>
+                <FeedItemActions
+                  id={item.id}
+                  isLiked={item.isLiked}
+                  likeCount={item.likeCount}
+                  isBookmarked={item.isBookmarked}
+                  onLike={toggleLike}
+                  onBookmark={toggleBookmark}
+                />
               }
             />
           ))
