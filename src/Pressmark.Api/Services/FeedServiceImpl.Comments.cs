@@ -18,9 +18,7 @@ public partial class FeedServiceImpl
         ListCommentsRequest request, ServerCallContext context)
     {
         var ct = context.CancellationToken;
-
-        if (!Guid.TryParse(request.FeedItemId, out var feedItemId))
-            throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid feed_item_id"));
+        var feedItemId = RpcGuards.ParseId(request.FeedItemId, "feed_item_id");
 
         var comments = await db.Comments
             .AsNoTracking()
@@ -59,8 +57,7 @@ public partial class FeedServiceImpl
             throw new RpcException(new Status(StatusCode.InvalidArgument,
                 "Comment body must be between 1 and 1000 characters"));
 
-        if (!Guid.TryParse(request.FeedItemId, out var feedItemId))
-            throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid feed_item_id"));
+        var feedItemId = RpcGuards.ParseId(request.FeedItemId, "feed_item_id");
 
         var settings = await SiteSettingsSnapshot.LoadAsync(
             db, [SiteSettingKeys.CommentsEnabled], ct);
@@ -110,8 +107,7 @@ public partial class FeedServiceImpl
         var ct = context.CancellationToken;
         var userId = context.GetUserId();
 
-        if (!Guid.TryParse(request.FeedItemId, out var feedItemId))
-            throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid feed_item_id"));
+        var feedItemId = RpcGuards.ParseId(request.FeedItemId, "feed_item_id");
 
         var existing = await db.CommentSubscriptions
             .FirstOrDefaultAsync(s => s.UserId == userId && s.FeedItemId == feedItemId, ct);
@@ -146,8 +142,7 @@ public partial class FeedServiceImpl
             throw new RpcException(new Status(StatusCode.InvalidArgument,
                 "type must be 'comment' or 'subscription'"));
 
-        if (!Guid.TryParse(request.TargetId, out var targetId))
-            throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid target_id"));
+        var targetId = RpcGuards.ParseId(request.TargetId, "target_id");
 
         // Verify target exists
         if (request.Type == "comment")

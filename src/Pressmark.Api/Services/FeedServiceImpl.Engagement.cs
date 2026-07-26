@@ -16,8 +16,7 @@ public partial class FeedServiceImpl
         MarkAsReadRequest request, ServerCallContext context)
     {
         var userId = context.GetUserId();
-        if (!Guid.TryParse(request.FeedItemId, out var itemId))
-            throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid feed_item_id"));
+        var itemId = RpcGuards.ParseId(request.FeedItemId, "feed_item_id");
         var ct = context.CancellationToken;
 
         var exists = await db.ReadItems
@@ -74,8 +73,7 @@ public partial class FeedServiceImpl
         ToggleLikeRequest request, ServerCallContext context)
     {
         var userId = context.GetUserId();
-        if (!Guid.TryParse(request.FeedItemId, out var itemId))
-            throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid feed_item_id"));
+        var itemId = RpcGuards.ParseId(request.FeedItemId, "feed_item_id");
         var ct = context.CancellationToken;
 
         var like = await db.Likes
@@ -98,8 +96,7 @@ public partial class FeedServiceImpl
         ToggleBookmarkRequest request, ServerCallContext context)
     {
         var userId = context.GetUserId();
-        if (!Guid.TryParse(request.FeedItemId, out var itemId))
-            throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid feed_item_id"));
+        var itemId = RpcGuards.ParseId(request.FeedItemId, "feed_item_id");
         var ct = context.CancellationToken;
 
         var bookmark = await db.Bookmarks

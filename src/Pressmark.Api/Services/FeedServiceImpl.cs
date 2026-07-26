@@ -69,8 +69,7 @@ public partial class FeedServiceImpl(
 
         if (!string.IsNullOrEmpty(request.SubscriptionId))
         {
-            if (!Guid.TryParse(request.SubscriptionId, out var subscriptionId))
-                throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid subscription_id format"));
+            var subscriptionId = RpcGuards.ParseId(request.SubscriptionId, "subscription_id");
             query = query.Where(f => f.SubscriptionId == subscriptionId);
         }
 
@@ -119,8 +118,7 @@ public partial class FeedServiceImpl(
     {
         var ct = context.CancellationToken;
 
-        if (!Guid.TryParse(request.FeedItemId, out var feedItemId))
-            throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid feed_item_id"));
+        var feedItemId = RpcGuards.ParseId(request.FeedItemId, "feed_item_id");
 
         var isAdmin = context.GetHttpContext().User.IsInRole("Admin");
 
@@ -202,12 +200,7 @@ public partial class FeedServiceImpl(
         }
         catch (OperationCanceledException)
         {
-            //logger.LogInformation("Client disconnected from feed stream.");
-        }
-        catch (Exception)
-        {
-            //logger.LogError(ex, "Unexpected error in feed stream.");
-            throw;
+            // Client disconnected; not an error.
         }
         finally
         {

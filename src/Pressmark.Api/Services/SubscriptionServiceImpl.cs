@@ -78,8 +78,7 @@ public class SubscriptionServiceImpl(AppDbContext db, IHttpClientFactory httpCli
         var userId = context.GetUserId();
         var ct = context.CancellationToken;
 
-        if (!Guid.TryParse(request.SubscriptionId, out var subId))
-            throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid subscription_id"));
+        var subId = RpcGuards.ParseId(request.SubscriptionId, "subscription_id");
 
         var sub = await db.Subscriptions
             .FirstOrDefaultAsync(s => s.Id == subId && s.UserId == userId, ct);
@@ -99,8 +98,7 @@ public class SubscriptionServiceImpl(AppDbContext db, IHttpClientFactory httpCli
         var userId = context.GetUserId();
         var ct = context.CancellationToken;
 
-        if (!Guid.TryParse(request.SubscriptionId, out var subId))
-            throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid subscription_id"));
+        var subId = RpcGuards.ParseId(request.SubscriptionId, "subscription_id");
 
         var sub = await db.Subscriptions
             .FirstOrDefaultAsync(s => s.Id == subId && s.UserId == userId, ct);
@@ -212,8 +210,7 @@ public class SubscriptionServiceImpl(AppDbContext db, IHttpClientFactory httpCli
         var userId = context.GetUserId();
         var ct = context.CancellationToken;
 
-        if (!Guid.TryParse(request.SubscriptionId, out var subId))
-            throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid subscription ID"));
+        var subId = RpcGuards.ParseId(request.SubscriptionId, "subscription_id");
 
         var sub = await db.Subscriptions
             .FirstOrDefaultAsync(s => s.Id == subId && s.UserId == userId, ct);
