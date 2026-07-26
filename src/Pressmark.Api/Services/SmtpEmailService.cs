@@ -118,13 +118,31 @@ public class SmtpEmailService(AppDbContext db, ILogger<SmtpEmailService> logger,
     /// Reads the SMTP configuration, returning <c>null</c> (and logging) when no host
     /// is configured, which is the signal for callers to skip sending entirely.
     /// </summary>
+    /// <remarks>
+    /// Each case logs its own literal message rather than interpolating <paramref name="kind"/>
+    /// — no value ever flows from a parameter into the logger, by construction.
+    /// </remarks>
     private async Task<SmtpSettings?> LoadSmtpAsync(EmailKind kind, CancellationToken ct)
     {
         var smtp = SmtpSettings.From(await SiteSettingsSnapshot.LoadAllAsync(db, ct));
 
         if (!smtp.IsConfigured)
         {
-            logger.LogWarning("SMTP not configured — skipping {EmailKind}", kind);
+            switch (kind)
+            {
+                case EmailKind.PasswordReset:
+                    logger.LogWarning("SMTP not configured — skipping password reset email");
+                    break;
+                case EmailKind.Invite:
+                    logger.LogWarning("SMTP not configured — skipping invite email");
+                    break;
+                case EmailKind.CommentNotification:
+                    logger.LogWarning("SMTP not configured — skipping comment notification email");
+                    break;
+                case EmailKind.DailyDigest:
+                    logger.LogWarning("SMTP not configured — skipping daily digest email");
+                    break;
+            }
             return null;
         }
 
