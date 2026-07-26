@@ -80,30 +80,22 @@ export function useSubscriptions() {
   }
 
   /** Reads the OPML file client-side, then imports and reloads the list. */
-  const importOpml = (file: File, onSettled: () => void) => {
-    const reader = new FileReader()
-    reader.onload = async (ev) => {
-      const opmlContent = ev.target?.result as string
-      try {
-        const res = await subscriptionClient.importSubscriptions({ opmlContent })
-        setImportStatus(
-          t('subscriptions:importSuccess', {
-            imported: res.imported,
-            skipped: res.skipped,
-          }),
-        )
-        await reloadList()
-      } catch {
-        setImportStatus(t('subscriptions:importError'))
-      } finally {
-        onSettled()
-      }
-    }
-    reader.onerror = () => {
+  const importOpml = async (file: File, onSettled: () => void) => {
+    try {
+      const opmlContent = await file.text()
+      const res = await subscriptionClient.importSubscriptions({ opmlContent })
+      setImportStatus(
+        t('subscriptions:importSuccess', {
+          imported: res.imported,
+          skipped: res.skipped,
+        }),
+      )
+      await reloadList()
+    } catch {
       setImportStatus(t('subscriptions:importError'))
+    } finally {
       onSettled()
     }
-    reader.readAsText(file)
   }
 
   const refreshSubscription = async (id: string) => {

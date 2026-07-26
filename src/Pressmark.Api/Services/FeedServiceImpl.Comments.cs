@@ -42,7 +42,7 @@ public partial class FeedServiceImpl
             Body = c.RemovedByAdmin ? "" : c.Body,
             CreatedAt = c.CreatedAt.ToString("o"),
             RemovedByAdmin = c.RemovedByAdmin,
-            IsCommentingBanned = c.RemovedByAdmin ? false : c.User.IsCommentingBanned,
+            IsCommentingBanned = !c.RemovedByAdmin && c.User.IsCommentingBanned,
         }));
         return result;
     }
