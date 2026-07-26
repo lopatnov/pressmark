@@ -76,8 +76,12 @@ export function CommunityItemActions({
       {isAuthenticated &&
         !isAdmin &&
         (isReported ? (
-          <span className="flex items-center gap-1 px-2 py-1 text-xs text-muted-foreground">
-            <Flag className="h-3.5 w-3.5" />
+          <span
+            className="flex items-center gap-1 px-2 py-1 text-xs text-muted-foreground"
+            title={t('feed:reportSent')}
+          >
+            <Flag className="h-3.5 w-3.5" aria-hidden="true" />
+            <span className="sr-only">{t('feed:reportSent')}</span>
           </span>
         ) : (
           <button

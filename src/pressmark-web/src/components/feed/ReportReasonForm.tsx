@@ -24,16 +24,17 @@ export function ReportReasonForm({
       <textarea
         value={reason}
         onChange={(e) => onReasonChange(e.target.value)}
+        aria-label={t('reportReason')}
         placeholder={t('reportReason')}
         maxLength={500}
         rows={2}
         className="w-full rounded-md border border-border bg-background px-2 py-1.5 text-xs resize-none"
       />
       <div className="flex gap-2">
-        <Button size="sm" onClick={onSubmit} disabled={submitting}>
+        <Button type="button" size="sm" onClick={onSubmit} disabled={submitting}>
           {t('reportSend')}
         </Button>
-        <Button size="sm" variant="ghost" onClick={onCancel}>
+        <Button type="button" size="sm" variant="ghost" onClick={onCancel}>
           {t('reportCancel')}
         </Button>
       </div>

@@ -48,24 +48,42 @@ export function AddSubscriptionForm({ onAdd, onDone, onCancel }: Props) {
       className="space-y-3 rounded-lg border border-border p-4"
     >
       <div className="space-y-1">
-        <label className="text-sm font-medium">{t('subscriptions:rssUrl')}</label>
+        <label htmlFor="rssUrl" className="text-sm font-medium">
+          {t('subscriptions:rssUrl')}
+        </label>
         <input
+          id="rssUrl"
           {...register('rssUrl')}
           type="url"
+          aria-invalid={!!errors.rssUrl}
+          aria-describedby={errors.rssUrl ? 'rssUrl-error' : undefined}
           placeholder="https://example.com/rss.xml"
           className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
         />
-        {errors.rssUrl && <p className="text-xs text-destructive">{errors.rssUrl.message}</p>}
+        {errors.rssUrl && (
+          <p id="rssUrl-error" className="text-xs text-destructive">
+            {errors.rssUrl.message}
+          </p>
+        )}
       </div>
       <div className="space-y-1">
-        <label className="text-sm font-medium">{t('subscriptions:feedTitle')}</label>
+        <label htmlFor="title" className="text-sm font-medium">
+          {t('subscriptions:feedTitle')}
+        </label>
         <input
+          id="title"
           {...register('title')}
           type="text"
+          aria-invalid={!!errors.title}
+          aria-describedby={errors.title ? 'title-error' : undefined}
           placeholder={t('subscriptions:feedTitlePlaceholder')}
           className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
         />
-        {errors.title && <p className="text-xs text-destructive">{errors.title.message}</p>}
+        {errors.title && (
+          <p id="title-error" className="text-xs text-destructive">
+            {errors.title.message}
+          </p>
+        )}
       </div>
       {errors.root && <p className="text-sm text-destructive">{errors.root.message}</p>}
       <div className="flex gap-2">

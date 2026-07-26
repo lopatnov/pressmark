@@ -29,7 +29,8 @@ export function SubscriptionRow({
   }
 
   const saveEdit = async () => {
-    if (await onRename(sub.id, editValue)) setIsEditing(false)
+    const trimmed = editValue.trim()
+    if (trimmed && (await onRename(sub.id, trimmed))) setIsEditing(false)
   }
 
   return (
@@ -48,6 +49,7 @@ export function SubscriptionRow({
                   if (e.key === 'Escape') setIsEditing(false)
                 }}
                 autoFocus
+                aria-label={t('subscriptions:editTitle')}
                 className="rounded border border-border bg-background px-2 py-0.5 text-sm"
               />
               <button
