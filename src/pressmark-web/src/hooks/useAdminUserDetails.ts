@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
+import { Code, ConnectError } from '@connectrpc/connect'
 import { adminClient } from '@/api/clients'
+import { useAuthStore } from '@/store/authStore'
 
 export interface AdminUserSubscription {
   id: string
@@ -38,15 +40,20 @@ export interface AdminUserDetails {
  */
 export function useAdminUserDetails(id: string | undefined) {
   const { t } = useTranslation(['admin', 'common'])
+  const currentUserId = useAuthStore((s) => s.user?.id)
   const [details, setDetails] = useState<AdminUserDetails | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     if (!id) return
+    // Navigating between users must not let a slow response for the previous id
+    // land on top of the current one.
+    let cancelled = false
     setLoading(true)
     adminClient
       .getUserDetails({ userId: id })
       .then((res) => {
+        if (cancelled) return
         const u = res.user!
         setDetails({
           id: u.id,
@@ -71,9 +78,16 @@ export function useAdminUserDetails(id: string | undefined) {
           })),
         })
       })
-      .catch(() => toast.error(t('common:error')))
-      .finally(() => setLoading(false))
-  }, [id])
+      .catch(() => {
+        if (!cancelled) toast.error(t('common:error'))
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [id, t])
 
   const changeRole = async () => {
     if (!details) return
@@ -82,8 +96,9 @@ export function useAdminUserDetails(id: string | undefined) {
       await adminClient.changeUserRole({ userId: details.id, role: newRole })
       setDetails((d) => (d ? { ...d, role: newRole } : d))
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : ''
-      if (msg.includes('last admin')) {
+      // The role change has exactly one precondition — demoting the last admin —
+      // so the status code alone identifies it, no message matching needed.
+      if (err instanceof ConnectError && err.code === Code.FailedPrecondition) {
         toast.error(t('admin:users.cannotDemoteLastAdmin'))
       } else {
         toast.error(t('common:error'))
@@ -145,11 +160,14 @@ export function useAdminUserDetails(id: string | undefined) {
       toast.success(t('admin:users.deleted'))
       return true
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : ''
-      if (msg.includes('last admin')) {
-        toast.error(t('admin:users.cannotDeleteLastAdmin'))
-      } else if (msg.includes('own account')) {
-        toast.error(t('admin:users.cannotDeleteSelf'))
+      // Deletion has two preconditions, both reported as FailedPrecondition:
+      // deleting yourself and deleting the last admin. Which one applies is
+      // decided from the signed-in user's id rather than the server's wording.
+      if (err instanceof ConnectError && err.code === Code.FailedPrecondition) {
+        const isSelf = !!currentUserId && currentUserId === details.id
+        toast.error(
+          isSelf ? t('admin:users.cannotDeleteSelf') : t('admin:users.cannotDeleteLastAdmin'),
+        )
       } else {
         toast.error(t('common:error'))
       }

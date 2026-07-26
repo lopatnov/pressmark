@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { feedClient } from '@/api/clients'
@@ -90,10 +90,18 @@ export function useFeedPage(activeSubId: string) {
     return () => controller.abort()
   }, [unreadOnly, activeSubId, loadFeed, reset])
 
+  // The stream outlives filter changes, so the active filter is read through a
+  // ref instead of being captured in the connection's closure.
+  const activeSubIdRef = useRef(activeSubId)
+  useEffect(() => {
+    activeSubIdRef.current = activeSubId
+  }, [activeSubId])
+
   // Real-time streaming: prepend new items as they arrive from the server,
   // reconnecting after a 5s backoff whenever the stream drops.
   useEffect(() => {
     const controller = new AbortController()
+    let retryTimer: ReturnType<typeof setTimeout> | undefined
 
     const connect = async () => {
       try {
@@ -103,6 +111,10 @@ export function useFeedPage(activeSubId: string) {
           { signal: controller.signal },
         )
         for await (const item of stream) {
+          // While a source filter is active the list must only ever show that
+          // source; updates from other subscriptions are dropped.
+          const filterSubId = activeSubIdRef.current
+          if (filterSubId && item.subscriptionId !== filterSubId) continue
           prependItem({
             id: item.id,
             subscriptionId: item.subscriptionId,
@@ -120,22 +132,33 @@ export function useFeedPage(activeSubId: string) {
           })
         }
       } catch {
-        if (!controller.signal.aborted) setTimeout(connect, 5000)
+        if (!controller.signal.aborted) retryTimer = setTimeout(connect, 5000)
       }
     }
 
     connect()
-    return () => controller.abort()
+    return () => {
+      controller.abort()
+      if (retryTimer) clearTimeout(retryTimer)
+    }
   }, [])
 
   const toggleLike = async (id: string) => {
-    const res = await feedClient.toggleLike({ feedItemId: id })
-    updateLike(id, res.isLiked, res.likeCount)
+    try {
+      const res = await feedClient.toggleLike({ feedItemId: id })
+      updateLike(id, res.isLiked, res.likeCount)
+    } catch {
+      toast.error(t('common:error'))
+    }
   }
 
   const toggleBookmark = async (id: string) => {
-    const res = await feedClient.toggleBookmark({ feedItemId: id })
-    updateBookmark(id, res.isBookmarked)
+    try {
+      const res = await feedClient.toggleBookmark({ feedItemId: id })
+      updateBookmark(id, res.isBookmarked)
+    } catch {
+      toast.error(t('common:error'))
+    }
   }
 
   /** Optimistic: the item greys out immediately, the write is fire-and-forget. */
@@ -145,9 +168,13 @@ export function useFeedPage(activeSubId: string) {
   }
 
   const markAllRead = async () => {
-    await feedClient.markAllAsRead({ subscriptionId: '' })
-    reset()
-    loadFeed()
+    try {
+      await feedClient.markAllAsRead({ subscriptionId: '' })
+      reset()
+      loadFeed()
+    } catch {
+      toast.error(t('common:error'))
+    }
   }
 
   return {

@@ -68,7 +68,9 @@ export function useCommunityFeed(activeSrcUrl: string) {
       } catch {
         if (!signal?.aborted) toast.error(t('common:error'))
       } finally {
-        setIsLoading(false)
+        // An aborted request must not clear the flag the request that replaced
+        // it has already set, or the skeleton drops and loadMore refires early.
+        if (!signal?.aborted) setIsLoading(false)
       }
     },
     [t, activeSrcUrl],
