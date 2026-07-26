@@ -73,6 +73,7 @@
     "*.{js,json,css,md}": "prettier --write"
   },
   "overrides": {
-    "@babel/plugin-transform-runtime": "^7.29.0"
+    "@babel/plugin-transform-runtime": "^7.29.0",
+    "@hono/node-server": "^2.0.12"
   }
 }
