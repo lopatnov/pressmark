@@ -54,6 +54,10 @@ public partial class AdminServiceImpl(AppDbContext db, ISmtpPasswordProtector pa
         var ct = context.CancellationToken;
         var s = request.Settings;
 
+        if (s.CommunityWindowDays < 0 || s.FeedRetentionDays < 0)
+            throw new RpcException(new Status(StatusCode.InvalidArgument,
+                "community_window_days and feed_retention_days must be non-negative"));
+
         // Stage every key against one snapshot of the table and commit them together:
         // a save is all-or-nothing, and the whole screen costs two round trips rather
         // than two per setting.

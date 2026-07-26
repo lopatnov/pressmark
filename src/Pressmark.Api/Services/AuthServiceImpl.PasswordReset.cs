@@ -1,3 +1,4 @@
+using System.Data;
 using System.Security.Cryptography;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
@@ -31,19 +32,26 @@ public partial class AuthServiceImpl
 
         // Single outstanding token per user: burn any still-live ones so a reset link
         // from an earlier request cannot be used once a newer one has been issued.
-        await db.PasswordResetTokens
-            .Where(t => t.UserId == user.Id && !t.IsUsed)
-            .ExecuteUpdateAsync(s => s
-                .SetProperty(t => t.IsUsed, true)
-                .SetProperty(t => t.UsedAt, DateTime.UtcNow), ct);
-
-        db.PasswordResetTokens.Add(new PasswordResetToken
+        // Serializable so two concurrent requests can't both see "nothing to burn"
+        // and each insert a token, leaving two simultaneously live.
+        await using (var tx = await db.Database.BeginTransactionAsync(IsolationLevel.Serializable, ct))
         {
-            TokenHash = tokenHash,
-            UserId = user.Id,
-            ExpiresAt = DateTime.UtcNow.AddHours(1),
-        });
-        await db.SaveChangesAsync(ct);
+            await db.PasswordResetTokens
+                .Where(t => t.UserId == user.Id && !t.IsUsed)
+                .ExecuteUpdateAsync(s => s
+                    .SetProperty(t => t.IsUsed, true)
+                    .SetProperty(t => t.UsedAt, DateTime.UtcNow), ct);
+
+            db.PasswordResetTokens.Add(new PasswordResetToken
+            {
+                TokenHash = tokenHash,
+                UserId = user.Id,
+                ExpiresAt = DateTime.UtcNow.AddHours(1),
+            });
+            await db.SaveChangesAsync(ct);
+
+            await tx.CommitAsync(ct);
+        }
 
         var baseUrl = config["App:BaseUrl"] ?? "http://localhost:5173";
         var resetUrl = $"{baseUrl.TrimEnd('/')}/reset-password?token={rawToken}";
@@ -64,25 +72,31 @@ public partial class AuthServiceImpl
             throw new RpcException(new Status(StatusCode.InvalidArgument, "Password must be at least 8 characters"));
 
         var tokenHash = JwtService.HashToken(request.Token);
+        var now = DateTime.UtcNow;
 
-        var record = await db.PasswordResetTokens
-            .FirstOrDefaultAsync(t =>
-                t.TokenHash == tokenHash &&
-                !t.IsUsed &&
-                t.ExpiresAt > DateTime.UtcNow, ct);
+        // Claim the token atomically: two concurrent requests presenting the same
+        // token can both load it as unused before either writes, so the actual
+        // single-use guarantee has to come from this conditional update's affected
+        // row count, not from the preceding read.
+        var claimed = await db.PasswordResetTokens
+            .Where(t => t.TokenHash == tokenHash && !t.IsUsed && t.ExpiresAt > now)
+            .ExecuteUpdateAsync(s => s
+                .SetProperty(t => t.IsUsed, true)
+                .SetProperty(t => t.UsedAt, now), ct);
 
-        if (record is null)
+        if (claimed == 0)
             throw new RpcException(new Status(StatusCode.NotFound,
                 "Invalid or expired reset token"));
+
+        var record = await db.PasswordResetTokens
+            .AsNoTracking()
+            .FirstAsync(t => t.TokenHash == tokenHash, ct);
 
         var user = await db.Users.FindAsync([record.UserId], ct);
         if (user is null)
             throw new RpcException(new Status(StatusCode.NotFound, "User not found"));
 
         user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
-
-        record.IsUsed = true;
-        record.UsedAt = DateTime.UtcNow;
 
         // Revoke all active refresh tokens — force re-login with new password
         var activeTokens = await db.RefreshTokens

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { adminClient, feedClient, subscriptionClient } from '@/api/clients'
@@ -34,6 +34,7 @@ export function useCommunityFeed(activeSrcUrl: string) {
   const [nextCursor, setNextCursor] = useState('')
   const [isLoading, setIsLoading] = useState(true)
   const [reportedSubs, setReportedSubs] = useState<Set<string>>(new Set())
+  const reportingSubsRef = useRef(new Set<string>())
 
   const subscribedUrls = useMemo(() => new Set(subscriptions.map((s) => s.rssUrl)), [subscriptions])
 
@@ -134,12 +135,16 @@ export function useCommunityFeed(activeSrcUrl: string) {
   }
 
   const reportSource = async (subscriptionId: string) => {
+    if (reportedSubs.has(subscriptionId) || reportingSubsRef.current.has(subscriptionId)) return
+    reportingSubsRef.current.add(subscriptionId)
     try {
       await feedClient.reportContent({ type: 'subscription', targetId: subscriptionId, reason: '' })
       setReportedSubs((prev) => new Set(prev).add(subscriptionId))
       toast.success(t('feed:reportSent'))
     } catch {
       toast.error(t('feed:reportSubmitError'))
+    } finally {
+      reportingSubsRef.current.delete(subscriptionId)
     }
   }
 

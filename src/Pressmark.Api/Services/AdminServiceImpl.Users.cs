@@ -1,3 +1,4 @@
+using System.Data;
 using System.Security.Claims;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
@@ -72,7 +73,7 @@ public partial class AdminServiceImpl
         var user = await db.Users.FindOrThrowAsync(userId, UserNotFoundMessage, ct);
         var wasAdmin = user.Role == UserRoles.Admin;
 
-        await using var tx = await db.Database.BeginTransactionAsync(ct);
+        await using var tx = await db.Database.BeginTransactionAsync(IsolationLevel.Serializable, ct);
 
         // Manually delete entities with NoAction FK constraints
         await db.ReadItems.Where(r => r.UserId == userId).ExecuteDeleteAsync(ct);
@@ -106,7 +107,7 @@ public partial class AdminServiceImpl
         var user = await db.Users.FindOrThrowAsync(userId, UserNotFoundMessage, ct);
         var isDemotion = user.Role == UserRoles.Admin && request.Role == UserRoles.User;
 
-        await using var tx = await db.Database.BeginTransactionAsync(ct);
+        await using var tx = await db.Database.BeginTransactionAsync(IsolationLevel.Serializable, ct);
 
         user.Role = request.Role;
         await db.SaveChangesAsync(ct);
@@ -160,11 +161,11 @@ public partial class AdminServiceImpl
     /// let two concurrent demote/delete requests each observe two admins and both
     /// commit, leaving none.
     /// <para>
-    /// This narrows but does not close the window: a concurrent transaction demoting
-    /// the other admin holds an exclusive lock on its row, so this count blocks on it
-    /// (and one of the two is chosen as a deadlock victim) rather than reading stale
-    /// data. Fully serialising it would need SQL Server hints (UPDLOCK, HOLDLOCK) that
-    /// EF Core does not expose on LINQ queries.
+    /// The caller opens its transaction at <see cref="IsolationLevel.Serializable"/>,
+    /// so this count is guaranteed to conflict with a concurrent demote/delete of the
+    /// other admin regardless of the database's READ_COMMITTED_SNAPSHOT setting — one
+    /// of the two transactions is rolled back (as a serialization failure or deadlock
+    /// victim) rather than both reading a pre-mutation snapshot and committing.
     /// </para>
     /// </remarks>
     private async Task EnsureAdminRemainsAsync(string message, CancellationToken ct)

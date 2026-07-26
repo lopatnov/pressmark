@@ -52,7 +52,7 @@ public partial class FeedServiceImpl
         db.ReadItems.AddRange(unreadIds.Select(id =>
             new ReadItem { UserId = userId, FeedItemId = id }));
 
-        await db.SaveChangesAsync(ct);
+        await SaveEngagementAsync(ct);
         return new Empty();
     }
 
