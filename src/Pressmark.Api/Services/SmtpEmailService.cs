@@ -7,9 +7,22 @@ namespace Pressmark.Api.Services;
 
 public class SmtpEmailService(AppDbContext db, ILogger<SmtpEmailService> logger, ISmtpPasswordProtector passwordProtector, IConfiguration config) : IEmailService
 {
+    /// <summary>
+    /// Closed set of email kinds this service sends, used only to label the
+    /// "SMTP not configured" log line — a fixed enum rather than a free-form
+    /// string so nothing caller-supplied ever reaches the logger.
+    /// </summary>
+    private enum EmailKind
+    {
+        PasswordReset,
+        Invite,
+        CommentNotification,
+        DailyDigest,
+    }
+
     public async Task SendPasswordResetAsync(string toEmail, string resetUrl, CancellationToken ct)
     {
-        var smtp = await LoadSmtpAsync("password reset email", ct);
+        var smtp = await LoadSmtpAsync(EmailKind.PasswordReset, ct);
         if (smtp is null) return;
 
         var message = NewMessage(smtp, toEmail, $"[{smtp.SiteName}] Password reset");
@@ -26,7 +39,7 @@ public class SmtpEmailService(AppDbContext db, ILogger<SmtpEmailService> logger,
 
     public async Task SendInviteAsync(string toEmail, string token, CancellationToken ct)
     {
-        var smtp = await LoadSmtpAsync("invite email", ct);
+        var smtp = await LoadSmtpAsync(EmailKind.Invite, ct);
         if (smtp is null) return;
 
         var baseUrl = config["App:BaseUrl"] ?? "http://localhost:5173";
@@ -52,7 +65,7 @@ public class SmtpEmailService(AppDbContext db, ILogger<SmtpEmailService> logger,
         string commentBody,
         CancellationToken ct)
     {
-        var smtp = await LoadSmtpAsync("comment notification email", ct);
+        var smtp = await LoadSmtpAsync(EmailKind.CommentNotification, ct);
         if (smtp is null) return;
 
         var message = NewMessage(
@@ -74,7 +87,7 @@ public class SmtpEmailService(AppDbContext db, ILogger<SmtpEmailService> logger,
         IReadOnlyList<DigestItem> items,
         CancellationToken ct)
     {
-        var smtp = await LoadSmtpAsync("daily digest email", ct);
+        var smtp = await LoadSmtpAsync(EmailKind.DailyDigest, ct);
         if (smtp is null) return;
 
         var sb = new System.Text.StringBuilder();
@@ -105,13 +118,13 @@ public class SmtpEmailService(AppDbContext db, ILogger<SmtpEmailService> logger,
     /// Reads the SMTP configuration, returning <c>null</c> (and logging) when no host
     /// is configured, which is the signal for callers to skip sending entirely.
     /// </summary>
-    private async Task<SmtpSettings?> LoadSmtpAsync(string emailDescription, CancellationToken ct)
+    private async Task<SmtpSettings?> LoadSmtpAsync(EmailKind kind, CancellationToken ct)
     {
         var smtp = SmtpSettings.From(await SiteSettingsSnapshot.LoadAllAsync(db, ct));
 
         if (!smtp.IsConfigured)
         {
-            logger.LogWarning("SMTP not configured — skipping {EmailDescription}", emailDescription);
+            logger.LogWarning("SMTP not configured — skipping {EmailKind}", kind);
             return null;
         }
 
