@@ -15,23 +15,24 @@ public class AdminServiceImpl(AppDbContext db, ISmtpPasswordProtector passwordPr
     public override async Task<SiteSettings> GetSiteSettings(Empty request, ServerCallContext context)
     {
         var ct = context.CancellationToken;
-        var settings = await db.SiteSettings.ToDictionaryAsync(s => s.Key, s => s.Value, ct);
+        var settings = await SiteSettingsSnapshot.LoadAllAsync(db, ct);
+        var smtp = SmtpSettings.From(settings);
 
         return new SiteSettings
         {
-            SiteName = settings.GetValueOrDefault("site_name", "Pressmark"),
-            CommunityWindowDays = int.TryParse(settings.GetValueOrDefault("community_window_days"), out var d) ? d : 1,
-            RegistrationMode = settings.GetValueOrDefault("registration_mode", "open"),
-            SmtpHost = settings.GetValueOrDefault("smtp_host", ""),
-            SmtpPort = int.TryParse(settings.GetValueOrDefault("smtp_port"), out var p) ? p : 587,
-            SmtpUser = settings.GetValueOrDefault("smtp_user", ""),
+            SiteName = settings.SiteName,
+            CommunityWindowDays = settings.CommunityWindowDays,
+            RegistrationMode = settings.RegistrationMode,
+            SmtpHost = smtp.Host,
+            SmtpPort = smtp.Port,
+            SmtpUser = smtp.User,
             SmtpPassword = "",  // write-only: never returned
-            SmtpUseTls = settings.GetValueOrDefault("smtp_use_tls", "true") == "true",
-            SmtpFromAddress = settings.GetValueOrDefault("smtp_from_address", ""),
-            CommentsEnabled = settings.GetValueOrDefault("comments_enabled", "true") == "true",
-            FeedRetentionDays = int.TryParse(settings.GetValueOrDefault("feed_retention_days"), out var r) ? r : 90,
-            CommunityPageEnabled = settings.GetValueOrDefault("community_page_enabled", "true") == "true",
-            SiteDescription = settings.GetValueOrDefault("site_description", "A self-hosted RSS reader and community feed"),
+            SmtpUseTls = smtp.UseTls,
+            SmtpFromAddress = settings.Value(SiteSettingKeys.SmtpFromAddress, ""),
+            CommentsEnabled = settings.CommentsEnabled,
+            FeedRetentionDays = settings.FeedRetentionDays,
+            CommunityPageEnabled = settings.CommunityPageEnabled,
+            SiteDescription = settings.SiteDescription,
         };
     }
 
@@ -551,12 +552,13 @@ public class AdminServiceImpl(AppDbContext db, ISmtpPasswordProtector passwordPr
     {
         var ct = context.CancellationToken;
 
-        var settings = await db.SiteSettings
-            .Where(s => s.Key == "community_window_days" || s.Key == "feed_retention_days")
-            .ToDictionaryAsync(s => s.Key, s => s.Value, ct);
+        var settings = await SiteSettingsSnapshot.LoadAsync(db, [
+            SiteSettingKeys.CommunityWindowDays,
+            SiteSettingKeys.FeedRetentionDays,
+        ], ct);
 
-        var windowDays = int.TryParse(settings.GetValueOrDefault("community_window_days"), out var w) ? w : 1;
-        var retentionDays = int.TryParse(settings.GetValueOrDefault("feed_retention_days"), out var r) ? r : 90;
+        var windowDays = settings.CommunityWindowDays;
+        var retentionDays = settings.FeedRetentionDays;
 
         // Delete likes older than community window
         var likeCutoff = DateTime.UtcNow.AddDays(-windowDays);

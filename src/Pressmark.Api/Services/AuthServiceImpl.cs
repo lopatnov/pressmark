@@ -27,10 +27,9 @@ public class AuthServiceImpl(
         if (request.Password.Length < 8)
             throw new RpcException(new Status(StatusCode.InvalidArgument, "Password must be at least 8 characters"));
 
-        var mode = await db.SiteSettings
-            .Where(s => s.Key == "registration_mode")
-            .Select(s => s.Value)
-            .FirstOrDefaultAsync(ct) ?? "open";
+        var settings = await SiteSettingsSnapshot.LoadAsync(
+            db, [SiteSettingKeys.RegistrationMode], ct);
+        var mode = settings.RegistrationMode;
 
         if (mode == "invite_only")
         {
@@ -219,14 +218,21 @@ public class AuthServiceImpl(
     {
         var ct = context.CancellationToken;
         var hasAdmin = await db.Users.AnyAsync(ct);
-        var settings = await db.SiteSettings
-            .Where(s => s.Key == "registration_mode" || s.Key == "community_window_days" || s.Key == "comments_enabled" || s.Key == "community_page_enabled")
-            .ToDictionaryAsync(s => s.Key, s => s.Value, ct);
-        var mode = settings.GetValueOrDefault("registration_mode", "open");
-        var windowDays = int.TryParse(settings.GetValueOrDefault("community_window_days", "1"), out var d) ? d : 1;
-        var commentsEnabled = settings.GetValueOrDefault("comments_enabled", "true") == "true";
-        var communityPageEnabled = settings.GetValueOrDefault("community_page_enabled", "true") == "true";
-        return new RegistrationStatus { HasAdmin = hasAdmin, RegistrationMode = mode, CommunityWindowDays = windowDays, CommentsEnabled = commentsEnabled, CommunityPageEnabled = communityPageEnabled };
+        var settings = await SiteSettingsSnapshot.LoadAsync(db, [
+            SiteSettingKeys.RegistrationMode,
+            SiteSettingKeys.CommunityWindowDays,
+            SiteSettingKeys.CommentsEnabled,
+            SiteSettingKeys.CommunityPageEnabled,
+        ], ct);
+
+        return new RegistrationStatus
+        {
+            HasAdmin = hasAdmin,
+            RegistrationMode = settings.RegistrationMode,
+            CommunityWindowDays = settings.CommunityWindowDays,
+            CommentsEnabled = settings.CommentsEnabled,
+            CommunityPageEnabled = settings.CommunityPageEnabled,
+        };
     }
 
     [AllowAnonymous]

@@ -62,12 +62,10 @@ public partial class FeedServiceImpl
         if (!Guid.TryParse(request.FeedItemId, out var feedItemId))
             throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid feed_item_id"));
 
-        var commentsEnabled = await db.SiteSettings
-            .Where(s => s.Key == "comments_enabled")
-            .Select(s => s.Value)
-            .FirstOrDefaultAsync(ct) ?? "true";
+        var settings = await SiteSettingsSnapshot.LoadAsync(
+            db, [SiteSettingKeys.CommentsEnabled], ct);
 
-        if (commentsEnabled != "true")
+        if (!settings.CommentsEnabled)
             throw new RpcException(new Status(StatusCode.FailedPrecondition, "Comments are disabled"));
 
         var user = await db.Users.FindAsync([userId], ct)

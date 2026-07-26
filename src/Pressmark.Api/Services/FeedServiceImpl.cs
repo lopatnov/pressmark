@@ -89,13 +89,9 @@ public partial class FeedServiceImpl(
         var ct = context.CancellationToken;
         var pageSize = FeedQueryExtensions.ClampPageSize(request.PageSize);
 
-        var windowDaysStr = await db.SiteSettings
-            .Where(s => s.Key == "community_window_days")
-            .Select(s => s.Value)
-            .FirstOrDefaultAsync(ct) ?? "1";
-
-        var windowDays = int.TryParse(windowDaysStr, out var d) ? d : 1;
-        var since = DateTime.UtcNow.AddDays(-windowDays);
+        var settings = await SiteSettingsSnapshot.LoadAsync(
+            db, [SiteSettingKeys.CommunityWindowDays], ct);
+        var since = DateTime.UtcNow.AddDays(-settings.CommunityWindowDays);
 
         var query = db.FeedItems
             .AsNoTracking()

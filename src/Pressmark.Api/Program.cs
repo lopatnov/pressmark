@@ -144,11 +144,14 @@ app.MapGet("/health", () => Results.Ok(new { status = "healthy" }));
 
 app.MapGet("/api/meta", async (AppDbContext db, IConfiguration config, CancellationToken ct) =>
 {
-    var settings = await db.SiteSettings
-        .Where(s => s.Key == "site_name" || s.Key == "site_description")
-        .ToDictionaryAsync(s => s.Key, s => s.Value, ct);
-    var siteName = settings.GetValueOrDefault("site_name", "Pressmark");
-    var siteDescription = settings.GetValueOrDefault("site_description", "");
+    var settings = await SiteSettingsSnapshot.LoadAsync(db, [
+        SiteSettingKeys.SiteName,
+        SiteSettingKeys.SiteDescription,
+    ], ct);
+    var siteName = settings.SiteName;
+    // Unlike the admin screen, an unset description is reported as empty here
+    // rather than falling back to the seeded copy.
+    var siteDescription = settings.Value(SiteSettingKeys.SiteDescription, "");
     var baseUrl = (config["App:BaseUrl"] ?? "http://localhost:5173").TrimEnd('/');
     return Results.Ok(new { siteName, siteDescription, baseUrl });
 }).AllowAnonymous();
@@ -157,12 +160,13 @@ app.MapGet("/sitemap.xml", async (AppDbContext db, IConfiguration config, Cancel
 {
     var baseUrl = System.Security.SecurityElement.Escape(
         (config["App:BaseUrl"] ?? "http://localhost:5173").TrimEnd('/'));
-    var settings = await db.SiteSettings
-        .Where(s => s.Key == "registration_mode" || s.Key == "community_page_enabled")
-        .ToDictionaryAsync(s => s.Key, s => s.Value, ct);
+    var settings = await SiteSettingsSnapshot.LoadAsync(db, [
+        SiteSettingKeys.RegistrationMode,
+        SiteSettingKeys.CommunityPageEnabled,
+    ], ct);
 
-    var communityEnabled = settings.GetValueOrDefault("community_page_enabled", "true") == "true";
-    var registrationOpen = settings.GetValueOrDefault("registration_mode", "open") == "open";
+    var communityEnabled = settings.CommunityPageEnabled;
+    var registrationOpen = settings.RegistrationMode == "open";
     var lastmod = DateTime.UtcNow.ToString("yyyy-MM-dd");
 
     var sb = new StringBuilder();
