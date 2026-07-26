@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using System.ServiceModel.Syndication;
 using System.Xml;
 using Google.Protobuf.WellKnownTypes;
@@ -17,7 +16,7 @@ public class SubscriptionServiceImpl(AppDbContext db, IHttpClientFactory httpCli
     public override async Task<Protos.Subscription> AddSubscription(
         AddSubscriptionRequest request, ServerCallContext context)
     {
-        var userId = GetUserId(context);
+        var userId = context.GetUserId();
         var ct = context.CancellationToken;
 
         if (!Uri.TryCreate(request.RssUrl, UriKind.Absolute, out var uri)
@@ -76,11 +75,10 @@ public class SubscriptionServiceImpl(AppDbContext db, IHttpClientFactory httpCli
     public override async Task<Protos.Subscription> UpdateSubscription(
         UpdateSubscriptionRequest request, ServerCallContext context)
     {
-        var userId = GetUserId(context);
+        var userId = context.GetUserId();
         var ct = context.CancellationToken;
 
-        if (!Guid.TryParse(request.SubscriptionId, out var subId))
-            throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid subscription_id"));
+        var subId = RpcGuards.ParseId(request.SubscriptionId, "subscription_id");
 
         var sub = await db.Subscriptions
             .FirstOrDefaultAsync(s => s.Id == subId && s.UserId == userId, ct);
@@ -97,11 +95,10 @@ public class SubscriptionServiceImpl(AppDbContext db, IHttpClientFactory httpCli
     public override async Task<Empty> RemoveSubscription(
         RemoveSubscriptionRequest request, ServerCallContext context)
     {
-        var userId = GetUserId(context);
+        var userId = context.GetUserId();
         var ct = context.CancellationToken;
 
-        if (!Guid.TryParse(request.SubscriptionId, out var subId))
-            throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid subscription_id"));
+        var subId = RpcGuards.ParseId(request.SubscriptionId, "subscription_id");
 
         var sub = await db.Subscriptions
             .FirstOrDefaultAsync(s => s.Id == subId && s.UserId == userId, ct);
@@ -118,7 +115,7 @@ public class SubscriptionServiceImpl(AppDbContext db, IHttpClientFactory httpCli
     public override async Task<SubscriptionList> ListSubscriptions(
         Empty request, ServerCallContext context)
     {
-        var userId = GetUserId(context);
+        var userId = context.GetUserId();
         var ct = context.CancellationToken;
 
         var subs = await db.Subscriptions
@@ -136,7 +133,7 @@ public class SubscriptionServiceImpl(AppDbContext db, IHttpClientFactory httpCli
     public override async Task<ToggleDigestSubscriptionResponse> ToggleDigestSubscription(
         Empty request, ServerCallContext context)
     {
-        var userId = GetUserId(context);
+        var userId = context.GetUserId();
         var ct = context.CancellationToken;
 
         var user = await db.Users.FindAsync([userId], ct)
@@ -151,7 +148,7 @@ public class SubscriptionServiceImpl(AppDbContext db, IHttpClientFactory httpCli
     public override async Task<ImportSubscriptionsResponse> ImportSubscriptions(
         ImportSubscriptionsRequest request, ServerCallContext context)
     {
-        var userId = GetUserId(context);
+        var userId = context.GetUserId();
         var ct = context.CancellationToken;
 
         List<(string RssUrl, string Title)> entries;
@@ -193,7 +190,7 @@ public class SubscriptionServiceImpl(AppDbContext db, IHttpClientFactory httpCli
     public override async Task<ExportSubscriptionsResponse> ExportSubscriptions(
         Empty request, ServerCallContext context)
     {
-        var userId = GetUserId(context);
+        var userId = context.GetUserId();
         var ct = context.CancellationToken;
 
         var subs = await db.Subscriptions
@@ -210,11 +207,10 @@ public class SubscriptionServiceImpl(AppDbContext db, IHttpClientFactory httpCli
     public override async Task<TriggerFetchResponse> TriggerFetch(
         TriggerFetchRequest request, ServerCallContext context)
     {
-        var userId = GetUserId(context);
+        var userId = context.GetUserId();
         var ct = context.CancellationToken;
 
-        if (!Guid.TryParse(request.SubscriptionId, out var subId))
-            throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid subscription ID"));
+        var subId = RpcGuards.ParseId(request.SubscriptionId, "subscription_id");
 
         var sub = await db.Subscriptions
             .FirstOrDefaultAsync(s => s.Id == subId && s.UserId == userId, ct);
@@ -227,17 +223,6 @@ public class SubscriptionServiceImpl(AppDbContext db, IHttpClientFactory httpCli
     }
 
     // ── helpers ──────────────────────────────────────────────────────────────
-
-    private static Guid GetUserId(ServerCallContext context)
-    {
-        var claim = context.GetHttpContext()
-            .User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-        if (claim is null)
-            throw new RpcException(new Status(StatusCode.Unauthenticated, "Not authenticated"));
-
-        return Guid.Parse(claim);
-    }
 
     private static Protos.Subscription ToProto(Entities.Subscription s) => new()
     {

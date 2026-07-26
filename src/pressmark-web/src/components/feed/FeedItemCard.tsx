@@ -1,7 +1,7 @@
 import { Ban, ExternalLink } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { sanitizeSummary, getYouTubeId, getFaviconUrl } from './feedUtils'
+import { sanitizeSummary, getYouTubeId, getFaviconUrl, formatDateTime } from './feedUtils'
 
 export interface FeedItemData {
   id: string
@@ -106,17 +106,7 @@ export function FeedItemCard({
             <span>·</span>
           </>
         )}
-        <span>
-          {item.publishedAt
-            ? new Date(item.publishedAt).toLocaleString(undefined, {
-                month: 'short',
-                day: 'numeric',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-              })
-            : ''}
-        </span>
+        <span>{formatDateTime(item.publishedAt, { includeYear: true })}</span>
       </div>
 
       {item.summary && (

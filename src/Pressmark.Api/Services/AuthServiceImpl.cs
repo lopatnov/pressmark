@@ -1,9 +1,6 @@
-using System.Security.Claims;
-using System.Security.Cryptography;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Pressmark.Api.Data;
@@ -12,10 +9,23 @@ using Pressmark.Api.Protos;
 
 namespace Pressmark.Api.Services;
 
-public class AuthServiceImpl(
+/// <summary>
+/// Account creation and sign-in.
+/// </summary>
+/// <remarks>
+/// Split across partial files by sub-domain:
+/// <list type="bullet">
+/// <item>AuthServiceImpl.cs — registration, login and registration status (this file)</item>
+/// <item>AuthServiceImpl.Session.cs — refresh-token rotation and logout</item>
+/// <item>AuthServiceImpl.PasswordReset.cs — forgot/reset password</item>
+/// </list>
+/// Session establishment is delegated to <see cref="AuthTokenIssuer"/> and invite
+/// handling to <see cref="InviteRedemptionService"/>.
+/// </remarks>
+public partial class AuthServiceImpl(
     AppDbContext db, JwtService jwt,
     IEmailService emailService, IConfiguration config,
-    IWebHostEnvironment env) : AuthService.AuthServiceBase
+    AuthTokenIssuer tokenIssuer, InviteRedemptionService invites) : AuthService.AuthServiceBase
 {
     public override async Task<AuthResponse> Register(
         RegisterRequest request, ServerCallContext context)
@@ -27,12 +37,12 @@ public class AuthServiceImpl(
         if (request.Password.Length < 8)
             throw new RpcException(new Status(StatusCode.InvalidArgument, "Password must be at least 8 characters"));
 
-        var mode = await db.SiteSettings
-            .Where(s => s.Key == "registration_mode")
-            .Select(s => s.Value)
-            .FirstOrDefaultAsync(ct) ?? "open";
+        var settings = await SiteSettingsSnapshot.LoadAsync(
+            db, [SiteSettingKeys.RegistrationMode], ct);
+        var mode = settings.RegistrationMode;
+        var inviteOnly = mode == "invite_only";
 
-        if (mode == "invite_only")
+        if (inviteOnly)
         {
             if (string.IsNullOrWhiteSpace(request.InviteToken))
                 throw new RpcException(new Status(StatusCode.PermissionDenied,
@@ -51,18 +61,8 @@ public class AuthServiceImpl(
         await using var tx = await db.Database.BeginTransactionAsync(
             System.Data.IsolationLevel.Serializable, ct);
 
-        if (mode == "invite_only")
-        {
-            var invite = await db.InviteTokens
-                .FirstOrDefaultAsync(t =>
-                    t.Token == request.InviteToken &&
-                    !t.IsUsed &&
-                    (t.ExpiresAt == null || t.ExpiresAt > DateTime.UtcNow), ct);
-
-            if (invite is null)
-                throw new RpcException(new Status(StatusCode.PermissionDenied,
-                    "Invalid or expired invite token"));
-        }
+        if (inviteOnly)
+            await invites.EnsureRedeemableAsync(request.InviteToken, ct);
 
         var isFirst = !await db.Users.AnyAsync(ct);
 
@@ -76,30 +76,12 @@ public class AuthServiceImpl(
         db.Users.Add(user);
         await db.SaveChangesAsync(ct);
 
-        if (mode == "invite_only")
-        {
-            var invite = await db.InviteTokens
-                .FirstAsync(t => t.Token == request.InviteToken, ct);
-            invite.IsUsed = true;
-            invite.UsedAt = DateTime.UtcNow;
-            invite.UsedByUserId = user.Id;
-
-            // Remove other unused tokens whose note matches the registered email
-            if (!string.IsNullOrWhiteSpace(invite.Note) &&
-                string.Equals(invite.Note, user.Email, StringComparison.OrdinalIgnoreCase))
-            {
-                var stale = await db.InviteTokens
-                    .Where(t => t.Note == invite.Note && !t.IsUsed && t.Id != invite.Id)
-                    .ToListAsync(ct);
-                db.InviteTokens.RemoveRange(stale);
-            }
-
-            await db.SaveChangesAsync(ct);
-        }
+        if (inviteOnly)
+            await invites.RedeemAsync(request.InviteToken, user, ct);
 
         await tx.CommitAsync(ct);
 
-        return await IssueTokens(user, context.GetHttpContext(), ct);
+        return await tokenIssuer.IssueAsync(user, context.GetHttpContext(), ct);
     }
 
     public override async Task<AuthResponse> Login(
@@ -117,99 +99,7 @@ public class AuthServiceImpl(
         if (user.IsSiteBanned)
             throw new RpcException(new Status(StatusCode.PermissionDenied, "account_banned"));
 
-        return await IssueTokens(user, context.GetHttpContext(), ct);
-    }
-
-    [DisableRateLimiting]
-    public override async Task<AuthResponse> Refresh(
-    RefreshRequest request, ServerCallContext context)
-    {
-        var ct = context.CancellationToken;
-        var http = context.GetHttpContext();
-        var rawToken = http.Request.Cookies[jwt.CookieName];
-
-        if (string.IsNullOrEmpty(rawToken))
-        {
-            return Unauthenticated(context, "Missing refresh token");
-        }
-
-        var principal = jwt.ValidateRefreshToken(rawToken);
-        if (principal is null)
-        {
-            return Unauthenticated(context, "Invalid or expired refresh token");
-        }
-
-        var userIdClaim = principal.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (!Guid.TryParse(userIdClaim, out var userId))
-        {
-            return Unauthenticated(context, "Invalid user identifier in token");
-        }
-
-        var tokenHash = JwtService.HashToken(rawToken);
-
-        var stored = await db.RefreshTokens
-            .FirstOrDefaultAsync(t =>
-                t.TokenHash == tokenHash &&
-                !t.IsRevoked &&
-                t.ExpiresAt > DateTime.UtcNow, ct);
-
-        if (stored is null)
-        {
-            return Unauthenticated(context, "Refresh token revoked or not found");
-        }
-
-        var user = await db.Users.FindAsync([userId], ct);
-        if (user is null)
-        {
-            return Unauthenticated(context, "User not found");
-        }
-
-        if (user.IsSiteBanned)
-        {
-            stored.IsRevoked = true;
-            stored.RevokedAt = DateTime.UtcNow;
-            await db.SaveChangesAsync(ct);
-            http.Response.Cookies.Delete(jwt.CookieName);
-            return Unauthenticated(context, "account_banned");
-        }
-
-        stored.IsRevoked = true;
-        stored.RevokedAt = DateTime.UtcNow;
-
-        await db.SaveChangesAsync(ct);
-
-        return await IssueTokens(user, http, ct);
-    }
-
-    private AuthResponse Unauthenticated(ServerCallContext context, string detail)
-    {
-        context.Status = new Status(StatusCode.Unauthenticated, detail);
-        return new AuthResponse();
-    }
-
-    [DisableRateLimiting]
-    public override async Task<Empty> Logout(Empty request, ServerCallContext context)
-    {
-        var ct = context.CancellationToken;
-        var http = context.GetHttpContext();
-        var rawToken = http.Request.Cookies[jwt.CookieName];
-
-        if (!string.IsNullOrEmpty(rawToken))
-        {
-            var tokenHash = JwtService.HashToken(rawToken);
-            var stored = await db.RefreshTokens
-                .FirstOrDefaultAsync(t => t.TokenHash == tokenHash && !t.IsRevoked, ct);
-
-            if (stored is not null)
-            {
-                stored.IsRevoked = true;
-                stored.RevokedAt = DateTime.UtcNow;
-                await db.SaveChangesAsync(ct);
-            }
-        }
-
-        http.Response.Cookies.Delete(jwt.CookieName);
-        return new Empty();
+        return await tokenIssuer.IssueAsync(user, context.GetHttpContext(), ct);
     }
 
     [AllowAnonymous]
@@ -219,118 +109,20 @@ public class AuthServiceImpl(
     {
         var ct = context.CancellationToken;
         var hasAdmin = await db.Users.AnyAsync(ct);
-        var settings = await db.SiteSettings
-            .Where(s => s.Key == "registration_mode" || s.Key == "community_window_days" || s.Key == "comments_enabled" || s.Key == "community_page_enabled")
-            .ToDictionaryAsync(s => s.Key, s => s.Value, ct);
-        var mode = settings.GetValueOrDefault("registration_mode", "open");
-        var windowDays = int.TryParse(settings.GetValueOrDefault("community_window_days", "1"), out var d) ? d : 1;
-        var commentsEnabled = settings.GetValueOrDefault("comments_enabled", "true") == "true";
-        var communityPageEnabled = settings.GetValueOrDefault("community_page_enabled", "true") == "true";
-        return new RegistrationStatus { HasAdmin = hasAdmin, RegistrationMode = mode, CommunityWindowDays = windowDays, CommentsEnabled = commentsEnabled, CommunityPageEnabled = communityPageEnabled };
-    }
+        var settings = await SiteSettingsSnapshot.LoadAsync(db, [
+            SiteSettingKeys.RegistrationMode,
+            SiteSettingKeys.CommunityWindowDays,
+            SiteSettingKeys.CommentsEnabled,
+            SiteSettingKeys.CommunityPageEnabled,
+        ], ct);
 
-    [AllowAnonymous]
-    public override async Task<Empty> ForgotPassword(
-        ForgotPasswordRequest request, ServerCallContext context)
-    {
-        var ct = context.CancellationToken;
-        var user = await db.Users
-            .FirstOrDefaultAsync(u => u.Email == request.Email, ct);
-
-        // Always return success — don't reveal whether the email exists
-        if (user is null) return new Empty();
-
-        var rawToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32))
-                            .Replace('+', '-').Replace('/', '_').TrimEnd('=');
-        var tokenHash = JwtService.HashToken(rawToken);
-
-        db.PasswordResetTokens.Add(new PasswordResetToken
+        return new RegistrationStatus
         {
-            TokenHash = tokenHash,
-            UserId = user.Id,
-            ExpiresAt = DateTime.UtcNow.AddHours(1),
-        });
-        await db.SaveChangesAsync(ct);
-
-        var baseUrl = config["App:BaseUrl"] ?? "http://localhost:5173";
-        var resetUrl = $"{baseUrl.TrimEnd('/')}/reset-password?token={rawToken}";
-
-        await emailService.SendPasswordResetAsync(user.Email, resetUrl, ct);
-
-        return new Empty();
-    }
-
-    [AllowAnonymous]
-    public override async Task<Empty> ResetPassword(
-        ResetPasswordRequest request, ServerCallContext context)
-    {
-        var ct = context.CancellationToken;
-        var tokenHash = JwtService.HashToken(request.Token);
-
-        var record = await db.PasswordResetTokens
-            .FirstOrDefaultAsync(t =>
-                t.TokenHash == tokenHash &&
-                !t.IsUsed &&
-                t.ExpiresAt > DateTime.UtcNow, ct);
-
-        if (record is null)
-            throw new RpcException(new Status(StatusCode.NotFound,
-                "Invalid or expired reset token"));
-
-        var user = await db.Users.FindAsync([record.UserId], ct);
-        if (user is null)
-            throw new RpcException(new Status(StatusCode.NotFound, "User not found"));
-
-        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
-
-        record.IsUsed = true;
-        record.UsedAt = DateTime.UtcNow;
-
-        // Revoke all active refresh tokens — force re-login with new password
-        var activeTokens = await db.RefreshTokens
-            .Where(t => t.UserId == user.Id && !t.IsRevoked)
-            .ToListAsync(ct);
-        foreach (var t in activeTokens)
-        {
-            t.IsRevoked = true;
-            t.RevokedAt = DateTime.UtcNow;
-        }
-
-        await db.SaveChangesAsync(ct);
-        return new Empty();
-    }
-
-    // ── helpers ──────────────────────────────────────────────────────────────
-
-    private async Task<AuthResponse> IssueTokens(
-        User user, HttpContext http, CancellationToken ct)
-    {
-        var accessToken = jwt.GenerateAccessToken(user);
-        var refreshToken = jwt.GenerateRefreshToken(user);
-
-        db.RefreshTokens.Add(new RefreshToken
-        {
-            UserId = user.Id,
-            TokenHash = JwtService.HashToken(refreshToken),
-            IssuedAt = DateTime.UtcNow,
-            ExpiresAt = DateTime.UtcNow.AddDays(jwt.RefreshExpiryDays),
-        });
-        await db.SaveChangesAsync(ct);
-
-        http.Response.Cookies.Append(jwt.CookieName, refreshToken, new CookieOptions
-        {
-            HttpOnly = true,
-            SameSite = SameSiteMode.Strict,
-            Secure = !env.IsDevelopment() || http.Request.IsHttps,
-            Expires = DateTimeOffset.UtcNow.AddDays(jwt.RefreshExpiryDays),
-        });
-
-        return new AuthResponse
-        {
-            AccessToken = accessToken,
-            Email = user.Email,
-            UserId = user.Id.ToString(),
-            Role = user.Role,
+            HasAdmin = hasAdmin,
+            RegistrationMode = settings.RegistrationMode,
+            CommunityWindowDays = settings.CommunityWindowDays,
+            CommentsEnabled = settings.CommentsEnabled,
+            CommunityPageEnabled = settings.CommunityPageEnabled,
         };
     }
 }

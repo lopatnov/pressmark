@@ -20,7 +20,7 @@ public class AuthIntegrationTests(IntegrationFixture fixture) : IClassFixture<In
     // ── refresh token rotation ────────────────────────────────────────────────
 
     /// <summary>
-    /// Regression test for AuthServiceImpl.cs:150.
+    /// Regression test for AuthServiceImpl.Refresh.
     /// Once a refresh token is marked IsRevoked=true (token rotation),
     /// it must not be found by the standard Refresh query, preventing reuse.
     /// </summary>
@@ -57,7 +57,7 @@ public class AuthIntegrationTests(IntegrationFixture fixture) : IClassFixture<In
 
         Assert.NotNull(found);
 
-        // Simulate token rotation: mark old token as revoked (AuthServiceImpl.cs:150)
+        // Simulate token rotation: mark old token as revoked (AuthServiceImpl.Refresh)
         found.IsRevoked = true;
         found.RevokedAt = DateTime.UtcNow;
         await db.SaveChangesAsync();

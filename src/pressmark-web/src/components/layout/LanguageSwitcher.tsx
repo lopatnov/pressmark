@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { Languages } from 'lucide-react'
+import { I18N_LOCALE_STORAGE_KEY } from '@/i18n'
 
 const LANGUAGES = [
   { code: 'en', label: 'English' },
@@ -28,7 +29,7 @@ export function LanguageSwitcher() {
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const locale = e.target.value
     i18n.changeLanguage(locale)
-    localStorage.setItem('i18n-locale', locale)
+    localStorage.setItem(I18N_LOCALE_STORAGE_KEY, locale)
   }
 
   return (

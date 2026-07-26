@@ -5,6 +5,8 @@ import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { adminClient, feedClient } from '@/api/clients'
 import { useAuthStore } from '@/store/authStore'
+import { formatDateTime } from './feedUtils'
+import { ReportReasonForm } from './ReportReasonForm'
 
 interface CommentItem {
   id: string
@@ -35,6 +37,7 @@ export function CommentSection({ feedItemId, initiallyOpen = false }: CommentSec
   const [reportedComments, setReportedComments] = useState<Set<string>>(new Set())
   const [reportingComment, setReportingComment] = useState<string | null>(null)
   const [reportReason, setReportReason] = useState('')
+  const [reportSubmitting, setReportSubmitting] = useState(false)
 
   const load = useCallback(async () => {
     try {
@@ -112,6 +115,8 @@ export function CommentSection({ feedItemId, initiallyOpen = false }: CommentSec
   }
 
   const handleReport = async (commentId: string) => {
+    if (reportSubmitting) return
+    setReportSubmitting(true)
     try {
       await feedClient.reportContent({ type: 'comment', targetId: commentId, reason: reportReason })
       setReportedComments((prev) => new Set(prev).add(commentId))
@@ -120,6 +125,8 @@ export function CommentSection({ feedItemId, initiallyOpen = false }: CommentSec
       toast.success(t('reportSent'))
     } catch {
       toast.error(t('reportSubmitError'))
+    } finally {
+      setReportSubmitting(false)
     }
   }
 
@@ -129,6 +136,7 @@ export function CommentSection({ feedItemId, initiallyOpen = false }: CommentSec
     <div className="border-t border-border mt-2 pt-2">
       <div className="flex items-center gap-2">
         <button
+          type="button"
           onClick={handleToggle}
           className="flex cursor-pointer items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
           aria-label={t('comments.toggle')}
@@ -138,6 +146,7 @@ export function CommentSection({ feedItemId, initiallyOpen = false }: CommentSec
         </button>
         {isAuthenticated && loaded && (
           <button
+            type="button"
             onClick={handleToggleSubscription}
             title={
               isSubscribed
@@ -181,20 +190,14 @@ export function CommentSection({ feedItemId, initiallyOpen = false }: CommentSec
                             </span>
                           )}
                           <span className="text-xs text-muted-foreground">
-                            {c.createdAt
-                              ? new Date(c.createdAt).toLocaleString(undefined, {
-                                  month: 'short',
-                                  day: 'numeric',
-                                  hour: '2-digit',
-                                  minute: '2-digit',
-                                })
-                              : ''}
+                            {formatDateTime(c.createdAt)}
                           </span>
                         </div>
                         <p className="text-xs text-foreground/90 whitespace-pre-wrap">{c.body}</p>
                       </div>
                       {isAdmin && (
                         <button
+                          type="button"
                           onClick={() => handleRemove(c.id)}
                           title={t('comments.remove')}
                           aria-label={t('comments.remove')}
@@ -209,6 +212,7 @@ export function CommentSection({ feedItemId, initiallyOpen = false }: CommentSec
                           <Check className="h-3.5 w-3.5 shrink-0 text-muted-foreground/60" />
                         ) : (
                           <button
+                            type="button"
                             onClick={() =>
                               setReportingComment(reportingComment === c.id ? null : c.id)
                             }
@@ -221,30 +225,17 @@ export function CommentSection({ feedItemId, initiallyOpen = false }: CommentSec
                         ))}
                     </div>
                     {reportingComment === c.id && (
-                      <div className="flex flex-col gap-1 pt-1">
-                        <textarea
-                          value={reportReason}
-                          onChange={(e) => setReportReason(e.target.value)}
-                          placeholder={t('reportReason')}
-                          maxLength={500}
-                          rows={2}
-                          className="w-full rounded-md border border-border bg-background px-2 py-1.5 text-xs resize-none"
+                      <div className="pt-1">
+                        <ReportReasonForm
+                          reason={reportReason}
+                          onReasonChange={setReportReason}
+                          submitting={reportSubmitting}
+                          onSubmit={() => handleReport(c.id)}
+                          onCancel={() => {
+                            setReportingComment(null)
+                            setReportReason('')
+                          }}
                         />
-                        <div className="flex gap-2">
-                          <Button size="sm" onClick={() => handleReport(c.id)}>
-                            {t('reportSend')}
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => {
-                              setReportingComment(null)
-                              setReportReason('')
-                            }}
-                          >
-                            {t('reportCancel')}
-                          </Button>
-                        </div>
                       </div>
                     )}
                   </>

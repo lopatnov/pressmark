@@ -40,12 +40,9 @@ public class DailyDigestService(
 
             if (users.Count == 0) return;
 
-            var windowDays = 1;
-            var windowSetting = await db.SiteSettings
-                .Where(s => s.Key == "community_window_days")
-                .Select(s => s.Value)
-                .FirstOrDefaultAsync(ct);
-            if (int.TryParse(windowSetting, out var w)) windowDays = w;
+            var settings = await SiteSettingsSnapshot.LoadAsync(
+                db, [SiteSettingKeys.CommunityWindowDays], ct);
+            var windowDays = settings.CommunityWindowDays;
 
             var baseUrl = config["App:BaseUrl"] ?? "http://localhost:5173";
             var defaultSince = DateTime.UtcNow.AddDays(-windowDays);

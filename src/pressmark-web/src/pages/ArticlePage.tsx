@@ -7,7 +7,7 @@ import { toast } from 'sonner'
 import { adminClient, feedClient } from '@/api/clients'
 import { FeedItemCard, type FeedItemData } from '@/components/feed/FeedItemCard'
 import { CommentSection } from '@/components/feed/CommentSection'
-import { Button } from '@/components/ui/button'
+import { ReportReasonForm } from '@/components/feed/ReportReasonForm'
 import { useAuthStore } from '@/store/authStore'
 
 export function ArticlePage() {
@@ -99,6 +99,7 @@ export function ArticlePage() {
       {isAdmin && (
         <div className="flex items-center gap-2">
           <button
+            type="button"
             onClick={async () => {
               try {
                 const hidden = !item.isHidden
@@ -134,26 +135,16 @@ export function ArticlePage() {
           {reported ? (
             <span className="text-xs text-muted-foreground">{t('feed:reportAlreadySent')}</span>
           ) : showReportForm ? (
-            <div className="flex w-full flex-col gap-2">
-              <textarea
-                value={reportReason}
-                onChange={(e) => setReportReason(e.target.value)}
-                placeholder={t('feed:reportReason')}
-                maxLength={500}
-                rows={2}
-                className="w-full rounded-md border border-border bg-background px-2 py-1.5 text-xs resize-none"
-              />
-              <div className="flex gap-2">
-                <Button size="sm" onClick={handleReport} disabled={reportSubmitting}>
-                  {t('feed:reportSend')}
-                </Button>
-                <Button size="sm" variant="ghost" onClick={() => setShowReportForm(false)}>
-                  {t('feed:reportCancel')}
-                </Button>
-              </div>
-            </div>
+            <ReportReasonForm
+              reason={reportReason}
+              onReasonChange={setReportReason}
+              onSubmit={handleReport}
+              onCancel={() => setShowReportForm(false)}
+              submitting={reportSubmitting}
+            />
           ) : (
             <button
+              type="button"
               onClick={() => setShowReportForm(true)}
               className="flex cursor-pointer items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
               title={t('feed:reportSource')}

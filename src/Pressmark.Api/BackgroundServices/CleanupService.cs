@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Pressmark.Api.Data;
+using Pressmark.Api.Services;
 
 namespace Pressmark.Api.BackgroundServices;
 
@@ -26,12 +27,13 @@ public class CleanupService(
             using var scope = scopeFactory.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-            var settings = await db.SiteSettings
-                .Where(s => s.Key == "community_window_days" || s.Key == "feed_retention_days")
-                .ToDictionaryAsync(s => s.Key, s => s.Value, ct);
+            var settings = await SiteSettingsSnapshot.LoadAsync(db, [
+                SiteSettingKeys.CommunityWindowDays,
+                SiteSettingKeys.FeedRetentionDays,
+            ], ct);
 
-            var windowDays = int.TryParse(settings.GetValueOrDefault("community_window_days"), out var w) ? w : 1;
-            var retentionDays = int.TryParse(settings.GetValueOrDefault("feed_retention_days"), out var r) ? r : 90;
+            var windowDays = settings.CommunityWindowDays;
+            var retentionDays = settings.FeedRetentionDays;
 
             // Delete likes older than community window
             var likeCutoff = DateTime.UtcNow.AddDays(-windowDays);

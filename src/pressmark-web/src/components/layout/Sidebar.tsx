@@ -132,6 +132,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         )}
         {isAuthenticated ? (
           <button
+            type="button"
             onClick={handleLogout}
             className="flex cursor-pointer items-center gap-2.5 rounded-md px-3 py-2 text-left text-sm text-sidebar-foreground transition-colors hover:bg-sidebar-accent/60"
           >

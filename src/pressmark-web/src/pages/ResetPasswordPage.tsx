@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -8,23 +9,27 @@ import { Button } from '@/components/ui/button'
 import { authClient } from '@/api/clients'
 import { ConnectError } from '@connectrpc/connect'
 
-const schema = z
-  .object({
-    newPassword: z.string().min(8, 'Minimum 8 characters'),
-    confirmPassword: z.string(),
-  })
-  .refine((d) => d.newPassword === d.confirmPassword, {
-    message: 'Passwords do not match',
-    path: ['confirmPassword'],
-  })
-type FormData = z.infer<typeof schema>
-
 export function ResetPasswordPage() {
   const { t } = useTranslation('auth')
   usePageTitle(t('resetPasswordTitle'))
   const navigate = useNavigate()
   const [params] = useSearchParams()
   const token = params.get('token') ?? ''
+
+  const schema = useMemo(
+    () =>
+      z
+        .object({
+          newPassword: z.string().min(8, t('errors.passwordTooShort')),
+          confirmPassword: z.string(),
+        })
+        .refine((d) => d.newPassword === d.confirmPassword, {
+          message: t('errors.passwordsDoNotMatch'),
+          path: ['confirmPassword'],
+        }),
+    [t],
+  )
+  type FormData = z.infer<typeof schema>
 
   const {
     register,

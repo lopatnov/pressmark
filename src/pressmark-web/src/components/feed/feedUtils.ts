@@ -31,3 +31,14 @@ export function getFaviconUrl(url: string): string | null {
     return null
   }
 }
+
+export function formatDateTime(iso: string, options?: { includeYear?: boolean }): string {
+  if (!iso) return ''
+  return new Date(iso).toLocaleString(undefined, {
+    month: 'short',
+    day: 'numeric',
+    ...(options?.includeYear ? { year: 'numeric' as const } : {}),
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
