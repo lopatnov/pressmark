@@ -5,6 +5,8 @@ import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { adminClient, feedClient } from '@/api/clients'
 import { useAuthStore } from '@/store/authStore'
+import { formatDateTime } from './feedUtils'
+import { ReportReasonForm } from './ReportReasonForm'
 
 interface CommentItem {
   id: string
@@ -181,14 +183,7 @@ export function CommentSection({ feedItemId, initiallyOpen = false }: CommentSec
                             </span>
                           )}
                           <span className="text-xs text-muted-foreground">
-                            {c.createdAt
-                              ? new Date(c.createdAt).toLocaleString(undefined, {
-                                  month: 'short',
-                                  day: 'numeric',
-                                  hour: '2-digit',
-                                  minute: '2-digit',
-                                })
-                              : ''}
+                            {formatDateTime(c.createdAt)}
                           </span>
                         </div>
                         <p className="text-xs text-foreground/90 whitespace-pre-wrap">{c.body}</p>
@@ -221,30 +216,16 @@ export function CommentSection({ feedItemId, initiallyOpen = false }: CommentSec
                         ))}
                     </div>
                     {reportingComment === c.id && (
-                      <div className="flex flex-col gap-1 pt-1">
-                        <textarea
-                          value={reportReason}
-                          onChange={(e) => setReportReason(e.target.value)}
-                          placeholder={t('reportReason')}
-                          maxLength={500}
-                          rows={2}
-                          className="w-full rounded-md border border-border bg-background px-2 py-1.5 text-xs resize-none"
+                      <div className="pt-1">
+                        <ReportReasonForm
+                          reason={reportReason}
+                          onReasonChange={setReportReason}
+                          onSubmit={() => handleReport(c.id)}
+                          onCancel={() => {
+                            setReportingComment(null)
+                            setReportReason('')
+                          }}
                         />
-                        <div className="flex gap-2">
-                          <Button size="sm" onClick={() => handleReport(c.id)}>
-                            {t('reportSend')}
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => {
-                              setReportingComment(null)
-                              setReportReason('')
-                            }}
-                          >
-                            {t('reportCancel')}
-                          </Button>
-                        </div>
                       </div>
                     )}
                   </>
