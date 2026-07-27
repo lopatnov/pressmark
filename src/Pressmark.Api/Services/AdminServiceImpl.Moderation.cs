@@ -121,8 +121,8 @@ public partial class AdminServiceImpl
             .ToListAsync(ct);
 
         // Batch-load related entities
-        var commentIds = reports.Where(r => r.Type == "comment").Select(r => r.TargetId).ToHashSet();
-        var subIds = reports.Where(r => r.Type == "subscription").Select(r => r.TargetId).ToHashSet();
+        var commentIds = reports.Where(r => r.Type == ReportTypes.Comment).Select(r => r.TargetId).ToHashSet();
+        var subIds = reports.Where(r => r.Type == ReportTypes.Subscription).Select(r => r.TargetId).ToHashSet();
 
         var comments = commentIds.Count > 0
             ? await db.Comments
@@ -145,13 +145,13 @@ public partial class AdminServiceImpl
         {
             var proto = AdminMapper.ToReport(r);
 
-            if (r.Type == "comment" && comments.TryGetValue(r.TargetId, out var comment))
+            if (r.Type == ReportTypes.Comment && comments.TryGetValue(r.TargetId, out var comment))
             {
                 proto.Content = comment.RemovedByAdmin ? "" : comment.Body;
                 proto.ArticleId = comment.FeedItemId.ToString();
                 proto.TargetUserEmail = comment.User?.Email ?? "";
             }
-            else if (r.Type == "subscription" && subs.TryGetValue(r.TargetId, out var sub))
+            else if (r.Type == ReportTypes.Subscription && subs.TryGetValue(r.TargetId, out var sub))
             {
                 proto.Content = sub.Title;
                 proto.ContentUrl = sub.RssUrl;
