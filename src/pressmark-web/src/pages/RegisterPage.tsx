@@ -38,7 +38,7 @@ export function RegisterPage() {
   const schema = useMemo(
     () =>
       z.object({
-        email: z.string().email(t('errors.invalidEmail')),
+        email: z.email({ error: t('errors.invalidEmail') }),
         password: z.string().min(8, t('errors.passwordTooShort')),
         inviteToken: z.string().optional(),
       }),
@@ -102,26 +102,42 @@ export function RegisterPage() {
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-1">
-            <label className="text-sm font-medium">{t('register.email')}</label>
+            <label htmlFor="email" className="text-sm font-medium">
+              {t('register.email')}
+            </label>
             <input
+              id="email"
               {...register('email')}
               type="email"
               autoComplete="email"
+              aria-invalid={!!errors.email}
+              aria-describedby={errors.email ? 'email-error' : undefined}
               className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
             />
-            {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
+            {errors.email && (
+              <p id="email-error" className="text-xs text-destructive">
+                {errors.email.message}
+              </p>
+            )}
           </div>
 
           <div className="space-y-1">
-            <label className="text-sm font-medium">{t('register.password')}</label>
+            <label htmlFor="password" className="text-sm font-medium">
+              {t('register.password')}
+            </label>
             <input
+              id="password"
               {...register('password')}
               type="password"
               autoComplete="new-password"
+              aria-invalid={!!errors.password}
+              aria-describedby={errors.password ? 'password-error' : undefined}
               className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
             />
             {errors.password && (
-              <p className="text-xs text-destructive">{errors.password.message}</p>
+              <p id="password-error" className="text-xs text-destructive">
+                {errors.password.message}
+              </p>
             )}
           </div>
 
@@ -130,15 +146,22 @@ export function RegisterPage() {
               {registrationMode === 'invite_only' && (
                 <p className="text-sm text-muted-foreground">{t('inviteOnlyHint')}</p>
               )}
-              <label className="text-sm font-medium">{t('inviteToken')}</label>
+              <label htmlFor="inviteToken" className="text-sm font-medium">
+                {t('inviteToken')}
+              </label>
               <input
+                id="inviteToken"
                 {...register('inviteToken')}
                 type="text"
                 placeholder={t('inviteTokenPlaceholder')}
+                aria-invalid={!!errors.inviteToken}
+                aria-describedby={errors.inviteToken ? 'inviteToken-error' : undefined}
                 className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm font-mono"
               />
               {errors.inviteToken && (
-                <p className="text-xs text-destructive">{errors.inviteToken.message}</p>
+                <p id="inviteToken-error" className="text-xs text-destructive">
+                  {errors.inviteToken.message}
+                </p>
               )}
             </div>
           )}

@@ -21,7 +21,11 @@
     "commentsEnabled": "Включить комментарии",
     "feedRetentionDays": "Хранение ленты (дней)",
     "oldFeedsCleared": "Старые фиды очищены успешно",
-    "clearOldFeedsNow": "Очистить старые фиды сейчас"
+    "clearOldFeedsNow": "Очистить старые фиды сейчас",
+    "errors": {
+      "required": "Это поле обязательно",
+      "outOfRange": "Введите число от {{min}} до {{max}}"
+    }
   },
   "moderation": {
     "title": "Модерация",

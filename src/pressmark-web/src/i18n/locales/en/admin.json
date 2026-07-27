@@ -21,7 +21,11 @@
     "commentsEnabled": "Enable comments",
     "feedRetentionDays": "Feed retention (days)",
     "oldFeedsCleared": "Old feeds cleared successfully",
-    "clearOldFeedsNow": "Clear old feeds now"
+    "clearOldFeedsNow": "Clear old feeds now",
+    "errors": {
+      "required": "This field is required",
+      "outOfRange": "Enter a number between {{min}} and {{max}}"
+    }
   },
   "moderation": {
     "title": "Moderation",

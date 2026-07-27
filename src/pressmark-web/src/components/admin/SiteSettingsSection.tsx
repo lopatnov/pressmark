@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -9,29 +9,39 @@ import { useAdminStore } from '@/store/adminStore'
 import { useAuthStore } from '@/store/authStore'
 import { toast } from 'sonner'
 
-const settingsSchema = z.object({
-  siteName: z.string().min(1),
-  siteDescription: z.string(),
-  communityWindowDays: z.number().int().min(1).max(365),
-  registrationMode: z.enum(['open', 'invite_only']),
-  smtpHost: z.string(),
-  smtpPort: z.number().int().min(1).max(65535),
-  smtpUser: z.string(),
-  smtpPassword: z.string(),
-  smtpUseTls: z.boolean(),
-  smtpFromAddress: z.string(),
-  commentsEnabled: z.boolean(),
-  feedRetentionDays: z.number().int().min(1).max(3650),
-  communityPageEnabled: z.boolean(),
-})
-type SettingsForm = z.infer<typeof settingsSchema>
-
 export default function SiteSettingsSection() {
   const { t } = useTranslation(['admin', 'common'])
   const { settings, setSettings } = useAdminStore()
   const setCommunityPageEnabled = useAuthStore((s) => s.setCommunityPageEnabled)
   const setCommentsEnabled = useAuthStore((s) => s.setCommentsEnabled)
   const [saved, setSaved] = useState(false)
+
+  // Built here rather than at module scope so the validation messages can be
+  // translated, the same way the other forms build their schemas.
+  const settingsSchema = useMemo(() => {
+    const range = (min: number, max: number) =>
+      z
+        .number()
+        .int()
+        .min(min, t('admin:settings.errors.outOfRange', { min, max }))
+        .max(max, t('admin:settings.errors.outOfRange', { min, max }))
+    return z.object({
+      siteName: z.string().min(1, t('admin:settings.errors.required')),
+      siteDescription: z.string(),
+      communityWindowDays: range(1, 365),
+      registrationMode: z.enum(['open', 'invite_only']),
+      smtpHost: z.string(),
+      smtpPort: range(1, 65535),
+      smtpUser: z.string(),
+      smtpPassword: z.string(),
+      smtpUseTls: z.boolean(),
+      smtpFromAddress: z.string(),
+      commentsEnabled: z.boolean(),
+      feedRetentionDays: range(1, 3650),
+      communityPageEnabled: z.boolean(),
+    })
+  }, [t])
+  type SettingsForm = z.infer<typeof settingsSchema>
 
   const {
     register,
@@ -46,7 +56,7 @@ export default function SiteSettingsSection() {
         ...settings,
         smtpPassword: '', // never pre-fill the password field
       })
-  }, [settings])
+  }, [settings, reset])
 
   const onSubmit = async (data: SettingsForm) => {
     try {
@@ -94,17 +104,24 @@ export default function SiteSettingsSection() {
         className="space-y-3 rounded-lg border border-border p-4"
       >
         <div className="space-y-1">
-          <label className="text-sm font-medium">{t('admin:settings.siteName')}</label>
+          <label htmlFor="siteName" className="text-sm font-medium">
+            {t('admin:settings.siteName')}
+          </label>
           <input
+            id="siteName"
             {...register('siteName')}
+            aria-invalid={!!errors.siteName}
             className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
           />
           {errors.siteName && <p className="text-xs text-destructive">{errors.siteName.message}</p>}
         </div>
 
         <div className="space-y-1">
-          <label className="text-sm font-medium">{t('admin:settings.siteDescription')}</label>
+          <label htmlFor="siteDescription" className="text-sm font-medium">
+            {t('admin:settings.siteDescription')}
+          </label>
           <textarea
+            id="siteDescription"
             {...register('siteDescription')}
             rows={2}
             className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm resize-none"
@@ -112,12 +129,16 @@ export default function SiteSettingsSection() {
         </div>
 
         <div className="space-y-1">
-          <label className="text-sm font-medium">{t('admin:settings.communityWindowDays')}</label>
+          <label htmlFor="communityWindowDays" className="text-sm font-medium">
+            {t('admin:settings.communityWindowDays')}
+          </label>
           <input
+            id="communityWindowDays"
             {...register('communityWindowDays', { valueAsNumber: true })}
             type="number"
             min={1}
             max={365}
+            aria-invalid={!!errors.communityWindowDays}
             className="w-32 rounded-md border border-border bg-background px-3 py-2 text-sm"
           />
           {errors.communityWindowDays && (
@@ -126,8 +147,11 @@ export default function SiteSettingsSection() {
         </div>
 
         <div className="space-y-1">
-          <label className="text-sm font-medium">{t('admin:settings.registrationMode')}</label>
+          <label htmlFor="registrationMode" className="text-sm font-medium">
+            {t('admin:settings.registrationMode')}
+          </label>
           <select
+            id="registrationMode"
             {...register('registrationMode')}
             className="rounded-md border border-border bg-background px-3 py-2 text-sm"
           >
@@ -141,28 +165,41 @@ export default function SiteSettingsSection() {
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
-              <label className="text-sm font-medium">{t('admin:settings.smtpHost')}</label>
+              <label htmlFor="smtpHost" className="text-sm font-medium">
+                {t('admin:settings.smtpHost')}
+              </label>
               <input
+                id="smtpHost"
                 {...register('smtpHost')}
                 className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
                 placeholder="smtp.example.com"
               />
             </div>
             <div className="space-y-1">
-              <label className="text-sm font-medium">{t('admin:settings.smtpPort')}</label>
+              <label htmlFor="smtpPort" className="text-sm font-medium">
+                {t('admin:settings.smtpPort')}
+              </label>
               <input
+                id="smtpPort"
                 {...register('smtpPort', { valueAsNumber: true })}
                 type="number"
                 min={1}
                 max={65535}
+                aria-invalid={!!errors.smtpPort}
                 className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
               />
+              {errors.smtpPort && (
+                <p className="text-xs text-destructive">{errors.smtpPort.message}</p>
+              )}
             </div>
           </div>
 
           <div className="space-y-1">
-            <label className="text-sm font-medium">{t('admin:settings.smtpUser')}</label>
+            <label htmlFor="smtpUser" className="text-sm font-medium">
+              {t('admin:settings.smtpUser')}
+            </label>
             <input
+              id="smtpUser"
               {...register('smtpUser')}
               autoComplete="off"
               className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
@@ -170,8 +207,11 @@ export default function SiteSettingsSection() {
           </div>
 
           <div className="space-y-1">
-            <label className="text-sm font-medium">{t('admin:settings.smtpPassword')}</label>
+            <label htmlFor="smtpPassword" className="text-sm font-medium">
+              {t('admin:settings.smtpPassword')}
+            </label>
             <input
+              id="smtpPassword"
               {...register('smtpPassword')}
               type="password"
               autoComplete="new-password"
@@ -181,8 +221,11 @@ export default function SiteSettingsSection() {
           </div>
 
           <div className="space-y-1">
-            <label className="text-sm font-medium">{t('admin:settings.smtpFromAddress')}</label>
+            <label htmlFor="smtpFromAddress" className="text-sm font-medium">
+              {t('admin:settings.smtpFromAddress')}
+            </label>
             <input
+              id="smtpFromAddress"
               {...register('smtpFromAddress')}
               type="email"
               className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
@@ -208,14 +251,16 @@ export default function SiteSettingsSection() {
         </div>
 
         <div className="space-y-1">
-          <label className="text-sm font-medium  pr-2">
+          <label htmlFor="feedRetentionDays" className="text-sm font-medium pr-2">
             {t('admin:settings.feedRetentionDays')}
           </label>
           <input
+            id="feedRetentionDays"
             {...register('feedRetentionDays', { valueAsNumber: true })}
             type="number"
             min={1}
             max={3650}
+            aria-invalid={!!errors.feedRetentionDays}
             className="w-32 rounded-md border border-border bg-background px-3 py-2 text-sm"
           />
           {errors.feedRetentionDays && (
@@ -223,7 +268,7 @@ export default function SiteSettingsSection() {
           )}
         </div>
         <div className="space-y-1">
-          <Button type="button" size="sm" variant="outline" onClick={() => handleClearOldFeeds()}>
+          <Button type="button" size="sm" variant="outline" onClick={handleClearOldFeeds}>
             {t('admin:settings.clearOldFeedsNow')}
           </Button>
         </div>
