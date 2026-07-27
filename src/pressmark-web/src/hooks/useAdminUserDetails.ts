@@ -54,7 +54,13 @@ export function useAdminUserDetails(id: string | undefined) {
       .getUserDetails({ userId: id })
       .then((res) => {
         if (cancelled) return
-        const u = res.user!
+        const u = res.user
+        // `user` is an optional message field: a response without it means the
+        // id does not resolve, which the page renders as "user not found".
+        if (!u) {
+          setDetails(null)
+          return
+        }
         setDetails({
           id: u.id,
           email: u.email,

@@ -71,7 +71,8 @@
     "subscriptions": "Підписки",
     "noSubscriptions": "Немає підписок",
     "noComments": "Немає коментарів",
-    "commentRemoved": "[видалено адміністратором]"
+    "commentRemoved": "[видалено адміністратором]",
+    "removeComment": "Видалити коментар"
   },
   "reports": {
     "title": "Скарги",

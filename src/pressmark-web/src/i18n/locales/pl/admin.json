@@ -71,7 +71,8 @@
     "subscriptions": "Subskrypcje",
     "noSubscriptions": "Brak subskrypcji",
     "noComments": "Brak komentarzy",
-    "commentRemoved": "[usunięte przez administratora]"
+    "commentRemoved": "[usunięte przez administratora]",
+    "removeComment": "Usuń komentarz"
   },
   "reports": {
     "title": "Zgłoszenia",

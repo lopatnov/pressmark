@@ -25,7 +25,8 @@ namespace Pressmark.Api.Services;
 public partial class AuthServiceImpl(
     AppDbContext db, JwtService jwt,
     IEmailService emailService, IConfiguration config,
-    AuthTokenIssuer tokenIssuer, InviteRedemptionService invites) : AuthService.AuthServiceBase
+    AuthTokenIssuer tokenIssuer, InviteRedemptionService invites,
+    ILogger<AuthServiceImpl> logger) : AuthService.AuthServiceBase
 {
     public override async Task<AuthResponse> Register(
         RegisterRequest request, ServerCallContext context)

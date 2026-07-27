@@ -98,38 +98,11 @@ public partial class AdminServiceImpl(AppDbContext db, ISmtpPasswordProtector pa
     {
         var ct = context.CancellationToken;
 
-        var settings = await SiteSettingsSnapshot.LoadAsync(db, [
-            SiteSettingKeys.CommunityWindowDays,
-            SiteSettingKeys.FeedRetentionDays,
-        ], ct);
-
-        var windowDays = settings.CommunityWindowDays;
-        var retentionDays = settings.FeedRetentionDays;
-
-        // Delete likes older than community window
-        var likeCutoff = DateTime.UtcNow.AddDays(-windowDays);
-        var deletedLikes = await db.Likes
-            .Where(l => l.CreatedAt < likeCutoff)
-            .ExecuteDeleteAsync(ct);
-
-        // Delete feed items older than retention period that have no bookmark
-        var itemCutoff = DateTime.UtcNow.AddDays(-retentionDays);
-        var toDelete = await db.FeedItems
-            .Where(f => f.FetchedAt < itemCutoff && !f.Bookmarks.Any())
-            .Select(f => f.Id)
-            .ToListAsync(ct);
-
-        var deletedItems = 0;
-        foreach (var batch in toDelete.Chunk(500))
-        {
-            deletedItems += await db.FeedItems
-                .Where(f => batch.Contains(f.Id))
-                .ExecuteDeleteAsync(ct);
-        }
+        var result = await FeedRetentionCleaner.RunAsync(db, ct);
 
         logger.LogInformation(
             "Manual cleanup: deleted {Likes} likes older than {Window}d, {Items} feed items older than {Retention}d",
-            deletedLikes, windowDays, deletedItems, retentionDays);
+            result.DeletedLikes, result.WindowDays, result.DeletedItems, result.RetentionDays);
 
         return new Empty();
     }

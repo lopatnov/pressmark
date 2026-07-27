@@ -1,5 +1,4 @@
 using System.Data;
-using System.Security.Claims;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Microsoft.EntityFrameworkCore;
@@ -66,8 +65,7 @@ public partial class AdminServiceImpl
         var ct = context.CancellationToken;
         var userId = RpcGuards.ParseId(request.UserId, UserIdField);
 
-        var callerIdStr = context.GetHttpContext().User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (callerIdStr != null && Guid.TryParse(callerIdStr, out var callerId) && callerId == userId)
+        if (context.TryGetUserId() == userId)
             throw new RpcException(new Status(StatusCode.FailedPrecondition, "Cannot delete your own account"));
 
         var user = await db.Users.FindOrThrowAsync(userId, UserNotFoundMessage, ct);

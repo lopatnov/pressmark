@@ -71,9 +71,9 @@ public partial class FeedServiceImpl
         if (user.IsCommentingBanned)
             throw new RpcException(new Status(StatusCode.PermissionDenied, "You are not allowed to comment"));
 
-        var feedItemExists = await db.FeedItems.AnyAsync(f => f.Id == feedItemId, ct);
-        if (!feedItemExists)
-            throw new RpcException(new Status(StatusCode.NotFound, "Feed item not found"));
+        // Loaded rather than probed: the existence check and the title the notification
+        // email needs are the same row.
+        var feedItem = await db.FeedItems.FindOrThrowAsync(feedItemId, "Feed item not found", ct);
 
         var comment = new Entities.Comment
         {
@@ -85,9 +85,7 @@ public partial class FeedServiceImpl
         db.Comments.Add(comment);
         await db.SaveChangesAsync(ct);
 
-        var feedItem = await db.FeedItems.FindAsync([feedItemId], ct);
-        if (feedItem != null)
-            NotifySubscribersInBackground(feedItemId, user.Email, feedItem.Title, comment.Body);
+        NotifySubscribersInBackground(feedItemId, user.Email, feedItem.Title, comment.Body);
 
         return new Protos.Comment
         {
@@ -167,14 +165,14 @@ public partial class FeedServiceImpl
         var ct = context.CancellationToken;
         var userId = context.GetUserId();
 
-        if (request.Type != "comment" && request.Type != "subscription")
+        if (request.Type != ReportTypes.Comment && request.Type != ReportTypes.Subscription)
             throw new RpcException(new Status(StatusCode.InvalidArgument,
                 "type must be 'comment' or 'subscription'"));
 
         var targetId = RpcGuards.ParseId(request.TargetId, "target_id");
 
         // Verify target exists
-        if (request.Type == "comment")
+        if (request.Type == ReportTypes.Comment)
         {
             var exists = await db.Comments.AnyAsync(c => c.Id == targetId && !c.RemovedByAdmin, ct);
             if (!exists)
@@ -189,7 +187,9 @@ public partial class FeedServiceImpl
 
         // Idempotent: no-op if already reported
         var alreadyReported = await db.Reports.AnyAsync(
-            r => r.ReporterUserId == userId && r.TargetId == targetId, ct);
+            r => r.ReporterUserId == userId
+              && r.Type == request.Type
+              && r.TargetId == targetId, ct);
         if (alreadyReported)
             return new Empty();
 

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -7,25 +7,44 @@ import { useAdminStore, type InviteItem } from '@/store/adminStore'
 import { toast } from 'sonner'
 import { AdminPagination } from './AdminPagination'
 import { AdminSkeletonRows } from './AdminSkeletonRows'
-
-const PAGE_SIZE = 20
+import { useAdminPaginatedList, ADMIN_PAGE_SIZE } from '@/hooks/useAdminPaginatedList'
 
 export default function InvitesSection() {
   const { t } = useTranslation(['admin', 'common'])
   const { addInvite, settings } = useAdminStore()
-  const [invites, setInvites] = useState<InviteItem[]>([])
-  const [totalCount, setTotalCount] = useState(0)
-  const [page, setPage] = useState(0)
-  const [loadingList, setLoadingList] = useState(true)
   const [note, setNote] = useState('')
   const [expiresDays, setExpiresDays] = useState(7)
   const [sendNotification, setSendNotification] = useState(false)
   const [newToken, setNewToken] = useState<InviteItem | null>(null)
   const [copiedId, setCopiedId] = useState<string | null>(null)
   const [generating, setGenerating] = useState(false)
-  const listReqRef = useRef(0)
+
+  const {
+    items: invites,
+    loading: loadingList,
+    page,
+    totalPages,
+    handlePage,
+    load,
+    setPage,
+  } = useAdminPaginatedList<InviteItem>((p) =>
+    adminClient.listInvites({ pageSize: ADMIN_PAGE_SIZE, page: p }).then((res) => ({
+      items: res.items.map((i) => ({
+        id: i.id,
+        token: '', // the token is only ever returned by generateInvite
+        note: i.note,
+        createdAt: i.createdAt,
+        expiresAt: i.expiresAt,
+      })),
+      totalCount: res.totalCount,
+    })),
+  )
 
   const smtpConfigured = Boolean(settings?.smtpHost)
+  const notePlaceholder = smtpConfigured
+    ? t('admin:invites.notifyEmailPlaceholder')
+    : t('admin:invites.notePlaceholder')
+  const noteIsValidEmail = /^[^\s@]+@[^\s@.]+(?:\.[^\s@.]+)+$/.test(note)
 
   const renderInviteList = () => {
     if (loadingList) {
@@ -71,39 +90,6 @@ export default function InvitesSection() {
       </table>
     )
   }
-  const noteIsValidEmail = /^[^\s@]+@[^\s@.]+(?:\.[^\s@.]+)+$/.test(note)
-
-  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE))
-
-  const loadList = (p: number) => {
-    const req = ++listReqRef.current
-    setLoadingList(true)
-    adminClient
-      .listInvites({ pageSize: PAGE_SIZE, page: p })
-      .then((res) => {
-        if (req !== listReqRef.current) return
-        setInvites(
-          res.items.map((i) => ({
-            id: i.id,
-            token: '',
-            note: i.note,
-            createdAt: i.createdAt,
-            expiresAt: i.expiresAt,
-          })),
-        )
-        setTotalCount(res.totalCount)
-      })
-      .catch(() => {
-        if (req === listReqRef.current) toast.error(t('common:error'))
-      })
-      .finally(() => {
-        if (req === listReqRef.current) setLoadingList(false)
-      })
-  }
-
-  useEffect(() => {
-    loadList(0)
-  }, [])
 
   const handleGenerate = async () => {
     if (generating) return
@@ -125,8 +111,8 @@ export default function InvitesSection() {
       addInvite(item)
       setNewToken(item)
       setNote('')
-      loadList(0)
       setPage(0)
+      load(0)
     } catch {
       toast.error(t('common:error'))
     } finally {
@@ -148,17 +134,13 @@ export default function InvitesSection() {
     try {
       await adminClient.deleteInvite({ id })
       if (newToken?.id === id) setNewToken(null)
+      // Deleting the last row of a page would leave it empty — step back one.
       const newPage = invites.length === 1 && page > 0 ? page - 1 : page
       setPage(newPage)
-      loadList(newPage)
+      load(newPage)
     } catch {
       toast.error(t('common:error'))
     }
-  }
-
-  const handlePage = (p: number) => {
-    setPage(p)
-    loadList(p)
   }
 
   return (
@@ -170,11 +152,8 @@ export default function InvitesSection() {
           <input
             value={note}
             onChange={(e) => setNote(e.target.value)}
-            placeholder={
-              smtpConfigured
-                ? t('admin:invites.notifyEmailPlaceholder')
-                : t('admin:invites.notePlaceholder')
-            }
+            aria-label={notePlaceholder}
+            placeholder={notePlaceholder}
             className="flex-1 rounded-md border border-border bg-background px-3 py-2 text-sm"
           />
           <select

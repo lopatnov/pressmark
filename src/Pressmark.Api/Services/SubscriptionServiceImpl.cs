@@ -1,17 +1,29 @@
-using System.ServiceModel.Syndication;
-using System.Xml;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Pressmark.Api.Data;
-using Pressmark.Api.Entities;
 using Pressmark.Api.Protos;
 
 namespace Pressmark.Api.Services;
 
+/// <summary>
+/// A user's own RSS sources: adding, renaming, removing and listing them, plus the
+/// on-demand refresh and the daily-digest opt-in.
+/// </summary>
+/// <remarks>
+/// Split across partial files by sub-domain:
+/// <list type="bullet">
+/// <item>SubscriptionServiceImpl.cs — the sources themselves (this file)</item>
+/// <item>SubscriptionServiceImpl.Opml.cs — OPML import and export</item>
+/// </list>
+/// Fetching and parsing feeds belongs to <see cref="FeedFetcherService"/> and projection
+/// to <see cref="SubscriptionMapper"/>; every endpoint here is scoped to the caller's own
+/// rows, so a subscription belonging to someone else reads as missing rather than denied.
+/// </remarks>
 [Authorize]
-public class SubscriptionServiceImpl(AppDbContext db, IHttpClientFactory httpClientFactory, FeedFetcherService feedFetcher) : SubscriptionService.SubscriptionServiceBase
+public partial class SubscriptionServiceImpl(
+    AppDbContext db, FeedFetcherService feedFetcher) : SubscriptionService.SubscriptionServiceBase
 {
     public override async Task<Protos.Subscription> AddSubscription(
         AddSubscriptionRequest request, ServerCallContext context)
@@ -24,18 +36,10 @@ public class SubscriptionServiceImpl(AppDbContext db, IHttpClientFactory httpCli
             throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid RSS URL"));
 
         // Validate by fetching and parsing the feed; also use the feed title as default
-        var feedTitle = "";
+        string feedTitle;
         try
         {
-            var http = httpClientFactory.CreateClient("Pressmark");
-            http.Timeout = TimeSpan.FromSeconds(10);
-            var bytes = await http.GetByteArrayAsync(request.RssUrl, ct);
-            var xml = LenientUtf8.GetString(bytes);
-
-            using var reader = XmlReader.Create(
-                new StringReader(xml),
-                new XmlReaderSettings { DtdProcessing = DtdProcessing.Ignore, CheckCharacters = false });
-            feedTitle = SyndicationFeed.Load(reader).Title?.Text ?? "";
+            feedTitle = await feedFetcher.ReadFeedTitleAsync(request.RssUrl, ct);
         }
         catch (OperationCanceledException) when (ct.IsCancellationRequested)
         {
@@ -55,7 +59,7 @@ public class SubscriptionServiceImpl(AppDbContext db, IHttpClientFactory httpCli
         var existing = await db.Subscriptions
             .FirstOrDefaultAsync(s => s.UserId == userId && s.RssUrl == request.RssUrl, ct);
         if (existing != null)
-            return ToProto(existing);
+            return SubscriptionMapper.ToProto(existing);
 
         var entity = new Entities.Subscription
         {
@@ -69,7 +73,7 @@ public class SubscriptionServiceImpl(AppDbContext db, IHttpClientFactory httpCli
         db.Subscriptions.Add(entity);
         await db.SaveChangesAsync(ct);
 
-        return ToProto(entity);
+        return SubscriptionMapper.ToProto(entity);
     }
 
     public override async Task<Protos.Subscription> UpdateSubscription(
@@ -78,18 +82,12 @@ public class SubscriptionServiceImpl(AppDbContext db, IHttpClientFactory httpCli
         var userId = context.GetUserId();
         var ct = context.CancellationToken;
 
-        var subId = RpcGuards.ParseId(request.SubscriptionId, "subscription_id");
-
-        var sub = await db.Subscriptions
-            .FirstOrDefaultAsync(s => s.Id == subId && s.UserId == userId, ct);
-
-        if (sub is null)
-            throw new RpcException(new Status(StatusCode.NotFound, "Subscription not found"));
+        var sub = await FindOwnSubscriptionAsync(request.SubscriptionId, userId, ct);
 
         sub.DisplayName = string.IsNullOrWhiteSpace(request.DisplayName) ? null : request.DisplayName.Trim();
         await db.SaveChangesAsync(ct);
 
-        return ToProto(sub);
+        return SubscriptionMapper.ToProto(sub);
     }
 
     public override async Task<Empty> RemoveSubscription(
@@ -98,13 +96,7 @@ public class SubscriptionServiceImpl(AppDbContext db, IHttpClientFactory httpCli
         var userId = context.GetUserId();
         var ct = context.CancellationToken;
 
-        var subId = RpcGuards.ParseId(request.SubscriptionId, "subscription_id");
-
-        var sub = await db.Subscriptions
-            .FirstOrDefaultAsync(s => s.Id == subId && s.UserId == userId, ct);
-
-        if (sub is null)
-            throw new RpcException(new Status(StatusCode.NotFound, "Subscription not found"));
+        var sub = await FindOwnSubscriptionAsync(request.SubscriptionId, userId, ct);
 
         db.Subscriptions.Remove(sub);
         await db.SaveChangesAsync(ct);
@@ -121,12 +113,16 @@ public class SubscriptionServiceImpl(AppDbContext db, IHttpClientFactory httpCli
         var subs = await db.Subscriptions
             .Where(s => s.UserId == userId)
             .OrderBy(s => s.DisplayName ?? s.Title)
+            .AsNoTracking()
             .ToListAsync(ct);
 
-        var user = await db.Users.FindAsync([userId], ct);
+        var digestEnabled = await db.Users
+            .Where(u => u.Id == userId)
+            .Select(u => u.DigestEnabled)
+            .FirstOrDefaultAsync(ct);
 
-        var list = new SubscriptionList { DigestEnabled = user?.DigestEnabled ?? false };
-        list.Subscriptions.AddRange(subs.Select(ToProto));
+        var list = new SubscriptionList { DigestEnabled = digestEnabled };
+        list.Subscriptions.AddRange(subs.Select(SubscriptionMapper.ToProto));
         return list;
     }
 
@@ -136,72 +132,12 @@ public class SubscriptionServiceImpl(AppDbContext db, IHttpClientFactory httpCli
         var userId = context.GetUserId();
         var ct = context.CancellationToken;
 
-        var user = await db.Users.FindAsync([userId], ct)
-            ?? throw new RpcException(new Status(StatusCode.NotFound, "User not found"));
+        var user = await db.Users.FindOrThrowAsync(userId, "User not found", ct);
 
         user.DigestEnabled = !user.DigestEnabled;
         await db.SaveChangesAsync(ct);
 
         return new ToggleDigestSubscriptionResponse { Enabled = user.DigestEnabled };
-    }
-
-    public override async Task<ImportSubscriptionsResponse> ImportSubscriptions(
-        ImportSubscriptionsRequest request, ServerCallContext context)
-    {
-        var userId = context.GetUserId();
-        var ct = context.CancellationToken;
-
-        List<(string RssUrl, string Title)> entries;
-        try
-        {
-            entries = OpmlService.Parse(request.OpmlContent);
-        }
-        catch
-        {
-            throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid OPML content"));
-        }
-
-        var existingUrls = await db.Subscriptions
-            .Where(s => s.UserId == userId)
-            .Select(s => s.RssUrl)
-            .ToHashSetAsync(ct);
-
-        int imported = 0, skipped = 0;
-        foreach (var (rssUrl, title) in entries)
-        {
-            if (existingUrls.Contains(rssUrl)) { skipped++; continue; }
-
-            db.Subscriptions.Add(new Entities.Subscription
-            {
-                UserId = userId,
-                RssUrl = rssUrl,
-                Title = title,
-            });
-            existingUrls.Add(rssUrl);
-            imported++;
-        }
-
-        if (imported > 0)
-            await db.SaveChangesAsync(ct);
-
-        return new ImportSubscriptionsResponse { Imported = imported, Skipped = skipped };
-    }
-
-    public override async Task<ExportSubscriptionsResponse> ExportSubscriptions(
-        Empty request, ServerCallContext context)
-    {
-        var userId = context.GetUserId();
-        var ct = context.CancellationToken;
-
-        var subs = await db.Subscriptions
-            .Where(s => s.UserId == userId)
-            .OrderBy(s => s.Title)
-            .ToListAsync(ct);
-
-        return new ExportSubscriptionsResponse
-        {
-            OpmlContent = OpmlService.Generate(subs),
-        };
     }
 
     public override async Task<TriggerFetchResponse> TriggerFetch(
@@ -210,28 +146,27 @@ public class SubscriptionServiceImpl(AppDbContext db, IHttpClientFactory httpCli
         var userId = context.GetUserId();
         var ct = context.CancellationToken;
 
-        var subId = RpcGuards.ParseId(request.SubscriptionId, "subscription_id");
-
-        var sub = await db.Subscriptions
-            .FirstOrDefaultAsync(s => s.Id == subId && s.UserId == userId, ct);
-
-        if (sub is null)
-            throw new RpcException(new Status(StatusCode.NotFound, "Subscription not found"));
+        var sub = await FindOwnSubscriptionAsync(request.SubscriptionId, userId, ct);
 
         var newItems = await feedFetcher.FetchAndSaveAsync(db, sub, ct);
         return new TriggerFetchResponse { NewItems = newItems };
     }
 
-    // ── helpers ──────────────────────────────────────────────────────────────
-
-    private static Protos.Subscription ToProto(Entities.Subscription s) => new()
+    /// <summary>
+    /// Loads a subscription the caller owns, or reports <see cref="StatusCode.NotFound"/>.
+    /// </summary>
+    /// <remarks>
+    /// Ownership is part of the lookup rather than a separate check, so someone else's
+    /// subscription is indistinguishable from one that does not exist and the id space
+    /// cannot be probed.
+    /// </remarks>
+    private async Task<Entities.Subscription> FindOwnSubscriptionAsync(
+        string subscriptionId, Guid userId, CancellationToken ct)
     {
-        Id = s.Id.ToString(),
-        UserId = s.UserId.ToString(),
-        RssUrl = s.RssUrl,
-        Title = s.DisplayName ?? s.Title,
-        LastFetchedAt = s.LastFetchedAt?.ToString("o") ?? "",
-        CreatedAt = s.CreatedAt.ToString("o"),
-        IsCommunityBanned = s.IsCommunityBanned,
-    };
+        var subId = RpcGuards.ParseId(subscriptionId, "subscription_id");
+
+        return await db.Subscriptions
+            .FirstOrDefaultAsync(s => s.Id == subId && s.UserId == userId, ct)
+            ?? throw new RpcException(new Status(StatusCode.NotFound, "Subscription not found"));
+    }
 }

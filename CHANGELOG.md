@@ -7,6 +7,27 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [Unreleased]
+
+### Fixed
+
+- `RssFetcherService` no longer stops the host on a transient error while loading the subscription list — the fetch cycle is now guarded the same way as its sibling background services
+- `MarkAllAsRead` now rejects a malformed `subscription_id` instead of silently marking the caller's entire feed as read
+- A broken SMTP configuration no longer turns `ForgotPassword` back into an account-existence oracle — delivery failures are logged, not surfaced
+- Daily digest no longer logs the recipient's email address
+- Feed entries with no `<link href>` no longer fail the whole fetch; the Open Graph image scraper no longer stops short of its read budget on a slow response
+- Bookmarks page no longer shows a stale filtered result when the source filter changes mid-request
+- Article page no longer keeps showing "not found" after navigating from a missing article to a valid one
+
+### Security
+
+- Patched a transitive vulnerability in `@modelcontextprotocol/sdk` (pulled in via shadcn tooling) by overriding `@hono/node-server` to a fixed version (GHSA-frvp-7c67-39w9)
+
+### Changed
+
+- Routine dependency updates across backend (NuGet), frontend (npm), Docker base images, and GitHub Actions to their latest compatible versions
+- `SubscriptionServiceImpl` restructured to match the partial-class + extracted-helper pattern used by the other gRPC services
+
 ## [1.1.0] — Community, SEO & nginx — 2026-04-20
 
 ### Added

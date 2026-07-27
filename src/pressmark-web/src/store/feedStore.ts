@@ -23,12 +23,11 @@ interface FeedState {
   totalUnread: number
   isLoading: boolean
   unreadOnly: boolean
-  subscriptionIdFilter: string
   setItems: (items: FeedItem[], cursor: string, unread: number) => void
   appendItems: (items: FeedItem[], cursor: string) => void
   prependItem: (item: FeedItem) => void
   setLoading: (loading: boolean) => void
-  setFilter: (unreadOnly: boolean, subscriptionId: string) => void
+  setUnreadOnly: (unreadOnly: boolean) => void
   updateLike: (id: string, isLiked: boolean, likeCount: number) => void
   updateBookmark: (id: string, isBookmarked: boolean) => void
   markRead: (id: string) => void
@@ -43,14 +42,13 @@ export const useFeedStore = create<FeedState>()(
       totalUnread: 0,
       isLoading: true,
       unreadOnly: false,
-      subscriptionIdFilter: '',
       setItems: (items, cursor, unread) => set({ items, nextCursor: cursor, totalUnread: unread }),
       appendItems: (items, cursor) =>
         set((s) => ({ items: [...s.items, ...items], nextCursor: cursor })),
       prependItem: (item) =>
         set((s) => ({ items: [item, ...s.items], totalUnread: s.totalUnread + 1 })),
       setLoading: (isLoading) => set({ isLoading }),
-      setFilter: (unreadOnly, subscriptionIdFilter) => set({ unreadOnly, subscriptionIdFilter }),
+      setUnreadOnly: (unreadOnly) => set({ unreadOnly }),
       updateLike: (id, isLiked, likeCount) =>
         set((s) => ({
           items: s.items.map((i) => (i.id === id ? { ...i, isLiked, likeCount } : i)),

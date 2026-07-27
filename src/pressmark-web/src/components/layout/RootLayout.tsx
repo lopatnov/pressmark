@@ -4,6 +4,13 @@ import { Toaster } from '@/components/ui/sonner'
 import { useAuthStore } from '@/store/authStore'
 import { authClient } from '@/api/clients'
 
+/** Shape of the plain-REST `/api/meta` document used to seed the page metadata. */
+interface SiteMeta {
+  siteName: string
+  siteDescription: string
+  baseUrl: string
+}
+
 export function RootLayout() {
   const setAuth = useAuthStore((s) => s.setAuth)
   const clearAuth = useAuthStore((s) => s.clearAuth)
@@ -18,7 +25,12 @@ export function RootLayout() {
 
   useEffect(() => {
     fetch('/api/meta')
-      .then((r) => r.json())
+      .then((r) => {
+        // A non-2xx response still parses as JSON when the server returns an
+        // error document, which would blank out the site name.
+        if (!r.ok) throw new Error(`meta request failed: ${r.status}`)
+        return r.json() as Promise<SiteMeta>
+      })
       .then((data) => {
         setSiteName(data.siteName)
         setSiteDescription(data.siteDescription)

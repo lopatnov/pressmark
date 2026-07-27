@@ -47,6 +47,7 @@
   "reportSubmitError": "Failed to send report",
   "filterBySource": "Filtered by source",
   "clearFilter": "Clear filter",
+  "openArticle": "Open article page",
   "article": {
     "notFound": "Article not found",
     "backToCommunity": "Back to community"

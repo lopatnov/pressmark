@@ -19,8 +19,8 @@ internal static class CursorHelper
             if (parts.Length != 2) return false;
             if (!long.TryParse(parts[0], out var ticks)) return false;
             if (ticks < DateTime.MinValue.Ticks || ticks > DateTime.MaxValue.Ticks) return false;
+            if (!Guid.TryParse(parts[1], out id)) return false;
             date = new DateTime(ticks, DateTimeKind.Utc);
-            id = Guid.Parse(parts[1]);
             return true;
         }
         catch { return false; }

@@ -71,7 +71,8 @@
     "subscriptions": "Abonelikler",
     "noSubscriptions": "Abonelik yok",
     "noComments": "Yorum yok",
-    "commentRemoved": "[admin tarafından kaldırıldı]"
+    "commentRemoved": "[admin tarafından kaldırıldı]",
+    "removeComment": "Yorumu kaldır"
   },
   "reports": {
     "title": "Raporlar",

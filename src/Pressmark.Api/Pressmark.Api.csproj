@@ -14,18 +14,18 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="BCrypt.Net-Next" Version="4.1.0" />
-    <PackageReference Include="Grpc.AspNetCore" Version="2.76.0" />
-    <PackageReference Include="Grpc.AspNetCore.Web" Version="2.76.0" />
-    <PackageReference Include="MailKit" Version="4.16.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.7" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.7">
+    <PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
+    <PackageReference Include="Grpc.AspNetCore" Version="2.80.0" />
+    <PackageReference Include="Grpc.AspNetCore.Web" Version="2.80.0" />
+    <PackageReference Include="MailKit" Version="4.17.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.10">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.7" />
-    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.17.0" />
-    <PackageReference Include="System.ServiceModel.Syndication" Version="10.0.7" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.10" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.21.0" />
+    <PackageReference Include="System.ServiceModel.Syndication" Version="10.0.10" />
     <PackageReference Include="Roslynator.Analyzers" Version="4.*">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>

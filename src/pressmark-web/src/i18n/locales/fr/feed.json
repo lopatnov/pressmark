@@ -47,6 +47,7 @@
   "reportSubmitError": "Impossible d’envoyer le signalement",
   "filterBySource": "Filtré par source",
   "clearFilter": "Effacer le filtre",
+  "openArticle": "Ouvrir la page de l'article",
   "article": {
     "notFound": "Article introuvable",
     "backToCommunity": "Retour à la communauté"

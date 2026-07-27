@@ -6,8 +6,9 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { usePageTitle } from '@/hooks/usePageTitle'
 import { Button } from '@/components/ui/button'
+import { FormField } from '@/components/ui/form-field'
 import { authClient } from '@/api/clients'
-import { ConnectError } from '@connectrpc/connect'
+import { Code, ConnectError } from '@connectrpc/connect'
 
 export function ResetPasswordPage() {
   const { t } = useTranslation('auth')
@@ -43,7 +44,7 @@ export function ResetPasswordPage() {
       await authClient.resetPassword({ token, newPassword: data.newPassword })
       navigate('/login')
     } catch (err) {
-      if (err instanceof ConnectError && err.code === 5 /* NotFound */) {
+      if (err instanceof ConnectError && err.code === Code.NotFound) {
         setError('root', { message: t('errors.invalidResetToken') })
       } else {
         setError('root', { message: t('errors.invalidCredentials') })
@@ -65,31 +66,23 @@ export function ResetPasswordPage() {
         <h1 className="text-2xl font-semibold">{t('resetPasswordTitle')}</h1>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="space-y-1">
-            <label className="text-sm font-medium">{t('register.password')}</label>
-            <input
-              {...register('newPassword')}
-              type="password"
-              autoComplete="new-password"
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
-            />
-            {errors.newPassword && (
-              <p className="text-xs text-destructive">{errors.newPassword.message}</p>
-            )}
-          </div>
+          <FormField
+            id="newPassword"
+            label={t('register.password')}
+            type="password"
+            autoComplete="new-password"
+            error={errors.newPassword?.message}
+            {...register('newPassword')}
+          />
 
-          <div className="space-y-1">
-            <label className="text-sm font-medium">{t('resetPasswordConfirm')}</label>
-            <input
-              {...register('confirmPassword')}
-              type="password"
-              autoComplete="new-password"
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
-            />
-            {errors.confirmPassword && (
-              <p className="text-xs text-destructive">{errors.confirmPassword.message}</p>
-            )}
-          </div>
+          <FormField
+            id="confirmPassword"
+            label={t('resetPasswordConfirm')}
+            type="password"
+            autoComplete="new-password"
+            error={errors.confirmPassword?.message}
+            {...register('confirmPassword')}
+          />
 
           {errors.root && <p className="text-sm text-destructive">{errors.root.message}</p>}
 

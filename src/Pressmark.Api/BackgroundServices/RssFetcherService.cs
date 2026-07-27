@@ -25,25 +25,46 @@ public class RssFetcherService(
         }
     }
 
+    /// <summary>
+    /// Runs one fetch cycle over every subscription. Never throws: an unhandled
+    /// exception out of <see cref="ExecuteAsync"/> stops the host, so a transient
+    /// database error here would take the whole API down until it was restarted.
+    /// </summary>
     private async Task FetchAllAsync(CancellationToken ct)
     {
-        using var scope = scopeFactory.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-        var subscriptions = await db.Subscriptions.ToListAsync(ct);
-
-        foreach (var sub in subscriptions)
+        try
         {
-            if (ct.IsCancellationRequested) break;
-            try
+            using var scope = scopeFactory.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+            var subscriptions = await db.Subscriptions.ToListAsync(ct);
+
+            foreach (var sub in subscriptions)
             {
-                await feedFetcher.FetchAndSaveAsync(db, sub, ct);
+                if (ct.IsCancellationRequested) break;
+                try
+                {
+                    await feedFetcher.FetchAndSaveAsync(db, sub, ct);
+                }
+                catch (OperationCanceledException) when (ct.IsCancellationRequested)
+                {
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    // One unreachable or malformed feed must not stop the rest of the cycle.
+                    logger.LogWarning(ex, "Failed to fetch RSS for subscription {Id} ({Url})",
+                        sub.Id, sub.RssUrl);
+                }
             }
-            catch (Exception ex)
-            {
-                logger.LogWarning(ex, "Failed to fetch RSS for subscription {Id} ({Url})",
-                    sub.Id, sub.RssUrl);
-            }
+        }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested)
+        {
+            // Shutting down; not an error.
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "RSS fetch cycle failed");
         }
     }
 }

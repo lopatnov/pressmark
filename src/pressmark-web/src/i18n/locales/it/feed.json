@@ -46,6 +46,7 @@
   "reportSubmitError": "Impossibile inviare la segnalazione",
   "filterBySource": "Filtrato per fonte",
   "clearFilter": "Cancella filtro",
+  "openArticle": "Aprire la pagina dell'articolo",
   "article": {
     "notFound": "Articolo non trovato",
     "backToCommunity": "Torna alla community"

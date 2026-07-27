@@ -86,15 +86,16 @@ public partial class AuthServiceImpl
         if (!string.IsNullOrEmpty(rawToken))
         {
             var tokenHash = JwtService.HashToken(rawToken);
-            var stored = await db.RefreshTokens
-                .FirstOrDefaultAsync(t => t.TokenHash == tokenHash && !t.IsRevoked, ct);
+            var now = DateTime.UtcNow;
 
-            if (stored is not null)
-            {
-                stored.IsRevoked = true;
-                stored.RevokedAt = DateTime.UtcNow;
-                await db.SaveChangesAsync(ct);
-            }
+            // One conditional UPDATE, as in Refresh: revoking what a preceding read
+            // returned leaves a window in which the token is still usable, and there is
+            // nothing here that the read has to decide.
+            await db.RefreshTokens
+                .Where(t => t.TokenHash == tokenHash && !t.IsRevoked)
+                .ExecuteUpdateAsync(s => s
+                    .SetProperty(t => t.IsRevoked, true)
+                    .SetProperty(t => t.RevokedAt, now), ct);
         }
 
         http.Response.Cookies.Delete(jwt.CookieName);

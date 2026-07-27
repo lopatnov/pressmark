@@ -46,6 +46,7 @@
   "reportSubmitError": "Melding versturen mislukt",
   "filterBySource": "Gefilterd op bron",
   "clearFilter": "Filter wissen",
+  "openArticle": "Artikelpagina openen",
   "article": {
     "notFound": "Artikel niet gevonden",
     "backToCommunity": "Terug naar gemeenschap"

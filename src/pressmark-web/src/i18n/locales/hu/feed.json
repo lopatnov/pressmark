@@ -46,6 +46,7 @@
   "reportSubmitError": "A bejelentés küldése sikertelen",
   "filterBySource": "Forrás szerint szűrve",
   "clearFilter": "Szűrő törlése",
+  "openArticle": "Cikkoldal megnyitása",
   "article": {
     "notFound": "A cikk nem található",
     "backToCommunity": "Vissza a közösségbe"

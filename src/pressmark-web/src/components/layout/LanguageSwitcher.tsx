@@ -24,7 +24,7 @@ const LANGUAGES = [
 ] as const
 
 export function LanguageSwitcher() {
-  const { i18n } = useTranslation()
+  const { t, i18n } = useTranslation('common')
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const locale = e.target.value
@@ -39,7 +39,8 @@ export function LanguageSwitcher() {
         value={i18n.language}
         onChange={handleChange}
         className="flex-1 cursor-pointer bg-transparent text-sm text-sidebar-foreground outline-none"
-        title="Language"
+        title={t('language')}
+        aria-label={t('language')}
       >
         {LANGUAGES.map(({ code, label }) => (
           <option key={code} value={code}>

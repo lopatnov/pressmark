@@ -7,7 +7,7 @@ import { adminClient } from '@/api/clients'
 import { useAuthStore } from '@/store/authStore'
 
 export function AppLayout() {
-  const { t } = useTranslation('common')
+  const { t } = useTranslation(['common', 'admin'])
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const closeSidebar = useCallback(() => setSidebarOpen(false), [])
   const isAdmin = useAuthStore((s) => s.isAdmin())
@@ -37,7 +37,7 @@ export function AppLayout() {
           <button
             type="button"
             onClick={() => setSidebarOpen(true)}
-            aria-label={t('nav.openMenu')}
+            aria-label={t('common:nav.openMenu')}
             className="cursor-pointer rounded p-1.5 hover:bg-muted"
           >
             <Menu className="h-5 w-5" />
@@ -46,7 +46,7 @@ export function AppLayout() {
             <button
               type="button"
               onClick={() => navigate('/admin')}
-              aria-label="Reports"
+              aria-label={t('admin:reports.title')}
               className="relative cursor-pointer rounded p-1.5 hover:bg-muted"
             >
               <Flag className="h-5 w-5 text-muted-foreground" />

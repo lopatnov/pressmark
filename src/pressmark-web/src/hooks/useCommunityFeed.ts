@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { adminClient, feedClient, subscriptionClient } from '@/api/clients'
 import { useSubscriptionStore } from '@/store/subscriptionStore'
-import { useIntersectionLoader } from '@/hooks/useIntersectionLoader'
+import { useCursorPaginatedList } from '@/hooks/useCursorPaginatedList'
 
 export interface CommunityItem {
   id: string
@@ -30,24 +30,19 @@ export function useCommunityFeed(activeSrcUrl: string) {
   const { t } = useTranslation(['feed', 'common', 'admin'])
   const { subscriptions, addSubscription } = useSubscriptionStore()
 
-  const [items, setItems] = useState<CommunityItem[]>([])
-  const [nextCursor, setNextCursor] = useState('')
-  const [isLoading, setIsLoading] = useState(true)
   const [reportedSubs, setReportedSubs] = useState<Set<string>>(new Set())
   const reportingSubsRef = useRef(new Set<string>())
 
   const subscribedUrls = useMemo(() => new Set(subscriptions.map((s) => s.rssUrl)), [subscriptions])
 
-  const loadFeed = useCallback(
-    async (cursor = '', signal?: AbortSignal) => {
-      setIsLoading(true)
-      try {
-        const res = await feedClient.getCommunityFeed(
-          { pageSize: 20, cursor, sourceRssUrl: activeSrcUrl },
-          { signal },
-        )
-        if (signal?.aborted) return
-        const mapped = res.items.map((item) => ({
+  const fetchPage = useCallback(
+    async (cursor: string, signal: AbortSignal) => {
+      const res = await feedClient.getCommunityFeed(
+        { pageSize: 20, cursor, sourceRssUrl: activeSrcUrl },
+        { signal },
+      )
+      return {
+        items: res.items.map((item): CommunityItem => ({
           id: item.id,
           title: item.title,
           url: item.url,
@@ -59,35 +54,17 @@ export function useCommunityFeed(activeSrcUrl: string) {
           imageUrl: item.imageUrl,
           subscriptionId: item.subscriptionId,
           sourceRssUrl: item.sourceRssUrl,
-        }))
-        if (cursor) {
-          setItems((prev) => [...prev, ...mapped])
-        } else {
-          setItems(mapped)
-        }
-        setNextCursor(res.nextCursor)
-      } catch {
-        if (!signal?.aborted) toast.error(t('common:error'))
-      } finally {
-        // An aborted request must not clear the flag the request that replaced
-        // it has already set, or the skeleton drops and loadMore refires early.
-        if (!signal?.aborted) setIsLoading(false)
+        })),
+        nextCursor: res.nextCursor,
       }
     },
-    [t, activeSrcUrl],
+    [activeSrcUrl],
   )
 
-  const loadMore = useCallback(() => {
-    if (!isLoading) loadFeed(nextCursor)
-  }, [nextCursor, isLoading, loadFeed])
-
-  const sentinelRef = useIntersectionLoader(loadMore, !!nextCursor && !isLoading)
-
-  useEffect(() => {
-    const controller = new AbortController()
-    loadFeed('', controller.signal)
-    return () => controller.abort()
-  }, [activeSrcUrl, loadFeed])
+  const { items, setItems, nextCursor, isLoading, sentinelRef, loadMore } = useCursorPaginatedList(
+    fetchPage,
+    activeSrcUrl,
+  )
 
   const toggleLike = async (id: string) => {
     try {

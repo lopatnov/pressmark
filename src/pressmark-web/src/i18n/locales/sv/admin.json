@@ -71,7 +71,8 @@
     "subscriptions": "Prenumerationer",
     "noSubscriptions": "Inga prenumerationer",
     "noComments": "Inga kommentarer",
-    "commentRemoved": "[borttagen av admin]"
+    "commentRemoved": "[borttagen av admin]",
+    "removeComment": "Ta bort kommentar"
   },
   "reports": {
     "title": "Rapporter",

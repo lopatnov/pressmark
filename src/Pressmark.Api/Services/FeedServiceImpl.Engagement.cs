@@ -39,13 +39,16 @@ public partial class FeedServiceImpl
         var ct = context.CancellationToken;
 
         var query = db.FeedItems
-            .Include(f => f.Subscription)
             .Where(f => f.Subscription.UserId == userId
                      && !db.ReadItems.Any(r => r.UserId == userId && r.FeedItemId == f.Id));
 
-        if (!string.IsNullOrEmpty(request.SubscriptionId)
-            && Guid.TryParse(request.SubscriptionId, out var subId))
+        // An unparsable id used to silently drop the filter, marking every source read
+        // when the caller asked for one. Report it like every other endpoint does.
+        if (!string.IsNullOrEmpty(request.SubscriptionId))
+        {
+            var subId = RpcGuards.ParseId(request.SubscriptionId, "subscription_id");
             query = query.Where(f => f.SubscriptionId == subId);
+        }
 
         var unreadIds = await query.Select(f => f.Id).ToListAsync(ct);
 

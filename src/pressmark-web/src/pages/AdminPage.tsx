@@ -1,10 +1,8 @@
-import { lazy, Suspense, useEffect } from 'react'
+import { lazy, Suspense } from 'react'
 import { useTranslation } from 'react-i18next'
 import { usePageTitle } from '@/hooks/usePageTitle'
+import { useAdminSiteSettings } from '@/hooks/useAdminSiteSettings'
 import { Skeleton } from '@/components/ui/skeleton'
-import { adminClient } from '@/api/clients'
-import { useAdminStore } from '@/store/adminStore'
-import { toast } from 'sonner'
 
 // Lazy load admin sections
 const SiteSettingsSection = lazy(() => import('@/components/admin/SiteSettingsSection'))
@@ -29,30 +27,7 @@ const SectionLoading = () => (
 export function AdminPage() {
   const { t } = useTranslation(['admin', 'common'])
   usePageTitle(t('common:nav.admin'))
-  const { setSettings } = useAdminStore()
-
-  useEffect(() => {
-    adminClient
-      .getSiteSettings({})
-      .then((res) =>
-        setSettings({
-          siteName: res.siteName,
-          communityWindowDays: res.communityWindowDays,
-          registrationMode: res.registrationMode as 'open' | 'invite_only',
-          smtpHost: res.smtpHost,
-          smtpPort: res.smtpPort || 587,
-          smtpUser: res.smtpUser,
-          smtpPassword: '', // write-only
-          smtpUseTls: res.smtpUseTls,
-          smtpFromAddress: res.smtpFromAddress,
-          commentsEnabled: res.commentsEnabled,
-          feedRetentionDays: res.feedRetentionDays || 90,
-          communityPageEnabled: res.communityPageEnabled,
-          siteDescription: res.siteDescription,
-        }),
-      )
-      .catch(() => toast.error(t('common:error')))
-  }, [setSettings, t])
+  useAdminSiteSettings()
 
   return (
     <div className="mx-auto max-w-4xl space-y-8 p-4">

@@ -56,7 +56,22 @@ public partial class AuthServiceImpl
         var baseUrl = config["App:BaseUrl"] ?? "http://localhost:5173";
         var resetUrl = $"{baseUrl.TrimEnd('/')}/reset-password?token={rawToken}";
 
-        await emailService.SendPasswordResetAsync(user.Email, resetUrl, ct);
+        try
+        {
+            await emailService.SendPasswordResetAsync(user.Email, resetUrl, ct);
+        }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            // Non-fatal, and deliberately not reported: a delivery failure is only
+            // reachable for an address that exists, so surfacing it would undo the
+            // unconditional success above and turn this into an account-existence
+            // oracle. Logs the user id, not the address, to keep PII out of logs.
+            logger.LogWarning(ex, "Failed to send password reset email for user {UserId}", user.Id);
+        }
 
         return new Empty();
     }

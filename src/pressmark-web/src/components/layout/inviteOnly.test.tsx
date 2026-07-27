@@ -7,10 +7,7 @@ import { Sidebar } from './Sidebar'
 import { LoginPage } from '@/pages/LoginPage'
 
 // ── mock heavy dependencies ───────────────────────────────────────────────────
-
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({ t: (key: string) => key }),
-}))
+// react-i18next is mocked globally in src/test-setup.ts
 
 vi.mock('@/components/layout/LanguageSwitcher', () => ({
   LanguageSwitcher: () => null,

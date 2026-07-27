@@ -46,6 +46,7 @@
   "reportSubmitError": "Det gick inte att skicka rapporten",
   "filterBySource": "Filtrerat efter källa",
   "clearFilter": "Rensa filter",
+  "openArticle": "Öppna artikelsidan",
   "article": {
     "notFound": "Artikel hittades inte",
     "backToCommunity": "Tillbaka till gemenskapen"

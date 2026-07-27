@@ -21,7 +21,11 @@
     "commentsEnabled": "Включить комментарии",
     "feedRetentionDays": "Хранение ленты (дней)",
     "oldFeedsCleared": "Старые фиды очищены успешно",
-    "clearOldFeedsNow": "Очистить старые фиды сейчас"
+    "clearOldFeedsNow": "Очистить старые фиды сейчас",
+    "errors": {
+      "required": "Это поле обязательно",
+      "outOfRange": "Введите число от {{min}} до {{max}}"
+    }
   },
   "moderation": {
     "title": "Модерация",
@@ -71,7 +75,8 @@
     "subscriptions": "Подписки",
     "noSubscriptions": "Нет подписок",
     "noComments": "Нет комментариев",
-    "commentRemoved": "[удалено администратором]"
+    "commentRemoved": "[удалено администратором]",
+    "removeComment": "Удалить комментарий"
   },
   "reports": {
     "title": "Жалобы",

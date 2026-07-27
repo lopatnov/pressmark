@@ -71,7 +71,8 @@
     "subscriptions": "購読",
     "noSubscriptions": "購読がありません",
     "noComments": "コメントなし",
-    "commentRemoved": "[管理者によって削除されました]"
+    "commentRemoved": "[管理者によって削除されました]",
+    "removeComment": "コメントを削除"
   },
   "reports": {
     "title": "報告",

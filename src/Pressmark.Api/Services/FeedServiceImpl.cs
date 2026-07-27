@@ -123,7 +123,7 @@ public partial class FeedServiceImpl(
 
         var feedItemId = RpcGuards.ParseId(request.FeedItemId, "feed_item_id");
 
-        var isAdmin = context.GetHttpContext().User.IsInRole("Admin");
+        var isAdmin = context.GetHttpContext().User.IsInRole(UserRoles.Admin);
 
         var item = await db.FeedItems
             .AsNoTracking()
@@ -174,6 +174,7 @@ public partial class FeedServiceImpl(
                 System.Globalization.DateTimeStyles.RoundtripKind, out var since))
         {
             var catchUp = await db.FeedItems
+                .AsNoTracking()
                 .Include(f => f.Subscription)
                 .Where(f => f.Subscription.UserId == userId
                          && f.PublishedAt > since

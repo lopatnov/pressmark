@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -6,15 +7,10 @@ import { useTranslation } from 'react-i18next'
 import { usePageTitle } from '@/hooks/usePageTitle'
 import { Code, ConnectError } from '@connectrpc/connect'
 import { Button } from '@/components/ui/button'
+import { FormField } from '@/components/ui/form-field'
 import { authClient } from '@/api/clients'
 import { useAuthStore } from '@/store/authStore'
 import { ArrowLeft } from 'lucide-react'
-
-const schema = z.object({
-  email: z.email(),
-  password: z.string().min(1),
-})
-type FormData = z.infer<typeof schema>
 
 export function LoginPage() {
   const { t } = useTranslation(['auth', 'common'])
@@ -23,6 +19,18 @@ export function LoginPage() {
   const setAuth = useAuthStore((s) => s.setAuth)
   const registrationMode = useAuthStore((s) => s.registrationMode)
   const communityPageEnabled = useAuthStore((s) => s.communityPageEnabled)
+
+  // Built here rather than at module scope so the validation messages can be
+  // translated, the same way RegisterPage builds its schema.
+  const schema = useMemo(
+    () =>
+      z.object({
+        email: z.email({ error: t('errors.invalidEmail') }),
+        password: z.string().min(1, t('errors.passwordRequired')),
+      }),
+    [t],
+  )
+  type FormData = z.infer<typeof schema>
 
   const {
     register,
@@ -62,29 +70,23 @@ export function LoginPage() {
         <h1 className="text-2xl font-semibold">{t('login.title')}</h1>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="space-y-1">
-            <label className="text-sm font-medium">{t('login.email')}</label>
-            <input
-              {...register('email')}
-              type="email"
-              autoComplete="email"
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
-            />
-            {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
-          </div>
+          <FormField
+            id="email"
+            label={t('login.email')}
+            type="email"
+            autoComplete="email"
+            error={errors.email?.message}
+            {...register('email')}
+          />
 
-          <div className="space-y-1">
-            <label className="text-sm font-medium">{t('login.password')}</label>
-            <input
-              {...register('password')}
-              type="password"
-              autoComplete="current-password"
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
-            />
-            {errors.password && (
-              <p className="text-xs text-destructive">{errors.password.message}</p>
-            )}
-          </div>
+          <FormField
+            id="password"
+            label={t('login.password')}
+            type="password"
+            autoComplete="current-password"
+            error={errors.password?.message}
+            {...register('password')}
+          />
 
           {errors.root && <p className="text-sm text-destructive">{errors.root.message}</p>}
 
