@@ -11,7 +11,7 @@
 ├── rules/
 │   ├── index.md       — ценности, дисциплина билдов, экономия, ревью PR; точка входа в правила
 │   ├── workflow.md    — базовое правило «дирижёр делает сам, кроме...», примеры, DoD
-│   ├── team.md         — 8 ролей, зоны ответственности, политика инструментов
+│   ├── team.md         — 9 ролей, зоны ответственности, политика инструментов
 │   └── conventions.md — коммиты, версии, ветки, changelog, PR-чеклист
 ├── agents/
 │   ├── _TEMPLATE.md   — канонический шаблон агента (копировать при создании нового)
@@ -22,7 +22,8 @@
 │   ├── security-engineer.md  — чувствительные части, триаж security-алертов
 │   ├── devops.md             — CI/CD, Docker, GitHub Actions
 │   ├── technical-writer.md   — haiku; README/CHANGELOG по шаблону из diff'а
-│   └── build-validator.md    — haiku; read-only проверка сборки/линта/тестов
+│   ├── build-validator.md    — haiku; read-only проверка сборки/линта/тестов
+│   └── repo-scout.md         — haiku; read-only сбор сигналов для /maintain (deps/security/размер)
 ├── commands/
 │   ├── build.md       — /build: проверка сборки/линта/тестов через build-validator
 │   └── maintain.md    — /maintain: плановый проход поддержки (deps, security, refactor+tester,
@@ -47,7 +48,7 @@
 `CLAUDE.md` → `rules/index.md` → `rules/workflow.md` → `rules/team.md`. Дальше — профильные
 файлы агентов по мере вызова ролей.
 
-## Почему 8 ролей, а не «лин-ядро» из 13+
+## Почему 9 ролей, а не «лин-ядро» из 13+
 
 Изначальный шаблон принёс 18 ролей, скопированных под общий случай (business-analyst, designer,
 lawyer, manager, scrum-master, translator, manual-tester, qa, release-engineer и т.д.). Для

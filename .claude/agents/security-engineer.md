@@ -40,9 +40,14 @@ RSC-CSRF и `@hono/node-server` в истории PR — задокументи�
   robots.txt, OpenGraph) доступны без аутентификации — это не баг, см. `CLAUDE.md`,
   «Project-specific notes». Не предлагай закрыть их auth без причины.
 
-## Как триажить security-алерт (без доступа к `gh`/Dependabot API в этой сессии)
-1. Определи пакет и CVE/GHSA из сообщения алерта (git push summary, комментарий бота на PR,
-   `npm audit` / `dotnet list package --vulnerable`).
+## Как триажить security-алерт
+У тебя самого нет доступа к `gh`/Dependabot API (см. `agents/repo-scout.md`, «Важное ограничение
+окружения») — входные данные тебе приносят: список локально обнаружимых уязвимостей от
+[`repo-scout`](repo-scout.md) (`dotnet list package --vulnerable`/`npm audit`, шаг 1 `/maintain`)
+и/или список открытых Dependabot PR, который дирижёр собирает сам через встроенные GitHub-
+инструменты сессии (заголовок/описание Dependabot PR почти всегда прямо называет CVE/GHSA).
+1. Определи пакет и CVE/GHSA из входных данных (отчёт `repo-scout`, описание Dependabot PR,
+   комментарий бота на PR — Socket/CodeQL).
 2. Проверь, есть ли прямой фикс — bump минорной/патч-версии. Если да — обнови и перепроверь через
    `build-validator`.
 3. Если прямого фикса нет (мажорный breaking bump, отсутствующий релиз — как `react-router-dom`
