@@ -8,15 +8,7 @@ import { feedClient } from '@/api/clients'
 import { useAuthStore } from '@/store/authStore'
 
 // ── mocks ─────────────────────────────────────────────────────────────────────
-
-vi.mock('react-i18next', () => {
-  const t = (key: string) => key
-  return { useTranslation: () => ({ t }) }
-})
-
-vi.mock('sonner', () => ({
-  toast: { error: vi.fn(), success: vi.fn() },
-}))
+// react-i18next and sonner are mocked globally in src/test-setup.ts
 
 // The comment thread does its own RPC and is not what these tests cover
 vi.mock('@/components/feed/CommentSection', () => ({

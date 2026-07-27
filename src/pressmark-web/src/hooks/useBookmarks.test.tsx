@@ -5,17 +5,7 @@ import { useBookmarks } from './useBookmarks'
 import { feedClient } from '@/api/clients'
 
 // ── mocks ─────────────────────────────────────────────────────────────────────
-
-vi.mock('react-i18next', () => {
-  // Stable reference — `t` lands in useCallback deps, so recreating it on every
-  // call would re-fire the load effect forever.
-  const t = (key: string) => key
-  return { useTranslation: () => ({ t }) }
-})
-
-vi.mock('sonner', () => ({
-  toast: { error: vi.fn() },
-}))
+// react-i18next and sonner are mocked globally in src/test-setup.ts
 
 vi.mock('@/hooks/useIntersectionLoader', () => ({
   useIntersectionLoader: () => ({ current: null }),

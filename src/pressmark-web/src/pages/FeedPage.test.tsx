@@ -8,19 +8,7 @@ import { useFeedStore } from '@/store/feedStore'
 import { feedClient } from '@/api/clients'
 
 // ── mocks ─────────────────────────────────────────────────────────────────────
-
-vi.mock('react-i18next', () => {
-  // Stable reference — if recreated on every call, it lands in useCallback deps
-  // and causes infinite re-renders in components that include `t` as a dep.
-  const t = (key: string) => key
-  return {
-    useTranslation: () => ({ t }),
-  }
-})
-
-vi.mock('sonner', () => ({
-  toast: { error: vi.fn() },
-}))
+// react-i18next and sonner are mocked globally in src/test-setup.ts
 
 vi.mock('@/hooks/useIntersectionLoader', () => ({
   useIntersectionLoader: () => ({ current: null }),
