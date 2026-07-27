@@ -17,6 +17,23 @@ model: sonnet
 - Обеспечить адаптивность и базовую доступность (a11y).
 - Все видимые пользователю строки — через `t('ns:key')` (`react-i18next`), без хардкода текста.
 
+## Перед стартом — сверься с образцом
+Не начинай с чистого листа: `.claude/docs/extending-the-app.md` даёт пошаговый рецепт для новой
+страницы (хук → страница → маршрут → локализация → тест). Готовые образцы для копирования стиля:
+- Пара page+hook → `FeedPage.tsx` ↔ `useFeedPage.ts`, `CommunityPage.tsx` ↔ `useCommunityFeed.ts`,
+  `SubscriptionsPage.tsx` ↔ `useSubscriptions.ts`, `AdminUserPage.tsx` ↔ `useAdminUserDetails.ts`.
+- Бесконечная подгрузка списка → переиспользуй `useIntersectionLoader.ts`, не пиши свой
+  `IntersectionObserver`.
+- Заголовок вкладки → `usePageTitle.ts`.
+- Маршрут (`src/router/index.tsx`): выбери обёртку по видимости/доступу — `RootLayout` (без
+  layout приложения, как Login/Register), `AppLayout` (внутри приложения), `<ProtectedRoute />`
+  (только вошедшим, как `/feed`), `<AdminRoute />` (только админам, как `/admin`),
+  `<CommunityRoute />` (публичная страница внутри `AppLayout`). Некритичные для первого рендера
+  страницы — в `lazy()` + `withSuspense(...)`.
+- Локализация: ключи минимум в `en` и `ru` (`src/pressmark-web/src/i18n/locales/`), остальные 16
+  можно оставить на потом.
+- Component-тест страницы → по образцу `FeedPage.test.tsx`, роутер-обёртка — `inviteOnly.test.tsx`.
+
 ## Boundaries (что НЕ делаю)
 - Серверная логика и API → `server-developer`.
 - Проверка билда → `build-validator`.

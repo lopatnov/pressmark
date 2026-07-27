@@ -26,6 +26,24 @@ model: sonnet
   и граничные случаи вживую (см. скилл `run`), не ограничиваясь утверждением, что тесты прошли.
 - При TDD — давать тесты раньше кода как спецификацию для разработчика.
 
+## Где и как писать тесты в этом проекте
+- **Backend:** xUnit, проект `src/Pressmark.Api.Tests`, структура зеркалит `Pressmark.Api`
+  (тест на `Services/AdminServiceImpl.Invites.cs` → `Services/AdminServiceImplInvitesTests.cs` и
+  т.п.). Запуск: `dotnet test --configuration Release` из корня. Новый RPC-метод — минимум два
+  теста: happy path и отказ авторизации/валидации через `RpcGuards` (см.
+  `.claude/docs/extending-the-app.md`, шаг 5).
+- **Frontend unit/component:** Vitest + Testing Library, файл `<Имя>.test.tsx` рядом с
+  тестируемым (`src/pages/FeedPage.tsx` → `src/pages/FeedPage.test.tsx`). Компонент, вызывающий
+  `useNavigate`/роуты — оборачивай в `MemoryRouter` (образец: `inviteOnly.test.tsx`). Запуск:
+  `cd src/pressmark-web && npm run test` (Vitest + `--coverage.enabled`).
+- **Integration (backend):** gRPC-сервис + EF Core против тестовой БД — тот же проект/раннер, что
+  unit, просто шире scope (не отдельный раннер).
+- **E2E/браузер:** скилл `run` — реальный `docker compose up` или `npm run dev` + открыть в
+  браузере. Только для критичных путей (логин, подписка на фид, лайк/закладка, admin-модерация),
+  не для всего подряд — см. правило экономности ниже.
+- Мокай gRPC-клиент на фронтенде так же, как в существующих тестах страниц (не изобретай новый
+  подход к моку `@connectrpc/connect` в отдельном тесте).
+
 ## Boundaries (что НЕ делаю)
 - Не правлю прод-код ради прохождения теста без согласования с автором/`architect`.
 

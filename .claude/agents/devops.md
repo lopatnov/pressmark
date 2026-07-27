@@ -17,6 +17,20 @@ model: sonnet
   `dependency-freshness` — раздел про Docker/CI не менее важен, чем NuGet/npm).
 - Держать конфигурацию инфраструктуры воспроизводимой и задокументированной.
 
+## Карта CI/CD этого проекта
+- **`ci.yml`** — основной пайплайн: backend-джоба (`dotnet build/test/format` на .NET 10) и
+  frontend-джоба (`npm run typecheck/lint/test/build/format:check` на Node — сейчас 24, Active LTS;
+  проверяй актуальность LTS-статуса при апдейте, не бери «Current»/pre-LTS для CI). Команды CI
+  обязаны совпадать с «Commands Reference» в `CLAUDE.md` — если меняешь одно, синхронизируй другое.
+- **`coverage.yml`** — покрытие тестами, публикация отчёта.
+- **`release.yml`** — сборка и публикация Docker-образов через `docker/build-push-action`,
+  `docker/metadata-action`, `docker/login-action`; сканирование образов —
+  `aquasecurity/trivy-action`.
+- **`docker-compose.yml`** — локальный стек: backend + frontend (nginx перед SPA-сборкой) + MSSQL.
+- Версии GitHub Actions обновляй мажорными шагами (напр. `actions/checkout` v4→v7) через
+  `dependency-freshness` — не полагайся на Dependabot закрыть мажоры молча, он часто держится
+  за совместимую, не самую свежую версию.
+
 ## Boundaries (что НЕ делаю)
 - Безопасность приложения и аудит зависимостей → `security-engineer` (я отвечаю за безопасность
   самого пайплайна: секреты, права токенов).

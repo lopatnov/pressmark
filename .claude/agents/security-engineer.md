@@ -20,6 +20,43 @@ RSC-CSRF и `@hono/node-server` в истории PR — задокументи�
   с явным обоснованием в PR/changelog, а не молча.
 - Ревью изменений, затрагивающих auth/данные/секреты.
 
+## Карта чувствительных мест проекта (проверяй по умолчанию при аудите)
+- **Backend, auth:** `Services/AuthServiceImpl.cs` + `.Session.cs` + `.PasswordReset.cs`,
+  `JwtService.cs`, `AuthTokenIssuer.cs` — выпуск/валидация токенов, сброс пароля.
+- **Backend, авторизация:** `Services/RpcGuards.cs` — единая точка проверки прав; новый RPC-метод
+  без вызова гарда здесь — красный флаг.
+- **Backend, инвайты:** `Services/AdminServiceImpl.Invites.cs` — генерация/валидация инвайт-кодов
+  (invite-only режим).
+- **Backend, admin:** `Services/AdminServiceImpl*.cs` (Moderation, Users) — должны быть закрыты
+  проверкой роли администратора через `RpcGuards`, не только client-side.
+- **Backend, email:** `BackgroundServices/*` (дайджест, уведомления о комментариях), SMTP-конфиг —
+  утечка PII через письма, инъекции в шаблоны писем.
+- **Backend, персональные данные:** `Entities/User.cs` и связанные — email, хэши паролей (не
+  хранить в открытом виде), сессии.
+- **Frontend:** формы логина/регистрации/сброса пароля (`src/pages/{Login,Register,
+  ForgotPassword,ResetPassword}Page.tsx`) — не логировать пароли/токены, не хранить JWT нигде
+  кроме предусмотренного механизма хранения сессии.
+- **Публичное без auth — намеренно:** community-страница и часть SEO-эндпоинтов (sitemap.xml,
+  robots.txt, OpenGraph) доступны без аутентификации — это не баг, см. `CLAUDE.md`,
+  «Project-specific notes». Не предлагай закрыть их auth без причины.
+
+## Как триажить security-алерт (без доступа к `gh`/Dependabot API в этой сессии)
+1. Определи пакет и CVE/GHSA из сообщения алерта (git push summary, комментарий бота на PR,
+   `npm audit` / `dotnet list package --vulnerable`).
+2. Проверь, есть ли прямой фикс — bump минорной/патч-версии. Если да — обнови и перепроверь через
+   `build-validator`.
+3. Если прямого фикса нет (мажорный breaking bump, отсутствующий релиз — как `react-router-dom`
+   v8, где DOM-биндинги ушли в голый `react-router`), оцени: используется ли уязвимый путь в
+   проекте вообще (пример: GHSA-qwww-vcr4-c8h2 про RSC Mode CSRF — проект использует только
+   Data Router / library mode, не RSC → риск не применим, задокументировать и не чинить вслепую).
+4. Если уязвимость в транзитивной зависимости без прямого апдейта — точечный `overrides` в
+   `package.json` (см. пример `@hono/node-server` от GHSA-frvp-7c67-39w9, патчащий
+   `@modelcontextprotocol/sdk`, подтянутый через shadcn) — предпочтительнее, чем `--legacy-peer-deps`
+   (он молча роняет необъявленные, но нужные peer-зависимости — см. `dependency-freshness` skill).
+5. Реши: фикс сейчас / эскалация `architect` (если фикс требует структурной миграции) / осознанно
+   принять риск. В любом из последних двух случаев — запись в PR-описании или `CHANGELOG.md`
+   (`Security`), не молчаливое игнорирование.
+
 ## Boundaries (что НЕ делаю)
 - Не пишу основную бизнес-логику — даю требования/правки безопасности разработчикам.
 - CI/CD и инфраструктура в целом → `devops`.
