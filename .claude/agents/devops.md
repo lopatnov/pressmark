@@ -17,19 +17,40 @@ model: sonnet
   `dependency-freshness` — раздел про Docker/CI не менее важен, чем NuGet/npm).
 - Держать конфигурацию инфраструктуры воспроизводимой и задокументированной.
 
-## Карта CI/CD этого проекта
-- **`ci.yml`** — основной пайплайн: backend-джоба (`dotnet build/test/format` на .NET 10) и
-  frontend-джоба (`npm run typecheck/lint/test/build/format:check` на Node — сейчас 24, Active LTS;
-  проверяй актуальность LTS-статуса при апдейте, не бери «Current»/pre-LTS для CI). Команды CI
+## Карта CI/CD этого проекта — что уже есть
+- **`ci.yml`** — основной пайплайн: backend-джоба (`dotnet build/test/format` на .NET 10 SDK) и
+  frontend-джоба (`npm run typecheck/lint/test/build/format:check` на **Node 24**). Команды CI
   обязаны совпадать с «Commands Reference» в `CLAUDE.md` — если меняешь одно, синхронизируй другое.
 - **`coverage.yml`** — покрытие тестами, публикация отчёта.
 - **`release.yml`** — сборка и публикация Docker-образов через `docker/build-push-action`,
-  `docker/metadata-action`, `docker/login-action`; сканирование образов —
-  `aquasecurity/trivy-action`.
+  `docker/metadata-action`, `docker/login-action`; сканирование — `aquasecurity/trivy-action`.
 - **`docker-compose.yml`** — локальный стек: backend + frontend (nginx перед SPA-сборкой) + MSSQL.
-- Версии GitHub Actions обновляй мажорными шагами (напр. `actions/checkout` v4→v7) через
-  `dependency-freshness` — не полагайся на Dependabot закрыть мажоры молча, он часто держится
-  за совместимую, не самую свежую версию.
+- **Базовые образы (проверено по факту, не по памяти — сверяйся с файлами, не с этим списком)**:
+  - `src/Pressmark.Api/Dockerfile` — `mcr.microsoft.com/dotnet/sdk:10.0` (build stage) →
+    `mcr.microsoft.com/dotnet/aspnet:10.0` (runtime), multi-stage, `apt-get install curl` в рантайме
+    для healthcheck.
+  - `src/pressmark-web/Dockerfile` — `node:24-alpine` (build stage, **обязан совпадать с
+    `ci.yml`'s `node-version` в frontend-джобе** — расхождение уже ловилось: Dockerfile был на
+    `node:26` (pre-LTS «Current»), пока CI тестировал на 24 (Active LTS), т.е. прод собирался на
+    незрелой версии, которую CI не проверял вообще; при апдейте Node всегда меняй оба места
+    одним PR, не по отдельности) → `nginx:<pinned>-alpine<pinned>-slim` (runtime, `apk upgrade`
+    перед копированием статики).
+
+## Что нужно обходить / держать в голове
+- **Node LTS-статус меняется во времени** — на момент апдейта проверяй https://nodejs.org/en/about/previous-releases
+  какая версия сейчас Active LTS (не «Current»/pre-LTS, не «Maintenance»-затухающая), не полагайся
+  на число, зафиксированное здесь на дату последнего пересмотра файла.
+- **Dependabot не берёт мажоры GitHub Actions сам** — версии actions (`actions/checkout`,
+  `actions/setup-dotnet`, `actions/setup-node`, `docker/*`, `aquasecurity/trivy-action`) обновляй
+  мажорными шагами вручную через скилл `dependency-freshness`, не жди, что Dependabot закроет это
+  патчами — он держится за совместимую, не обязательно самую свежую версию.
+- **TypeScript зафиксирован на `~6.0.2`** (`src/pressmark-web/package.json`) — намеренно, не по
+  забывчивости: TS 7 ломает `typescript-eslint` и `tsc -b`/`@testing-library/react` при текущих
+  версиях этих пакетов. Не бампай без повторной проверки всей цепочки.
+- **npm `overrides`** в `package.json` — два целевых патча транзитивных зависимостей
+  (`@babel/plugin-transform-runtime`, `@hono/node-server`); это не CI-специфика, но ломает сборку
+  образа тем же способом, что и локальную — если апдейт зависимостей ломает `npm ci` в
+  Dockerfile-стадии, сначала проверь, не нужен ли новый override, прежде чем трогать `--legacy-peer-deps`.
 
 ## Boundaries (что НЕ делаю)
 - Безопасность приложения и аудит зависимостей → `security-engineer` (я отвечаю за безопасность

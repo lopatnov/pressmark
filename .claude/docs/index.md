@@ -25,7 +25,8 @@
 │   └── build-validator.md    — haiku; read-only проверка сборки/линта/тестов
 ├── commands/
 │   ├── build.md       — /build: проверка сборки/линта/тестов через build-validator
-│   └── maintain.md    — /maintain: плановый проход поддержки (deps, security, refactor, radar, PR)
+│   └── maintain.md    — /maintain: плановый проход поддержки (deps, security, refactor+tester,
+│                                    build-validator, radar, changelog/technical-writer, PR)
 ├── skills/
 │   ├── _TEMPLATE/               — канонический шаблон скилла (копировать при создании нового)
 │   ├── testing/                 — плейбук тестирования (пирамида тестов, роль tester)
