@@ -71,7 +71,8 @@
     "subscriptions": "구독",
     "noSubscriptions": "구독 없음",
     "noComments": "댓글 없음",
-    "commentRemoved": "[관리자에 의해 삭제됨]"
+    "commentRemoved": "[관리자에 의해 삭제됨]",
+    "removeComment": "댓글 삭제"
   },
   "reports": {
     "title": "신고",

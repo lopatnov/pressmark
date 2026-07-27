@@ -46,6 +46,7 @@
   "reportSubmitError": "Nie udało się wysłać zgłoszenia",
   "filterBySource": "Filtruj według źródła",
   "clearFilter": "Wyczyść filtr",
+  "openArticle": "Otwórz stronę artykułu",
   "article": {
     "notFound": "Artykuł nie znaleziony",
     "backToCommunity": "Powrót do społeczności"

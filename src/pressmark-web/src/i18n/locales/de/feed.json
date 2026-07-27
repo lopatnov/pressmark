@@ -46,6 +46,7 @@
   "reportSubmitError": "Meldung konnte nicht gesendet werden",
   "filterBySource": "Nach Quelle filtern",
   "clearFilter": "Filter löschen",
+  "openArticle": "Artikelseite öffnen",
   "article": {
     "notFound": "Artikel nicht gefunden",
     "backToCommunity": "Zurück zur Community"

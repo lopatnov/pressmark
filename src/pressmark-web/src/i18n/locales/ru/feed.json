@@ -46,6 +46,7 @@
   "reportSubmitError": "Не удалось отправить жалобу",
   "filterBySource": "Фильтр по источнику",
   "clearFilter": "Сбросить фильтр",
+  "openArticle": "Открыть страницу статьи",
   "article": {
     "notFound": "Статья не найдена",
     "backToCommunity": "Назад к сообществу"

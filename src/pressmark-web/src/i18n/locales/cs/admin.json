@@ -71,7 +71,8 @@
     "subscriptions": "Odběry",
     "noSubscriptions": "Žádné odběry",
     "noComments": "Žádné komentáře",
-    "commentRemoved": "[odstraněno správcem]"
+    "commentRemoved": "[odstraněno správcem]",
+    "removeComment": "Odstranit komentář"
   },
   "reports": {
     "title": "Hlášení",

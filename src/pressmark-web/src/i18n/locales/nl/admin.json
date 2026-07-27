@@ -71,7 +71,8 @@
     "subscriptions": "Abonnementen",
     "noSubscriptions": "Geen abonnementen",
     "noComments": "Geen opmerkingen",
-    "commentRemoved": "[verwijderd door admin]"
+    "commentRemoved": "[verwijderd door admin]",
+    "removeComment": "Reactie verwijderen"
   },
   "reports": {
     "title": "Meldingen",

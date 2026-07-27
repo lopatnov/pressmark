@@ -46,6 +46,7 @@
   "reportSubmitError": "Nepodařilo se odeslat hlášení",
   "filterBySource": "Filtrováno podle zdroje",
   "clearFilter": "Vymazat filtr",
+  "openArticle": "Otevřít stránku článku",
   "article": {
     "notFound": "Článek nenalezen",
     "backToCommunity": "Zpět do komunity"

@@ -71,7 +71,8 @@
     "subscriptions": "订阅",
     "noSubscriptions": "无订阅",
     "noComments": "无评论",
-    "commentRemoved": "[管理员已删除]"
+    "commentRemoved": "[管理员已删除]",
+    "removeComment": "删除评论"
   },
   "reports": {
     "title": "举报",

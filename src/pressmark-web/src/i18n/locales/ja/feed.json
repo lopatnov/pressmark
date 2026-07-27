@@ -46,6 +46,7 @@
   "reportSubmitError": "報告の送信に失敗しました",
   "filterBySource": "ソースでフィルタ中",
   "clearFilter": "フィルタを解除",
+  "openArticle": "記事ページを開く",
   "article": {
     "notFound": "記事が見つかりません",
     "backToCommunity": "コミュニティに戻る"

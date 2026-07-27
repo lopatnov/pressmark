@@ -46,6 +46,7 @@
   "reportSubmitError": "Nu s-a putut trimite raportul",
   "filterBySource": "Filtrat după sursă",
   "clearFilter": "Șterge filtrul",
+  "openArticle": "Deschideți pagina articolului",
   "article": {
     "notFound": "Articol negăsit",
     "backToCommunity": "Înapoila comunitate"

@@ -46,6 +46,7 @@
   "reportSubmitError": "Falha ao enviar denúncia",
   "filterBySource": "Filtrado por fonte",
   "clearFilter": "Limpar filtro",
+  "openArticle": "Abrir a página do artigo",
   "article": {
     "notFound": "Artigo não encontrado",
     "backToCommunity": "Voltar à comunidade"

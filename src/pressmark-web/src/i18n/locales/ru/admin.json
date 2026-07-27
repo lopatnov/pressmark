@@ -71,7 +71,8 @@
     "subscriptions": "Подписки",
     "noSubscriptions": "Нет подписок",
     "noComments": "Нет комментариев",
-    "commentRemoved": "[удалено администратором]"
+    "commentRemoved": "[удалено администратором]",
+    "removeComment": "Удалить комментарий"
   },
   "reports": {
     "title": "Жалобы",

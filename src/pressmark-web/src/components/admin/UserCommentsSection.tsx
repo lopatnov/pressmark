@@ -34,7 +34,8 @@ export function UserCommentsSection({ comments, onRemove }: Props) {
                     <Link
                       to={`/article/${c.feedItemId}`}
                       className="text-muted-foreground hover:text-foreground transition-colors"
-                      title={c.feedItemTitle}
+                      title={c.feedItemTitle || t('admin:moderation.openArticle')}
+                      aria-label={t('admin:moderation.openArticle')}
                     >
                       <ExternalLink className="h-3.5 w-3.5" />
                     </Link>
@@ -43,7 +44,8 @@ export function UserCommentsSection({ comments, onRemove }: Props) {
                     <button
                       type="button"
                       onClick={() => onRemove(c.id)}
-                      title={t('admin:users.commentRemoved')}
+                      title={t('admin:users.removeComment')}
+                      aria-label={t('admin:users.removeComment')}
                       className="cursor-pointer text-muted-foreground hover:text-destructive transition-colors"
                     >
                       <Trash2 className="h-3.5 w-3.5" />

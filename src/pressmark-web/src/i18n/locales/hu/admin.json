@@ -71,7 +71,8 @@
     "subscriptions": "Előfizetések",
     "noSubscriptions": "Nincs előfizetés",
     "noComments": "Nincsenek megjegyzések",
-    "commentRemoved": "[admin által eltávolítva]"
+    "commentRemoved": "[admin által eltávolítva]",
+    "removeComment": "Hozzászólás eltávolítása"
   },
   "reports": {
     "title": "Bejelentések",

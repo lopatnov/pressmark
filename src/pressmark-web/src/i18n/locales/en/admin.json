@@ -71,7 +71,8 @@
     "subscriptions": "Subscriptions",
     "noSubscriptions": "No subscriptions",
     "noComments": "No comments",
-    "commentRemoved": "[removed by admin]"
+    "commentRemoved": "[removed by admin]",
+    "removeComment": "Remove comment"
   },
   "reports": {
     "title": "Reports",

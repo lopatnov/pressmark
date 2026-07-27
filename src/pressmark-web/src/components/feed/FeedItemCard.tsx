@@ -35,7 +35,7 @@ export function FeedItemCard({
   articleId,
   sourceHref,
 }: FeedItemCardProps) {
-  const { t } = useTranslation('subscriptions')
+  const { t } = useTranslation(['feed', 'subscriptions'])
   const isUnread = item.isRead === false
   const youtubeId = getYouTubeId(item.url)
   const faviconUrl = getFaviconUrl(item.url)
@@ -61,8 +61,8 @@ export function FeedItemCard({
         {articleId ? (
           <Link
             to={`/article/${articleId}`}
-            title="Open article page"
-            aria-label="Open article page"
+            title={t('feed:openArticle')}
+            aria-label={t('feed:openArticle')}
             className="shrink-0 text-muted-foreground hover:text-foreground transition-colors"
           >
             <ExternalLink className="mt-0.5 h-3.5 w-3.5" />
@@ -100,7 +100,7 @@ export function FeedItemCard({
             {item.isSourceBanned && (
               <span className="flex items-center gap-0.5 rounded-full bg-destructive/10 px-1.5 py-0.5 text-destructive">
                 <Ban className="h-2.5 w-2.5" />
-                <span>{t('banned')}</span>
+                <span>{t('subscriptions:banned')}</span>
               </span>
             )}
             <span>·</span>

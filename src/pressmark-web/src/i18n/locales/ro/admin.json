@@ -71,7 +71,8 @@
     "subscriptions": "Abonamente",
     "noSubscriptions": "Nu există abonamente",
     "noComments": "Fără comentarii",
-    "commentRemoved": "[eliminat de admin]"
+    "commentRemoved": "[eliminat de admin]",
+    "removeComment": "Elimină comentariu"
   },
   "reports": {
     "title": "Rapoarte",
