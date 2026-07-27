@@ -22,6 +22,14 @@ model: haiku
 
 **Backend** (запускай из корня репозитория; решение — `Pressmark.slnx`):
 1. `dotnet build --configuration Release` — 0 ошибок обязательны. Warnings — сосчитай, не блокируют GREEN.
+   Сюда же встроены Roslyn-анализаторы (`Roslynator.Analyzers` в `Pressmark.Api.csproj` + штатные
+   .NET SDK-анализаторы, включая nullable-анализ) — отдельной команды для них нет, их диагностика
+   приходит в том же выводе `dotnet build`. Различай по префиксу кода: `CSxxxx` — обычный
+   компилятор, `RCSxxxx` — Roslynator, `CAxxxx` — .NET-анализатор. Считай их в общий счётчик
+   warnings, но если один и тот же `RCSxxxx`/`CAxxxx`-код повторяется в нескольких местах (не
+   опечатка, а системный паттерн) — вынеси его отдельной строкой в «ТОП-ПРОБЛЕМЫ» с пометкой «к
+   architect» (см. эскалацию ниже), это тот же класс сигнала, что и Sonar Code Smell, только уже
+   доступный локально без сети.
 2. `dotnet test --configuration Release` — все тесты обязаны пройти. Зафиксируй `<passed>/<total>`.
 3. `dotnet format src/Pressmark.Api/Pressmark.Api.csproj --verify-no-changes`
 4. `dotnet format src/Pressmark.Api.Tests/Pressmark.Api.Tests.csproj --verify-no-changes`
@@ -83,6 +91,9 @@ TYPECHECK frontend (tsc):         ok | <N ошибок>
 - Ошибка выглядит архитектурной (не опечатка/типизация, а конфликт паттернов, дублирование,
   нарушение разреза partial-классов/page+hook из `CLAUDE.md`) → пометь «к architect» в рекомендации,
   не пытайся оценить это сам — не твоя зона.
+- Повторяющийся `RCSxxxx`/`CAxxxx`-код анализатора (не единичный, а системный паттерн) → та же
+  пометка «к architect» — это его зона (см. «Static-analysis сигналы» в `architect.md`), не пытайся
+  сам решить, чинить это сейчас или нет.
 
 ## Definition of Done
 Все применимые команды из списка выше запущены в указанном порядке, дан вердикт GREEN/RED с
