@@ -1,13 +1,14 @@
 ---
 name: dependency-freshness
-description: Чек-лист обновления зависимостей Pressmark до ДЕЙСТВИТЕЛЬНО последних версий — включая мажорные и фреймворк (.NET SDK, React) — а не только то, что молча подтянет `npm install`/`dotnet add package`, и не только то, что предложит Dependabot патчами. Применяй по запросу пользователя на плановое обновление зависимостей, или когда `npm outdated`/`dotnet list package --outdated` показывают устаревшие мажоры.
+description: Чек-лист обновления зависимостей Pressmark до ДЕЙСТВИТЕЛЬНО последних версий — включая мажорные, фреймворк (.NET SDK, React), Docker-образы и GitHub Actions — а не только то, что молча подтянет `npm install`/`dotnet add package`, и не только то, что предложит Dependabot патчами. Применяй по запросу пользователя на плановое обновление зависимостей, или когда `npm outdated`/`dotnet list package --outdated` показывают устаревшие мажоры.
 ---
 
 # Dependency Freshness — обновление до реально последних версий
 
 > Стек-специфичный скилл (в отличие от `.claude/rules/*`, которые веб-нейтральны). Команды ниже —
 > для Pressmark: backend `src/Pressmark.Api` + `src/Pressmark.Api.Tests` (.NET/NuGet), frontend
-> `src/pressmark-web` (npm).
+> `src/pressmark-web` (npm), плюс Docker-образы и GitHub Actions (зона `devops`, но чек-лист тот
+> же по духу — CI/registry не гарантируют «последнее» так же, как package-менеджеры не гарантируют).
 
 ## Когда применять
 - Пользователь просит «обнови зависимости до последних», плановый maintenance-проход.
@@ -72,6 +73,42 @@ description: Чек-лист обновления зависимостей Press
    `@hono/node-server`), с проверкой, что затронутый dev-инструмент всё ещё работает
    (`npx <tool> --help` и т.п.), а не только что `npm install` прошёл без ошибок.
 
+## Docker-образы
+
+Роль: `devops` (не покрывается `repo-scout` — тот смотрит только пакетные менеджеры, не registry).
+Текущий набор образов и почему разные Dockerfile обязаны совпадать по версии — см. «Карта CI/CD
+этого проекта» в `agents/devops.md`, здесь — только чек-лист свежести:
+
+1. Для каждого базового образа (`src/Pressmark.Api/Dockerfile`,
+   `src/pressmark-web/Dockerfile`) сверь тег с реально доступными в registry — `docker manifest
+   inspect <image>:<tag>` или страница тегов на Docker Hub/`mcr.microsoft.com`, не полагайся на то,
+   что тег вида `10.0`/`24-alpine` сам «подтянется»: он **пиновый**, и Dependabot по нему
+   молчит, пока explicit-версия совпадает по паттерну.
+2. **Node — сверяй LTS-статус, не только номер версии**: https://nodejs.org/en/about/previous-releases
+   — берём Active LTS, не «Current»/pre-LTS и не затухающую «Maintenance». `node:26-alpine` в
+   Dockerfile при `ci.yml` на Node 24 — реальный прецедент рассинхрона (прод собирался на
+   незрелой версии, которую CI не проверял вообще), см. `agents/devops.md`.
+3. **.NET SDK/runtime образы** — тег обязан совпадать с TFM в `.csproj` (`net10.0` →
+   `mcr.microsoft.com/dotnet/sdk:10.0`/`aspnet:10.0`); апдейт major .NET — самостоятельная задача
+   через `architect`, не рутинный bump образа.
+4. При апдейте Node/.NET — меняй **оба места одним PR**: Dockerfile и `ci.yml`'s
+   `node-version`/`dotnet-version` — расхождение означает, что прод собирается на версии, которую
+   CI не тестирует вообще.
+
+## GitHub Actions
+
+Роль: `devops`. Dependabot **не берёт мажоры GitHub Actions сам** (держится совместимой, не
+обязательно последней версии) — обновляй вручную:
+
+1. Для каждого action в `.github/workflows/*.yml` (`actions/checkout`, `actions/setup-dotnet`,
+   `actions/setup-node`, `docker/build-push-action`, `docker/metadata-action`, `docker/login-action`,
+   `aquasecurity/trivy-action` и т.п.) — сверь закреплённую версию с последним релизом на странице
+   action на GitHub Marketplace/репозитория (`Releases`), не с тем, что подсказывает автокомплит.
+2. Мажорный апдейт action — читай `Releases`/`CHANGELOG` на breaking changes во входных/выходных
+   параметрах (`with:`/`outputs:`), не просто меняй номер версии в `uses:`.
+3. После апдейта — обязательный прогон workflow (push в ветку или `workflow_dispatch`, если
+   доступен) до мержа, не полагайся на то, что синтаксис не изменился.
+
 ## Итоговый чек-лист
 
 - [ ] `dotnet list package --outdated --include-transitive` прогнан для обоих `.csproj`.
@@ -87,15 +124,21 @@ description: Чек-лист обновления зависимостей Press
 - [ ] После апдейтов: `npm run typecheck && npm run lint && npm run test && npm run build` и
       `dotnet build --configuration Release && dotnet test --configuration Release` — всё зелёное
       (делегировать `build-validator`).
+- [ ] Базовые образы Docker сверены с registry (не только с тегом-паттерном), Node/.NET SDK версии
+      совпадают между Dockerfile и `ci.yml` (`devops`).
+- [ ] Версии GitHub Actions в `.github/workflows/*.yml` сверены с последними релизами, мажоры
+      апдейчены вручную с проверкой breaking changes (`devops`).
 
 ## Связанные роли и правила
 - `repo-scout` — read-only снимок устаревших пакетов (`dotnet list --outdated`/`npm outdated`)
   одним проходом в начале `/maintain`, отправная точка для этого чек-листа вместо повторного
-  запуска тех же команд вручную.
+  запуска тех же команд вручную. Docker-образы и GitHub Actions `repo-scout` не покрывает — это
+  делает `devops` вручную по разделам выше.
 - `build-validator` — прогон проверок после каждого апдейта, без замусоривания контекста.
 - `architect` — решение по мажорным/фреймворк-апдейтам с breaking changes.
 - `security-engineer` — если апдейт закрывает Dependabot security alert, свериться, что версия
   действительно патчит advisory (не просто «новее»).
+- `devops` — владелец разделов «Docker-образы» и «GitHub Actions» выше.
 
 ## Definition of Done
 Все пакеты сверены с реально последними опубликованными версиями (не только с тем, что подтянул бы
