@@ -62,7 +62,7 @@ builder.Services.AddRateLimiter(options =>
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 });
 
-// HTTP client (pooled — used by SubscriptionServiceImpl and RssFetcherService)
+// HTTP client (pooled — used by FeedFetcherService and the favicon proxy)
 builder.Services.AddHttpClient("Pressmark", c =>
 {
     c.DefaultRequestHeaders.UserAgent.ParseAdd("Pressmark/1.0");
