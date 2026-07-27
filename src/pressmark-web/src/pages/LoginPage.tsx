@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next'
 import { usePageTitle } from '@/hooks/usePageTitle'
 import { Code, ConnectError } from '@connectrpc/connect'
 import { Button } from '@/components/ui/button'
+import { FormField } from '@/components/ui/form-field'
 import { authClient } from '@/api/clients'
 import { useAuthStore } from '@/store/authStore'
 import { ArrowLeft } from 'lucide-react'
@@ -69,45 +70,23 @@ export function LoginPage() {
         <h1 className="text-2xl font-semibold">{t('login.title')}</h1>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="space-y-1">
-            <label htmlFor="email" className="text-sm font-medium">
-              {t('login.email')}
-            </label>
-            <input
-              id="email"
-              {...register('email')}
-              type="email"
-              autoComplete="email"
-              aria-invalid={!!errors.email}
-              aria-describedby={errors.email ? 'email-error' : undefined}
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
-            />
-            {errors.email && (
-              <p id="email-error" className="text-xs text-destructive">
-                {errors.email.message}
-              </p>
-            )}
-          </div>
+          <FormField
+            id="email"
+            label={t('login.email')}
+            type="email"
+            autoComplete="email"
+            error={errors.email?.message}
+            {...register('email')}
+          />
 
-          <div className="space-y-1">
-            <label htmlFor="password" className="text-sm font-medium">
-              {t('login.password')}
-            </label>
-            <input
-              id="password"
-              {...register('password')}
-              type="password"
-              autoComplete="current-password"
-              aria-invalid={!!errors.password}
-              aria-describedby={errors.password ? 'password-error' : undefined}
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
-            />
-            {errors.password && (
-              <p id="password-error" className="text-xs text-destructive">
-                {errors.password.message}
-              </p>
-            )}
-          </div>
+          <FormField
+            id="password"
+            label={t('login.password')}
+            type="password"
+            autoComplete="current-password"
+            error={errors.password?.message}
+            {...register('password')}
+          />
 
           {errors.root && <p className="text-sm text-destructive">{errors.root.message}</p>}
 

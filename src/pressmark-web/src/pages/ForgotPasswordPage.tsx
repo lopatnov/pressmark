@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { usePageTitle } from '@/hooks/usePageTitle'
 import { Button } from '@/components/ui/button'
+import { FormField } from '@/components/ui/form-field'
 import { authClient } from '@/api/clients'
 
 export function ForgotPasswordPage() {
@@ -45,25 +46,14 @@ export function ForgotPasswordPage() {
           <p className="text-sm text-muted-foreground">{t('forgotPasswordSuccess')}</p>
         ) : (
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div className="space-y-1">
-              <label htmlFor="email" className="text-sm font-medium">
-                {t('login.email')}
-              </label>
-              <input
-                id="email"
-                {...register('email')}
-                type="email"
-                autoComplete="email"
-                aria-invalid={!!errors.email}
-                aria-describedby={errors.email ? 'email-error' : undefined}
-                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
-              />
-              {errors.email && (
-                <p id="email-error" className="text-xs text-destructive">
-                  {errors.email.message}
-                </p>
-              )}
-            </div>
+            <FormField
+              id="email"
+              label={t('login.email')}
+              type="email"
+              autoComplete="email"
+              error={errors.email?.message}
+              {...register('email')}
+            />
 
             <Button type="submit" className="w-full" disabled={isSubmitting}>
               {t('forgotPasswordSubmit')}
