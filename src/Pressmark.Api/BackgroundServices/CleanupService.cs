@@ -1,4 +1,3 @@
-using Microsoft.EntityFrameworkCore;
 using Pressmark.Api.Data;
 using Pressmark.Api.Services;
 
@@ -27,39 +26,12 @@ public class CleanupService(
             using var scope = scopeFactory.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-            var settings = await SiteSettingsSnapshot.LoadAsync(db, [
-                SiteSettingKeys.CommunityWindowDays,
-                SiteSettingKeys.FeedRetentionDays,
-            ], ct);
+            var result = await FeedRetentionCleaner.RunAsync(db, ct);
 
-            var windowDays = settings.CommunityWindowDays;
-            var retentionDays = settings.FeedRetentionDays;
-
-            // Delete likes older than community window
-            var likeCutoff = DateTime.UtcNow.AddDays(-windowDays);
-            var deletedLikes = await db.Likes
-                .Where(l => l.CreatedAt < likeCutoff)
-                .ExecuteDeleteAsync(ct);
-
-            // Delete feed items older than retention period that have no bookmark
-            var itemCutoff = DateTime.UtcNow.AddDays(-retentionDays);
-            var toDelete = await db.FeedItems
-                .Where(f => f.FetchedAt < itemCutoff && !f.Bookmarks.Any())
-                .Select(f => f.Id)
-                .ToListAsync(ct);
-
-            var deletedItems = 0;
-            foreach (var batch in toDelete.Chunk(500))
-            {
-                deletedItems += await db.FeedItems
-                    .Where(f => batch.Contains(f.Id))
-                    .ExecuteDeleteAsync(ct);
-            }
-
-            if (deletedLikes > 0 || deletedItems > 0)
+            if (result.RemovedAnything)
                 logger.LogInformation(
                     "Cleanup: deleted {Likes} likes older than {Window}d, {Items} feed items older than {Retention}d",
-                    deletedLikes, windowDays, deletedItems, retentionDays);
+                    result.DeletedLikes, result.WindowDays, result.DeletedItems, result.RetentionDays);
         }
         catch (Exception ex)
         {
