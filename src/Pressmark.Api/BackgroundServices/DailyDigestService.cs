@@ -104,7 +104,8 @@ public class DailyDigestService(
                 }
                 catch (Exception ex)
                 {
-                    logger.LogWarning(ex, "Failed to send daily digest to {Email}", user.Email);
+                    // Logs the user id, not the address, to keep PII out of logs.
+                    logger.LogWarning(ex, "Failed to send daily digest to user {UserId}", user.Id);
                 }
             }
 
