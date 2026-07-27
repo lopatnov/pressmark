@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { feedClient } from '@/api/clients'
-import { useIntersectionLoader } from '@/hooks/useIntersectionLoader'
+import { useCursorPaginatedList } from '@/hooks/useCursorPaginatedList'
 
 export interface BookmarkItem {
   id: string
@@ -26,20 +26,14 @@ export interface BookmarkItem {
 export function useBookmarks(activeSubId: string) {
   const { t } = useTranslation(['feed', 'common'])
 
-  const [items, setItems] = useState<BookmarkItem[]>([])
-  const [nextCursor, setNextCursor] = useState('')
-  const [isLoading, setIsLoading] = useState(true)
-
-  const loadBookmarks = useCallback(
-    async (cursor = '', signal?: AbortSignal) => {
-      setIsLoading(true)
-      try {
-        const res = await feedClient.getBookmarks(
-          { pageSize: 20, cursor, subscriptionId: activeSubId },
-          { signal },
-        )
-        if (signal?.aborted) return
-        const mapped = res.items.map((item) => ({
+  const fetchPage = useCallback(
+    async (cursor: string, signal: AbortSignal) => {
+      const res = await feedClient.getBookmarks(
+        { pageSize: 20, cursor, subscriptionId: activeSubId },
+        { signal },
+      )
+      return {
+        items: res.items.map((item): BookmarkItem => ({
           id: item.id,
           title: item.title,
           url: item.url,
@@ -49,38 +43,18 @@ export function useBookmarks(activeSubId: string) {
           sourceTitle: item.sourceTitle,
           subscriptionId: item.subscriptionId,
           isSourceBanned: item.isSourceBanned,
-        }))
-        if (cursor) {
-          setItems((prev) => [...prev, ...mapped])
-        } else {
-          setItems(mapped)
-        }
-        setNextCursor(res.nextCursor)
-      } catch {
-        if (!signal?.aborted) toast.error(t('common:error'))
-      } finally {
-        // An aborted request must not clear the flag the request that replaced
-        // it has already set, or the skeleton drops and loadMore refires early.
-        if (!signal?.aborted) setIsLoading(false)
+        })),
+        nextCursor: res.nextCursor,
       }
     },
-    [t, activeSubId],
+    [activeSubId],
   )
 
-  const handleLoadMore = useCallback(() => {
-    if (!isLoading) loadBookmarks(nextCursor)
-  }, [nextCursor, isLoading, loadBookmarks])
-
-  const sentinelRef = useIntersectionLoader(handleLoadMore, !!nextCursor && !isLoading)
-
-  // Reload when the source filter changes; abort the previous in-flight request
-  useEffect(() => {
-    const controller = new AbortController()
-    setItems([])
-    setNextCursor('')
-    loadBookmarks('', controller.signal)
-    return () => controller.abort()
-  }, [activeSubId, loadBookmarks])
+  const { items, setItems, nextCursor, isLoading, sentinelRef, loadMore } = useCursorPaginatedList(
+    fetchPage,
+    activeSubId,
+    true,
+  )
 
   /** The row disappears on success; a failure leaves the list untouched. */
   const removeBookmark = async (id: string) => {
@@ -97,7 +71,7 @@ export function useBookmarks(activeSubId: string) {
     nextCursor,
     isLoading,
     sentinelRef,
-    handleLoadMore,
+    handleLoadMore: loadMore,
     removeBookmark,
   }
 }
