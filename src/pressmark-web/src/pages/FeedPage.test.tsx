@@ -77,7 +77,6 @@ beforeEach(() => {
     totalUnread: 0,
     isLoading: false,
     unreadOnly: false,
-    subscriptionIdFilter: '',
   })
 
   // Default: getFeed resolves with empty page

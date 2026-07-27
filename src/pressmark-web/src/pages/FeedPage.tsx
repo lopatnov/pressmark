@@ -24,7 +24,7 @@ export function FeedPage() {
     totalUnread,
     isLoading,
     unreadOnly,
-    setFilter,
+    setUnreadOnly,
     sentinelRef,
     handleLoadMore,
     toggleLike,
@@ -51,7 +51,7 @@ export function FeedPage() {
             <input
               type="checkbox"
               checked={unreadOnly}
-              onChange={(e) => setFilter(e.target.checked, '')}
+              onChange={(e) => setUnreadOnly(e.target.checked)}
               className="h-3.5 w-3.5"
             />
             {t('feed:unreadOnly')}
