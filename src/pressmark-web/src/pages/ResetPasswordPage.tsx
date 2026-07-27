@@ -6,6 +6,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { usePageTitle } from '@/hooks/usePageTitle'
 import { Button } from '@/components/ui/button'
+import { FormField } from '@/components/ui/form-field'
 import { authClient } from '@/api/clients'
 import { Code, ConnectError } from '@connectrpc/connect'
 
@@ -65,45 +66,23 @@ export function ResetPasswordPage() {
         <h1 className="text-2xl font-semibold">{t('resetPasswordTitle')}</h1>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="space-y-1">
-            <label htmlFor="newPassword" className="text-sm font-medium">
-              {t('register.password')}
-            </label>
-            <input
-              id="newPassword"
-              {...register('newPassword')}
-              type="password"
-              autoComplete="new-password"
-              aria-invalid={!!errors.newPassword}
-              aria-describedby={errors.newPassword ? 'newPassword-error' : undefined}
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
-            />
-            {errors.newPassword && (
-              <p id="newPassword-error" className="text-xs text-destructive">
-                {errors.newPassword.message}
-              </p>
-            )}
-          </div>
+          <FormField
+            id="newPassword"
+            label={t('register.password')}
+            type="password"
+            autoComplete="new-password"
+            error={errors.newPassword?.message}
+            {...register('newPassword')}
+          />
 
-          <div className="space-y-1">
-            <label htmlFor="confirmPassword" className="text-sm font-medium">
-              {t('resetPasswordConfirm')}
-            </label>
-            <input
-              id="confirmPassword"
-              {...register('confirmPassword')}
-              type="password"
-              autoComplete="new-password"
-              aria-invalid={!!errors.confirmPassword}
-              aria-describedby={errors.confirmPassword ? 'confirmPassword-error' : undefined}
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
-            />
-            {errors.confirmPassword && (
-              <p id="confirmPassword-error" className="text-xs text-destructive">
-                {errors.confirmPassword.message}
-              </p>
-            )}
-          </div>
+          <FormField
+            id="confirmPassword"
+            label={t('resetPasswordConfirm')}
+            type="password"
+            autoComplete="new-password"
+            error={errors.confirmPassword?.message}
+            {...register('confirmPassword')}
+          />
 
           {errors.root && <p className="text-sm text-destructive">{errors.root.message}</p>}
 
