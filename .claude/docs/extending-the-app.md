@@ -53,8 +53,8 @@
    - Некритичные для первого рендера страницы — оборачивай в `lazy()` + `withSuspense(...)`, как
      все страницы кроме `Login`/`Register`/`ForgotPassword`/`ResetPassword`.
 4. **Локализация.** Каждая видимая строка — через `t('ns:key')` (`react-i18next`). Добавь ключи
-   как минимум в `en` и `ru` (`src/pressmark-web/src/i18n/locales/`); остальные 16 локалей может
-   добить `translator` отдельной задачей — это не блокирует Quality gate.
+   как минимум в `en` и `ru` (`src/pressmark-web/src/i18n/locales/`); остальные 16 локалей можно
+   добить отдельной задачей позже — это не блокирует мерж.
 5. **Тесты.** Component-тест страницы (Vitest + Testing Library) по образцу `FeedPage.test.tsx` —
    рендер через `MemoryRouter` (см. `inviteOnly.test.tsx` для примера обёртки роутером).
 6. Проверка: `npm run typecheck && npm run lint && npm run test && npm run build` (см. Commands

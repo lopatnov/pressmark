@@ -27,24 +27,22 @@ PATCH — исправления. До первого релиза — `0.y.z`.
 
 ## Changelog — Keep a Changelog
 
-Секции: `Added`, `Changed`, `Fixed`, `Removed`, `Deprecated`, `Security`. Незарелиженное —
-в `Unreleased` (соответствует `backlog/completed/non-released.md`). Ведёт `technical-writer`,
-ротацию при релизе координирует `scrum-master`/`release-engineer`.
+Секции: `Added`, `Changed`, `Fixed`, `Removed`, `Deprecated`, `Security`. Незарелиженное — в
+`Unreleased` в корневом `CHANGELOG.md`. Ведёт `technical-writer`.
 
 ## Качество кода
 
 - Код пишется «как окружающий код»: тот же стиль, нейминг, плотность комментариев.
-- Форматтер и линтер — **обязательные ворота Quality** (команды — в `CLAUDE.md`). Запуск —
+- Форматтер и линтер — **обязательны перед мержем** (команды — в `CLAUDE.md`). Запуск —
   через `build-validator`. Билд зелёный (0 ошибок), предупреждения просмотрены.
 - Простота важнее «умности» (ценность «Простота» из `index.md`).
 
-## PR-чеклист (ворота перед merge)
+## PR-чеклист перед merge
 
 - [ ] Билд зелёный, линтер/форматтер пройдены (`build-validator`).
-- [ ] Тесты добавлены/обновлены и проходят (`tester` / `manual-tester`).
+- [ ] Тесты добавлены/обновлены и проходят (`tester`).
 - [ ] Документация и changelog обновлены при изменении поведения (`technical-writer`).
 - [ ] Чувствительные части проверены (`security-engineer`), если затронуты.
-- [ ] Задача переведена в `backlog/completed/non-released.md` (`scrum-master`).
 - [ ] Соответствует Definition of Done из `workflow.md`.
 
 > Один `git push` ≤ 1 раза в час без явной просьбы (см. `index.md` — экономия и гонки CI).
