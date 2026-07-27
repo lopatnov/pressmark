@@ -110,8 +110,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddAuthorization();
 
 // CORS — AllowCredentials required for httpOnly refresh cookie on cross-origin Refresh calls
+var allowedOrigins = config["Cors:AllowedOrigins"]
+    ?? throw new InvalidOperationException("Cors:AllowedOrigins is required. Set it via env var or appsettings.");
 builder.Services.AddCors(o => o.AddPolicy("GrpcWeb", policy => policy
-    .WithOrigins(config["Cors:AllowedOrigins"]!)
+    .WithOrigins(allowedOrigins)
     .AllowAnyMethod()
     .AllowAnyHeader()
     .AllowCredentials()));
@@ -246,7 +248,9 @@ app.MapGet("/proxy/favicon", async (string? url, IHttpClientFactory httpClientFa
     try
     {
         var client = httpClientFactory.CreateClient("Pressmark");
-        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+        // Linked to the request so a disconnected client also drops the outbound fetch.
+        using var cts = CancellationTokenSource.CreateLinkedTokenSource(ctx.RequestAborted);
+        cts.CancelAfter(TimeSpan.FromSeconds(5));
         using var response = await client.GetAsync(faviconUrl, cts.Token);
 
         if (!response.IsSuccessStatusCode)
