@@ -60,6 +60,10 @@ public partial class AuthServiceImpl
         {
             await emailService.SendPasswordResetAsync(user.Email, resetUrl, ct);
         }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested)
+        {
+            throw;
+        }
         catch (Exception ex)
         {
             // Non-fatal, and deliberately not reported: a delivery failure is only
