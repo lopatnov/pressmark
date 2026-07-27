@@ -7,7 +7,7 @@ import { useAuthStore } from '@/store/authStore'
 import { FeedItemCard } from '@/components/feed/FeedItemCard'
 import { CommentSection } from '@/components/feed/CommentSection'
 import { CommunityItemActions } from '@/components/feed/CommunityItemActions'
-import { FeedCardSkeletonList } from '@/components/feed/FeedCardSkeleton'
+import { FeedCardList } from '@/components/feed/FeedCardList'
 import { SourceFilterBanner } from '@/components/feed/SourceFilterBanner'
 
 export function CommunityPage() {
@@ -69,55 +69,39 @@ export function CommunityPage() {
         />
       )}
 
-      {items.length === 0 && !isLoading && isAuthenticated && (
-        <p className="py-12 text-center text-sm text-muted-foreground">
-          {t('feed:community.empty')}
-        </p>
-      )}
-
-      <div className="space-y-2">
-        {isLoading && items.length === 0 ? (
-          <FeedCardSkeletonList />
-        ) : (
-          items.map((item) => (
-            <FeedItemCard
-              key={item.id}
-              item={item}
-              articleId={item.id}
-              sourceHref={
-                item.sourceRssUrl ? `/?src=${encodeURIComponent(item.sourceRssUrl)}` : undefined
-              }
-              actions={
-                <CommunityItemActions
-                  item={item}
-                  isAuthenticated={isAuthenticated}
-                  isAdmin={isAdmin}
-                  isSubscribed={subscribedUrls.has(item.sourceRssUrl)}
-                  isReported={reportedSubs.has(item.subscriptionId)}
-                  onLike={toggleLike}
-                  onSubscribe={subscribeToSource}
-                  onReport={reportSource}
-                  onHide={hideItem}
-                  onBan={banSource}
-                />
-              }
-              footer={<CommentSection feedItemId={item.id} />}
-            />
-          ))
+      <FeedCardList
+        items={items}
+        isLoading={isLoading}
+        nextCursor={nextCursor}
+        sentinelRef={sentinelRef}
+        onLoadMore={loadMore}
+        emptyMessage={isAuthenticated ? t('feed:community.empty') : undefined}
+        renderItem={(item) => (
+          <FeedItemCard
+            key={item.id}
+            item={item}
+            articleId={item.id}
+            sourceHref={
+              item.sourceRssUrl ? `/?src=${encodeURIComponent(item.sourceRssUrl)}` : undefined
+            }
+            actions={
+              <CommunityItemActions
+                item={item}
+                isAuthenticated={isAuthenticated}
+                isAdmin={isAdmin}
+                isSubscribed={subscribedUrls.has(item.sourceRssUrl)}
+                isReported={reportedSubs.has(item.subscriptionId)}
+                onLike={toggleLike}
+                onSubscribe={subscribeToSource}
+                onReport={reportSource}
+                onHide={hideItem}
+                onBan={banSource}
+              />
+            }
+            footer={<CommentSection feedItemId={item.id} />}
+          />
         )}
-      </div>
-
-      {nextCursor && (
-        <div ref={sentinelRef} className="pt-2 text-center">
-          <Button variant="outline" disabled={isLoading} onClick={loadMore}>
-            {t('feed:loadMore')}
-          </Button>
-        </div>
-      )}
-
-      {isLoading && items.length > 0 && (
-        <p className="text-center text-sm text-muted-foreground">{t('common:loading')}</p>
-      )}
+      />
 
       {!isAuthenticated && registrationMode === 'open' && (
         <div className="pt-4 text-center">

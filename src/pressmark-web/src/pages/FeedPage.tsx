@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { useSubscriptionStore } from '@/store/subscriptionStore'
 import { FeedItemCard } from '@/components/feed/FeedItemCard'
 import { FeedItemActions } from '@/components/feed/FeedItemActions'
-import { FeedCardSkeletonList } from '@/components/feed/FeedCardSkeleton'
+import { FeedCardList } from '@/components/feed/FeedCardList'
 import { SourceFilterBanner } from '@/components/feed/SourceFilterBanner'
 
 export function FeedPage() {
@@ -72,47 +72,33 @@ export function FeedPage() {
         />
       )}
 
-      {items.length === 0 && !isLoading && (
-        <p className="py-12 text-center text-sm text-muted-foreground">{t('feed:empty')}</p>
-      )}
-
-      <div className="space-y-2">
-        {isLoading && items.length === 0 ? (
-          <FeedCardSkeletonList />
-        ) : (
-          items.map((item) => (
-            <FeedItemCard
-              key={item.id}
-              item={item}
-              articleId={item.id}
-              sourceHref={item.subscriptionId ? `/feed?sub=${item.subscriptionId}` : undefined}
-              onTitleClick={!item.isRead ? () => markAsRead(item.id) : undefined}
-              actions={
-                <FeedItemActions
-                  id={item.id}
-                  isLiked={item.isLiked}
-                  likeCount={item.likeCount}
-                  isBookmarked={item.isBookmarked}
-                  onLike={toggleLike}
-                  onBookmark={toggleBookmark}
-                />
-              }
-            />
-          ))
+      <FeedCardList
+        items={items}
+        isLoading={isLoading}
+        nextCursor={nextCursor}
+        sentinelRef={sentinelRef}
+        onLoadMore={handleLoadMore}
+        emptyMessage={t('feed:empty')}
+        renderItem={(item) => (
+          <FeedItemCard
+            key={item.id}
+            item={item}
+            articleId={item.id}
+            sourceHref={item.subscriptionId ? `/feed?sub=${item.subscriptionId}` : undefined}
+            onTitleClick={!item.isRead ? () => markAsRead(item.id) : undefined}
+            actions={
+              <FeedItemActions
+                id={item.id}
+                isLiked={item.isLiked}
+                likeCount={item.likeCount}
+                isBookmarked={item.isBookmarked}
+                onLike={toggleLike}
+                onBookmark={toggleBookmark}
+              />
+            }
+          />
         )}
-      </div>
-
-      {nextCursor && (
-        <div ref={sentinelRef} className="pt-2 text-center">
-          <Button variant="outline" disabled={isLoading} onClick={handleLoadMore}>
-            {t('feed:loadMore')}
-          </Button>
-        </div>
-      )}
-
-      {isLoading && items.length > 0 && (
-        <p className="text-center text-sm text-muted-foreground">{t('common:loading')}</p>
-      )}
+      />
     </div>
   )
 }
