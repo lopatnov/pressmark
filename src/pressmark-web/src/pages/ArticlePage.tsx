@@ -1,11 +1,10 @@
-import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { usePageTitle } from '@/hooks/usePageTitle'
 import { EyeOff, Eye, Flag } from 'lucide-react'
-import { toast } from 'sonner'
-import { adminClient, feedClient } from '@/api/clients'
-import { FeedItemCard, type FeedItemData } from '@/components/feed/FeedItemCard'
+import { usePageTitle } from '@/hooks/usePageTitle'
+import { useArticle } from '@/hooks/useArticle'
+import { FeedItemCard } from '@/components/feed/FeedItemCard'
+import { FeedCardSkeleton } from '@/components/feed/FeedCardSkeleton'
 import { CommentSection } from '@/components/feed/CommentSection'
 import { ReportReasonForm } from '@/components/feed/ReportReasonForm'
 import { useAuthStore } from '@/store/authStore'
@@ -16,55 +15,20 @@ export function ArticlePage() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated())
   const isAdmin = useAuthStore((s) => s.isAdmin())
 
-  const [item, setItem] = useState<FeedItemData | null>(null)
+  const {
+    item,
+    notFound,
+    showReportForm,
+    setShowReportForm,
+    reportReason,
+    setReportReason,
+    reportSubmitting,
+    reported,
+    toggleHidden,
+    submitReport,
+  } = useArticle(id)
+
   usePageTitle(item?.title ?? t('common:nav.feed'))
-  const [notFound, setNotFound] = useState(false)
-
-  const [showReportForm, setShowReportForm] = useState(false)
-  const [reportReason, setReportReason] = useState('')
-  const [reportSubmitting, setReportSubmitting] = useState(false)
-  const [reported, setReported] = useState(false)
-
-  useEffect(() => {
-    if (!id) return
-    feedClient
-      .getFeedItem({ feedItemId: id })
-      .then((res) => {
-        setItem({
-          id: res.id,
-          title: res.title,
-          url: res.url,
-          summary: res.summary,
-          publishedAt: res.publishedAt,
-          sourceTitle: res.sourceTitle,
-          imageUrl: res.imageUrl || undefined,
-          subscriptionId: res.subscriptionId,
-          sourceRssUrl: res.sourceRssUrl,
-          isHidden: res.isHidden,
-          isSourceBanned: res.isSourceBanned,
-        })
-      })
-      .catch(() => setNotFound(true))
-  }, [id])
-
-  const handleReport = async () => {
-    if (!item?.subscriptionId) return
-    setReportSubmitting(true)
-    try {
-      await feedClient.reportContent({
-        type: 'subscription',
-        targetId: item.subscriptionId,
-        reason: reportReason,
-      })
-      setReported(true)
-      setShowReportForm(false)
-      toast.success(t('feed:reportSent'))
-    } catch {
-      toast.error(t('feed:reportSubmitError'))
-    } finally {
-      setReportSubmitting(false)
-    }
-  }
 
   if (notFound) {
     return (
@@ -79,8 +43,8 @@ export function ArticlePage() {
 
   if (!item) {
     return (
-      <div className="space-y-3 p-4">
-        <div className="h-32 animate-pulse rounded-lg bg-muted" />
+      <div className="mx-auto max-w-2xl p-4">
+        <FeedCardSkeleton />
       </div>
     )
   }
@@ -100,18 +64,7 @@ export function ArticlePage() {
         <div className="flex items-center gap-2">
           <button
             type="button"
-            onClick={async () => {
-              try {
-                const hidden = !item.isHidden
-                await adminClient.hideFeedItem({ feedItemId: item.id, hidden })
-                setItem((prev) => prev && { ...prev, isHidden: hidden })
-                toast.success(
-                  hidden ? t('admin:moderation.hidden') : t('admin:moderation.unhidden'),
-                )
-              } catch {
-                toast.error(t('common:error'))
-              }
-            }}
+            onClick={toggleHidden}
             className="flex cursor-pointer items-center gap-1 text-xs text-muted-foreground hover:text-destructive transition-colors"
             title={item.isHidden ? t('admin:moderation.unhide') : t('admin:moderation.hide')}
           >
@@ -138,7 +91,7 @@ export function ArticlePage() {
             <ReportReasonForm
               reason={reportReason}
               onReasonChange={setReportReason}
-              onSubmit={handleReport}
+              onSubmit={submitReport}
               onCancel={() => setShowReportForm(false)}
               submitting={reportSubmitting}
             />

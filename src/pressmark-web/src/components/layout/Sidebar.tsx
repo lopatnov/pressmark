@@ -15,8 +15,7 @@ import {
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/store/authStore'
 import { useFeedStore } from '@/store/feedStore'
-import { useAdminStore } from '@/store/adminStore'
-import { authClient, adminClient } from '@/api/clients'
+import { authClient } from '@/api/clients'
 import { LanguageSwitcher } from './LanguageSwitcher'
 
 interface SidebarProps {
@@ -40,31 +39,6 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const communityPageEnabled = useAuthStore((s) => s.communityPageEnabled)
   const siteName = useAuthStore((s) => s.siteName)
   const totalUnread = useFeedStore((s) => s.totalUnread)
-  const { settings, setSettings } = useAdminStore()
-
-  useEffect(() => {
-    if (!isAdmin || settings) return
-    adminClient
-      .getSiteSettings({})
-      .then((res) => {
-        setSettings({
-          siteName: res.siteName,
-          siteDescription: res.siteDescription,
-          communityWindowDays: res.communityWindowDays,
-          registrationMode: res.registrationMode as 'open' | 'invite_only',
-          smtpHost: res.smtpHost,
-          smtpPort: res.smtpPort || 587,
-          smtpUser: res.smtpUser,
-          smtpPassword: '',
-          smtpUseTls: res.smtpUseTls,
-          smtpFromAddress: res.smtpFromAddress,
-          commentsEnabled: res.commentsEnabled,
-          feedRetentionDays: res.feedRetentionDays || 90,
-          communityPageEnabled: res.communityPageEnabled,
-        })
-      })
-      .catch(() => {})
-  }, [isAdmin])
 
   const handleLogout = async () => {
     await authClient.logout({}).catch(() => {})
@@ -156,9 +130,9 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         <div className="my-1.5 border-t border-sidebar-border" />
         <div className="border-sidebar-border">
           <div className="flex items-center gap-2.5 rounded-md px-3 py-2 text-left text-xs text-muted-foreground transition-colors">
-            <UserStar className="h-4 w-4 shrink-0"></UserStar>
-            <div className="transition-colors rounded-md ">
-              {t('common:builtBy')}&nbsp;
+            <UserStar className="h-4 w-4 shrink-0" />
+            <div className="transition-colors rounded-md">
+              {t('builtBy')}&nbsp;
               <a
                 href="https://github.com/lopatnov"
                 target="_blank"

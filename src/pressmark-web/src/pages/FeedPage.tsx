@@ -1,6 +1,5 @@
 import { useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Ban, X } from 'lucide-react'
 import { usePageTitle } from '@/hooks/usePageTitle'
 import { useFeedPage } from '@/hooks/useFeedPage'
 import { Button } from '@/components/ui/button'
@@ -8,9 +7,10 @@ import { useSubscriptionStore } from '@/store/subscriptionStore'
 import { FeedItemCard } from '@/components/feed/FeedItemCard'
 import { FeedItemActions } from '@/components/feed/FeedItemActions'
 import { FeedCardSkeletonList } from '@/components/feed/FeedCardSkeleton'
+import { SourceFilterBanner } from '@/components/feed/SourceFilterBanner'
 
 export function FeedPage() {
-  const { t } = useTranslation(['feed', 'common', 'subscriptions'])
+  const { t } = useTranslation(['feed', 'common'])
   usePageTitle(t('common:nav.feed'))
   const [searchParams, setSearchParams] = useSearchParams()
   const activeSubId = searchParams.get('sub') ?? ''
@@ -65,31 +65,11 @@ export function FeedPage() {
       </div>
 
       {activeSubId && (items.length > 0 || activeSub) && (
-        <div
-          className={`flex items-center gap-2 rounded-md border px-3 py-1.5 text-xs text-muted-foreground ${isSourceBanned ? 'border-destructive/50 bg-destructive/5' : 'border-border bg-muted/40'}`}
-        >
-          <span className="flex flex-1 items-center gap-2">
-            {t('feed:filterBySource')}:{' '}
-            <span className="font-medium text-foreground">
-              {items[0]?.sourceTitle ?? activeSub?.title}
-            </span>
-            {isSourceBanned && (
-              <span className="flex shrink-0 items-center gap-1 rounded-full bg-destructive/10 px-2 py-0.5 text-destructive">
-                <Ban className="h-3 w-3" />
-                {t('subscriptions:banned')}
-              </span>
-            )}
-          </span>
-          <button
-            type="button"
-            onClick={() => setSearchParams({})}
-            className="cursor-pointer hover:text-foreground transition-colors"
-            title={t('feed:clearFilter')}
-            aria-label={t('feed:clearFilter')}
-          >
-            <X className="h-3.5 w-3.5" />
-          </button>
-        </div>
+        <SourceFilterBanner
+          sourceTitle={items[0]?.sourceTitle ?? activeSub?.title}
+          isBanned={isSourceBanned}
+          onClear={() => setSearchParams({})}
+        />
       )}
 
       {items.length === 0 && !isLoading && (
