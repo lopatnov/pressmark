@@ -110,8 +110,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddAuthorization();
 
 // CORS — AllowCredentials required for httpOnly refresh cookie on cross-origin Refresh calls
-var allowedOrigins = config["Cors:AllowedOrigins"]
-    ?? throw new InvalidOperationException("Cors:AllowedOrigins is required. Set it via env var or appsettings.");
+var allowedOrigins = config["Cors:AllowedOrigins"];
+if (string.IsNullOrWhiteSpace(allowedOrigins))
+    throw new InvalidOperationException("Cors:AllowedOrigins is required. Set it via env var or appsettings.");
 builder.Services.AddCors(o => o.AddPolicy("GrpcWeb", policy => policy
     .WithOrigins(allowedOrigins)
     .AllowAnyMethod()

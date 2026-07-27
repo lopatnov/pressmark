@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { useIntersectionLoader } from '@/hooks/useIntersectionLoader'
@@ -31,41 +31,53 @@ export function useCursorPaginatedList<TItem>(
   const [items, setItems] = useState<TItem[]>([])
   const [nextCursor, setNextCursor] = useState('')
   const [isLoading, setIsLoading] = useState(true)
+  // Shared across loadMore and the reset effect so either one starting a
+  // fresh request aborts whichever request the other one has in flight.
+  const abortRef = useRef<AbortController | null>(null)
 
   const loadPage = useCallback(
-    async (cursor = '', signal?: AbortSignal) => {
+    async (cursor: string, signal: AbortSignal) => {
       setIsLoading(true)
       try {
-        const res = await fetchPage(cursor, signal as AbortSignal)
-        if (signal?.aborted) return
+        const res = await fetchPage(cursor, signal)
+        if (signal.aborted) return
         setItems((prev) => (cursor ? [...prev, ...res.items] : res.items))
         setNextCursor(res.nextCursor)
       } catch {
-        if (!signal?.aborted) toast.error(t('common:error'))
+        if (!signal.aborted) toast.error(t('common:error'))
       } finally {
         // An aborted request must not clear the flag the request that replaced
         // it has already set, or the skeleton drops and loadMore refires early.
-        if (!signal?.aborted) setIsLoading(false)
+        if (!signal.aborted) setIsLoading(false)
       }
     },
     [fetchPage, t],
   )
 
+  const startLoad = useCallback(
+    (cursor: string) => {
+      abortRef.current?.abort()
+      const controller = new AbortController()
+      abortRef.current = controller
+      loadPage(cursor, controller.signal)
+    },
+    [loadPage],
+  )
+
   const loadMore = useCallback(() => {
-    if (!isLoading) loadPage(nextCursor)
-  }, [nextCursor, isLoading, loadPage])
+    if (!isLoading) startLoad(nextCursor)
+  }, [nextCursor, isLoading, startLoad])
 
   const sentinelRef = useIntersectionLoader(loadMore, !!nextCursor && !isLoading)
 
   useEffect(() => {
-    const controller = new AbortController()
     if (clearOnReset) {
       setItems([])
       setNextCursor('')
     }
-    loadPage('', controller.signal)
-    return () => controller.abort()
-  }, [resetKey, loadPage, clearOnReset])
+    startLoad('')
+    return () => abortRef.current?.abort()
+  }, [resetKey, startLoad, clearOnReset])
 
   return { items, setItems, nextCursor, isLoading, sentinelRef, loadMore }
 }
