@@ -21,7 +21,7 @@
 │   ├── tester.md             — тесты всех уровней, включая e2e в браузере
 │   ├── security-engineer.md  — чувствительные части, триаж security-алертов
 │   ├── devops.md             — CI/CD, Docker, GitHub Actions
-│   ├── technical-writer.md   — README/CHANGELOG
+│   ├── technical-writer.md   — haiku; README/CHANGELOG по шаблону из diff'а
 │   └── build-validator.md    — haiku; read-only проверка сборки/линта/тестов
 ├── commands/
 │   ├── build.md       — /build: проверка сборки/линта/тестов через build-validator
@@ -32,14 +32,16 @@
 │   ├── testing/                 — плейбук тестирования (пирамида тестов, роль tester)
 │   └── dependency-freshness/    — чек-лист обновления зависимостей до реально последних версий
 │                                  (включая мажоры, .NET SDK, React, Docker-образы, GitHub Actions)
-├── backlog/
-│   ├── roadmap.md     — фазы поддержки проекта; фичи-беклог живёт в GitHub Issues
-│   └── ideas.md        — технологический радар (кандидаты на замену/апгрейд, см. `/maintain`)
 └── docs/
     ├── index.md               — этот файл
     └── extending-the-app.md   — как добавить новый gRPC-эндпоинт / новую страницу, по образцу
                                   существующего кода
 ```
+
+Нет папки `backlog/` — продуктовый бэклог, баги и кандидаты технологического радара (раньше
+`backlog/ideas.md`) живут в GitHub Issues проекта (`lopatnov/pressmark/issues`), радар — с меткой
+`tech-radar`. Локальные файлы для этого не заводим: одно место правды, видимое пользователю без
+захода в репозиторий.
 
 ## Порядок чтения при старте сессии
 `CLAUDE.md` → `rules/index.md` → `rules/workflow.md` → `rules/team.md`. Дальше — профильные

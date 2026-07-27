@@ -15,8 +15,9 @@ CI/CD/Docker и read-only проверки сборки — не на кажду
 [`.claude/rules/team.md`](.claude/rules/team.md) →
 [`.claude/rules/conventions.md`](.claude/rules/conventions.md).
 
-Продуктовый бэклог фич и баги живут в **GitHub Issues** проекта, не в `.claude/backlog/` — там
-только сессионные технологические заметки (`.claude/backlog/ideas.md`, см. `/maintain`).
+Продуктовый бэклог фич, баги и кандидаты технологического радара живут в **GitHub Issues** проекта
+(`lopatnov/pressmark/issues`) — не в локальных файлах `.claude/`. Находку для радара (см.
+`/maintain`, пункт 4) фиксируй отдельным issue с меткой `tech-radar`, а не файлом в репозитории.
 
 **Разделение ответственности файлов:**
 
