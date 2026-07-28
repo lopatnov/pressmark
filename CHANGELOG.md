@@ -9,6 +9,8 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.2.0] — Reliability, Security & Dependency Refresh — 2026-07-28
+
 ### Fixed
 
 - `RssFetcherService` no longer stops the host on a transient error while loading the subscription list — the fetch cycle is now guarded the same way as its sibling background services
@@ -157,6 +159,7 @@ what the community is reading — all on your own infrastructure.
 
 ---
 
+[1.2.0]: https://github.com/lopatnov/pressmark/releases/tag/v1.2.0
 [1.1.0]: https://github.com/lopatnov/pressmark/releases/tag/v1.1.0
 [1.0.1]: https://github.com/lopatnov/pressmark/releases/tag/v1.0.1
 [1.0.0]: https://github.com/lopatnov/pressmark/releases/tag/v1.0.0
