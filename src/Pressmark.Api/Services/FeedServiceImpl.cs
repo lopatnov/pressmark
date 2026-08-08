@@ -40,10 +40,11 @@ public partial class FeedServiceImpl(
             .Include(f => f.Subscription)
             .Where(f => f.Subscription.UserId == userId);
 
+        Guid? subscriptionIdFilter = null;
         if (!string.IsNullOrEmpty(request.SubscriptionId))
         {
-            var subscriptionId = RpcGuards.ParseId(request.SubscriptionId, "subscription_id");
-            query = query.Where(f => f.SubscriptionId == subscriptionId);
+            subscriptionIdFilter = RpcGuards.ParseId(request.SubscriptionId, "subscription_id");
+            query = query.Where(f => f.SubscriptionId == subscriptionIdFilter);
         }
 
         if (request.UnreadOnly)
@@ -55,7 +56,8 @@ public partial class FeedServiceImpl(
             .ToPageAsync(pageSize, ct);
 
         return await pageAssembler.AssembleUserPageAsync(pageItems, hasMore, userId,
-            allBookmarked: false, includeTotalUnread: string.IsNullOrEmpty(request.Cursor), ct);
+            allBookmarked: false, includeTotalUnread: string.IsNullOrEmpty(request.Cursor), ct,
+            subscriptionIdFilter);
     }
 
     public override async Task<FeedPage> GetBookmarks(

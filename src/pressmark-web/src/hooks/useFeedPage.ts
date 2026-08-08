@@ -169,7 +169,7 @@ export function useFeedPage(activeSubId: string) {
 
   const markAllRead = async () => {
     try {
-      await feedClient.markAllAsRead({ subscriptionId: '' })
+      await feedClient.markAllAsRead({ subscriptionId: activeSubId })
       reset()
       loadFeed()
     } catch {
