@@ -72,7 +72,14 @@ internal static class FaviconProxyEndpoint
             // Linked to the request so a disconnected client also drops the outbound fetch.
             using var cts = CancellationTokenSource.CreateLinkedTokenSource(ctx.RequestAborted);
             cts.CancelAfter(FetchTimeout);
-            using var response = await client.GetAsync(faviconUrl, cts.Token);
+
+            // ResponseHeadersRead: the default GetAsync completion option buffers the
+            // whole body into memory before any check here gets to run, so a malicious
+            // server's (untrustworthy) Content-Length couldn't bound anything. Reading
+            // headers only, then copying the body ourselves with a hard byte cap, is what
+            // actually bounds memory use against an oversized or Content-Length-lying response.
+            using var response = await client.GetAsync(
+                faviconUrl, HttpCompletionOption.ResponseHeadersRead, cts.Token);
 
             if (!response.IsSuccessStatusCode)
                 return Results.NoContent();
@@ -84,12 +91,13 @@ internal static class FaviconProxyEndpoint
             if (response.Content.Headers.ContentLength > MaxFaviconBytes)
                 return Results.NoContent();
 
-            var bytes = await response.Content.ReadAsByteArrayAsync(cts.Token);
-            if (bytes.Length > MaxFaviconBytes)
+            await using var responseStream = await response.Content.ReadAsStreamAsync(cts.Token);
+            using var buffer = new MemoryStream();
+            if (!await responseStream.CopyToLimitedAsync(buffer, MaxFaviconBytes, cts.Token))
                 return Results.NoContent();
 
             ctx.Response.Headers.CacheControl = "public, max-age=86400";
-            return Results.Bytes(bytes, contentType);
+            return Results.Bytes(buffer.ToArray(), contentType);
         }
         catch
         {
@@ -98,5 +106,27 @@ internal static class FaviconProxyEndpoint
             // same "no favicon available" response so nothing about the target is leaked.
             return Results.NoContent();
         }
+    }
+
+    /// <summary>
+    /// Copies <paramref name="source"/> into <paramref name="destination"/>, stopping as
+    /// soon as more than <paramref name="maxBytes"/> have been read. Returns false (without
+    /// having buffered the excess) if the source turned out to be larger than the limit —
+    /// callers must not trust <c>Content-Length</c> to have bounded this already, since it
+    /// is server-supplied and can undercount or be absent.
+    /// </summary>
+    private static async Task<bool> CopyToLimitedAsync(
+        this Stream source, Stream destination, int maxBytes, CancellationToken ct)
+    {
+        var buffer = new byte[8192];
+        var total = 0;
+        int read;
+        while ((read = await source.ReadAsync(buffer, ct)) > 0)
+        {
+            total += read;
+            if (total > maxBytes) return false;
+            await destination.WriteAsync(buffer.AsMemory(0, read), ct);
+        }
+        return true;
     }
 }
