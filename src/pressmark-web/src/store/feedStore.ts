@@ -1,7 +1,8 @@
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 
-interface FeedItem {
+/** Feed article as the store keeps it — the projection every loader must produce. */
+export interface FeedItem {
   id: string
   subscriptionId: string
   title: string
