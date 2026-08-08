@@ -9,6 +9,10 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- "Mark all as read" while filtered to one source now only marks that source's articles read, instead of the whole feed across every subscription; the unread-count badge is scoped the same way
+
 ## [1.2.0] — Reliability, Security & Dependency Refresh — 2026-07-28
 
 ### Fixed
