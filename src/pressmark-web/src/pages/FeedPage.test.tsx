@@ -48,9 +48,9 @@ function makeItem(id: string, title: string) {
   }
 }
 
-function renderFeedPage() {
+function renderFeedPage(initialEntries: string[] = ['/feed']) {
   return render(
-    <MemoryRouter>
+    <MemoryRouter initialEntries={initialEntries}>
       <FeedPage />
     </MemoryRouter>,
   )
@@ -197,5 +197,56 @@ describe('FeedPage — unmount during streaming', () => {
     expect(streamSignal.aborted).toBe(true)
     // No additional items prepended after unmount
     expect(useFeedStore.getState().items.length).toBe(itemCountBeforeUnmount)
+  })
+})
+
+// ── mark-all-read subscription scope ────────────────────────────────────────
+
+/**
+ * Regression test for the bug fixed alongside FeedPageAssembler's TotalUnread
+ * scoping: markAllRead() used to always send subscriptionId: '' regardless of
+ * the active source filter, so clicking "mark all as read" while filtered to
+ * one subscription silently marked every article across every subscription
+ * as read.
+ */
+describe('FeedPage — mark-all-read subscription scope', () => {
+  it('sends the active subscription id when a source filter is active', async () => {
+    const user = userEvent.setup()
+
+    vi.mocked(feedClient.getFeed).mockResolvedValue({
+      items: [makeItem('1', 'Filtered Item')],
+      nextCursor: '',
+      totalUnread: 3,
+    } as any)
+    vi.mocked(feedClient.markAllAsRead).mockResolvedValue({} as any)
+
+    renderFeedPage(['/feed?sub=sub-1'])
+
+    const button = await screen.findByRole('button', { name: 'feed:markAllRead' })
+    await user.click(button)
+
+    await waitFor(() =>
+      expect(feedClient.markAllAsRead).toHaveBeenCalledWith({ subscriptionId: 'sub-1' }),
+    )
+  })
+
+  it('sends an empty subscription id when no source filter is active', async () => {
+    const user = userEvent.setup()
+
+    vi.mocked(feedClient.getFeed).mockResolvedValue({
+      items: [makeItem('1', 'Unfiltered Item')],
+      nextCursor: '',
+      totalUnread: 3,
+    } as any)
+    vi.mocked(feedClient.markAllAsRead).mockResolvedValue({} as any)
+
+    renderFeedPage(['/feed'])
+
+    const button = await screen.findByRole('button', { name: 'feed:markAllRead' })
+    await user.click(button)
+
+    await waitFor(() =>
+      expect(feedClient.markAllAsRead).toHaveBeenCalledWith({ subscriptionId: '' }),
+    )
   })
 })
