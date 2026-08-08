@@ -9,6 +9,10 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Security
+
+- Favicon proxy (`/proxy/favicon`) hardened against SSRF: the target hostname's DNS records are now resolved and every resolved address validated (loopback/link-local/RFC1918/CGNAT/IPv6 ULA/multicast) at TCP-connect time, closing gaps in the previous string-prefix host check (cloud metadata hostnames, `0.0.0.0`, IPv4-mapped IPv6 loopback/private addresses). The endpoint no longer follows redirects and now has its own per-IP rate limit, since it is intentionally unauthenticated (the community/feed pages it serves are public) but performs an outbound fetch per request
+
 ## [1.2.0] — Reliability, Security & Dependency Refresh — 2026-07-28
 
 ### Fixed
