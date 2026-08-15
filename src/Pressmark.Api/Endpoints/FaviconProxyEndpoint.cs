@@ -58,11 +58,11 @@ internal static class FaviconProxyEndpoint
             if (response.Content.Headers.ContentLength > MaxFaviconBytes)
                 return Results.NoContent();
 
-            ctx.Response.Headers.CacheControl = "public, max-age=86400";
             var bytes = await response.Content.ReadAsByteArrayAsync(cts.Token);
             if (bytes.Length > MaxFaviconBytes)
                 return Results.NoContent();
 
+            ctx.Response.Headers.CacheControl = "public, max-age=86400";
             return Results.Bytes(bytes, contentType);
         }
         catch
