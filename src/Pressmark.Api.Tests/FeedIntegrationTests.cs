@@ -243,4 +243,58 @@ public class FeedIntegrationTests(IntegrationFixture fixture) : IClassFixture<In
         // Together they cover all 6 items
         Assert.Equal(6, page1Ids.Union(page2Ids).Count());
     }
+
+    // ── TotalUnread subscription scope ──────────────────────────────────────────
+
+    /// <summary>
+    /// Regression for the bug where TotalUnread always counted unread items across
+    /// every subscription, even when GetFeed was scoped to a single subscription —
+    /// the badge disagreed with what a subscription-scoped "mark all as read" would
+    /// actually mark. A user with two subscriptions, each with unread items, must
+    /// see TotalUnread reflect only the filtered subscription's unread count when a
+    /// subscriptionId filter is applied (exact query from
+    /// FeedPageAssembler.AssembleUserPageAsync).
+    /// </summary>
+    [Fact]
+    public async Task TotalUnread_ScopedToSubscription_WhenFilterActive()
+    {
+        if (!fixture.IsAvailable) return;
+
+        await using var db = fixture.CreateContext();
+        var assembler = new FeedPageAssembler(db, fixture.CreateContextFactory());
+
+        var user = MakeUser();
+        db.Users.Add(user);
+        var sub1 = MakeSub(user.Id);
+        var sub2 = MakeSub(user.Id);
+        db.Subscriptions.AddRange(sub1, sub2);
+
+        // 3 items in sub1, 2 items in sub2 — all unread initially.
+        var sub1Items = Enumerable.Range(0, 3).Select(_ => MakeItem(sub1.Id)).ToList();
+        var sub2Items = Enumerable.Range(0, 2).Select(_ => MakeItem(sub2.Id)).ToList();
+        db.FeedItems.AddRange(sub1Items);
+        db.FeedItems.AddRange(sub2Items);
+        await db.SaveChangesAsync();
+
+        // Mark one item in sub1 as read: sub1 has 2 unread, sub2 has 2 unread,
+        // so the global total (4) must differ from the sub1-scoped total (2).
+        db.ReadItems.Add(new ReadItem { UserId = user.Id, FeedItemId = sub1Items[0].Id });
+        await db.SaveChangesAsync();
+
+        // Exercise the actual production code path (FeedServiceImpl.GetFeed calls this
+        // same method) instead of a hand-rolled query, so a regression in the
+        // subscriptionId wiring itself would fail this test.
+        var globalPage = await assembler.AssembleUserPageAsync(
+            [.. sub1Items, .. sub2Items], hasMore: false, user.Id,
+            allBookmarked: false, includeTotalUnread: true, CancellationToken.None);
+
+        var sub1ScopedPage = await assembler.AssembleUserPageAsync(
+            sub1Items, hasMore: false, user.Id,
+            allBookmarked: false, includeTotalUnread: true, CancellationToken.None,
+            subscriptionId: sub1.Id);
+
+        Assert.Equal(4, globalPage.TotalUnread);
+        Assert.Equal(2, sub1ScopedPage.TotalUnread);
+        Assert.NotEqual(globalPage.TotalUnread, sub1ScopedPage.TotalUnread);
+    }
 }

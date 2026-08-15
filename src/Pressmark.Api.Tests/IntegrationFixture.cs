@@ -26,6 +26,27 @@ public sealed class IntegrationFixture : IAsyncLifetime
                 .Options);
     }
 
+    /// <summary>
+    /// A DbContext factory over the same test database, for services (like
+    /// <see cref="Services.FeedPageAssembler"/>) that need one to run parallel queries.
+    /// </summary>
+    public IDbContextFactory<AppDbContext> CreateContextFactory()
+    {
+        if (_connectionString is null)
+            throw new InvalidOperationException("SQL Server not available");
+
+        return new TestDbContextFactory(
+            new DbContextOptionsBuilder<AppDbContext>()
+                .UseSqlServer(_connectionString)
+                .Options);
+    }
+
+    private sealed class TestDbContextFactory(DbContextOptions<AppDbContext> options)
+        : IDbContextFactory<AppDbContext>
+    {
+        public AppDbContext CreateDbContext() => new(options);
+    }
+
     public async Task InitializeAsync()
     {
         var raw = Environment.GetEnvironmentVariable("TEST_MSSQL_CONNECTION_STRING");

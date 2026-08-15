@@ -16,13 +16,19 @@ public class FeedPageAssembler(AppDbContext db, IDbContextFactory<AppDbContext> 
     /// </summary>
     /// <param name="allBookmarked">When true (bookmarks), all items are bookmarked by definition.</param>
     /// <param name="includeTotalUnread">When true (first page of the feed), compute and set TotalUnread.</param>
+    /// <param name="subscriptionId">
+    /// When set, scopes TotalUnread to this subscription — matches the same filter
+    /// already applied to the page query, so the badge agrees with what "mark all as
+    /// read" for this view will actually mark.
+    /// </param>
     public async Task<FeedPage> AssembleUserPageAsync(
         List<Entities.FeedItem> pageItems,
         bool hasMore,
         Guid userId,
         bool allBookmarked,
         bool includeTotalUnread,
-        CancellationToken ct)
+        CancellationToken ct,
+        Guid? subscriptionId = null)
     {
         var ids = pageItems.Select(f => f.Id).ToList();
 
@@ -66,8 +72,11 @@ public class FeedPageAssembler(AppDbContext db, IDbContextFactory<AppDbContext> 
             var readFeedItemIds = db.ReadItems
                 .Where(r => r.UserId == userId)
                 .Select(r => r.FeedItemId);
-            page.TotalUnread = await db.FeedItems
-                .CountAsync(f => f.Subscription.UserId == userId && !readFeedItemIds.Contains(f.Id), ct);
+            var unreadQuery = db.FeedItems
+                .Where(f => f.Subscription.UserId == userId && !readFeedItemIds.Contains(f.Id));
+            if (subscriptionId.HasValue)
+                unreadQuery = unreadQuery.Where(f => f.SubscriptionId == subscriptionId.Value);
+            page.TotalUnread = await unreadQuery.CountAsync(ct);
         }
 
         foreach (var item in pageItems)

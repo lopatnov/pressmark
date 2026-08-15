@@ -2,8 +2,31 @@ import { useCallback, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { feedClient } from '@/api/clients'
-import { useFeedStore } from '@/store/feedStore'
+import type { FeedItem as FeedItemMessage } from '@/api/generated/feed_pb'
+import { useFeedStore, type FeedItem } from '@/store/feedStore'
 import { useIntersectionLoader } from '@/hooks/useIntersectionLoader'
+
+/**
+ * Projects a wire feed item onto the store's shape. Shared by the paged load and
+ * the update stream so a new proto field can only ever be wired into both at once.
+ */
+function toFeedItem(item: FeedItemMessage): FeedItem {
+  return {
+    id: item.id,
+    subscriptionId: item.subscriptionId,
+    title: item.title,
+    url: item.url,
+    summary: item.summary,
+    publishedAt: item.publishedAt,
+    isRead: item.isRead,
+    likeCount: item.likeCount,
+    isLiked: item.isLiked,
+    isBookmarked: item.isBookmarked,
+    sourceTitle: item.sourceTitle,
+    imageUrl: item.imageUrl,
+    isSourceBanned: item.isSourceBanned,
+  }
+}
 
 /**
  * Drives the personal feed: the paginated load, the live update stream and the
@@ -46,21 +69,7 @@ export function useFeedPage(activeSubId: string) {
           { signal },
         )
         if (signal?.aborted) return
-        const mapped = res.items.map((item) => ({
-          id: item.id,
-          subscriptionId: item.subscriptionId,
-          title: item.title,
-          url: item.url,
-          summary: item.summary,
-          publishedAt: item.publishedAt,
-          isRead: item.isRead,
-          likeCount: item.likeCount,
-          isLiked: item.isLiked,
-          isBookmarked: item.isBookmarked,
-          sourceTitle: item.sourceTitle,
-          imageUrl: item.imageUrl,
-          isSourceBanned: item.isSourceBanned,
-        }))
+        const mapped = res.items.map(toFeedItem)
         if (cursor) {
           appendItems(mapped, res.nextCursor)
         } else {
@@ -115,21 +124,7 @@ export function useFeedPage(activeSubId: string) {
           // source; updates from other subscriptions are dropped.
           const filterSubId = activeSubIdRef.current
           if (filterSubId && item.subscriptionId !== filterSubId) continue
-          prependItem({
-            id: item.id,
-            subscriptionId: item.subscriptionId,
-            title: item.title,
-            url: item.url,
-            summary: item.summary,
-            publishedAt: item.publishedAt,
-            isRead: item.isRead,
-            likeCount: item.likeCount,
-            isLiked: item.isLiked,
-            isBookmarked: item.isBookmarked,
-            sourceTitle: item.sourceTitle,
-            imageUrl: item.imageUrl,
-            isSourceBanned: item.isSourceBanned,
-          })
+          prependItem(toFeedItem(item))
         }
       } catch {
         if (!controller.signal.aborted) retryTimer = setTimeout(connect, 5000)
@@ -169,7 +164,7 @@ export function useFeedPage(activeSubId: string) {
 
   const markAllRead = async () => {
     try {
-      await feedClient.markAllAsRead({ subscriptionId: '' })
+      await feedClient.markAllAsRead({ subscriptionId: activeSubId })
       reset()
       loadFeed()
     } catch {
