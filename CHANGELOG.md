@@ -13,6 +13,11 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - "Mark all as read" while filtered to one source now only marks that source's articles read, instead of the whole feed across every subscription; the unread-count badge is scoped the same way
 
+### Security
+
+- Patched an XSS gap in article-summary sanitization by updating `dompurify` to a fixed version (GHSA-55q2-fjhq-7xh7)
+- Closed four transitive vulnerabilities in frontend build tooling (`brace-expansion`, `fast-uri`, `js-yaml`, `nanoid`) via npm overrides — none of these reach the shipped bundle or run at runtime (GHSA-rgw5-rvv9-x895, GHSA-7p8r-x3mc-p8w7, GHSA-5p4m-2wfm-xmqj, GHSA-2v37-7h3g-55p8)
+
 ## [1.2.0] — Reliability, Security & Dependency Refresh — 2026-07-28
 
 ### Fixed

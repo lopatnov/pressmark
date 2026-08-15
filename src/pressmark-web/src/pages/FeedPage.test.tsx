@@ -250,3 +250,47 @@ describe('FeedPage — mark-all-read subscription scope', () => {
     )
   })
 })
+
+// ── streamed item mapping (toFeedItem) ──────────────────────────────────────
+
+/**
+ * Regression test for the toFeedItem extraction in useFeedPage: the live update
+ * stream now projects each wire item through the shared toFeedItem mapper
+ * instead of a hand-copied field list, so a streamed item must still land in
+ * the store with every field populated correctly.
+ */
+describe('FeedPage — streamed item mapping (toFeedItem)', () => {
+  it('maps every field of a streamed item into the store', async () => {
+    const streamedItem = {
+      id: 'streamed-full',
+      subscriptionId: 'sub-full',
+      title: 'Full Field Title',
+      url: 'https://example.com/full-field-article',
+      summary: 'Full field summary text',
+      publishedAt: '2026-08-08T12:00:00Z',
+      isRead: false,
+      likeCount: 7,
+      isLiked: true,
+      isBookmarked: true,
+      sourceTitle: 'Full Field Source',
+      imageUrl: 'https://example.com/full-field.png',
+      isSourceBanned: true,
+    }
+
+    vi.mocked(feedClient.streamFeedUpdates).mockImplementation(async function* (
+      _req: unknown,
+      opts?: any,
+    ) {
+      yield streamedItem as any
+      await new Promise<void>((_, reject) => {
+        opts?.signal?.addEventListener('abort', () => reject(new Error('aborted')))
+      })
+    })
+
+    renderFeedPage()
+
+    await screen.findByText('Full Field Title')
+
+    expect(useFeedStore.getState().items[0]).toEqual(streamedItem)
+  })
+})
