@@ -9,6 +9,10 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- "Mark all as read" while filtered to one source now only marks that source's articles read, instead of the whole feed across every subscription; the unread-count badge is scoped the same way
+
 ### Security
 
 - Patched an XSS gap in article-summary sanitization by updating `dompurify` to a fixed version (GHSA-55q2-fjhq-7xh7)
