@@ -54,3 +54,6 @@ TestResult.xml
 nunit-*.xml
 /.vs
 /src/pressmark-web/coverage
+
+# Claude Code subagent worktrees (isolated working copies for background agents)
+/.claude/worktrees/
