@@ -261,6 +261,7 @@ public class FeedIntegrationTests(IntegrationFixture fixture) : IClassFixture<In
         if (!fixture.IsAvailable) return;
 
         await using var db = fixture.CreateContext();
+        var assembler = new FeedPageAssembler(db, fixture.CreateContextFactory());
 
         var user = MakeUser();
         db.Users.Add(user);
@@ -280,21 +281,20 @@ public class FeedIntegrationTests(IntegrationFixture fixture) : IClassFixture<In
         db.ReadItems.Add(new ReadItem { UserId = user.Id, FeedItemId = sub1Items[0].Id });
         await db.SaveChangesAsync();
 
-        var readFeedItemIds = db.ReadItems
-            .Where(r => r.UserId == user.Id)
-            .Select(r => r.FeedItemId);
+        // Exercise the actual production code path (FeedServiceImpl.GetFeed calls this
+        // same method) instead of a hand-rolled query, so a regression in the
+        // subscriptionId wiring itself would fail this test.
+        var globalPage = await assembler.AssembleUserPageAsync(
+            [.. sub1Items, .. sub2Items], hasMore: false, user.Id,
+            allBookmarked: false, includeTotalUnread: true, CancellationToken.None);
 
-        var globalUnread = await db.FeedItems
-            .Where(f => f.Subscription.UserId == user.Id && !readFeedItemIds.Contains(f.Id))
-            .CountAsync();
+        var sub1ScopedPage = await assembler.AssembleUserPageAsync(
+            sub1Items, hasMore: false, user.Id,
+            allBookmarked: false, includeTotalUnread: true, CancellationToken.None,
+            subscriptionId: sub1.Id);
 
-        var sub1ScopedUnread = await db.FeedItems
-            .Where(f => f.Subscription.UserId == user.Id && !readFeedItemIds.Contains(f.Id))
-            .Where(f => f.SubscriptionId == sub1.Id)
-            .CountAsync();
-
-        Assert.Equal(4, globalUnread);
-        Assert.Equal(2, sub1ScopedUnread);
-        Assert.NotEqual(globalUnread, sub1ScopedUnread);
+        Assert.Equal(4, globalPage.TotalUnread);
+        Assert.Equal(2, sub1ScopedPage.TotalUnread);
+        Assert.NotEqual(globalPage.TotalUnread, sub1ScopedPage.TotalUnread);
     }
 }
