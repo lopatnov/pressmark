@@ -33,8 +33,9 @@ internal static class DatabaseMigrator
             catch (Exception ex) when (attempt < MaxAttempts)
             {
                 logger.LogWarning(
-                    "DB not ready (attempt {Attempt}/{MaxAttempts}): {Message}. Retrying in {Delay}s…",
-                    attempt, MaxAttempts, ex.Message, RetryDelay.TotalSeconds);
+                    ex,
+                    "DB not ready (attempt {Attempt}/{MaxAttempts}). Retrying in {Delay}s…",
+                    attempt, MaxAttempts, RetryDelay.TotalSeconds);
                 await Task.Delay(RetryDelay);
             }
         }
