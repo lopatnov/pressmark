@@ -9,9 +9,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Pressmark.Api.BackgroundServices;
 using Pressmark.Api.Data;
+using Pressmark.Api.Endpoints;
 using Pressmark.Api.Services;
-
-const string DefaultBaseUrl = "http://localhost:5173";
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
@@ -59,14 +58,33 @@ builder.Services.AddRateLimiter(options =>
                 QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
                 QueueLimit = 0,
             }));
+    // Favicon proxy: unauthenticated and does an outbound fetch per request, so it's
+    // an easy DoS/amplification target without its own limit. A single page can
+    // legitimately request a few dozen distinct favicons (one per feed-item source),
+    // so the window is looser than "auth" but still capped per IP.
+    options.AddPolicy(FaviconProxyEndpoint.RateLimitPolicyName, context =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: context.Connection.RemoteIpAddress?.ToString() ?? "anon",
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 60,
+                Window = TimeSpan.FromMinutes(1),
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = 5,
+            }));
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 });
 
-// HTTP client (pooled — used by FeedFetcherService and the favicon proxy)
+// HTTP client (pooled — used by FeedFetcherService for RSS/OPML fetches, which
+// legitimately need to follow redirects; kept separate from the favicon proxy's
+// client so that client's stricter SSRF/redirect rules can't affect this one).
 builder.Services.AddHttpClient("Pressmark", c =>
 {
     c.DefaultRequestHeaders.UserAgent.ParseAdd("Pressmark/1.0");
 });
+
+// HTTP client + SSRF defenses dedicated to the favicon proxy (see Endpoints/FaviconProxyEndpoint.cs).
+builder.Services.AddFaviconProxyHttpClient();
 
 var jwtSecret = config["Jwt:Secret"]
     ?? throw new InvalidOperationException("Jwt:Secret is required. Set it via env var or appsettings.");
@@ -151,64 +169,7 @@ var app = builder.Build();
 
 app.MapGet("/health", () => Results.Ok(new { status = "healthy" }));
 
-app.MapGet("/api/meta", async (AppDbContext db, IConfiguration config, CancellationToken ct) =>
-{
-    var settings = await SiteSettingsSnapshot.LoadAsync(db, [
-        SiteSettingKeys.SiteName,
-        SiteSettingKeys.SiteDescription,
-    ], ct);
-    var siteName = settings.SiteName;
-    // Unlike the admin screen, an unset description is reported as empty here
-    // rather than falling back to the seeded copy.
-    var siteDescription = settings.Value(SiteSettingKeys.SiteDescription, "");
-    var baseUrl = (config["App:BaseUrl"] ?? DefaultBaseUrl).TrimEnd('/');
-    return Results.Ok(new { siteName, siteDescription, baseUrl });
-}).AllowAnonymous();
-
-app.MapGet("/sitemap.xml", async (AppDbContext db, IConfiguration config, CancellationToken ct) =>
-{
-    var baseUrl = System.Security.SecurityElement.Escape(
-        (config["App:BaseUrl"] ?? DefaultBaseUrl).TrimEnd('/'));
-    var settings = await SiteSettingsSnapshot.LoadAsync(db, [
-        SiteSettingKeys.RegistrationMode,
-        SiteSettingKeys.CommunityPageEnabled,
-    ], ct);
-
-    var communityEnabled = settings.CommunityPageEnabled;
-    var registrationOpen = settings.RegistrationMode == "open";
-    var lastmod = DateTime.UtcNow.ToString("yyyy-MM-dd");
-
-    var sb = new StringBuilder();
-    sb.AppendLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-    sb.AppendLine("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">");
-    if (communityEnabled)
-        sb.AppendLine($"  <url><loc>{baseUrl}/</loc><lastmod>{lastmod}</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>");
-    sb.AppendLine($"  <url><loc>{baseUrl}/login</loc><lastmod>{lastmod}</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>");
-    if (registrationOpen)
-        sb.AppendLine($"  <url><loc>{baseUrl}/register</loc><lastmod>{lastmod}</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>");
-    sb.AppendLine("</urlset>");
-
-    return Results.Content(sb.ToString(), "application/xml");
-}).AllowAnonymous();
-
-app.MapGet("/robots.txt", (IConfiguration config) =>
-{
-    var baseUrl = (config["App:BaseUrl"] ?? DefaultBaseUrl).TrimEnd('/');
-    var content = $"""
-        User-agent: *
-        Allow: /
-        Allow: /login
-        Allow: /register
-        Disallow: /feed
-        Disallow: /subscriptions
-        Disallow: /bookmarks
-        Disallow: /admin
-        Disallow: /article/
-
-        Sitemap: {baseUrl}/sitemap.xml
-        """;
-    return Results.Content(content, "text/plain");
-}).AllowAnonymous();
+app.MapSeoEndpoints();
 
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
@@ -226,63 +187,6 @@ app.MapGrpcService<SubscriptionServiceImpl>();
 app.MapGrpcService<FeedServiceImpl>();
 app.MapGrpcService<AdminServiceImpl>();
 
-app.MapGet("/proxy/favicon", async (string? url, IHttpClientFactory httpClientFactory, HttpContext ctx) =>
-{
-    if (string.IsNullOrWhiteSpace(url))
-        return Results.NoContent();
-
-    if (!Uri.TryCreate(url, UriKind.Absolute, out var uri) ||
-        (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps))
-        return Results.NoContent();
-
-    // Block loopback and private IP ranges to prevent SSRF
-    var host = uri.Host.ToLowerInvariant();
-    if (host is "localhost" or "127.0.0.1" or "::1" ||
-        host.StartsWith("192.168.") ||
-        host.StartsWith("10.") ||
-        host.StartsWith("169.254.") ||
-        IsPrivate172(host))
-        return Results.NoContent();
-
-    var faviconUrl = uri.GetLeftPart(UriPartial.Authority) + "/favicon.ico";
-
-    try
-    {
-        var client = httpClientFactory.CreateClient("Pressmark");
-        // Linked to the request so a disconnected client also drops the outbound fetch.
-        using var cts = CancellationTokenSource.CreateLinkedTokenSource(ctx.RequestAborted);
-        cts.CancelAfter(TimeSpan.FromSeconds(5));
-        using var response = await client.GetAsync(faviconUrl, cts.Token);
-
-        if (!response.IsSuccessStatusCode)
-            return Results.NoContent();
-
-        var contentType = response.Content.Headers.ContentType?.MediaType ?? "";
-        if (!contentType.StartsWith("image/"))
-            return Results.NoContent();
-
-        const int maxFaviconBytes = 1024 * 1024; // 1 MB
-        if (response.Content.Headers.ContentLength > maxFaviconBytes)
-            return Results.NoContent();
-
-        ctx.Response.Headers.CacheControl = "public, max-age=86400";
-        var bytes = await response.Content.ReadAsByteArrayAsync(cts.Token);
-        if (bytes.Length > maxFaviconBytes)
-            return Results.NoContent();
-
-        return Results.Bytes(bytes, contentType);
-    }
-    catch
-    {
-        return Results.NoContent();
-    }
-});
+app.MapFaviconProxy();
 
 await app.RunAsync();
-
-static bool IsPrivate172(string host)
-{
-    if (!host.StartsWith("172.")) return false;
-    var parts = host.Split('.');
-    return parts.Length >= 2 && int.TryParse(parts[1], out var octet) && octet is >= 16 and <= 31;
-}
