@@ -5,6 +5,7 @@ import { feedClient } from '@/api/clients'
 import type { FeedItem as FeedItemMessage } from '@/api/generated/feed_pb'
 import { useFeedStore, type FeedItem } from '@/store/feedStore'
 import { useIntersectionLoader } from '@/hooks/useIntersectionLoader'
+import { useLatestRequest } from '@/hooks/useLatestRequest'
 
 /**
  * Projects a wire feed item onto the store's shape. Shared by the paged load and
@@ -55,8 +56,14 @@ export function useFeedPage(activeSubId: string) {
     reset,
   } = useFeedStore()
 
+  // Shared across load-more and the reset effect so either one starting a fresh
+  // request aborts whichever request the other one has in flight. The signal is
+  // required rather than optional: an unabortable load-more was how a page of
+  // the previous filter used to append itself to the list that replaced it.
+  const { start, abort } = useLatestRequest()
+
   const loadFeed = useCallback(
-    async (cursor = '', signal?: AbortSignal) => {
+    async (cursor: string, signal: AbortSignal) => {
       setLoading(true)
       try {
         const res = await feedClient.getFeed(
@@ -68,7 +75,7 @@ export function useFeedPage(activeSubId: string) {
           },
           { signal },
         )
-        if (signal?.aborted) return
+        if (signal.aborted) return
         const mapped = res.items.map(toFeedItem)
         if (cursor) {
           appendItems(mapped, res.nextCursor)
@@ -76,28 +83,34 @@ export function useFeedPage(activeSubId: string) {
           setItems(mapped, res.nextCursor, res.totalUnread)
         }
       } catch {
-        if (!signal?.aborted) toast.error(t('common:error'))
+        if (!signal.aborted) toast.error(t('common:error'))
       } finally {
-        if (!signal?.aborted) setLoading(false)
+        // An aborted request must not clear the flag the request that replaced
+        // it has already set, or the skeleton drops and load-more refires early.
+        if (!signal.aborted) setLoading(false)
       }
     },
     [setLoading, appendItems, setItems, t, activeSubId],
   )
 
+  const startLoad = useCallback(
+    (cursor: string) => start((signal) => loadFeed(cursor, signal)),
+    [start, loadFeed],
+  )
+
   const handleLoadMore = useCallback(() => {
-    const cursor = useFeedStore.getState().nextCursor
-    if (cursor && !useFeedStore.getState().isLoading) loadFeed(cursor)
-  }, [loadFeed])
+    const { nextCursor: cursor, isLoading: loading } = useFeedStore.getState()
+    if (cursor && !loading) startLoad(cursor)
+  }, [startLoad])
 
   const sentinelRef = useIntersectionLoader(handleLoadMore, !!nextCursor && !isLoading)
 
   // Reload when filter changes; abort the previous in-flight request
   useEffect(() => {
-    const controller = new AbortController()
     reset()
-    loadFeed('', controller.signal)
-    return () => controller.abort()
-  }, [unreadOnly, activeSubId, loadFeed, reset])
+    startLoad('')
+    return abort
+  }, [unreadOnly, activeSubId, startLoad, reset, abort])
 
   // The stream outlives filter changes, so the active filter is read through a
   // ref instead of being captured in the connection's closure.
@@ -166,7 +179,7 @@ export function useFeedPage(activeSubId: string) {
     try {
       await feedClient.markAllAsRead({ subscriptionId: activeSubId })
       reset()
-      loadFeed()
+      startLoad('')
     } catch {
       toast.error(t('common:error'))
     }
