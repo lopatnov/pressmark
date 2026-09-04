@@ -10,8 +10,15 @@ import { feedClient } from '@/api/clients'
 // ── mocks ─────────────────────────────────────────────────────────────────────
 // react-i18next and sonner are mocked globally in src/test-setup.ts
 
+// Captures the load-more callback so tests can trigger it directly, without
+// simulating a real IntersectionObserver entry.
+let capturedLoadMore: (() => void) | null = null
+
 vi.mock('@/hooks/useIntersectionLoader', () => ({
-  useIntersectionLoader: () => ({ current: null }),
+  useIntersectionLoader: (onIntersect: () => void) => {
+    capturedLoadMore = onIntersect
+    return { current: null }
+  },
 }))
 
 vi.mock('@/components/feed/FeedItemCard', () => ({
@@ -141,6 +148,87 @@ describe('FeedPage — unreadOnly race condition', () => {
       expect(screen.queryByText('First Result')).not.toBeInTheDocument()
     })
     expect(firstCallSignal.aborted).toBe(true)
+  })
+})
+
+// ── load-more / filter-change race condition ────────────────────────────────
+
+/**
+ * Regression test for the race fixed by extracting useLatestRequest: handleLoadMore
+ * used to call loadFeed(cursor) with no AbortSignal at all, so a load-more request
+ * in flight when the filter changed could not be cancelled. Its late response still
+ * passed the (truthy) cursor check and got appended onto the list the filter change
+ * had already replaced, splicing a stale item in under a stale nextCursor.
+ *
+ * With the fix, handleLoadMore and the filter-change effect share one AbortController
+ * via useLatestRequest, so starting the filter-change reload aborts the load-more
+ * that was still in flight.
+ */
+describe('FeedPage — load-more race condition', () => {
+  it('discards a late load-more response after the filter changes mid-flight', async () => {
+    const user = userEvent.setup()
+
+    let resolveLoadMore!: () => void
+    let loadMoreSignal!: AbortSignal
+    let callCount = 0
+
+    vi.mocked(feedClient.getFeed).mockImplementation(async (_req: unknown, opts?: any) => {
+      callCount++
+      if (callCount === 1) {
+        // Initial page load: one item, plus a cursor so load-more is available.
+        return {
+          items: [makeItem('a1', 'Page A Item 1')],
+          nextCursor: 'cursor-a',
+          totalUnread: 0,
+        } as any
+      }
+      if (callCount === 2) {
+        // Load-more for the original filter: suspended until explicitly resolved.
+        loadMoreSignal = opts?.signal as AbortSignal
+        await new Promise<void>((resolve) => {
+          resolveLoadMore = resolve
+        })
+        return {
+          items: [makeItem('a2-stale', 'Stale Load-More Item')],
+          nextCursor: 'stale-cursor',
+          totalUnread: 0,
+        } as any
+      }
+      // Third call: the filter-change reload, resolves immediately.
+      return {
+        items: [makeItem('b1', 'Page B Item 1')],
+        nextCursor: 'cursor-b',
+        totalUnread: 0,
+      } as any
+    })
+
+    renderFeedPage()
+
+    await screen.findByText('Page A Item 1')
+
+    // Trigger load-more directly via the captured IntersectionObserver callback.
+    act(() => capturedLoadMore?.())
+    await waitFor(() => expect(callCount).toBe(2))
+
+    // Change the filter while the load-more is still in flight — the effect
+    // cleanup aborts the load-more, then starts a fresh request for the new filter.
+    const checkbox = screen.getByRole('checkbox')
+    await user.click(checkbox)
+
+    await screen.findByText('Page B Item 1')
+    expect(useFeedStore.getState().nextCursor).toBe('cursor-b')
+
+    // Now let the stale (already-aborted) load-more response resolve.
+    act(() => resolveLoadMore())
+
+    // The stale item must never appear, and nextCursor must still belong to the
+    // new filter — a regression would splice the stale item onto the list and
+    // overwrite nextCursor with the stale one.
+    await waitFor(() => {
+      expect(screen.queryByText('Stale Load-More Item')).not.toBeInTheDocument()
+    })
+    expect(useFeedStore.getState().nextCursor).toBe('cursor-b')
+    expect(loadMoreSignal.aborted).toBe(true)
   })
 })
 

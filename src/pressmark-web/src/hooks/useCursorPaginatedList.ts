@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { useIntersectionLoader } from '@/hooks/useIntersectionLoader'
+import { useLatestRequest } from '@/hooks/useLatestRequest'
 
 interface PagedResult<TItem> {
   items: TItem[]
@@ -33,7 +34,7 @@ export function useCursorPaginatedList<TItem>(
   const [isLoading, setIsLoading] = useState(true)
   // Shared across loadMore and the reset effect so either one starting a
   // fresh request aborts whichever request the other one has in flight.
-  const abortRef = useRef<AbortController | null>(null)
+  const { start, abort } = useLatestRequest()
 
   const loadPage = useCallback(
     async (cursor: string, signal: AbortSignal) => {
@@ -55,13 +56,8 @@ export function useCursorPaginatedList<TItem>(
   )
 
   const startLoad = useCallback(
-    (cursor: string) => {
-      abortRef.current?.abort()
-      const controller = new AbortController()
-      abortRef.current = controller
-      loadPage(cursor, controller.signal)
-    },
-    [loadPage],
+    (cursor: string) => start((signal) => loadPage(cursor, signal)),
+    [start, loadPage],
   )
 
   const loadMore = useCallback(() => {
@@ -76,8 +72,8 @@ export function useCursorPaginatedList<TItem>(
       setNextCursor('')
     }
     startLoad('')
-    return () => abortRef.current?.abort()
-  }, [resetKey, startLoad, clearOnReset])
+    return abort
+  }, [resetKey, startLoad, clearOnReset, abort])
 
   return { items, setItems, nextCursor, isLoading, sentinelRef, loadMore }
 }
