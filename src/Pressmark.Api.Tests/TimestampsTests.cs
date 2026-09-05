@@ -23,6 +23,21 @@ public class TimestampsTests
         Assert.EndsWith("Z", value.ToIsoUtc());
     }
 
+    /// <summary>
+    /// Pins the exact rendered value, not just that it ends with Z: a wrong fix
+    /// (e.g. calling ToUniversalTime() first, which is a no-op on Kind.Utc but
+    /// shifts a Kind.Unspecified value by the local offset before formatting)
+    /// would still pass EndsWith("Z") but render the wrong instant on any
+    /// server whose local time isn't already UTC.
+    /// </summary>
+    [Fact]
+    public void ToIsoUtc_UnspecifiedKind_RendersTheStoredDigitsUnchanged()
+    {
+        var value = DateTime.SpecifyKind(Instant, DateTimeKind.Unspecified);
+
+        Assert.Equal("2024-06-15T10:30:00.0000000Z", value.ToIsoUtc());
+    }
+
     [Fact]
     public void ToIsoUtc_UtcKind_EndsWithZ()
     {
