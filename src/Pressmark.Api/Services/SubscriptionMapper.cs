@@ -16,8 +16,8 @@ internal static class SubscriptionMapper
         UserId = s.UserId.ToString(),
         RssUrl = s.RssUrl,
         Title = s.DisplayName ?? s.Title,
-        LastFetchedAt = s.LastFetchedAt?.ToString("o") ?? "",
-        CreatedAt = s.CreatedAt.ToString("o"),
+        LastFetchedAt = s.LastFetchedAt.ToIsoUtc(),
+        CreatedAt = s.CreatedAt.ToIsoUtc(),
         IsCommunityBanned = s.IsCommunityBanned,
     };
 }

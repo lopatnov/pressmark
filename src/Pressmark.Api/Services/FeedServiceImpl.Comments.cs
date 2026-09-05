@@ -40,7 +40,7 @@ public partial class FeedServiceImpl
             Id = c.Id.ToString(),
             UserEmail = c.RemovedByAdmin ? "" : c.User.Email,
             Body = c.RemovedByAdmin ? "" : c.Body,
-            CreatedAt = c.CreatedAt.ToString("o"),
+            CreatedAt = c.CreatedAt.ToIsoUtc(),
             RemovedByAdmin = c.RemovedByAdmin,
             IsCommentingBanned = !c.RemovedByAdmin && c.User.IsCommentingBanned,
         }));
@@ -92,7 +92,7 @@ public partial class FeedServiceImpl
             Id = comment.Id.ToString(),
             UserEmail = user.Email,
             Body = comment.Body,
-            CreatedAt = comment.CreatedAt.ToString("o"),
+            CreatedAt = comment.CreatedAt.ToIsoUtc(),
             RemovedByAdmin = false,
             IsCommentingBanned = user.IsCommentingBanned,
         };
