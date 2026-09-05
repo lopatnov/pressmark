@@ -37,10 +37,23 @@ function toFeedItem(item: FeedItemMessage): FeedItem {
  * because a live update is prepended as it comes in, and a batch of new articles is
  * broadcast newest-first, so the item left on top is the batch's *oldest*. Asking
  * the server to replay from that would replay the rest of the batch on every
- * reconnect. Timestamps are ISO-8601 in a fixed format, so they compare as strings.
+ * reconnect. Compared as parsed dates rather than raw strings: items loaded via
+ * `getFeed` and items delivered over the stream aren't guaranteed identical
+ * ISO-8601 formatting (e.g. a trailing `Z`), and a longer string with the same
+ * prefix sorts as "greater" lexicographically even when it represents the same
+ * or an earlier instant.
  */
 function newestPublishedAt(items: readonly FeedItem[]): string {
-  return items.reduce((newest, item) => (item.publishedAt > newest ? item.publishedAt : newest), '')
+  let newest = ''
+  let newestMs = -Infinity
+  for (const item of items) {
+    const ms = Date.parse(item.publishedAt)
+    if (ms > newestMs) {
+      newest = item.publishedAt
+      newestMs = ms
+    }
+  }
+  return newest
 }
 
 /**
