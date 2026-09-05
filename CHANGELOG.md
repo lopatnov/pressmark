@@ -13,6 +13,7 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - "Mark all as read" while filtered to one source now only marks that source's articles read, instead of the whole feed across every subscription; the unread-count badge is scoped the same way
 - Loading more of the feed no longer splices stale items (and a stale pagination cursor) into the list if the source/unread filter changes before the load-more request finishes
+- Article, comment, invite and admin-panel timestamps no longer render shifted by the viewer's local UTC offset on reload — stored timestamps are now serialised with an explicit `Z`, matching what the live update stream already sent
 
 ### Security
 
