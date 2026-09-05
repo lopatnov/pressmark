@@ -13,6 +13,7 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - "Mark all as read" while filtered to one source now only marks that source's articles read, instead of the whole feed across every subscription; the unread-count badge is scoped the same way
 - Loading more of the feed no longer splices stale items (and a stale pagination cursor) into the list if the source/unread filter changes before the load-more request finishes
+- The feed's live-update stream no longer replays the same batch of new articles on every reconnect (duplicate rows, an inflated unread badge, and a replayed article losing its read state); the stream also now retries after a clean disconnect, not only after an error, so a server restart no longer silently stops live updates until the next page reload
 
 ### Security
 
