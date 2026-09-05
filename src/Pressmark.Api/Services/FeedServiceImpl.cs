@@ -33,9 +33,13 @@ public partial class FeedServiceImpl(
     /// is client-supplied and otherwise unbounded, so an old (or hostile) value would
     /// materialise the caller's whole retained history into memory and write all of it
     /// to the stream. The newest items are the ones a reconnecting client can use;
-    /// anything older it already has, or gets from normal paging.
+    /// anything older it already has, or picks up on the next reload.
     /// </summary>
-    private const int MaxCatchUpItems = 100;
+    /// <remarks>
+    /// Internal (not private) so <c>FeedIntegrationTests</c> can reference it directly
+    /// instead of hardcoding a copy of the value that could silently drift.
+    /// </remarks>
+    internal const int MaxCatchUpItems = 100;
 
     public override async Task<FeedPage> GetFeed(
         GetFeedRequest request, ServerCallContext context)
@@ -195,6 +199,7 @@ public partial class FeedServiceImpl(
                          && !f.IsCommunityHidden
                          && !f.Subscription.IsCommunityBanned)
                 .OrderByDescending(f => f.PublishedAt)
+                .ThenByDescending(f => f.Id)
                 .Take(MaxCatchUpItems)
                 .ToListAsync(ct);
 
