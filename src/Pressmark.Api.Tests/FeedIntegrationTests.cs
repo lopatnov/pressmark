@@ -297,4 +297,85 @@ public class FeedIntegrationTests(IntegrationFixture fixture) : IClassFixture<In
         Assert.Equal(2, sub1ScopedPage.TotalUnread);
         Assert.NotEqual(globalPage.TotalUnread, sub1ScopedPage.TotalUnread);
     }
+
+    // ── stream catch-up replay bound ─────────────────────────────────────────
+
+    /// <summary>
+    /// Regression for the unbounded stream catch-up replay: since_timestamp on
+    /// StreamFeedUpdates is client-supplied and was previously unbounded, so an
+    /// old (or hostile) value made the server materialise the caller's entire
+    /// retained history into memory and write all of it to the stream. With more
+    /// than MaxCatchUpItems matching items, exactly the newest must come back —
+    /// and the write loop (reversing the newest-first query result) must still
+    /// deliver them oldest-first on the wire, which is what leaves the newest
+    /// article on top of the client's list after each prepend.
+    /// </summary>
+    /// <remarks>
+    /// This pins the query's shape (cap, ordering, tiebreaker) rather than calling
+    /// StreamFeedUpdates itself — there is no test double for its
+    /// IServerStreamWriter/ServerCallContext yet (tracked separately). A change to
+    /// the service outside this query's shape (e.g. the write loop) can still slip
+    /// past this test.
+    /// </remarks>
+    [Fact]
+    public async Task StreamCatchUp_CapsAtMaxItems_DeliveredOldestFirst()
+    {
+        if (!fixture.IsAvailable) return;
+
+        await using var db = fixture.CreateContext();
+
+        var user = MakeUser();
+        db.Users.Add(user);
+        var sub = MakeSub(user.Id);
+        db.Subscriptions.Add(sub);
+
+        const int totalItems = FeedServiceImpl.MaxCatchUpItems + 50;
+
+        // Each item is one minute newer than the previous one, so item order by
+        // insertion also matches order by PublishedAt.
+        var baseTime = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        var items = Enumerable.Range(0, totalItems)
+            .Select(i => MakeItem(sub.Id, publishedAt: baseTime.AddMinutes(i)))
+            .ToList();
+        db.FeedItems.AddRange(items);
+        await db.SaveChangesAsync();
+
+        var since = baseTime.AddMinutes(-1); // every item matches "PublishedAt > since"
+
+        // Exact query from FeedServiceImpl.StreamFeedUpdates's catch-up replay.
+        var catchUp = await db.FeedItems
+            .AsNoTracking()
+            .Include(f => f.Subscription)
+            .Where(f => f.Subscription.UserId == user.Id
+                     && f.PublishedAt > since
+                     && !f.IsCommunityHidden
+                     && !f.Subscription.IsCommunityBanned)
+            .OrderByDescending(f => f.PublishedAt)
+            .ThenByDescending(f => f.Id)
+            .Take(FeedServiceImpl.MaxCatchUpItems)
+            .ToListAsync();
+
+        Assert.Equal(FeedServiceImpl.MaxCatchUpItems, catchUp.Count);
+
+        var newestItems = items.OrderByDescending(f => f.PublishedAt)
+            .Take(FeedServiceImpl.MaxCatchUpItems).ToList();
+        Assert.True(catchUp.Select(f => f.Id).ToHashSet().SetEquals(newestItems.Select(f => f.Id)));
+
+        // The write loop from FeedServiceImpl.StreamFeedUpdates: walks the
+        // newest-first query result in reverse to deliver oldest-first.
+        var deliveryOrder = new List<Guid>();
+        for (var i = catchUp.Count - 1; i >= 0; i--)
+            deliveryOrder.Add(catchUp[i].Id);
+
+        var expectedDeliveryOrder = newestItems
+            .OrderBy(f => f.PublishedAt)
+            .Select(f => f.Id)
+            .ToList();
+
+        Assert.Equal(expectedDeliveryOrder, deliveryOrder);
+
+        // The 50 oldest items (outside the cap) must not appear at all.
+        var droppedIds = items.Except(newestItems).Select(f => f.Id);
+        Assert.Empty(droppedIds.Intersect(deliveryOrder));
+    }
 }

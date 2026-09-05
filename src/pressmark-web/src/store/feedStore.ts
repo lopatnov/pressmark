@@ -46,8 +46,18 @@ export const useFeedStore = create<FeedState>()(
       setItems: (items, cursor, unread) => set({ items, nextCursor: cursor, totalUnread: unread }),
       appendItems: (items, cursor) =>
         set((s) => ({ items: [...s.items, ...items], nextCursor: cursor })),
+      // The update stream can deliver an article the list already holds — on
+      // reconnect the server replays everything newer than the timestamp the
+      // client asked from. Re-adding it would show the row twice (duplicate
+      // React keys included), inflate the unread count and reset the copy's
+      // read/like/bookmark state, so a known id is dropped instead. Returning
+      // the state unchanged is what keeps that a no-op for subscribers.
       prependItem: (item) =>
-        set((s) => ({ items: [item, ...s.items], totalUnread: s.totalUnread + 1 })),
+        set((s) =>
+          s.items.some((i) => i.id === item.id)
+            ? s
+            : { items: [item, ...s.items], totalUnread: s.totalUnread + 1 },
+        ),
       setLoading: (isLoading) => set({ isLoading }),
       setUnreadOnly: (unreadOnly) => set({ unreadOnly }),
       updateLike: (id, isLiked, likeCount) =>

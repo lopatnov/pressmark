@@ -13,13 +13,16 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - "Mark all as read" while filtered to one source now only marks that source's articles read, instead of the whole feed across every subscription; the unread-count badge is scoped the same way
 - Loading more of the feed no longer splices stale items (and a stale pagination cursor) into the list if the source/unread filter changes before the load-more request finishes
+- The feed's live-update stream no longer replays the same batch of new articles on every reconnect (duplicate rows, an inflated unread badge, and a replayed article losing its read state); the stream also now retries after a clean disconnect, not only after an error, so a server restart no longer silently stops live updates until the next page reload
 - Article, comment, invite, subscription and admin-panel timestamps no longer render shifted by the viewer's local UTC offset on reload — stored timestamps are now serialised with an explicit `Z`, matching what the live update stream already sent
 
 ### Security
 
+- The personal feed's live-update stream no longer replays a client's entire retained history when it reconnects with an old `since` timestamp — the catch-up replay is now capped at the newest 100 items, matching the page-size cap every other listing endpoint already uses
 - Favicon proxy (`/proxy/favicon`) hardened against SSRF: the target hostname's DNS records are now resolved and every resolved address validated (loopback/link-local/RFC1918/CGNAT/IPv6 ULA/multicast) at TCP-connect time, closing gaps in the previous string-prefix host check (cloud metadata hostnames, `0.0.0.0`, IPv4-mapped IPv6 loopback/private addresses). The endpoint no longer follows redirects and now has its own per-IP rate limit, since it is intentionally unauthenticated (the community/feed pages it serves are public) but performs an outbound fetch per request
 - Patched an XSS gap in article-summary sanitization by updating `dompurify` to a fixed version (GHSA-55q2-fjhq-7xh7)
 - Closed four transitive vulnerabilities in frontend build tooling (`brace-expansion`, `fast-uri`, `js-yaml`, `nanoid`) via npm overrides — none of these reach the shipped bundle or run at runtime (GHSA-rgw5-rvv9-x895, GHSA-7p8r-x3mc-p8w7, GHSA-5p4m-2wfm-xmqj, GHSA-2v37-7h3g-55p8)
+- Closed two moderate `qs` vulnerabilities (transitive via `shadcn`'s bundled MCP tooling) via an npm override — build-tooling-only, does not reach the shipped bundle (GHSA-x5fp-wj9c-mxmx, GHSA-4mjr-xmp4-gh2g)
 
 ## [1.2.0] — Reliability, Security & Dependency Refresh — 2026-07-28
 

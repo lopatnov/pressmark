@@ -382,3 +382,84 @@ describe('FeedPage — streamed item mapping (toFeedItem)', () => {
     expect(useFeedStore.getState().items[0]).toEqual(streamedItem)
   })
 })
+
+// ── stream reconnect replay point (newestPublishedAt) ───────────────────────
+
+/**
+ * Regression test for the reconnect replay bug: a broadcast batch of new
+ * articles arrives newest-first, so as each one is prepended the batch's
+ * *oldest* article ends up on top of the list (items[0]) — the list is ordered
+ * by arrival, not by publish date. Asking the server to replay from
+ * items[0].publishedAt on reconnect therefore replayed the rest of that same
+ * batch every time: duplicate rows, duplicate React keys, an inflated unread
+ * badge.
+ *
+ * The fix (newestPublishedAt in useFeedPage) replays from the newest publishedAt
+ * in the list instead of items[0]. This drives that through the real reconnect
+ * path: the first stream call delivers a newest-first batch and ends cleanly
+ * (not an error, since the fix also retries on a clean end) to trigger the 5s
+ * backoff retry, and the second call's sinceTimestamp is asserted against the
+ * newest item's timestamp rather than the batch's last-arrived (oldest) item.
+ */
+describe('FeedPage — stream reconnect replay point (newestPublishedAt)', () => {
+  it('replays from the newest item in the list on reconnect, not items[0]', async () => {
+    vi.useFakeTimers()
+    try {
+      // Irrelevant to this test — left pending so it cannot race with the
+      // stream's prepends via its own (unrelated) setItems([]) call.
+      vi.mocked(feedClient.getFeed).mockReturnValue(new Promise(() => {}))
+
+      const sinceTimestamps: string[] = []
+      let callCount = 0
+
+      vi.mocked(feedClient.streamFeedUpdates).mockImplementation((req: any, opts?: any) => {
+        callCount++
+        sinceTimestamps.push(req.sinceTimestamp)
+        if (callCount === 1) {
+          // A broadcast batch delivered newest-first: prepending each one in
+          // turn leaves the *oldest* of the two on top of the list.
+          return (async function* () {
+            yield {
+              ...makeItem('batch-newest', 'Newest'),
+              publishedAt: '2026-01-01T10:05:00.000Z',
+            } as any
+            yield {
+              ...makeItem('batch-oldest', 'Oldest'),
+              publishedAt: '2026-01-01T10:00:00.000Z',
+            } as any
+            // Clean end — no throw — must still trigger the retry below.
+          })()
+        }
+        // Reconnect call: block forever, nothing else to assert on it.
+        return (async function* () {
+          await new Promise<void>((_, reject) => {
+            opts?.signal?.addEventListener('abort', () => reject(new Error('aborted')))
+          })
+        })()
+      })
+
+      renderFeedPage()
+
+      // Drain the microtask queue (fake timers leave those untouched) until
+      // both items of the batch have been prepended into the store — the
+      // store update is synchronous, so this does not depend on React having
+      // re-rendered yet.
+      for (let i = 0; i < 20 && useFeedStore.getState().items.length < 2; i++) {
+        await vi.advanceTimersByTimeAsync(0)
+      }
+      expect(useFeedStore.getState().items.map((i) => i.id)).toEqual([
+        'batch-oldest',
+        'batch-newest',
+      ])
+
+      await vi.advanceTimersByTimeAsync(5000)
+
+      expect(callCount).toBe(2)
+      // Must replay from the newest publishedAt in the list, not items[0] (the
+      // batch's oldest article, left on top by arrival order).
+      expect(sinceTimestamps[1]).toBe('2026-01-01T10:05:00.000Z')
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+})

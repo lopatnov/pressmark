@@ -28,6 +28,19 @@ public partial class FeedServiceImpl(
     CommentNotificationService commentNotifications,
     ILogger<FeedServiceImpl> logger) : FeedService.FeedServiceBase
 {
+    /// <summary>
+    /// Caps the replay a reconnecting stream client can ask for. <c>since_timestamp</c>
+    /// is client-supplied and otherwise unbounded, so an old (or hostile) value would
+    /// materialise the caller's whole retained history into memory and write all of it
+    /// to the stream. The newest items are the ones a reconnecting client can use;
+    /// anything older it already has, or picks up on the next reload.
+    /// </summary>
+    /// <remarks>
+    /// Internal (not private) so <c>FeedIntegrationTests</c> can reference it directly
+    /// instead of hardcoding a copy of the value that could silently drift.
+    /// </remarks>
+    internal const int MaxCatchUpItems = 100;
+
     public override async Task<FeedPage> GetFeed(
         GetFeedRequest request, ServerCallContext context)
     {
@@ -175,6 +188,9 @@ public partial class FeedServiceImpl(
             && DateTime.TryParse(request.SinceTimestamp, null,
                 System.Globalization.DateTimeStyles.RoundtripKind, out var since))
         {
+            // Ordered newest-first so the cap keeps the newest items rather than an
+            // arbitrary window, then replayed oldest-first: the client prepends each
+            // item as it arrives, so ascending order is what leaves the newest on top.
             var catchUp = await db.FeedItems
                 .AsNoTracking()
                 .Include(f => f.Subscription)
@@ -182,11 +198,13 @@ public partial class FeedServiceImpl(
                          && f.PublishedAt > since
                          && !f.IsCommunityHidden
                          && !f.Subscription.IsCommunityBanned)
-                .OrderBy(f => f.PublishedAt)
+                .OrderByDescending(f => f.PublishedAt)
+                .ThenByDescending(f => f.Id)
+                .Take(MaxCatchUpItems)
                 .ToListAsync(ct);
 
-            foreach (var item in catchUp)
-                await responseStream.WriteAsync(FeedItemMapper.ToCatchUpProto(item), ct);
+            for (var i = catchUp.Count - 1; i >= 0; i--)
+                await responseStream.WriteAsync(FeedItemMapper.ToCatchUpProto(catchUp[i]), ct);
         }
 
         // Subscribe to live updates
