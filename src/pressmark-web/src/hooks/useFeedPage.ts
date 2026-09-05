@@ -30,6 +30,20 @@ function toFeedItem(item: FeedItemMessage): FeedItem {
 }
 
 /**
+ * Newest publish timestamp currently in the list, or '' when it is empty — the
+ * point the update stream should replay from.
+ *
+ * It has to be the maximum rather than `items[0]`: the list is ordered by arrival,
+ * because a live update is prepended as it comes in, and a batch of new articles is
+ * broadcast newest-first, so the item left on top is the batch's *oldest*. Asking
+ * the server to replay from that would replay the rest of the batch on every
+ * reconnect. Timestamps are ISO-8601 in a fixed format, so they compare as strings.
+ */
+function newestPublishedAt(items: readonly FeedItem[]): string {
+  return items.reduce((newest, item) => (item.publishedAt > newest ? item.publishedAt : newest), '')
+}
+
+/**
  * Drives the personal feed: the paginated load, the live update stream and the
  * per-item actions, leaving FeedPage with layout only.
  *
@@ -120,16 +134,15 @@ export function useFeedPage(activeSubId: string) {
   }, [activeSubId])
 
   // Real-time streaming: prepend new items as they arrive from the server,
-  // reconnecting after a 5s backoff whenever the stream drops.
+  // reconnecting after a 5s backoff whenever the stream ends.
   useEffect(() => {
     const controller = new AbortController()
     let retryTimer: ReturnType<typeof setTimeout> | undefined
 
     const connect = async () => {
       try {
-        const sinceTimestamp = useFeedStore.getState().items[0]?.publishedAt ?? ''
         const stream = feedClient.streamFeedUpdates(
-          { sinceTimestamp },
+          { sinceTimestamp: newestPublishedAt(useFeedStore.getState().items) },
           { signal: controller.signal },
         )
         for await (const item of stream) {
@@ -140,8 +153,12 @@ export function useFeedPage(activeSubId: string) {
           prependItem(toFeedItem(item))
         }
       } catch {
-        if (!controller.signal.aborted) retryTimer = setTimeout(connect, 5000)
+        // A dropped stream is expected (idle timeouts, restarts); the retry below covers it.
       }
+      // Retry whether the stream failed or ended cleanly: a server restart can
+      // close it without surfacing an error, which used to leave the page with no
+      // live updates until a reload. Only the cleanup's abort stops the retrying.
+      if (!controller.signal.aborted) retryTimer = setTimeout(connect, 5000)
     }
 
     connect()
