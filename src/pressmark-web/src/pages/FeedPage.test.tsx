@@ -422,11 +422,11 @@ describe('FeedPage — stream reconnect replay point (newestPublishedAt)', () =>
             yield {
               ...makeItem('batch-newest', 'Newest'),
               publishedAt: '2026-01-01T10:05:00.000Z',
-            }
+            } as any
             yield {
               ...makeItem('batch-oldest', 'Oldest'),
               publishedAt: '2026-01-01T10:00:00.000Z',
-            }
+            } as any
             // Clean end — no throw — must still trigger the retry below.
           })()
         }
