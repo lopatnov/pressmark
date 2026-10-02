@@ -5,8 +5,8 @@ import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { adminClient } from '@/api/clients'
 import { toast } from 'sonner'
+import { AdminListPanel } from './AdminListPanel'
 import { AdminPagination } from './AdminPagination'
-import { AdminSkeletonRows } from './AdminSkeletonRows'
 import { useAdminPaginatedList, ADMIN_PAGE_SIZE } from '@/hooks/useAdminPaginatedList'
 
 interface ReportItem {
@@ -63,34 +63,28 @@ export default function ReportsSection() {
     }
   }
 
-  const renderContent = () => {
-    if (loading) {
-      return (
-        <div className="overflow-x-auto rounded-lg border border-border">
-          <AdminSkeletonRows>
-            {(key) => (
-              <div key={key} className="flex items-start gap-4 px-4 py-3">
-                <div className="min-w-[7rem] space-y-1.5">
-                  <Skeleton className="h-3 w-28" />
-                  <Skeleton className="h-4 w-20" />
-                  <Skeleton className="h-3 w-36" />
-                </div>
-                <div className="min-w-[8rem] space-y-1.5">
-                  <Skeleton className="h-3 w-32" />
-                  <Skeleton className="h-3 w-20" />
-                </div>
-                <Skeleton className="ml-auto h-8 w-16 flex-shrink-0" />
-              </div>
-            )}
-          </AdminSkeletonRows>
-        </div>
-      )
-    }
-    if (reports.length === 0) {
-      return <p className="text-sm text-muted-foreground">{t('admin:reports.empty')}</p>
-    }
-    return (
-      <div className="overflow-x-auto rounded-lg border border-border">
+  return (
+    <section className="space-y-3">
+      <h2 className="text-base font-medium">{t('admin:reports.title')}</h2>
+      <AdminListPanel
+        loading={loading}
+        isEmpty={reports.length === 0}
+        emptyMessage={t('admin:reports.empty')}
+        skeletonRow={(key) => (
+          <div key={key} className="flex items-start gap-4 px-4 py-3">
+            <div className="min-w-[7rem] space-y-1.5">
+              <Skeleton className="h-3 w-28" />
+              <Skeleton className="h-4 w-20" />
+              <Skeleton className="h-3 w-36" />
+            </div>
+            <div className="min-w-[8rem] space-y-1.5">
+              <Skeleton className="h-3 w-32" />
+              <Skeleton className="h-3 w-20" />
+            </div>
+            <Skeleton className="ml-auto h-8 w-16 flex-shrink-0" />
+          </div>
+        )}
+      >
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-border bg-muted/40">
@@ -158,14 +152,7 @@ export default function ReportsSection() {
             ))}
           </tbody>
         </table>
-      </div>
-    )
-  }
-
-  return (
-    <section className="space-y-3">
-      <h2 className="text-base font-medium">{t('admin:reports.title')}</h2>
-      {renderContent()}
+      </AdminListPanel>
       <AdminPagination page={page} totalPages={totalPages} loading={loading} onPage={handlePage} />
     </section>
   )

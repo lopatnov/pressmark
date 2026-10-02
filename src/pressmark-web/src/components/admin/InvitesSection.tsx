@@ -5,8 +5,8 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { adminClient } from '@/api/clients'
 import { useAdminStore, type InviteItem } from '@/store/adminStore'
 import { toast } from 'sonner'
+import { AdminListPanel } from './AdminListPanel'
 import { AdminPagination } from './AdminPagination'
-import { AdminSkeletonRows } from './AdminSkeletonRows'
 import { useAdminPaginatedList, ADMIN_PAGE_SIZE } from '@/hooks/useAdminPaginatedList'
 
 export default function InvitesSection() {
@@ -44,51 +44,6 @@ export default function InvitesSection() {
     ? t('admin:invites.notifyEmailPlaceholder')
     : t('admin:invites.notePlaceholder')
   const noteIsValidEmail = /^[^\s@]+@[^\s@.]+(?:\.[^\s@.]+)+$/.test(note)
-
-  const renderInviteList = () => {
-    if (loadingList) {
-      return (
-        <AdminSkeletonRows>
-          {(key) => (
-            <div key={key} className="flex items-center justify-between px-4 py-3">
-              <Skeleton className="h-4 w-28" />
-              <Skeleton className="h-4 w-36" />
-              <Skeleton className="h-8 w-16" />
-            </div>
-          )}
-        </AdminSkeletonRows>
-      )
-    }
-    if (invites.length === 0) {
-      return (
-        <p className="px-4 py-6 text-center text-sm text-muted-foreground">
-          {t('admin:invites.empty')}
-        </p>
-      )
-    }
-    return (
-      <table className="w-full text-sm">
-        <tbody>
-          {invites.map((inv) => (
-            <tr key={inv.id} className="border-b border-border last:border-0">
-              <td className="px-4 py-2 text-xs text-muted-foreground">{inv.note || '—'}</td>
-              <td className="px-4 py-2 text-xs text-muted-foreground">
-                {t('admin:invites.expiresAt')}:{' '}
-                {inv.expiresAt
-                  ? new Date(inv.expiresAt).toLocaleDateString()
-                  : t('admin:invites.expiryNever')}
-              </td>
-              <td className="px-4 py-2 text-right">
-                <Button size="sm" variant="ghost" onClick={() => handleDelete(inv.id)}>
-                  {t('admin:invites.delete')}
-                </Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    )
-  }
 
   const handleGenerate = async () => {
     if (generating) return
@@ -200,7 +155,39 @@ export default function InvitesSection() {
         )}
       </div>
 
-      <div className="rounded-lg border border-border">{renderInviteList()}</div>
+      <AdminListPanel
+        loading={loadingList}
+        isEmpty={invites.length === 0}
+        emptyMessage={t('admin:invites.empty')}
+        skeletonRow={(key) => (
+          <div key={key} className="flex items-center justify-between px-4 py-3">
+            <Skeleton className="h-4 w-28" />
+            <Skeleton className="h-4 w-36" />
+            <Skeleton className="h-8 w-16" />
+          </div>
+        )}
+      >
+        <table className="w-full text-sm">
+          <tbody>
+            {invites.map((inv) => (
+              <tr key={inv.id} className="border-b border-border last:border-0">
+                <td className="px-4 py-2 text-xs text-muted-foreground">{inv.note || '—'}</td>
+                <td className="px-4 py-2 text-xs text-muted-foreground">
+                  {t('admin:invites.expiresAt')}:{' '}
+                  {inv.expiresAt
+                    ? new Date(inv.expiresAt).toLocaleDateString()
+                    : t('admin:invites.expiryNever')}
+                </td>
+                <td className="px-4 py-2 text-right">
+                  <Button size="sm" variant="ghost" onClick={() => handleDelete(inv.id)}>
+                    {t('admin:invites.delete')}
+                  </Button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </AdminListPanel>
       <AdminPagination
         page={page}
         totalPages={totalPages}
