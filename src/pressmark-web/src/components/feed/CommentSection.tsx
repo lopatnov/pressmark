@@ -1,143 +1,60 @@
-import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Bell, BellOff, Check, Flag, MessageSquare, Trash2 } from 'lucide-react'
-import { toast } from 'sonner'
+import { Bell, BellOff, MessageSquare } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { adminClient, feedClient } from '@/api/clients'
 import { useAuthStore } from '@/store/authStore'
-import { formatDateTime } from './feedUtils'
+import { useComments } from '@/hooks/useComments'
+import { CommentRow } from './CommentRow'
 import { ReportReasonForm } from './ReportReasonForm'
-
-interface CommentItem {
-  id: string
-  userEmail: string
-  body: string
-  createdAt: string
-  removedByAdmin: boolean
-  isCommentingBanned: boolean
-}
 
 interface CommentSectionProps {
   feedItemId: string
   initiallyOpen?: boolean
 }
 
+/**
+ * An article's comment thread, collapsed behind a toggle unless `initiallyOpen`.
+ * State and RPCs live in useComments; see there for why a caller that switches
+ * articles under it keys it by article id.
+ */
 export function CommentSection({ feedItemId, initiallyOpen = false }: CommentSectionProps) {
   const { t } = useTranslation(['feed', 'common'])
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated())
   const isAdmin = useAuthStore((s) => s.isAdmin())
   const commentsEnabled = useAuthStore((s) => s.commentsEnabled)
 
-  const [open, setOpen] = useState(initiallyOpen)
-  const [loaded, setLoaded] = useState(false)
-  const [comments, setComments] = useState<CommentItem[]>([])
-  const [isSubscribed, setIsSubscribed] = useState(false)
-  const [body, setBody] = useState('')
-  const [submitting, setSubmitting] = useState(false)
-  const [reportedComments, setReportedComments] = useState<Set<string>>(new Set())
-  const [reportingComment, setReportingComment] = useState<string | null>(null)
-  const [reportReason, setReportReason] = useState('')
-  const [reportSubmitting, setReportSubmitting] = useState(false)
-
-  const load = useCallback(async () => {
-    try {
-      const res = await feedClient.listComments({ feedItemId })
-      setComments(
-        res.items.map((c) => ({
-          id: c.id,
-          userEmail: c.userEmail,
-          body: c.body,
-          createdAt: c.createdAt,
-          removedByAdmin: c.removedByAdmin,
-          isCommentingBanned: c.isCommentingBanned,
-        })),
-      )
-      setIsSubscribed(res.isSubscribed)
-      setLoaded(true)
-    } catch {
-      toast.error(t('comments.loadError'))
-    }
-  }, [feedItemId, t])
-
-  useEffect(() => {
-    if (initiallyOpen) load()
-  }, [initiallyOpen, load])
-
-  const handleToggle = () => {
-    const next = !open
-    setOpen(next)
-    if (next && !loaded) load()
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!body.trim()) return
-    setSubmitting(true)
-    try {
-      const res = await feedClient.addComment({ feedItemId, body: body.trim() })
-      setComments((prev) => [
-        ...prev,
-        {
-          id: res.id,
-          userEmail: res.userEmail,
-          body: res.body,
-          createdAt: res.createdAt,
-          removedByAdmin: res.removedByAdmin,
-          isCommentingBanned: res.isCommentingBanned,
-        },
-      ])
-      setBody('')
-    } catch {
-      toast.error(t('comments.submitError'))
-    } finally {
-      setSubmitting(false)
-    }
-  }
-
-  const handleRemove = async (commentId: string) => {
-    try {
-      await adminClient.removeComment({ commentId })
-      setComments((prev) =>
-        prev.map((c) => (c.id === commentId ? { ...c, removedByAdmin: true } : c)),
-      )
-    } catch {
-      toast.error(t('comments.removeError'))
-    }
-  }
-
-  const handleToggleSubscription = async () => {
-    try {
-      const res = await feedClient.toggleCommentSubscription({ feedItemId })
-      setIsSubscribed(res.subscribed)
-    } catch {
-      toast.error(t('common:error'))
-    }
-  }
-
-  const handleReport = async (commentId: string) => {
-    if (reportSubmitting) return
-    setReportSubmitting(true)
-    try {
-      await feedClient.reportContent({ type: 'comment', targetId: commentId, reason: reportReason })
-      setReportedComments((prev) => new Set(prev).add(commentId))
-      setReportingComment(null)
-      setReportReason('')
-      toast.success(t('reportSent'))
-    } catch {
-      toast.error(t('reportSubmitError'))
-    } finally {
-      setReportSubmitting(false)
-    }
-  }
+  const {
+    open,
+    loaded,
+    comments,
+    isSubscribed,
+    body,
+    setBody,
+    submitting,
+    reportedIds,
+    reportingId,
+    reportReason,
+    setReportReason,
+    reportSubmitting,
+    toggleOpen,
+    submitComment,
+    removeComment,
+    toggleSubscription,
+    toggleReporting,
+    cancelReport,
+    submitReport,
+  } = useComments(feedItemId, initiallyOpen)
 
   const count = comments.length
+  const subscriptionLabel = isSubscribed
+    ? t('comments.unsubscribeNotifications')
+    : t('comments.subscribeNotifications')
 
   return (
     <div className="border-t border-border mt-2 pt-2">
       <div className="flex items-center gap-2">
         <button
           type="button"
-          onClick={handleToggle}
+          onClick={toggleOpen}
           className="flex cursor-pointer items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
           aria-label={t('comments.toggle')}
         >
@@ -147,17 +64,9 @@ export function CommentSection({ feedItemId, initiallyOpen = false }: CommentSec
         {isAuthenticated && loaded && (
           <button
             type="button"
-            onClick={handleToggleSubscription}
-            title={
-              isSubscribed
-                ? t('comments.unsubscribeNotifications')
-                : t('comments.subscribeNotifications')
-            }
-            aria-label={
-              isSubscribed
-                ? t('comments.unsubscribeNotifications')
-                : t('comments.subscribeNotifications')
-            }
+            onClick={toggleSubscription}
+            title={subscriptionLabel}
+            aria-label={subscriptionLabel}
             className="cursor-pointer text-muted-foreground hover:text-foreground transition-colors"
           >
             {isSubscribed ? <Bell className="h-3.5 w-3.5" /> : <BellOff className="h-3.5 w-3.5" />}
@@ -169,82 +78,42 @@ export function CommentSection({ feedItemId, initiallyOpen = false }: CommentSec
         <div className="mt-3 space-y-3">
           {!loaded && <p className="text-xs text-muted-foreground">{t('common:loading')}</p>}
 
-          {loaded && comments.length === 0 && (
+          {loaded && count === 0 && (
             <p className="text-xs text-muted-foreground">{t('comments.empty')}</p>
           )}
 
           {loaded &&
             comments.map((c) => (
-              <div key={c.id} className="space-y-0.5">
-                {c.removedByAdmin ? (
-                  <p className="text-xs italic text-muted-foreground/60">{t('comments.removed')}</p>
-                ) : (
-                  <>
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="space-y-0.5 flex-1">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-xs font-medium">{c.userEmail}</span>
-                          {c.isCommentingBanned && (
-                            <span className="rounded bg-destructive/10 px-1 py-0.5 text-[10px] font-medium text-destructive">
-                              {t('common:banned')}
-                            </span>
-                          )}
-                          <span className="text-xs text-muted-foreground">
-                            {formatDateTime(c.createdAt)}
-                          </span>
-                        </div>
-                        <p className="text-xs text-foreground/90 whitespace-pre-wrap">{c.body}</p>
-                      </div>
-                      {isAdmin && (
-                        <button
-                          type="button"
-                          onClick={() => handleRemove(c.id)}
-                          title={t('comments.remove')}
-                          aria-label={t('comments.remove')}
-                          className="cursor-pointer shrink-0 text-muted-foreground hover:text-destructive transition-colors"
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </button>
-                      )}
-                      {isAuthenticated &&
-                        !isAdmin &&
-                        (reportedComments.has(c.id) ? (
-                          <Check className="h-3.5 w-3.5 shrink-0 text-muted-foreground/60" />
-                        ) : (
-                          <button
-                            type="button"
-                            onClick={() =>
-                              setReportingComment(reportingComment === c.id ? null : c.id)
-                            }
-                            title={t('reportComment')}
-                            aria-label={t('reportComment')}
-                            className="cursor-pointer shrink-0 text-muted-foreground/60 hover:text-muted-foreground transition-colors"
-                          >
-                            <Flag className="h-3.5 w-3.5" />
-                          </button>
-                        ))}
-                    </div>
-                    {reportingComment === c.id && (
-                      <div className="pt-1">
-                        <ReportReasonForm
-                          reason={reportReason}
-                          onReasonChange={setReportReason}
-                          submitting={reportSubmitting}
-                          onSubmit={() => handleReport(c.id)}
-                          onCancel={() => {
-                            setReportingComment(null)
-                            setReportReason('')
-                          }}
-                        />
-                      </div>
-                    )}
-                  </>
-                )}
-              </div>
+              <CommentRow
+                key={c.id}
+                comment={c}
+                canRemove={isAdmin}
+                canReport={isAuthenticated && !isAdmin}
+                isReported={reportedIds.has(c.id)}
+                onRemove={removeComment}
+                onToggleReport={toggleReporting}
+                reportForm={
+                  reportingId === c.id && (
+                    <ReportReasonForm
+                      reason={reportReason}
+                      onReasonChange={setReportReason}
+                      submitting={reportSubmitting}
+                      onSubmit={() => submitReport(c.id)}
+                      onCancel={cancelReport}
+                    />
+                  )
+                }
+              />
             ))}
 
           {isAuthenticated && commentsEnabled && (
-            <form onSubmit={handleSubmit} className="flex gap-2 pt-1">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault()
+                submitComment()
+              }}
+              className="flex gap-2 pt-1"
+            >
               <input
                 value={body}
                 onChange={(e) => setBody(e.target.value)}
