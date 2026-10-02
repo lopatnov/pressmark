@@ -81,9 +81,7 @@ public partial class AuthServiceImpl
     {
         var ct = context.CancellationToken;
 
-        // Same policy as Register — a reset must not be a way around it.
-        if (request.NewPassword.Length < 8)
-            throw new RpcException(new Status(StatusCode.InvalidArgument, "Password must be at least 8 characters"));
+        RpcGuards.EnsurePasswordPolicy(request.NewPassword);
 
         var tokenHash = JwtService.HashToken(request.Token);
         var now = DateTime.UtcNow;
