@@ -53,8 +53,7 @@ public partial class AuthServiceImpl
             await tx.CommitAsync(ct);
         }
 
-        var baseUrl = config["App:BaseUrl"] ?? "http://localhost:5173";
-        var resetUrl = $"{baseUrl.TrimEnd('/')}/reset-password?token={rawToken}";
+        var resetUrl = $"{config.GetAppBaseUrl()}/reset-password?token={rawToken}";
 
         try
         {
