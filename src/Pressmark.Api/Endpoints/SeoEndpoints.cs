@@ -36,7 +36,7 @@ internal static class SeoEndpoints
             ], ct);
 
             var communityEnabled = settings.CommunityPageEnabled;
-            var registrationOpen = settings.RegistrationMode == "open";
+            var registrationOpen = settings.RegistrationMode == RegistrationModes.Open;
             var lastmod = DateTime.UtcNow.ToString("yyyy-MM-dd");
 
             var sb = new StringBuilder();

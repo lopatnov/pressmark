@@ -93,7 +93,7 @@ internal sealed class SiteSettingsSnapshot(Dictionary<string, string> values)
 
     internal bool CommunityPageEnabled => Bool(SiteSettingKeys.CommunityPageEnabled, true);
 
-    internal string RegistrationMode => Value(SiteSettingKeys.RegistrationMode, "open");
+    internal string RegistrationMode => Value(SiteSettingKeys.RegistrationMode, RegistrationModes.Open);
 
     internal bool CommentsEnabled => Bool(SiteSettingKeys.CommentsEnabled, true);
 
