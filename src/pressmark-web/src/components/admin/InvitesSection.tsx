@@ -3,15 +3,23 @@ import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { adminClient } from '@/api/clients'
-import { useAdminStore, type InviteItem } from '@/store/adminStore'
+import { useAdminStore } from '@/store/adminStore'
 import { toast } from 'sonner'
 import { AdminListPanel } from './AdminListPanel'
 import { AdminPagination } from './AdminPagination'
 import { useAdminPaginatedList, ADMIN_PAGE_SIZE } from '@/hooks/useAdminPaginatedList'
 
+interface InviteItem {
+  id: string
+  token: string // populated only on creation
+  note: string
+  createdAt: string
+  expiresAt: string // empty = no expiry
+}
+
 export default function InvitesSection() {
   const { t } = useTranslation(['admin', 'common'])
-  const { addInvite, settings } = useAdminStore()
+  const settings = useAdminStore((s) => s.settings)
   const [note, setNote] = useState('')
   const [expiresDays, setExpiresDays] = useState(7)
   const [sendNotification, setSendNotification] = useState(false)
@@ -62,7 +70,6 @@ export default function InvitesSection() {
         createdAt: res.createdAt,
         expiresAt: res.expiresAt,
       }
-      addInvite(item)
       setNewToken(item)
       setNote('')
       handlePage(0)

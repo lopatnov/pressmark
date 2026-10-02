@@ -35,7 +35,6 @@ export function useAdminSiteSettings() {
           smtpHost: res.smtpHost,
           smtpPort: res.smtpPort || DEFAULT_SMTP_PORT,
           smtpUser: res.smtpUser,
-          smtpPassword: '', // write-only — never echoed back by the server
           smtpUseTls: res.smtpUseTls,
           smtpFromAddress: res.smtpFromAddress,
           commentsEnabled: res.commentsEnabled,

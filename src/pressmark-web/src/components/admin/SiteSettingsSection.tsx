@@ -58,28 +58,14 @@ export default function SiteSettingsSection() {
       })
   }, [settings, reset])
 
-  const onSubmit = async (data: SettingsForm) => {
+  // The password is write-only: it goes to the server and nowhere else, so what
+  // the admin typed never ends up in the shared store.
+  const onSubmit = async ({ smtpPassword, ...stored }: SettingsForm) => {
     try {
-      await adminClient.updateSiteSettings({
-        settings: {
-          siteName: data.siteName,
-          siteDescription: data.siteDescription,
-          communityWindowDays: data.communityWindowDays,
-          registrationMode: data.registrationMode,
-          smtpHost: data.smtpHost,
-          smtpPort: data.smtpPort,
-          smtpUser: data.smtpUser,
-          smtpPassword: data.smtpPassword,
-          smtpUseTls: data.smtpUseTls,
-          smtpFromAddress: data.smtpFromAddress,
-          commentsEnabled: data.commentsEnabled,
-          feedRetentionDays: data.feedRetentionDays,
-          communityPageEnabled: data.communityPageEnabled,
-        },
-      })
-      setSettings(data)
-      setCommunityPageEnabled(data.communityPageEnabled)
-      setCommentsEnabled(data.commentsEnabled)
+      await adminClient.updateSiteSettings({ settings: { ...stored, smtpPassword } })
+      setSettings(stored)
+      setCommunityPageEnabled(stored.communityPageEnabled)
+      setCommentsEnabled(stored.commentsEnabled)
       setSaved(true)
       setTimeout(() => setSaved(false), 2000)
     } catch {
