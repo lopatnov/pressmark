@@ -32,10 +32,7 @@ export default function ReportsSection() {
     page,
     totalPages,
     handlePage,
-    load,
-    setItems,
-    setTotalCount,
-    setPage,
+    removeItem,
   } = useAdminPaginatedList<ReportItem>(
     (p) =>
       adminClient.listReports({ pageSize: ADMIN_PAGE_SIZE, page: p }).then((res) => ({
@@ -60,15 +57,7 @@ export default function ReportsSection() {
   const handleResolve = async (id: string) => {
     try {
       await adminClient.resolveReport({ id })
-      const remaining = reports.filter((r) => r.id !== id)
-      if (remaining.length === 0 && page > 0) {
-        const newPage = page - 1
-        setPage(newPage)
-        load(newPage)
-      } else {
-        setItems(remaining)
-        setTotalCount((c) => c - 1)
-      }
+      removeItem(id)
     } catch {
       toast.error(t('admin:reports.resolveError'))
     }

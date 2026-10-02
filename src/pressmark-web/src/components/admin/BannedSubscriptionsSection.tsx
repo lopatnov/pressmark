@@ -16,18 +16,18 @@ interface BannedSub {
 export default function BannedSubscriptionsSection() {
   const { t } = useTranslation(['admin', 'common'])
 
-  const { items, loading, page, totalPages, handlePage, load } = useAdminPaginatedList<BannedSub>(
-    (p) =>
+  const { items, loading, page, totalPages, handlePage, removeItem } =
+    useAdminPaginatedList<BannedSub>((p) =>
       adminClient.listBannedSubscriptions({ pageSize: ADMIN_PAGE_SIZE, page: p }).then((res) => ({
         items: res.items.map((b) => ({ id: b.id, rssUrl: b.rssUrl, title: b.title })),
         totalCount: res.totalCount,
       })),
-  )
+    )
 
   const handleUnban = async (id: string) => {
     try {
       await adminClient.banSubscription({ subscriptionId: id, banned: false })
-      load(page)
+      removeItem(id)
     } catch {
       toast.error(t('common:error'))
     }

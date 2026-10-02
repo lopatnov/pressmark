@@ -19,8 +19,8 @@ interface HiddenItem {
 export default function HiddenArticlesSection() {
   const { t } = useTranslation(['admin', 'common'])
 
-  const { items, loading, page, totalPages, handlePage, load } = useAdminPaginatedList<HiddenItem>(
-    (p) =>
+  const { items, loading, page, totalPages, handlePage, removeItem } =
+    useAdminPaginatedList<HiddenItem>((p) =>
       adminClient.listHiddenFeedItems({ pageSize: ADMIN_PAGE_SIZE, page: p }).then((res) => ({
         items: res.items.map((item) => ({
           id: item.id,
@@ -30,13 +30,13 @@ export default function HiddenArticlesSection() {
         })),
         totalCount: res.totalCount,
       })),
-  )
+    )
 
   const handleUnhide = async (id: string) => {
     try {
       await adminClient.hideFeedItem({ feedItemId: id, hidden: false })
       toast.success(t('admin:moderation.unhidden'))
-      load(page)
+      removeItem(id)
     } catch {
       toast.error(t('common:error'))
     }

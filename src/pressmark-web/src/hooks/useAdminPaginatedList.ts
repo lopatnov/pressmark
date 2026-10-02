@@ -9,7 +9,12 @@ interface PageResult<T> {
   totalCount: number
 }
 
-export function useAdminPaginatedList<T>(
+/**
+ * Offset pagination for the admin list sections: loads a page, tracks the total
+ * for the pager, and drops a superseded response so a slow page can't land on top
+ * of the one the admin has since moved to.
+ */
+export function useAdminPaginatedList<T extends { id: string }>(
   fetchPage: (page: number) => Promise<PageResult<T>>,
   errorKey = 'common:error',
 ) {
@@ -52,16 +57,31 @@ export function useAdminPaginatedList<T>(
     load(p)
   }
 
+  /**
+   * Takes a row out of the list once the server has removed it (resolved, unbanned,
+   * deleted, ...). The page is not refetched, so the rest of it stays on screen
+   * instead of flashing back to the skeleton. Functional updates, so two removals
+   * in flight at once cannot put each other's row back.
+   */
+  const removeItem = (id: string) => {
+    setItems((prev) => prev.filter((item) => item.id !== id))
+    setTotalCount((count) => Math.max(0, count - 1))
+  }
+
+  // Removing the last row of a page past the first would leave the admin on an
+  // empty page beyond the end of the list; step back to the page before it.
+  const pageEmptied = !loading && items.length === 0 && page > 0
+  useEffect(() => {
+    if (pageEmptied) handlePage(page - 1)
+  }, [pageEmptied, page])
+
   return {
     items,
-    totalCount,
     page,
     loading,
     totalPages,
     handlePage,
-    load,
+    removeItem,
     setItems,
-    setTotalCount,
-    setPage,
   }
 }

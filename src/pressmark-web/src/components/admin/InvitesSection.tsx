@@ -25,8 +25,7 @@ export default function InvitesSection() {
     page,
     totalPages,
     handlePage,
-    load,
-    setPage,
+    removeItem,
   } = useAdminPaginatedList<InviteItem>((p) =>
     adminClient.listInvites({ pageSize: ADMIN_PAGE_SIZE, page: p }).then((res) => ({
       items: res.items.map((i) => ({
@@ -111,8 +110,7 @@ export default function InvitesSection() {
       addInvite(item)
       setNewToken(item)
       setNote('')
-      setPage(0)
-      load(0)
+      handlePage(0)
     } catch {
       toast.error(t('common:error'))
     } finally {
@@ -134,10 +132,7 @@ export default function InvitesSection() {
     try {
       await adminClient.deleteInvite({ id })
       if (newToken?.id === id) setNewToken(null)
-      // Deleting the last row of a page would leave it empty — step back one.
-      const newPage = invites.length === 1 && page > 0 ? page - 1 : page
-      setPage(newPage)
-      load(newPage)
+      removeItem(id)
     } catch {
       toast.error(t('common:error'))
     }
