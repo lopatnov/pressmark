@@ -11,8 +11,6 @@ namespace Pressmark.Api.Endpoints;
 /// </summary>
 internal static class SeoEndpoints
 {
-    private const string DefaultBaseUrl = "http://localhost:5173";
-
     internal static IEndpointRouteBuilder MapSeoEndpoints(this IEndpointRouteBuilder endpoints)
     {
         endpoints.MapGet("/api/meta", async (AppDbContext db, IConfiguration config, CancellationToken ct) =>
@@ -25,14 +23,13 @@ internal static class SeoEndpoints
             // Unlike the admin screen, an unset description is reported as empty here
             // rather than falling back to the seeded copy.
             var siteDescription = settings.Value(SiteSettingKeys.SiteDescription, "");
-            var baseUrl = (config["App:BaseUrl"] ?? DefaultBaseUrl).TrimEnd('/');
+            var baseUrl = config.GetAppBaseUrl();
             return Results.Ok(new { siteName, siteDescription, baseUrl });
         }).AllowAnonymous();
 
         endpoints.MapGet("/sitemap.xml", async (AppDbContext db, IConfiguration config, CancellationToken ct) =>
         {
-            var baseUrl = System.Security.SecurityElement.Escape(
-                (config["App:BaseUrl"] ?? DefaultBaseUrl).TrimEnd('/'));
+            var baseUrl = System.Security.SecurityElement.Escape(config.GetAppBaseUrl());
             var settings = await SiteSettingsSnapshot.LoadAsync(db, [
                 SiteSettingKeys.RegistrationMode,
                 SiteSettingKeys.CommunityPageEnabled,
@@ -57,7 +54,7 @@ internal static class SeoEndpoints
 
         endpoints.MapGet("/robots.txt", (IConfiguration config) =>
         {
-            var baseUrl = (config["App:BaseUrl"] ?? DefaultBaseUrl).TrimEnd('/');
+            var baseUrl = config.GetAppBaseUrl();
             var content = $"""
                 User-agent: *
                 Allow: /

@@ -39,7 +39,7 @@ public class DailyDigestService(
             db, [SiteSettingKeys.CommunityWindowDays], ct);
         var windowDays = settings.CommunityWindowDays;
 
-        var baseUrl = config["App:BaseUrl"] ?? "http://localhost:5173";
+        var baseUrl = config.GetAppBaseUrl();
         var defaultSince = DateTime.UtcNow.AddDays(-windowDays);
         var sentCount = 0;
 

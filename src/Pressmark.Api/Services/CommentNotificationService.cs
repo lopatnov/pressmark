@@ -33,8 +33,7 @@ public class CommentNotificationService(
                 .Select(s => s.User.Email)
                 .ToListAsync();
 
-            var baseUrl = config["App:BaseUrl"] ?? "http://localhost:5173";
-            var articlePageUrl = $"{baseUrl.TrimEnd('/')}/article/{feedItemId}";
+            var articlePageUrl = $"{config.GetAppBaseUrl()}/article/{feedItemId}";
 
             foreach (var email in subscribers)
             {
