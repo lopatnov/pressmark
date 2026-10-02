@@ -35,15 +35,7 @@ public partial class FeedServiceImpl
                 s => s.UserId == userId.Value && s.FeedItemId == feedItemId, ct);
 
         var result = new CommentList { IsSubscribed = isSubscribed };
-        result.Items.AddRange(comments.Select(c => new Protos.Comment
-        {
-            Id = c.Id.ToString(),
-            UserEmail = c.RemovedByAdmin ? "" : c.User.Email,
-            Body = c.RemovedByAdmin ? "" : c.Body,
-            CreatedAt = c.CreatedAt.ToIsoUtc(),
-            RemovedByAdmin = c.RemovedByAdmin,
-            IsCommentingBanned = !c.RemovedByAdmin && c.User.IsCommentingBanned,
-        }));
+        result.Items.AddRange(comments.Select(CommentMapper.ToProto));
         return result;
     }
 
@@ -78,6 +70,7 @@ public partial class FeedServiceImpl
         var comment = new Entities.Comment
         {
             UserId = userId,
+            User = user,
             FeedItemId = feedItemId,
             Body = request.Body.Trim(),
         };
@@ -87,15 +80,7 @@ public partial class FeedServiceImpl
 
         NotifySubscribersInBackground(feedItemId, user.Email, feedItem.Title, comment.Body);
 
-        return new Protos.Comment
-        {
-            Id = comment.Id.ToString(),
-            UserEmail = user.Email,
-            Body = comment.Body,
-            CreatedAt = comment.CreatedAt.ToIsoUtc(),
-            RemovedByAdmin = false,
-            IsCommentingBanned = user.IsCommentingBanned,
-        };
+        return CommentMapper.ToProto(comment);
     }
 
     /// <summary>
