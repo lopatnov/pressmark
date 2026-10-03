@@ -17,6 +17,7 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Article, comment, invite, subscription and admin-panel timestamps no longer render shifted by the viewer's local UTC offset on reload — stored timestamps are now serialised with an explicit `Z`, matching what the live update stream already sent
 - Removing the last row from a later page of an admin list (banned sources, hidden articles, invites, reports, users) no longer leaves the admin stuck on an empty page past the end of the list — they're stepped back to the previous page instead
 - The Open Graph image prober used while fetching RSS articles now disposes its HTTP response and stream after each probe, instead of leaving them for the garbage collector — left unfixed, every probe would hold a connection open
+- Navigating from one article to another no longer briefly shows the next article's comment thread underneath the previous article's content before the new article finishes loading
 
 ### Security
 

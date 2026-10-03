@@ -109,7 +109,11 @@ export function ArticlePage() {
         </div>
       )}
 
-      {id && <CommentSection feedItemId={id} initiallyOpen />}
+      {/* The thread follows the article on screen, not the route param: the param
+          changes a render before the article does, which used to fire a load for
+          the next article from the thread about to unmount. Keyed, so a different
+          article always starts a fresh thread (draft and report state included). */}
+      <CommentSection key={item.id} feedItemId={item.id} initiallyOpen />
     </div>
   )
 }
