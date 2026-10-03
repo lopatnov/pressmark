@@ -52,8 +52,8 @@ export function useComments(feedItemId: string, initiallyOpen: boolean) {
   const [reportReason, setReportReason] = useState('')
   const [reportSubmitting, setReportSubmitting] = useState(false)
 
-  const load = useCallback(() => {
-    start(async (signal) => {
+  const fetchComments = useCallback(
+    async (signal: AbortSignal) => {
       try {
         const res = await feedClient.listComments({ feedItemId }, { signal })
         if (signal.aborted) return
@@ -63,8 +63,14 @@ export function useComments(feedItemId: string, initiallyOpen: boolean) {
       } catch {
         if (!signal.aborted) toast.error(t('comments.loadError'))
       }
-    })
-  }, [feedItemId, start, t])
+    },
+    [feedItemId, t],
+  )
+
+  const load = useCallback(
+    () => start((signal) => void fetchComments(signal)),
+    [start, fetchComments],
+  )
 
   // Aborting on cleanup means a thread that is unmounted, or whose article changed,
   // never has a late response land on top of the thread that replaced it.
