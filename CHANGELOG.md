@@ -15,6 +15,7 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Loading more of the feed no longer splices stale items (and a stale pagination cursor) into the list if the source/unread filter changes before the load-more request finishes
 - The feed's live-update stream no longer replays the same batch of new articles on every reconnect (duplicate rows, an inflated unread badge, and a replayed article losing its read state); the stream also now retries after a clean disconnect, not only after an error, so a server restart no longer silently stops live updates until the next page reload
 - Article, comment, invite, subscription and admin-panel timestamps no longer render shifted by the viewer's local UTC offset on reload — stored timestamps are now serialised with an explicit `Z`, matching what the live update stream already sent
+- Removing the last row from a later page of an admin list (banned sources, hidden articles, invites, reports, users) no longer leaves the admin stuck on an empty page past the end of the list — they're stepped back to the previous page instead
 
 ### Security
 
