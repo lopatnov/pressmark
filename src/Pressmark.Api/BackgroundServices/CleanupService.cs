@@ -3,39 +3,26 @@ using Pressmark.Api.Services;
 
 namespace Pressmark.Api.BackgroundServices;
 
+/// <summary>Applies the retention settings once a day; see <see cref="FeedRetentionCleaner"/>.</summary>
 public class CleanupService(
     IServiceScopeFactory scopeFactory,
-    ILogger<CleanupService> logger) : BackgroundService
+    ILogger<CleanupService> logger) : PeriodicBackgroundService(logger)
 {
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    // Stagger the first run so the app finishes starting up.
+    protected override TimeSpan InitialDelay => TimeSpan.FromSeconds(30);
+
+    protected override TimeSpan Interval => TimeSpan.FromHours(24);
+
+    protected override async Task RunCycleAsync(CancellationToken ct)
     {
-        // Stagger first run so the app finishes starting up
-        await Task.Delay(TimeSpan.FromSeconds(30), stoppingToken);
+        using var scope = scopeFactory.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-        while (!stoppingToken.IsCancellationRequested)
-        {
-            await CleanupAsync(stoppingToken);
-            await Task.Delay(TimeSpan.FromHours(24), stoppingToken);
-        }
-    }
+        var result = await FeedRetentionCleaner.RunAsync(db, ct);
 
-    private async Task CleanupAsync(CancellationToken ct)
-    {
-        try
-        {
-            using var scope = scopeFactory.CreateScope();
-            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-            var result = await FeedRetentionCleaner.RunAsync(db, ct);
-
-            if (result.RemovedAnything)
-                logger.LogInformation(
-                    "Cleanup: deleted {Likes} likes older than {Window}d, {Items} feed items older than {Retention}d",
-                    result.DeletedLikes, result.WindowDays, result.DeletedItems, result.RetentionDays);
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Cleanup failed");
-        }
+        if (result.RemovedAnything)
+            Logger.LogInformation(
+                "Cleanup: deleted {Likes} likes older than {Window}d, {Items} feed items older than {Retention}d",
+                result.DeletedLikes, result.WindowDays, result.DeletedItems, result.RetentionDays);
     }
 }

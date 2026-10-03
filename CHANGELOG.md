@@ -15,6 +15,8 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Loading more of the feed no longer splices stale items (and a stale pagination cursor) into the list if the source/unread filter changes before the load-more request finishes
 - The feed's live-update stream no longer replays the same batch of new articles on every reconnect (duplicate rows, an inflated unread badge, and a replayed article losing its read state); the stream also now retries after a clean disconnect, not only after an error, so a server restart no longer silently stops live updates until the next page reload
 - Article, comment, invite, subscription and admin-panel timestamps no longer render shifted by the viewer's local UTC offset on reload — stored timestamps are now serialised with an explicit `Z`, matching what the live update stream already sent
+- Removing the last row from a later page of an admin list (banned sources, hidden articles, invites, reports, users) no longer leaves the admin stuck on an empty page past the end of the list — they're stepped back to the previous page instead
+- The Open Graph image prober used while fetching RSS articles now disposes its HTTP response and stream after each probe, instead of leaving them for the garbage collector — left unfixed, every probe would hold a connection open
 
 ### Security
 
@@ -23,6 +25,8 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Patched an XSS gap in article-summary sanitization by updating `dompurify` to a fixed version (GHSA-55q2-fjhq-7xh7)
 - Closed four transitive vulnerabilities in frontend build tooling (`brace-expansion`, `fast-uri`, `js-yaml`, `nanoid`) via npm overrides — none of these reach the shipped bundle or run at runtime (GHSA-rgw5-rvv9-x895, GHSA-7p8r-x3mc-p8w7, GHSA-5p4m-2wfm-xmqj, GHSA-2v37-7h3g-55p8)
 - Closed two moderate `qs` vulnerabilities (transitive via `shadcn`'s bundled MCP tooling) via an npm override — build-tooling-only, does not reach the shipped bundle (GHSA-x5fp-wj9c-mxmx, GHSA-4mjr-xmp4-gh2g)
+- Closed a `dompurify` DOM XSS gap and five further transitive vulnerabilities (`brace-expansion`, `fast-uri`, `ip-address`, `js-yaml`, `undici`) surfaced after dependencies went stale during a maintenance gap — resolved entirely within already-declared version ranges/overrides, no breaking changes (GHSA-p98j-92pf-mc4p, GHSA-q2hr-2g5m-vwhr, GHSA-hrr3-gc8f-f4qj, GHSA-rpw4-54j3-4h4q, GHSA-2883-xcg3-v3hh, GHSA-3wwx-pv8p-q78v and related undici/ip-address advisories)
+- Closed a `dompurify` DOM XSS gap and six further transitive vulnerabilities (`brace-expansion`, `fast-uri`, `ip-address`, `js-yaml`, `undici`) surfaced after dependencies went stale during a maintenance gap — resolved entirely within already-declared version ranges/overrides, no breaking changes (GHSA-p98j-92pf-mc4p, GHSA-q2hr-2g5m-vwhr, GHSA-hrr3-gc8f-f4qj, GHSA-rpw4-54j3-4h4q, GHSA-2883-xcg3-v3hh, GHSA-3wwx-pv8p-q78v and related undici/ip-address advisories)
 
 ## [1.2.0] — Reliability, Security & Dependency Refresh — 2026-07-28
 

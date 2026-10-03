@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, type ComponentPropsWithoutRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
+import { FormField } from '@/components/ui/form-field'
 import { adminClient } from '@/api/clients'
 import { useAdminStore } from '@/store/adminStore'
 import { useAuthStore } from '@/store/authStore'
@@ -58,28 +59,14 @@ export default function SiteSettingsSection() {
       })
   }, [settings, reset])
 
-  const onSubmit = async (data: SettingsForm) => {
+  // The password is write-only: it goes to the server and nowhere else, so what
+  // the admin typed never ends up in the shared store.
+  const onSubmit = async ({ smtpPassword, ...stored }: SettingsForm) => {
     try {
-      await adminClient.updateSiteSettings({
-        settings: {
-          siteName: data.siteName,
-          siteDescription: data.siteDescription,
-          communityWindowDays: data.communityWindowDays,
-          registrationMode: data.registrationMode,
-          smtpHost: data.smtpHost,
-          smtpPort: data.smtpPort,
-          smtpUser: data.smtpUser,
-          smtpPassword: data.smtpPassword,
-          smtpUseTls: data.smtpUseTls,
-          smtpFromAddress: data.smtpFromAddress,
-          commentsEnabled: data.commentsEnabled,
-          feedRetentionDays: data.feedRetentionDays,
-          communityPageEnabled: data.communityPageEnabled,
-        },
-      })
-      setSettings(data)
-      setCommunityPageEnabled(data.communityPageEnabled)
-      setCommentsEnabled(data.commentsEnabled)
+      await adminClient.updateSiteSettings({ settings: { ...stored, smtpPassword } })
+      setSettings(stored)
+      setCommunityPageEnabled(stored.communityPageEnabled)
+      setCommentsEnabled(stored.commentsEnabled)
       setSaved(true)
       setTimeout(() => setSaved(false), 2000)
     } catch {
@@ -103,18 +90,12 @@ export default function SiteSettingsSection() {
         onSubmit={handleSubmit(onSubmit)}
         className="space-y-3 rounded-lg border border-border p-4"
       >
-        <div className="space-y-1">
-          <label htmlFor="siteName" className="text-sm font-medium">
-            {t('admin:settings.siteName')}
-          </label>
-          <input
-            id="siteName"
-            {...register('siteName')}
-            aria-invalid={!!errors.siteName}
-            className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
-          />
-          {errors.siteName && <p className="text-xs text-destructive">{errors.siteName.message}</p>}
-        </div>
+        <FormField
+          id="siteName"
+          label={t('admin:settings.siteName')}
+          error={errors.siteName?.message}
+          {...register('siteName')}
+        />
 
         <div className="space-y-1">
           <label htmlFor="siteDescription" className="text-sm font-medium">
@@ -128,23 +109,16 @@ export default function SiteSettingsSection() {
           />
         </div>
 
-        <div className="space-y-1">
-          <label htmlFor="communityWindowDays" className="text-sm font-medium">
-            {t('admin:settings.communityWindowDays')}
-          </label>
-          <input
-            id="communityWindowDays"
-            {...register('communityWindowDays', { valueAsNumber: true })}
-            type="number"
-            min={1}
-            max={365}
-            aria-invalid={!!errors.communityWindowDays}
-            className="w-32 rounded-md border border-border bg-background px-3 py-2 text-sm"
-          />
-          {errors.communityWindowDays && (
-            <p className="text-xs text-destructive">{errors.communityWindowDays.message}</p>
-          )}
-        </div>
+        <FormField
+          id="communityWindowDays"
+          label={t('admin:settings.communityWindowDays')}
+          type="number"
+          min={1}
+          max={365}
+          className="w-32"
+          error={errors.communityWindowDays?.message}
+          {...register('communityWindowDays', { valueAsNumber: true })}
+        />
 
         <div className="space-y-1">
           <label htmlFor="registrationMode" className="text-sm font-medium">
@@ -164,109 +138,69 @@ export default function SiteSettingsSection() {
           <p className="text-sm font-medium text-muted-foreground">{t('admin:settings.smtp')}</p>
 
           <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1">
-              <label htmlFor="smtpHost" className="text-sm font-medium">
-                {t('admin:settings.smtpHost')}
-              </label>
-              <input
-                id="smtpHost"
-                {...register('smtpHost')}
-                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
-                placeholder="smtp.example.com"
-              />
-            </div>
-            <div className="space-y-1">
-              <label htmlFor="smtpPort" className="text-sm font-medium">
-                {t('admin:settings.smtpPort')}
-              </label>
-              <input
-                id="smtpPort"
-                {...register('smtpPort', { valueAsNumber: true })}
-                type="number"
-                min={1}
-                max={65535}
-                aria-invalid={!!errors.smtpPort}
-                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
-              />
-              {errors.smtpPort && (
-                <p className="text-xs text-destructive">{errors.smtpPort.message}</p>
-              )}
-            </div>
-          </div>
-
-          <div className="space-y-1">
-            <label htmlFor="smtpUser" className="text-sm font-medium">
-              {t('admin:settings.smtpUser')}
-            </label>
-            <input
-              id="smtpUser"
-              {...register('smtpUser')}
-              autoComplete="off"
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+            <FormField
+              id="smtpHost"
+              label={t('admin:settings.smtpHost')}
+              placeholder="smtp.example.com"
+              {...register('smtpHost')}
+            />
+            <FormField
+              id="smtpPort"
+              label={t('admin:settings.smtpPort')}
+              type="number"
+              min={1}
+              max={65535}
+              error={errors.smtpPort?.message}
+              {...register('smtpPort', { valueAsNumber: true })}
             />
           </div>
 
-          <div className="space-y-1">
-            <label htmlFor="smtpPassword" className="text-sm font-medium">
-              {t('admin:settings.smtpPassword')}
-            </label>
-            <input
-              id="smtpPassword"
-              {...register('smtpPassword')}
-              type="password"
-              autoComplete="new-password"
-              placeholder={t('admin:settings.smtpPasswordPlaceholder')}
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
-            />
-          </div>
+          <FormField
+            id="smtpUser"
+            label={t('admin:settings.smtpUser')}
+            autoComplete="off"
+            {...register('smtpUser')}
+          />
+          <FormField
+            id="smtpPassword"
+            label={t('admin:settings.smtpPassword')}
+            type="password"
+            autoComplete="new-password"
+            placeholder={t('admin:settings.smtpPasswordPlaceholder')}
+            {...register('smtpPassword')}
+          />
+          <FormField
+            id="smtpFromAddress"
+            label={t('admin:settings.smtpFromAddress')}
+            type="email"
+            placeholder="noreply@example.com"
+            {...register('smtpFromAddress')}
+          />
 
-          <div className="space-y-1">
-            <label htmlFor="smtpFromAddress" className="text-sm font-medium">
-              {t('admin:settings.smtpFromAddress')}
-            </label>
-            <input
-              id="smtpFromAddress"
-              {...register('smtpFromAddress')}
-              type="email"
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
-              placeholder="noreply@example.com"
-            />
-          </div>
-
-          <label className="flex items-center gap-2 text-sm font-medium cursor-pointer">
-            <input {...register('smtpUseTls')} type="checkbox" className="h-4 w-4" />
-            {t('admin:settings.smtpUseTls')}
-          </label>
+          <CheckboxField label={t('admin:settings.smtpUseTls')} {...register('smtpUseTls')} />
         </div>
 
         <div className="border-t border-border pt-3 space-y-2">
-          <label className="flex items-center gap-2 text-sm font-medium cursor-pointer">
-            <input {...register('communityPageEnabled')} type="checkbox" className="h-4 w-4" />
-            {t('admin:settings.communityPageEnabled')}
-          </label>
-          <label className="flex items-center gap-2 text-sm font-medium cursor-pointer">
-            <input {...register('commentsEnabled')} type="checkbox" className="h-4 w-4" />
-            {t('admin:settings.commentsEnabled')}
-          </label>
+          <CheckboxField
+            label={t('admin:settings.communityPageEnabled')}
+            {...register('communityPageEnabled')}
+          />
+          <CheckboxField
+            label={t('admin:settings.commentsEnabled')}
+            {...register('commentsEnabled')}
+          />
         </div>
 
-        <div className="space-y-1">
-          <label htmlFor="feedRetentionDays" className="text-sm font-medium pr-2">
-            {t('admin:settings.feedRetentionDays')}
-          </label>
-          <input
-            id="feedRetentionDays"
-            {...register('feedRetentionDays', { valueAsNumber: true })}
-            type="number"
-            min={1}
-            max={3650}
-            aria-invalid={!!errors.feedRetentionDays}
-            className="w-32 rounded-md border border-border bg-background px-3 py-2 text-sm"
-          />
-          {errors.feedRetentionDays && (
-            <p className="text-xs text-destructive">{errors.feedRetentionDays.message}</p>
-          )}
-        </div>
+        <FormField
+          id="feedRetentionDays"
+          label={t('admin:settings.feedRetentionDays')}
+          type="number"
+          min={1}
+          max={3650}
+          className="w-32"
+          error={errors.feedRetentionDays?.message}
+          {...register('feedRetentionDays', { valueAsNumber: true })}
+        />
         <div className="space-y-1">
           <Button type="button" size="sm" variant="outline" onClick={handleClearOldFeeds}>
             {t('admin:settings.clearOldFeedsNow')}
@@ -281,5 +215,19 @@ export default function SiteSettingsSection() {
         </div>
       </form>
     </section>
+  )
+}
+
+interface CheckboxFieldProps extends ComponentPropsWithoutRef<'input'> {
+  readonly label: string
+}
+
+/** A checkbox with its label wrapped around it, so it needs no id to be labelled. */
+function CheckboxField({ label, ...inputProps }: CheckboxFieldProps) {
+  return (
+    <label className="flex items-center gap-2 text-sm font-medium cursor-pointer">
+      <input type="checkbox" className="h-4 w-4" {...inputProps} />
+      {label}
+    </label>
   )
 }
