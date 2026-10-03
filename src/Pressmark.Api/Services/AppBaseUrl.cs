@@ -18,6 +18,9 @@ internal static class AppBaseUrl
     private const string DevelopmentFallback = "http://localhost:5173";
 
     /// <summary>Returns the configured base URL without a trailing slash.</summary>
-    internal static string GetAppBaseUrl(this IConfiguration config) =>
-        (config[ConfigKey] ?? DevelopmentFallback).TrimEnd('/');
+    internal static string GetAppBaseUrl(this IConfiguration config)
+    {
+        var configured = config[ConfigKey];
+        return (string.IsNullOrWhiteSpace(configured) ? DevelopmentFallback : configured).TrimEnd('/');
+    }
 }

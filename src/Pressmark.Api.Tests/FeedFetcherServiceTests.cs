@@ -27,7 +27,11 @@ public class FeedFetcherServiceTests
     private sealed class FakeHandler(HttpResponseMessage response) : HttpMessageHandler
     {
         protected override Task<HttpResponseMessage> SendAsync(
-            HttpRequestMessage request, CancellationToken ct) => Task.FromResult(response);
+            HttpRequestMessage request, CancellationToken ct)
+        {
+            ct.ThrowIfCancellationRequested();
+            return Task.FromResult(response);
+        }
     }
 
     private static (HttpClient Client, TrackingStream Stream) MakeClient(string html, string contentType = "text/html")
@@ -63,5 +67,22 @@ public class FeedFetcherServiceTests
 
         Assert.Null(result);
         Assert.True(stream.Disposed);
+    }
+
+    /// <summary>
+    /// A bare catch here would swallow the host's shutdown signal the same as a probe
+    /// timeout, so RunCycleAsync's loop would see this subscription's fetch "succeed"
+    /// mid-shutdown instead of letting the cycle end — it must propagate, not be caught
+    /// as a per-item failure (see PeriodicBackgroundService's documented contract).
+    /// </summary>
+    [Fact]
+    public async Task TryFetchOgImageAsync_PropagatesCancellation_InsteadOfReturningNull()
+    {
+        var (client, _) = MakeClient("<html></html>");
+        using var cts = new CancellationTokenSource();
+        await cts.CancelAsync();
+
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(
+            () => FeedFetcherService.TryFetchOgImageAsync(client, "https://example.com/article", cts.Token));
     }
 }
