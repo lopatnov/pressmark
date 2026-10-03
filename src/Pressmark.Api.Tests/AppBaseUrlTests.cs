@@ -32,4 +32,14 @@ public class AppBaseUrlTests
     {
         Assert.Equal("http://localhost:5173", Config(null).GetAppBaseUrl());
     }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void GetAppBaseUrl_FallsBackToTheDevServer_WhenBlank(string blank)
+    {
+        // A blank value is as unconfigured as a missing one — treating it as a
+        // real base URL would send already-sent mail links as relative paths.
+        Assert.Equal("http://localhost:5173", Config(blank).GetAppBaseUrl());
+    }
 }

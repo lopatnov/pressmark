@@ -187,6 +187,12 @@ public class FeedFetcherService(
 
             return match.Success ? match.Groups[1].Value.Trim() : null;
         }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested)
+        {
+            // Shutdown, not a probe failure — let it propagate so the per-item catch in
+            // RunCycleAsync's loop sees it, instead of this item just losing its image.
+            throw;
+        }
         catch
         {
             return null; // timeout, 404, non-HTML — silently skip
