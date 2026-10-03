@@ -37,6 +37,9 @@ describe('useAdminPaginatedList — removeItem', () => {
     expect(result.current.page).toBe(0)
     expect(result.current.totalPages).toBe(1)
     expect(fetchPage).toHaveBeenLastCalledWith(0)
+    // Mount + handlePage(1) + exactly one reconcile — stepping back must not
+    // also re-fire while settling onto the page it stepped back to.
+    expect(fetchPage).toHaveBeenCalledTimes(3)
   })
 
   it('stays on the first page when its last row is removed', async () => {
@@ -88,7 +91,7 @@ describe('useAdminPaginatedList — removeItem', () => {
     // What the server reports once the row is gone and the next page's first
     // row has slid up to fill this one.
     fetchPage.mockImplementation(async () => ({
-      items: [...rows('p0', ADMIN_PAGE_SIZE - 1), { id: 'p1-0' }],
+      items: [...rows('p0', ADMIN_PAGE_SIZE).slice(1), { id: 'p1-0' }],
       totalCount: ADMIN_PAGE_SIZE + 4,
     }))
     act(() => result.current.removeItem('p0-0'))
@@ -125,5 +128,50 @@ describe('useAdminPaginatedList — removeItem', () => {
     await waitFor(() => expect(result.current.items).toEqual([{ id: 'p1-0' }]))
     expect(result.current.page).toBe(0)
     expect(fetchPage).toHaveBeenLastCalledWith(0)
+  })
+
+  /**
+   * A reconcile fetch started for an earlier removal can still be in flight when
+   * a second row is removed. Applying its response wholesale would overwrite the
+   * second removal's own (newer) local state and put that row back.
+   */
+  it('does not resurrect a row removed while an earlier reconcile fetch is still in flight', async () => {
+    const fetchPage = vi.fn(async () => ({
+      items: rows('r', ADMIN_PAGE_SIZE),
+      totalCount: ADMIN_PAGE_SIZE + 1,
+    }))
+    const { result } = renderHook(() => useAdminPaginatedList(fetchPage))
+    await waitFor(() => expect(result.current.loading).toBe(false))
+
+    let resolveReconcile!: (value: { items: { id: string }[]; totalCount: number }) => void
+    fetchPage.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveReconcile = resolve
+        }),
+    )
+    // What a further reconcile sees once both removals have actually landed.
+    fetchPage.mockResolvedValue({
+      items: [...rows('r', ADMIN_PAGE_SIZE).slice(2), { id: 'r-20' }],
+      totalCount: ADMIN_PAGE_SIZE - 1,
+    })
+
+    act(() => result.current.removeItem('r-0'))
+    await waitFor(() => expect(fetchPage).toHaveBeenCalledTimes(2))
+
+    act(() => result.current.removeItem('r-1'))
+    expect(result.current.items.some((item) => item.id === 'r-1')).toBe(false)
+
+    // What the server reports from the request that started before r-1 was
+    // removed: a full, internally consistent page (20 of 20 expected) that
+    // still carries r-1 — nothing about its shape alone calls for a further
+    // reconcile, so only explicitly remembering r-1 as removed keeps it out.
+    resolveReconcile({
+      items: [...rows('r', ADMIN_PAGE_SIZE).slice(1), { id: 'r-20' }],
+      totalCount: ADMIN_PAGE_SIZE,
+    })
+
+    await waitFor(() => expect(result.current.items.some((item) => item.id === 'r-20')).toBe(true))
+    expect(result.current.items.some((item) => item.id === 'r-1')).toBe(false)
   })
 })
