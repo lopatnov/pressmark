@@ -3,15 +3,23 @@ import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { adminClient } from '@/api/clients'
-import { useAdminStore, type InviteItem } from '@/store/adminStore'
+import { useAdminStore } from '@/store/adminStore'
 import { toast } from 'sonner'
+import { AdminListPanel } from './AdminListPanel'
 import { AdminPagination } from './AdminPagination'
-import { AdminSkeletonRows } from './AdminSkeletonRows'
 import { useAdminPaginatedList, ADMIN_PAGE_SIZE } from '@/hooks/useAdminPaginatedList'
+
+interface InviteItem {
+  id: string
+  token: string // populated only on creation
+  note: string
+  createdAt: string
+  expiresAt: string // empty = no expiry
+}
 
 export default function InvitesSection() {
   const { t } = useTranslation(['admin', 'common'])
-  const { addInvite, settings } = useAdminStore()
+  const settings = useAdminStore((s) => s.settings)
   const [note, setNote] = useState('')
   const [expiresDays, setExpiresDays] = useState(7)
   const [sendNotification, setSendNotification] = useState(false)
@@ -25,8 +33,7 @@ export default function InvitesSection() {
     page,
     totalPages,
     handlePage,
-    load,
-    setPage,
+    removeItem,
   } = useAdminPaginatedList<InviteItem>((p) =>
     adminClient.listInvites({ pageSize: ADMIN_PAGE_SIZE, page: p }).then((res) => ({
       items: res.items.map((i) => ({
@@ -46,51 +53,6 @@ export default function InvitesSection() {
     : t('admin:invites.notePlaceholder')
   const noteIsValidEmail = /^[^\s@]+@[^\s@.]+(?:\.[^\s@.]+)+$/.test(note)
 
-  const renderInviteList = () => {
-    if (loadingList) {
-      return (
-        <AdminSkeletonRows>
-          {(key) => (
-            <div key={key} className="flex items-center justify-between px-4 py-3">
-              <Skeleton className="h-4 w-28" />
-              <Skeleton className="h-4 w-36" />
-              <Skeleton className="h-8 w-16" />
-            </div>
-          )}
-        </AdminSkeletonRows>
-      )
-    }
-    if (invites.length === 0) {
-      return (
-        <p className="px-4 py-6 text-center text-sm text-muted-foreground">
-          {t('admin:invites.empty')}
-        </p>
-      )
-    }
-    return (
-      <table className="w-full text-sm">
-        <tbody>
-          {invites.map((inv) => (
-            <tr key={inv.id} className="border-b border-border last:border-0">
-              <td className="px-4 py-2 text-xs text-muted-foreground">{inv.note || '—'}</td>
-              <td className="px-4 py-2 text-xs text-muted-foreground">
-                {t('admin:invites.expiresAt')}:{' '}
-                {inv.expiresAt
-                  ? new Date(inv.expiresAt).toLocaleDateString()
-                  : t('admin:invites.expiryNever')}
-              </td>
-              <td className="px-4 py-2 text-right">
-                <Button size="sm" variant="ghost" onClick={() => handleDelete(inv.id)}>
-                  {t('admin:invites.delete')}
-                </Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    )
-  }
-
   const handleGenerate = async () => {
     if (generating) return
     setGenerating(true)
@@ -108,11 +70,9 @@ export default function InvitesSection() {
         createdAt: res.createdAt,
         expiresAt: res.expiresAt,
       }
-      addInvite(item)
       setNewToken(item)
       setNote('')
-      setPage(0)
-      load(0)
+      handlePage(0)
     } catch {
       toast.error(t('common:error'))
     } finally {
@@ -134,10 +94,7 @@ export default function InvitesSection() {
     try {
       await adminClient.deleteInvite({ id })
       if (newToken?.id === id) setNewToken(null)
-      // Deleting the last row of a page would leave it empty — step back one.
-      const newPage = invites.length === 1 && page > 0 ? page - 1 : page
-      setPage(newPage)
-      load(newPage)
+      removeItem(id)
     } catch {
       toast.error(t('common:error'))
     }
@@ -205,7 +162,39 @@ export default function InvitesSection() {
         )}
       </div>
 
-      <div className="rounded-lg border border-border">{renderInviteList()}</div>
+      <AdminListPanel
+        loading={loadingList}
+        isEmpty={invites.length === 0}
+        emptyMessage={t('admin:invites.empty')}
+        skeletonRow={(key) => (
+          <div key={key} className="flex items-center justify-between px-4 py-3">
+            <Skeleton className="h-4 w-28" />
+            <Skeleton className="h-4 w-36" />
+            <Skeleton className="h-8 w-16" />
+          </div>
+        )}
+      >
+        <table className="w-full text-sm">
+          <tbody>
+            {invites.map((inv) => (
+              <tr key={inv.id} className="border-b border-border last:border-0">
+                <td className="px-4 py-2 text-xs text-muted-foreground">{inv.note || '—'}</td>
+                <td className="px-4 py-2 text-xs text-muted-foreground">
+                  {t('admin:invites.expiresAt')}:{' '}
+                  {inv.expiresAt
+                    ? new Date(inv.expiresAt).toLocaleDateString()
+                    : t('admin:invites.expiryNever')}
+                </td>
+                <td className="px-4 py-2 text-right">
+                  <Button size="sm" variant="ghost" onClick={() => handleDelete(inv.id)}>
+                    {t('admin:invites.delete')}
+                  </Button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </AdminListPanel>
       <AdminPagination
         page={page}
         totalPages={totalPages}
