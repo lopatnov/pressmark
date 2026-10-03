@@ -15,6 +15,7 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Loading more of the feed no longer splices stale items (and a stale pagination cursor) into the list if the source/unread filter changes before the load-more request finishes
 - The feed's live-update stream no longer replays the same batch of new articles on every reconnect (duplicate rows, an inflated unread badge, and a replayed article losing its read state); the stream also now retries after a clean disconnect, not only after an error, so a server restart no longer silently stops live updates until the next page reload
 - Article, comment, invite, subscription and admin-panel timestamps no longer render shifted by the viewer's local UTC offset on reload — stored timestamps are now serialised with an explicit `Z`, matching what the live update stream already sent
+- The Open Graph image prober used while fetching RSS articles now disposes its HTTP response and stream after each probe, instead of leaving them for the garbage collector — left unfixed, every probe would hold a connection open
 
 ### Security
 

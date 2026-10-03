@@ -153,7 +153,7 @@ public class FeedFetcherService(
         return SyndicationFeed.Load(reader);
     }
 
-    private static async Task<string?> TryFetchOgImageAsync(
+    internal static async Task<string?> TryFetchOgImageAsync(
         HttpClient client, string url, CancellationToken ct)
     {
         try
@@ -161,7 +161,10 @@ public class FeedFetcherService(
             using var cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
             cts.CancelAfter(TimeSpan.FromSeconds(5));
 
-            var response = await client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cts.Token);
+            // Disposed explicitly: with ResponseHeadersRead the connection stays checked
+            // out until the body is drained or the response disposed, and only the head
+            // of the page is ever read — left to the GC, every probe would hold a socket.
+            using var response = await client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cts.Token);
             if (!response.IsSuccessStatusCode) return null;
 
             var contentType = response.Content.Headers.ContentType?.MediaType;
@@ -171,7 +174,7 @@ public class FeedFetcherService(
             // Read only the first 64 KB — og:image is always in <head>. ReadAtLeastAsync
             // rather than a single ReadAsync, which returns as soon as any bytes are
             // available and would often hand back a fragment too short to hold the tag.
-            var stream = await response.Content.ReadAsStreamAsync(cts.Token);
+            await using var stream = await response.Content.ReadAsStreamAsync(cts.Token);
             var buffer = new byte[HeadBytesToScan];
             var bytesRead = await stream.ReadAtLeastAsync(
                 buffer, buffer.Length, throwOnEndOfStream: false, cts.Token);
@@ -183,6 +186,12 @@ public class FeedFetcherService(
                 match = OgImageContentFirst.Match(html);
 
             return match.Success ? match.Groups[1].Value.Trim() : null;
+        }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested)
+        {
+            // Shutdown, not a probe failure — let it propagate so the per-item catch in
+            // RunCycleAsync's loop sees it, instead of this item just losing its image.
+            throw;
         }
         catch
         {

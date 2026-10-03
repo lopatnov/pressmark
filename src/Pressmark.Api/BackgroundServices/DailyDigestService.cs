@@ -4,116 +4,112 @@ using Pressmark.Api.Services;
 
 namespace Pressmark.Api.BackgroundServices;
 
+/// <summary>
+/// Emails each opted-in user a daily digest. Runs hourly so a new day is picked up
+/// promptly; <c>LastDigestSentAt</c> keeps it to one digest per user per day.
+/// </summary>
 public class DailyDigestService(
     IServiceScopeFactory scopeFactory,
     IConfiguration config,
-    ILogger<DailyDigestService> logger) : BackgroundService
+    ILogger<DailyDigestService> logger) : PeriodicBackgroundService(logger)
 {
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override TimeSpan InitialDelay => TimeSpan.FromSeconds(60);
+
+    protected override TimeSpan Interval => TimeSpan.FromHours(1);
+
+    protected override async Task RunCycleAsync(CancellationToken ct)
     {
-        await Task.Delay(TimeSpan.FromSeconds(60), stoppingToken);
+        using var scope = scopeFactory.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var emailService = scope.ServiceProvider.GetRequiredService<IEmailService>();
 
-        while (!stoppingToken.IsCancellationRequested)
+        var todayUtc = DateTime.UtcNow.Date;
+
+        var users = await db.Users
+            .AsNoTracking()
+            .Where(u => u.DigestEnabled
+                && !u.IsSiteBanned
+                && (u.LastDigestSentAt == null || u.LastDigestSentAt < todayUtc))
+            .Select(u => new { u.Id, u.Email, u.LastDigestSentAt })
+            .ToListAsync(ct);
+
+        if (users.Count == 0) return;
+
+        var settings = await SiteSettingsSnapshot.LoadAsync(
+            db, [SiteSettingKeys.CommunityWindowDays], ct);
+        var windowDays = settings.CommunityWindowDays;
+
+        var baseUrl = config.GetAppBaseUrl();
+        var defaultSince = DateTime.UtcNow.AddDays(-windowDays);
+        var sentCount = 0;
+
+        foreach (var user in users)
         {
-            await SendDigestsAsync(stoppingToken);
-            await Task.Delay(TimeSpan.FromHours(1), stoppingToken);
-        }
-    }
-
-    private async Task SendDigestsAsync(CancellationToken ct)
-    {
-        try
-        {
-            using var scope = scopeFactory.CreateScope();
-            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-            var emailService = scope.ServiceProvider.GetRequiredService<IEmailService>();
-
-            var todayUtc = DateTime.UtcNow.Date;
-
-            var users = await db.Users
-                .AsNoTracking()
-                .Where(u => u.DigestEnabled
-                    && !u.IsSiteBanned
-                    && (u.LastDigestSentAt == null || u.LastDigestSentAt < todayUtc))
-                .Select(u => new { u.Id, u.Email, u.LastDigestSentAt })
-                .ToListAsync(ct);
-
-            if (users.Count == 0) return;
-
-            var settings = await SiteSettingsSnapshot.LoadAsync(
-                db, [SiteSettingKeys.CommunityWindowDays], ct);
-            var windowDays = settings.CommunityWindowDays;
-
-            var baseUrl = config["App:BaseUrl"] ?? "http://localhost:5173";
-            var defaultSince = DateTime.UtcNow.AddDays(-windowDays);
-            var sentCount = 0;
-
-            foreach (var user in users)
+            try
             {
-                try
-                {
-                    // Use last digest time as cutoff so each user gets only new content
-                    var since = user.LastDigestSentAt ?? defaultSince;
+                // Use last digest time as cutoff so each user gets only new content
+                var since = user.LastDigestSentAt ?? defaultSince;
 
-                    // Community: top articles liked since this user's last digest
-                    var communityItems = await db.Likes
-                        .AsNoTracking()
-                        .Where(l => l.CreatedAt >= since
-                            && !l.FeedItem.IsCommunityHidden
-                            && !l.FeedItem.Subscription.IsCommunityBanned
-                            && !l.User.IsSiteBanned)
-                        .GroupBy(l => l.FeedItemId)
-                        .OrderByDescending(g => g.Count())
-                        .Take(10)
-                        .Select(g => new DigestItem(
-                            g.First().FeedItem.Title,
-                            g.First().FeedItem.Url,
-                            g.First().FeedItem.Subscription.Title,
-                            g.Count()))
-                        .ToListAsync(ct);
+                // Community: top articles liked since this user's last digest
+                var communityItems = await db.Likes
+                    .AsNoTracking()
+                    .Where(l => l.CreatedAt >= since
+                        && !l.FeedItem.IsCommunityHidden
+                        && !l.FeedItem.Subscription.IsCommunityBanned
+                        && !l.User.IsSiteBanned)
+                    .GroupBy(l => l.FeedItemId)
+                    .OrderByDescending(g => g.Count())
+                    .Take(10)
+                    .Select(g => new DigestItem(
+                        g.First().FeedItem.Title,
+                        g.First().FeedItem.Url,
+                        g.First().FeedItem.Subscription.Title,
+                        g.Count()))
+                    .ToListAsync(ct);
 
-                    // Personal feed: new articles from user's own subscriptions since last digest
-                    var feedItems = await db.FeedItems
-                        .AsNoTracking()
-                        .Where(f => f.Subscription.UserId == user.Id
-                            && f.FetchedAt >= since)
-                        .OrderByDescending(f => f.PublishedAt)
-                        .Take(10)
-                        .Select(f => new DigestItem(
-                            f.Title,
-                            f.Url,
-                            f.Subscription.Title,
-                            0))
-                        .ToListAsync(ct);
+                // Personal feed: new articles from user's own subscriptions since last digest
+                var feedItems = await db.FeedItems
+                    .AsNoTracking()
+                    .Where(f => f.Subscription.UserId == user.Id
+                        && f.FetchedAt >= since)
+                    .OrderByDescending(f => f.PublishedAt)
+                    .Take(10)
+                    .Select(f => new DigestItem(
+                        f.Title,
+                        f.Url,
+                        f.Subscription.Title,
+                        0))
+                    .ToListAsync(ct);
 
-                    // Merge both sources, deduplicate by URL
-                    var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-                    var digestItems = communityItems.Concat(feedItems)
-                        .Where(item => seen.Add(item.Url))
-                        .ToList();
+                // Merge both sources, deduplicate by URL
+                var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                var digestItems = communityItems.Concat(feedItems)
+                    .Where(item => seen.Add(item.Url))
+                    .ToList();
 
-                    if (digestItems.Count == 0) continue;
+                if (digestItems.Count == 0) continue;
 
-                    await emailService.SendDailyDigestAsync(user.Email, baseUrl, digestItems, ct);
+                await emailService.SendDailyDigestAsync(user.Email, baseUrl, digestItems, ct);
 
-                    await db.Users
-                        .Where(u => u.Id == user.Id)
-                        .ExecuteUpdateAsync(s => s.SetProperty(u => u.LastDigestSentAt, DateTime.UtcNow), ct);
+                await db.Users
+                    .Where(u => u.Id == user.Id)
+                    .ExecuteUpdateAsync(s => s.SetProperty(u => u.LastDigestSentAt, DateTime.UtcNow), ct);
 
-                    sentCount++;
-                }
-                catch (Exception ex)
-                {
-                    // Logs the user id, not the address, to keep PII out of logs.
-                    logger.LogWarning(ex, "Failed to send daily digest to user {UserId}", user.Id);
-                }
+                sentCount++;
             }
+            catch (OperationCanceledException) when (ct.IsCancellationRequested)
+            {
+                // Shutting down: stop the cycle rather than logging every remaining
+                // user as a failed delivery.
+                throw;
+            }
+            catch (Exception ex)
+            {
+                // Logs the user id, not the address, to keep PII out of logs.
+                Logger.LogWarning(ex, "Failed to send daily digest to user {UserId}", user.Id);
+            }
+        }
 
-            logger.LogInformation("Daily digest sent to {Count} user(s)", sentCount);
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "DailyDigestService failed");
-        }
+        Logger.LogInformation("Daily digest sent to {Count} user(s)", sentCount);
     }
 }
