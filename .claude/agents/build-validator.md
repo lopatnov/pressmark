@@ -35,7 +35,7 @@ model: haiku
 4. `dotnet format src/Pressmark.Api.Tests/Pressmark.Api.Tests.csproj --verify-no-changes`
 
 **Frontend** (каждую команду запускай как `cd src/pressmark-web && <команда>` одним вызовом Bash):
-5. `npm run typecheck` — `tsc --noEmit`, 0 ошибок типов.
+5. `npm run typecheck` — `tsc -b`, 0 ошибок типов.
 6. `npm run lint` — ESLint, 0 ошибок (warnings — сосчитай, не блокируют GREEN).
 7. `npm run test` — Vitest. Зафиксируй `<passed>/<total>`.
 8. `npm run build` — `tsc -b && vite build`, 0 ошибок.
