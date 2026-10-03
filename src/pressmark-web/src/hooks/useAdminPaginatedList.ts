@@ -30,9 +30,9 @@ export function useAdminPaginatedList<T extends { id: string }>(
 
   const totalPages = Math.max(1, Math.ceil(totalCount / ADMIN_PAGE_SIZE))
 
-  const load = (p: number) => {
+  const load = (p: number, opts: { silent?: boolean } = {}) => {
     const req = ++reqRef.current
-    setLoading(true)
+    if (!opts.silent) setLoading(true)
     fetchRef
       .current(p)
       .then(({ items: newItems, totalCount: count }) => {
@@ -44,7 +44,7 @@ export function useAdminPaginatedList<T extends { id: string }>(
         if (req === reqRef.current) toast.error(t(errorKey))
       })
       .finally(() => {
-        if (req === reqRef.current) setLoading(false)
+        if (req === reqRef.current && !opts.silent) setLoading(false)
       })
   }
 
@@ -59,21 +59,32 @@ export function useAdminPaginatedList<T extends { id: string }>(
 
   /**
    * Takes a row out of the list once the server has removed it (resolved, unbanned,
-   * deleted, ...). The page is not refetched, so the rest of it stays on screen
-   * instead of flashing back to the skeleton. Functional updates, so two removals
-   * in flight at once cannot put each other's row back.
+   * deleted, ...). Updates local state only, so the rest of the page stays on
+   * screen instead of flashing back to the skeleton; the reconcile effect below
+   * corrects anything this leaves stale. Functional updates, so two removals in
+   * flight at once cannot put each other's row back.
    */
   const removeItem = (id: string) => {
     setItems((prev) => prev.filter((item) => item.id !== id))
     setTotalCount((count) => Math.max(0, count - 1))
   }
 
-  // Removing the last row of a page past the first would leave the admin on an
-  // empty page beyond the end of the list; step back to the page before it.
-  const pageEmptied = !loading && items.length === 0 && page > 0
+  // removeItem only filters local state, so the offsets it didn't fetch drift from
+  // the server's: a row that should have slid up from the next page is missing,
+  // the current page can run past the end of a shrunk list, or (removing several
+  // at once) both. Reconcile with a silent background refetch of the now-current
+  // page whenever this page is missing rows it should hold, or no longer exists.
+  const lastPage = Math.max(0, Math.ceil(totalCount / ADMIN_PAGE_SIZE) - 1)
+  const expectedOnPage = Math.min(ADMIN_PAGE_SIZE, Math.max(0, totalCount - page * ADMIN_PAGE_SIZE))
+  const pageOverflowed = page > lastPage
+  const pageUnderfilled = !pageOverflowed && totalCount > 0 && items.length < expectedOnPage
+  const needsReconcile = !loading && (pageOverflowed || pageUnderfilled)
   useEffect(() => {
-    if (pageEmptied) handlePage(page - 1)
-  }, [pageEmptied, page])
+    if (!needsReconcile) return
+    const target = Math.min(page, lastPage)
+    if (target !== page) setPage(target)
+    load(target, { silent: true })
+  }, [needsReconcile, page, lastPage])
 
   return {
     items,

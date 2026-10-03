@@ -70,4 +70,60 @@ describe('useAdminPaginatedList — removeItem', () => {
     expect(result.current.items).toEqual([{ id: 'r-2' }])
     expect(fetchPage).toHaveBeenCalledTimes(1)
   })
+
+  /**
+   * Removing a row from a page that isn't the list's last leaves every row after
+   * it one offset short of what the server would now return for this page — the
+   * row that should have slid up from the next page is missing until this page is
+   * refetched.
+   */
+  it('backfills the row that slides up from the next page after a removal', async () => {
+    const fetchPage = vi.fn(async () => ({
+      items: rows('p0', ADMIN_PAGE_SIZE),
+      totalCount: ADMIN_PAGE_SIZE + 5,
+    }))
+    const { result } = renderHook(() => useAdminPaginatedList(fetchPage))
+    await waitFor(() => expect(result.current.loading).toBe(false))
+
+    // What the server reports once the row is gone and the next page's first
+    // row has slid up to fill this one.
+    fetchPage.mockImplementation(async () => ({
+      items: [...rows('p0', ADMIN_PAGE_SIZE - 1), { id: 'p1-0' }],
+      totalCount: ADMIN_PAGE_SIZE + 4,
+    }))
+    act(() => result.current.removeItem('p0-0'))
+
+    // Optimistic local state right after removeItem: one row short, stale total.
+    expect(result.current.items).toHaveLength(ADMIN_PAGE_SIZE - 1)
+    expect(result.current.loading).toBe(false) // reconciles silently, no skeleton
+
+    await waitFor(() => expect(result.current.items).toHaveLength(ADMIN_PAGE_SIZE))
+    expect(result.current.items.at(-1)).toEqual({ id: 'p1-0' })
+    expect(result.current.page).toBe(0)
+    expect(fetchPage).toHaveBeenLastCalledWith(0)
+  })
+
+  /**
+   * Clearing every row on page 0 in one go (a bulk action) while later pages
+   * still exist used to leave the admin on a blank page 0 forever — the old
+   * step-back rule only fired past the first page, so page 0 was never reloaded
+   * to pull the rest of the list in.
+   */
+  it('refills page 0 after all its rows are removed when later pages exist', async () => {
+    const fetchPage = vi.fn(async () => ({
+      items: rows('p0', ADMIN_PAGE_SIZE),
+      totalCount: ADMIN_PAGE_SIZE + 1,
+    }))
+    const { result } = renderHook(() => useAdminPaginatedList(fetchPage))
+    await waitFor(() => expect(result.current.loading).toBe(false))
+
+    fetchPage.mockImplementation(async () => ({ items: rows('p1', 1), totalCount: 1 }))
+    act(() => {
+      for (let i = 0; i < ADMIN_PAGE_SIZE; i++) result.current.removeItem(`p0-${i}`)
+    })
+
+    await waitFor(() => expect(result.current.items).toEqual([{ id: 'p1-0' }]))
+    expect(result.current.page).toBe(0)
+    expect(fetchPage).toHaveBeenLastCalledWith(0)
+  })
 })
