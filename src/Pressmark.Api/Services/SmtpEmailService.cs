@@ -42,8 +42,7 @@ public class SmtpEmailService(AppDbContext db, ILogger<SmtpEmailService> logger,
         var smtp = await LoadSmtpAsync(EmailKind.Invite, ct);
         if (smtp is null) return;
 
-        var baseUrl = config["App:BaseUrl"] ?? "http://localhost:5173";
-        var registerUrl = $"{baseUrl.TrimEnd('/')}/register?invite_token={Uri.EscapeDataString(token)}";
+        var registerUrl = $"{config.GetAppBaseUrl()}/register?invite_token={Uri.EscapeDataString(token)}";
 
         var message = NewMessage(smtp, toEmail, $"[{smtp.SiteName}] You've been invited");
         message.Body = new TextPart("plain")

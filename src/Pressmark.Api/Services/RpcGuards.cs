@@ -23,6 +23,21 @@ internal static class RpcGuards
         return id;
     }
 
+    /// <summary>Shortest password accepted anywhere a password is set.</summary>
+    internal const int MinPasswordLength = 8;
+
+    /// <summary>
+    /// Enforces the password policy, raising <see cref="StatusCode.InvalidArgument"/> when
+    /// it is not met. Shared by registration and password reset, so a reset can never be
+    /// a way around the policy registration applies.
+    /// </summary>
+    internal static void EnsurePasswordPolicy(string password)
+    {
+        if (password.Length < MinPasswordLength)
+            throw new RpcException(new Status(StatusCode.InvalidArgument,
+                $"Password must be at least {MinPasswordLength} characters"));
+    }
+
     /// <summary>
     /// Loads an entity by primary key, raising <see cref="StatusCode.NotFound"/>
     /// with the supplied message when it does not exist.

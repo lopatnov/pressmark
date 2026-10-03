@@ -35,13 +35,12 @@ public partial class AuthServiceImpl(
 
         if (!System.Net.Mail.MailAddress.TryCreate(request.Email, out _))
             throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid email address"));
-        if (request.Password.Length < 8)
-            throw new RpcException(new Status(StatusCode.InvalidArgument, "Password must be at least 8 characters"));
+        RpcGuards.EnsurePasswordPolicy(request.Password);
 
         var settings = await SiteSettingsSnapshot.LoadAsync(
             db, [SiteSettingKeys.RegistrationMode], ct);
         var mode = settings.RegistrationMode;
-        var inviteOnly = mode == "invite_only";
+        var inviteOnly = mode == RegistrationModes.InviteOnly;
 
         if (inviteOnly)
         {
@@ -49,7 +48,7 @@ public partial class AuthServiceImpl(
                 throw new RpcException(new Status(StatusCode.PermissionDenied,
                     "An invite token is required"));
         }
-        else if (mode != "open")
+        else if (mode != RegistrationModes.Open)
             throw new RpcException(new Status(StatusCode.FailedPrecondition,
                 "Registration is closed"));
 
@@ -71,7 +70,7 @@ public partial class AuthServiceImpl(
         {
             Email = request.Email,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
-            Role = isFirst ? "Admin" : "User",
+            Role = isFirst ? UserRoles.Admin : UserRoles.User,
         };
 
         db.Users.Add(user);

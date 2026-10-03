@@ -22,7 +22,7 @@ namespace Pressmark.Api.Services;
 /// The [Authorize] attribute is declared here only — a regression test asserts
 /// that exactly one Admin-role attribute is present on the type.
 /// </remarks>
-[Authorize(Roles = "Admin")]
+[Authorize(Roles = UserRoles.Admin)]
 public partial class AdminServiceImpl(AppDbContext db, ISmtpPasswordProtector passwordProtector, IEmailService emailService, ILogger<AdminServiceImpl> logger) : AdminService.AdminServiceBase
 {
     public override async Task<SiteSettings> GetSiteSettings(Empty request, ServerCallContext context)
