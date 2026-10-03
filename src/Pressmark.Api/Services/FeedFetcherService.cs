@@ -153,7 +153,7 @@ public class FeedFetcherService(
         return SyndicationFeed.Load(reader);
     }
 
-    private static async Task<string?> TryFetchOgImageAsync(
+    internal static async Task<string?> TryFetchOgImageAsync(
         HttpClient client, string url, CancellationToken ct)
     {
         try
