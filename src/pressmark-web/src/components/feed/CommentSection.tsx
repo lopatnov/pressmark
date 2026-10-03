@@ -64,7 +64,7 @@ export function CommentSection({ feedItemId, initiallyOpen = false }: CommentSec
         {isAuthenticated && loaded && (
           <button
             type="button"
-            onClick={toggleSubscription}
+            onClick={() => toggleSubscription()}
             title={subscriptionLabel}
             aria-label={subscriptionLabel}
             className="cursor-pointer text-muted-foreground hover:text-foreground transition-colors"
@@ -90,7 +90,7 @@ export function CommentSection({ feedItemId, initiallyOpen = false }: CommentSec
                 canRemove={isAdmin}
                 canReport={isAuthenticated && !isAdmin}
                 isReported={reportedIds.has(c.id)}
-                onRemove={removeComment}
+                onRemove={(commentId) => removeComment(commentId)}
                 onToggleReport={toggleReporting}
                 reportForm={
                   reportingId === c.id && (
