@@ -36,7 +36,7 @@ model: haiku
 
 **Frontend** (каждую команду запускай как `cd src/pressmark-web && <команда>` одним вызовом Bash):
 5. `npm run typecheck` — `tsc -b`, 0 ошибок типов.
-6. `npm run lint` — ESLint, 0 ошибок (warnings — сосчитай, не блокируют GREEN).
+6. `npm run lint` — oxlint, 0 ошибок (warnings — сосчитай, не блокируют GREEN).
 7. `npm run test` — Vitest. Зафиксируй `<passed>/<total>`.
 8. `npm run build` — `tsc -b && vite build`, 0 ошибок.
 9. `npm run format:check` — Prettier, только проверка. **Никогда** не запускай `npm run format`
@@ -75,7 +75,7 @@ model: haiku
 ТЕСТЫ backend (dotnet test):      <passed>/<total> | n/a (не менялся)
 ФОРМАТ backend (dotnet format):   ok | <N файлов не отформатировано>
 TYPECHECK frontend (tsc):         ok | <N ошибок>
-ЛИНТ frontend (eslint):           ok | <N ошибок> / <N warnings>
+ЛИНТ frontend (oxlint):           ok | <N ошибок> / <N warnings>
 ТЕСТЫ frontend (vitest):          <passed>/<total> | n/a (не менялся)
 СБОРКА frontend (vite build):     ok | <N ошибок>
 ФОРМАТ frontend (prettier):       ok | <N файлов не отформатировано>
