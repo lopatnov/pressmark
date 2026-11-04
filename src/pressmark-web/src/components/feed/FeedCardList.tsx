@@ -1,7 +1,20 @@
 import type { ReactNode, RefObject } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
-import { FeedCardSkeletonList } from '@/components/feed/FeedCardSkeleton'
+import { FeedCardSkeleton } from '@/components/feed/FeedCardSkeleton'
+
+const SKELETON_KEYS = ['sk-1', 'sk-2', 'sk-3', 'sk-4', 'sk-5'] as const
+
+/** A full first page of feed placeholders. */
+function FeedCardSkeletonList() {
+  return (
+    <>
+      {SKELETON_KEYS.map((key) => (
+        <FeedCardSkeleton key={key} />
+      ))}
+    </>
+  )
+}
 
 interface FeedCardListProps<TItem> {
   items: TItem[]

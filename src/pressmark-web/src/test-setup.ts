@@ -1,5 +1,5 @@
 import { vi } from 'vitest'
-import '@testing-library/jest-dom'
+import '@testing-library/jest-dom/vitest'
 
 // Shared across component/hook tests — `t` must be a stable reference or it
 // lands in useCallback deps and causes infinite re-renders in components that

@@ -342,17 +342,11 @@ public class FeedIntegrationTests(IntegrationFixture fixture) : IClassFixture<In
 
         var since = baseTime.AddMinutes(-1); // every item matches "PublishedAt > since"
 
-        // Exact query from FeedServiceImpl.StreamFeedUpdates's catch-up replay.
+        // The query FeedServiceImpl.StreamFeedUpdates's catch-up replay runs.
         var catchUp = await db.FeedItems
             .AsNoTracking()
             .Include(f => f.Subscription)
-            .Where(f => f.Subscription.UserId == user.Id
-                     && f.PublishedAt > since
-                     && !f.IsCommunityHidden
-                     && !f.Subscription.IsCommunityBanned)
-            .OrderByDescending(f => f.PublishedAt)
-            .ThenByDescending(f => f.Id)
-            .Take(FeedServiceImpl.MaxCatchUpItems)
+            .CatchUpSince(user.Id, since, FeedServiceImpl.MaxCatchUpItems)
             .ToListAsync();
 
         Assert.Equal(FeedServiceImpl.MaxCatchUpItems, catchUp.Count);
@@ -377,5 +371,80 @@ public class FeedIntegrationTests(IntegrationFixture fixture) : IClassFixture<In
         // The 50 oldest items (outside the cap) must not appear at all.
         var droppedIds = items.Except(newestItems).Select(f => f.Id);
         Assert.Empty(droppedIds.Intersect(deliveryOrder));
+    }
+
+    /// <summary>
+    /// Regression: the catch-up replay used to skip community-hidden items and items
+    /// from community-banned sources, so a reconnect silently lost articles that the
+    /// personal feed (which ignores community moderation) shows on the next reload.
+    /// </summary>
+    [Fact]
+    public async Task StreamCatchUp_IncludesCommunityModeratedItems()
+    {
+        if (!fixture.IsAvailable) return;
+
+        await using var db = fixture.CreateContext();
+
+        var user = MakeUser();
+        db.Users.Add(user);
+        var sub = MakeSub(user.Id);
+        var bannedSub = MakeSub(user.Id);
+        bannedSub.IsCommunityBanned = true;
+        db.Subscriptions.AddRange(sub, bannedSub);
+        var hiddenItem = MakeItem(sub.Id, hidden: true);
+        var bannedSourceItem = MakeItem(bannedSub.Id);
+        db.FeedItems.AddRange(hiddenItem, bannedSourceItem);
+        await db.SaveChangesAsync();
+
+        var catchUpIds = await db.FeedItems
+            .CatchUpSince(user.Id, DateTime.UtcNow.AddHours(-1), FeedServiceImpl.MaxCatchUpItems)
+            .Select(f => f.Id)
+            .ToListAsync();
+
+        Assert.Contains(hiddenItem.Id, catchUpIds);
+        Assert.Contains(bannedSourceItem.Id, catchUpIds);
+    }
+
+    // ── single-article visibility ─────────────────────────────────────────────
+
+    /// <summary>
+    /// Regression: GetFeedItem returned NotFound to the subscription's owner for an
+    /// article that was community-hidden or from a community-banned source, although
+    /// the owner's personal feed lists that article and links to its page. The owner
+    /// and admins must see it; other users and anonymous callers must not.
+    /// </summary>
+    [Fact]
+    public async Task SingleArticle_ModeratedItem_VisibleToOwnerAndAdminOnly()
+    {
+        if (!fixture.IsAvailable) return;
+
+        await using var db = fixture.CreateContext();
+
+        var owner = MakeUser();
+        var stranger = MakeUser();
+        db.Users.AddRange(owner, stranger);
+        var sub = MakeSub(owner.Id);
+        var bannedSub = MakeSub(owner.Id);
+        bannedSub.IsCommunityBanned = true;
+        db.Subscriptions.AddRange(sub, bannedSub);
+        var visibleItem = MakeItem(sub.Id);
+        var hiddenItem = MakeItem(sub.Id, hidden: true);
+        var bannedSourceItem = MakeItem(bannedSub.Id);
+        db.FeedItems.AddRange(visibleItem, hiddenItem, bannedSourceItem);
+        await db.SaveChangesAsync();
+
+        Guid[] itemIds = [visibleItem.Id, hiddenItem.Id, bannedSourceItem.Id];
+
+        // The filter FeedServiceImpl.GetFeedItem applies to the requested item.
+        Task<List<Guid>> ViewableIds(Guid? userId, bool isAdmin) => db.FeedItems
+            .Where(f => itemIds.Contains(f.Id))
+            .WhereViewableBy(userId, isAdmin)
+            .Select(f => f.Id)
+            .ToListAsync();
+
+        Assert.Equal(3, (await ViewableIds(owner.Id, isAdmin: false)).Count);
+        Assert.Equal(3, (await ViewableIds(stranger.Id, isAdmin: true)).Count);
+        Assert.Equal([visibleItem.Id], await ViewableIds(stranger.Id, isAdmin: false));
+        Assert.Equal([visibleItem.Id], await ViewableIds(null, isAdmin: false));
     }
 }

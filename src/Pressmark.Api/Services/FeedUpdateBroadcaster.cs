@@ -10,7 +10,8 @@ public record FeedUpdateEvent(
     string Summary,
     DateTime PublishedAt,
     string ImageUrl,
-    string SourceTitle
+    string SourceTitle,
+    bool IsSourceBanned
 );
 
 /// <summary>
