@@ -48,6 +48,19 @@ internal static class FeedQueryExtensions
     }
 
     /// <summary>
+    /// The replay a reconnecting stream client gets: the newest <paramref name="maxItems"/>
+    /// of the caller's own items published after <paramref name="since"/>, newest-first.
+    /// Like the personal feed it extends, it ignores community moderation.
+    /// </summary>
+    internal static IQueryable<Entities.FeedItem> CatchUpSince(
+        this IQueryable<Entities.FeedItem> query, Guid userId, DateTime since, int maxItems) =>
+        query
+            .Where(f => f.Subscription.UserId == userId && f.PublishedAt > since)
+            .OrderByDescending(f => f.PublishedAt)
+            .ThenByDescending(f => f.Id)
+            .Take(maxItems);
+
+    /// <summary>
     /// Fetches one page newest-first, reading one extra row to detect whether
     /// further pages exist without issuing a second count query.
     /// </summary>

@@ -176,9 +176,11 @@ public partial class FeedServiceImpl(
         var userId = context.GetUserId();
         var ct = context.CancellationToken;
 
-        // Load the user's active subscription IDs for filtering broadcast events
+        // The user's subscription IDs, for filtering broadcast events. Community-banned
+        // sources are kept: like GetFeed, the stream is the personal feed, which
+        // community moderation leaves untouched.
         var userSubIds = await db.Subscriptions
-            .Where(s => s.UserId == userId && !s.IsCommunityBanned)
+            .Where(s => s.UserId == userId)
             .Select(s => s.Id)
             .ToHashSetAsync(ct);
 
@@ -193,13 +195,7 @@ public partial class FeedServiceImpl(
             var catchUp = await db.FeedItems
                 .AsNoTracking()
                 .Include(f => f.Subscription)
-                .Where(f => f.Subscription.UserId == userId
-                         && f.PublishedAt > since
-                         && !f.IsCommunityHidden
-                         && !f.Subscription.IsCommunityBanned)
-                .OrderByDescending(f => f.PublishedAt)
-                .ThenByDescending(f => f.Id)
-                .Take(MaxCatchUpItems)
+                .CatchUpSince(userId, since, MaxCatchUpItems)
                 .ToListAsync(ct);
 
             for (var i = catchUp.Count - 1; i >= 0; i--)

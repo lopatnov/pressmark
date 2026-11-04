@@ -112,7 +112,8 @@ public class FeedFetcherService(
         {
             await broadcaster.BroadcastAsync(new FeedUpdateEvent(
                 item.Id, item.SubscriptionId, item.Title, item.Url,
-                item.Summary ?? "", item.PublishedAt, item.ImageUrl ?? "", sub.Title));
+                item.Summary ?? "", item.PublishedAt, item.ImageUrl ?? "", sub.Title,
+                sub.IsCommunityBanned));
         }
 
         return addedItems.Count;

@@ -55,6 +55,6 @@ internal static class FeedItemMapper
         IsBookmarked = false,
         SourceTitle = evt.SourceTitle,
         ImageUrl = evt.ImageUrl,
-        IsSourceBanned = false, // streaming is pre-filtered to exclude banned sources
+        IsSourceBanned = evt.IsSourceBanned,
     };
 }
