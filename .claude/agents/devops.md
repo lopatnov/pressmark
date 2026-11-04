@@ -19,7 +19,7 @@ model: sonnet
 
 ## Карта CI/CD этого проекта — что уже есть
 - **`ci.yml`** — основной пайплайн: backend-джоба (`dotnet build/test/format` на .NET 10 SDK) и
-  frontend-джоба (`npm run typecheck/lint/test/build/format:check` на **Node 24**). Команды CI
+  frontend-джоба (`npm run typecheck/lint/test/build/format:check` на **Node 26**). Команды CI
   обязаны совпадать с «Commands Reference» в `CLAUDE.md` — если меняешь одно, синхронизируй другое.
 - **`coverage.yml`** — покрытие тестами, публикация отчёта.
 - **`release.yml`** — сборка и публикация Docker-образов через `docker/build-push-action`,
@@ -29,9 +29,9 @@ model: sonnet
   - `src/Pressmark.Api/Dockerfile` — `mcr.microsoft.com/dotnet/sdk:10.0` (build stage) →
     `mcr.microsoft.com/dotnet/aspnet:10.0` (runtime), multi-stage, `apt-get install curl` в рантайме
     для healthcheck.
-  - `src/pressmark-web/Dockerfile` — `node:24-alpine` (build stage, **обязан совпадать с
+  - `src/pressmark-web/Dockerfile` — `node:26-alpine` (build stage, **обязан совпадать с
     `ci.yml`'s `node-version` в frontend-джобе** — расхождение уже ловилось: Dockerfile был на
-    `node:26` (pre-LTS «Current»), пока CI тестировал на 24 (Active LTS), т.е. прод собирался на
+    `node:26` (тогда ещё pre-LTS «Current»), пока CI тестировал на 24 (тогда Active LTS), т.е. прод собирался на
     незрелой версии, которую CI не проверял вообще; при апдейте Node всегда меняй оба места
     одним PR, не по отдельности) → `nginx:<pinned>-alpine<pinned>-slim` (runtime, `apk upgrade`
     перед копированием статики).
