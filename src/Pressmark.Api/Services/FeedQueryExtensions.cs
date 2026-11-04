@@ -30,6 +30,24 @@ internal static class FeedQueryExtensions
     }
 
     /// <summary>
+    /// Restricts the query to items the caller may open as a single article.
+    /// Community moderation (a hidden item, a banned source) only takes an item off
+    /// the shared surfaces: an admin still sees it in order to review it, and the
+    /// subscription's owner still sees it, because it stays in their personal feed
+    /// and that feed links to the article page.
+    /// </summary>
+    /// <param name="userId">The caller, or <c>null</c> when anonymous.</param>
+    internal static IQueryable<Entities.FeedItem> WhereViewableBy(
+        this IQueryable<Entities.FeedItem> query, Guid? userId, bool isAdmin)
+    {
+        if (isAdmin) return query;
+
+        return query.Where(f =>
+            (!f.IsCommunityHidden && !f.Subscription.IsCommunityBanned)
+            || f.Subscription.UserId == userId);
+    }
+
+    /// <summary>
     /// Fetches one page newest-first, reading one extra row to detect whether
     /// further pages exist without issuing a second count query.
     /// </summary>

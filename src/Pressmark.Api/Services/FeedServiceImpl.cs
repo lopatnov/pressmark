@@ -139,18 +139,17 @@ public partial class FeedServiceImpl(
         var feedItemId = RpcGuards.ParseId(request.FeedItemId, "feed_item_id");
 
         var isAdmin = context.GetHttpContext().User.IsInRole(UserRoles.Admin);
+        var userId = context.TryGetUserId();
 
         var item = await db.FeedItems
             .AsNoTracking()
             .Include(f => f.Subscription)
-            .Where(f => f.Id == feedItemId
-                     && (isAdmin || (!f.IsCommunityHidden && !f.Subscription.IsCommunityBanned)))
+            .Where(f => f.Id == feedItemId)
+            .WhereViewableBy(userId, isAdmin)
             .FirstOrDefaultAsync(ct)
             ?? throw new RpcException(new Status(StatusCode.NotFound, "Feed item not found"));
 
         var likeCount = await db.Likes.CountAsync(l => l.FeedItemId == feedItemId, ct);
-
-        var userId = context.TryGetUserId();
 
         var isLiked = userId.HasValue &&
             await db.Likes.AnyAsync(l => l.UserId == userId && l.FeedItemId == feedItemId, ct);
