@@ -59,7 +59,7 @@ The public community page — articles liked by users — is open to anyone with
 
 ## Local Development
 
-**Prerequisites:** [.NET 10 SDK](https://dotnet.microsoft.com/download) · [Node.js 22](https://nodejs.org/)
+**Prerequisites:** [.NET 10 SDK](https://dotnet.microsoft.com/download) · [Node.js 26](https://nodejs.org/) (LTS)
 
 You need a running MSSQL instance — either **local** or **Docker**:
 
