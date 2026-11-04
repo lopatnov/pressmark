@@ -15,16 +15,3 @@ export function FeedCardSkeleton() {
     </div>
   )
 }
-
-const SKELETON_KEYS = ['sk-1', 'sk-2', 'sk-3', 'sk-4', 'sk-5'] as const
-
-/** A full first page of feed placeholders. */
-export function FeedCardSkeletonList() {
-  return (
-    <>
-      {SKELETON_KEYS.map((key) => (
-        <FeedCardSkeleton key={key} />
-      ))}
-    </>
-  )
-}
