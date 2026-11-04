@@ -194,7 +194,7 @@ page+hook по инерции — это не нарушение, а друго�
 - `dotnet format src/Pressmark.Api/Pressmark.Api.csproj --verify-no-changes` — проверка форматирования backend.
 - `dotnet format src/Pressmark.Api.Tests/Pressmark.Api.Tests.csproj --verify-no-changes` — то же для тестового проекта.
 - `cd src/pressmark-web && npm run format:check` — проверка форматирования frontend (Prettier); `npm run format` — исправить.
-- `cd src/pressmark-web && npm run lint` — ESLint.
+- `cd src/pressmark-web && npm run lint` — oxlint (конфиг `.oxlintrc.json`; в pre-commit через lint-staged с `--deny-warnings`).
 - `cd src/pressmark-web && npm run typecheck` — `tsc -b` (следует `references` в `tsconfig.json`; оба проекта уже задают `noEmit`), отдельно от `build` для быстрой проверки типов.
 
 ### Testing

@@ -47,8 +47,9 @@ model: sonnet
 - **TypeScript зафиксирован на `~6.0.2`** (`src/pressmark-web/package.json`) — намеренно, не по
   забывчивости: TS 7 ломает `typescript-eslint` и `tsc -b`/`@testing-library/react` при текущих
   версиях этих пакетов. Не бампай без повторной проверки всей цепочки.
-- **npm `overrides`** в `package.json` — два целевых патча транзитивных зависимостей
-  (`@babel/plugin-transform-runtime`, `@hono/node-server`); это не CI-специфика, но ломает сборку
+- **npm `overrides`** в `package.json` — целевые патчи транзитивных зависимостей
+  (сейчас `fast-uri`, `minimatch`; перед удалением проверяй, что потребитель пакета реально исчез
+  из `package-lock.json`); это не CI-специфика, но ломает сборку
   образа тем же способом, что и локальную — если апдейт зависимостей ломает `npm ci` в
   Dockerfile-стадии, сначала проверь, не нужен ли новый override, прежде чем трогать `--legacy-peer-deps`.
 

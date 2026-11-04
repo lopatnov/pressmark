@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "eslint .",
+    "lint": "oxlint",
     "preview": "vite preview",
     "generate": "buf generate",
     "format": "prettier --write .",
@@ -53,29 +53,24 @@
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.2.1",
     "@vitest/coverage-v8": "^5.1.0",
-    "eslint": "^10.14.0",
-    "eslint-plugin-react-refresh": "^0.5.7",
-    "globals": "^17.14.0",
     "husky": "^9.1.7",
     "jsdom": "^30.1.3",
     "lint-staged": "^17.6.0",
+    "oxlint": "^1.91.0",
     "prettier": "^3.9.10",
     "typescript": "~6.0.3",
-    "typescript-eslint": "^8.72.1",
     "vite": "~8.2.4",
     "vitest": "^5.1.0"
   },
   "lint-staged": {
     "!(src/api/generated/**)*.{ts,tsx}": [
       "prettier --write",
-      "eslint --max-warnings 0 --no-warn-ignored"
+      "oxlint --deny-warnings"
     ],
     "*.{js,json,css,md}": "prettier --write"
   },
   "overrides": {
-    "brace-expansion": "^5.0.12",
     "fast-uri": "^3.1.8",
-    "minimatch": "^11.0.4",
-    "nanoid": "^3.3.17"
+    "minimatch": "^11.0.4"
   }
 }
